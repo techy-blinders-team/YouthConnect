@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SkOfficial } from './sk-official';
+import { ManageProfiling } from './manage-profiling';
 
-describe('SkOfficial', () => {
-  let component: SkOfficial;
-  let fixture: ComponentFixture<SkOfficial>;
+describe('ManageProfiling', () => {
+  let component: ManageProfiling;
+  let fixture: ComponentFixture<ManageProfiling>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SkOfficial]
+      imports: [ManageProfiling]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(SkOfficial);
+    fixture = TestBed.createComponent(ManageProfiling);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

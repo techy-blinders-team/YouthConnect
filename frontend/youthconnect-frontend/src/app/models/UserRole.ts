@@ -1,0 +1,1 @@
+export type UserRole =  'youth' | 'sk-official' | 'admin';
