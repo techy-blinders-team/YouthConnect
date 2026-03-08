@@ -1,27 +1,6 @@
 import { Routes } from '@angular/router';
-import { LandingPage } from './pages/landing-page/landing-page';
-import { AboutPage } from './pages/about-page/about-page';
-import { LeadersPage } from './pages/leaders-page/leaders-page';
-import { ProjectsPage } from './pages/projects-page/projects-page';
-import { LoginPage } from './pages/login-page/login-page';
-import { SignUpPage } from './pages/sign-up-page/sign-up-page';
-import { Dashboard } from './pages/youth-user-page/dashboard/dashboard';
-import { CreateConcern } from './pages/youth-user-page/create-concern/create-concern';
-import { Events } from './pages/youth-user-page/events/events';
-import { Concerns } from './pages/sk-official-page/concerns/concerns';
-import { CreateEvent } from './pages/sk-official-page/create-event/create-event';
-import { SkOfficialDashboard } from './pages/sk-official-page/sk-official-dashboard/sk-official-dashboard';
-import { ManageEvent } from './pages/sk-official-page/manage-event/manage-event';
-import { ManageProfiling } from './pages/sk-official-page/manage-profiling/manage-profiling';
-import { SkOfficialLogin } from './pages/sk-official-page/sk-official-login/sk-official-login';
-import { TaskTracker } from './pages/sk-official-page/task-tracker/task-tracker';
-import { BackupRestore } from './pages/administrator-page/backup-restore/backup-restore';
-import { AdministratorPage } from './pages/administrator-page/administrator-page/administrator-page';
-import { ManageAdministrators } from './pages/administrator-page/manage-administrators/manage-administrators';
-import { ManageSkOfficials } from './pages/administrator-page/manage-sk-officials/manage-sk-officials';
-import { ManageYouthMember } from './pages/administrator-page/manage-youth-member/manage-youth-member';
-import { SystemControl } from './pages/administrator-page/system-control/system-control';
-import { SystemStatistics } from './pages/administrator-page/system-statistics/system-statistics';
+import { authGuard } from './guards/auth.guard';
+import { roleGuard } from './guards/role.guard';
 
 export const routes: Routes = [
 
@@ -65,12 +44,128 @@ export const routes: Routes = [
             import ('./pages/sign-up-page/sign-up-page').then (move => move.SignUpPage),
     },
 
+
+    // User Role Youth Route
     {
-        path: 'sk-official-login',
-        loadComponent: () => 
-            import ('./pages/sk-official-page/sk-official-login/sk-official-login').then (move => move.SkOfficialLogin),
+        path: 'youth',
+        canActivate: [authGuard, roleGuard],
+        data: {roles: ['youth']},
+        children: [ 
+            {
+            path: 'dashboard',
+            loadComponent: () =>
+                import('./pages/youth-user-page/dashboard/dashboard').then (move => move.Dashboard),
+            },
+            {
+                path: 'create-concern',
+                loadComponent: () => 
+                    import ('./pages/youth-user-page/create-concern/create-concern').then (move => move.CreateConcern),
+            },
+            {
+                path: 'events',
+                loadComponent: () =>
+                    import ('./pages/youth-user-page/events/events').then (move => move.Events),
+            },
+            {
+                path: 'notifications',
+                loadComponent: () =>
+                    import ('./pages/youth-user-page/notification/notification').then (move => move.Notification),
+            },
+            {
+                path: '', redirectTo: 'dashboard', pathMatch: 'full'
+            },
+        
+        ],
     },
 
-    
+    //SK Official Route
+    {
+        path: 'sk-official',
+        canActivate: [authGuard, roleGuard],
+        data: {roles: ['sk-official']},
+        children: [
+            {
+                path: 'dashboard',
+                loadComponent: () =>
+                    import('./pages/sk-official-page/sk-official-dashboard/sk-official-dashboard').then (move => move.SkOfficialDashboard),
+            },
+
+            {
+                path: 'concerns',
+                loadComponent: () =>
+                    import('./pages/sk-official-page/concerns/concerns').then (move => move.Concerns),
+            },
+
+            {
+                path: 'create-event',
+                loadComponent: () => 
+                    import('./pages/sk-official-page/create-event/create-event').then (move => move.CreateEvent),
+            },
+
+            {
+                path: 'manage-event',
+                loadComponent: () =>
+                    import('./pages/sk-official-page/manage-event/manage-event').then (move => move.ManageEvent),
+            },
+
+            {
+                path: 'profiling',
+                loadComponent: () =>
+                    import ('./pages/sk-official-page/manage-profiling/manage-profiling').then (move => move.ManageProfiling),
+            },
+
+            {
+                path: 'task-trakcer',
+                loadComponent: () =>
+                    import ('./pages/sk-official-page/task-tracker/task-tracker').then (move => move.TaskTracker),
+            },
+            { 
+                path: '', redirectTo: 'dashboard', pathMatch: 'full' 
+            },
+
+        ],
+    },
+
+    //Admin Route
+    {
+        path: 'admin',
+        canActivate: [authGuard, roleGuard],
+        data: {roles: ['admin']},
+        children: [
+            {
+                path: 'dashboard',
+                loadComponent: () =>
+                    import('./pages/administrator-page/administrator-dashboard/administrator-dashboard').then (move => move.AdministratorDashboard),
+            },
+            {
+                path: 'backup-restore',
+                loadComponent: () =>
+                    import ('./pages/administrator-page/backup-restore/backup-restore').then (move => move.BackupRestore),
+            },
+            {
+                path: 'manage-sk-officials',
+                loadComponent: () =>
+                    import('./pages/administrator-page/manage-sk-officials/manage-sk-officials').then (move => move.ManageSkOfficials),
+            },
+            {
+                path: 'manage-youth-member',
+                loadComponent: () =>
+                    import('./pages/administrator-page/manage-youth-member/manage-youth-member').then (move => move.ManageYouthMember),
+            },
+            {
+                path: 'system-control',
+                loadComponent: () =>
+                    import ('./pages/administrator-page/system-control/system-control').then (move => move.SystemControl),
+            },
+            {
+                path: 'system-statics',
+                loadComponent: () => 
+                    import ('./pages/administrator-page/system-statistics/system-statistics').then (move => move.SystemStatistics),
+            },
+            { 
+                path: '', redirectTo: 'dashboard', pathMatch: 'full' 
+            },
+        ],
+    },
 
 ];

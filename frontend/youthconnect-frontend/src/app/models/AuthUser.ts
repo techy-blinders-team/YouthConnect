@@ -1,4 +1,4 @@
-import { UserRole } from "./userRole";
+import { UserRole } from "./UserRole";
 
 export interface AuthUser {
     token: string;
