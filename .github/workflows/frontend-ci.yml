@@ -36,7 +36,7 @@ jobs:
       run: npm ci
 
     - name: Run tests
-      run: npm run test -- --watch=false --browsers=ChromeHeadless || echo "Tests not configured, skipping..."
+      run: npm run test:ci || echo "Tests not configured, skipping..."
 
     - name: Build application
       run: npm run build -- --configuration production
