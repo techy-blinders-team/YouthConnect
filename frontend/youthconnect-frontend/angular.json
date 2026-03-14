@@ -28,7 +28,6 @@
                 "glob": "**/*",
                 "input": "public"
               },
-              
               {
                 "glob": "**/*",
                 "input": "src/app/assets",
@@ -51,6 +50,11 @@
                   "type": "anyComponentStyle",
                   "maximumWarning": "4kB",
                   "maximumError": "8kB"
+                },
+                {
+                  "type": "any",
+                  "maximumWarning": "2MB",
+                  "maximumError": "5MB"
                 }
               ],
               "outputHashing": "all"
