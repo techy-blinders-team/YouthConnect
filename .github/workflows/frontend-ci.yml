@@ -1,4 +1,4 @@
-# This testing is for Frontend
+# Frontend CI Pipeline
 name: Frontend CI
 
 on:
@@ -13,8 +13,13 @@ on:
       - 'frontend/**'
       - '.github/workflows/frontend-ci.yml'
 
+env:
+  NODE_VERSION: '20'
+  WORKING_DIR: frontend/youthconnect-frontend
+
 jobs:
-  build-and-test:
+  lint-and-test:
+    name: Lint & Test
     runs-on: ubuntu-latest
     
     defaults:
@@ -28,15 +33,71 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '20'
+        node-version: ${{ env.NODE_VERSION }}
         cache: 'npm'
         cache-dependency-path: frontend/youthconnect-frontend/package-lock.json
 
     - name: Install dependencies
       run: npm ci
 
-    - name: Run tests
-      run: npm run test:ci || echo "Tests not configured, skipping..."
+    - name: Run tests with coverage
+      run: npm run test:ci
 
-    - name: Build application
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v4
+      if: always()
+      with:
+        files: ./frontend/youthconnect-frontend/coverage/lcov.info
+        flags: frontend
+        name: frontend-coverage
+      continue-on-error: true
+
+    - name: Archive test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: frontend-test-results
+        path: frontend/youthconnect-frontend/coverage/
+        retention-days: 7
+
+  build:
+    name: Build Application
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+    
+    defaults:
+      run:
+        working-directory: frontend/youthconnect-frontend
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: frontend/youthconnect-frontend/package-lock.json
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build production bundle
       run: npm run build -- --configuration production
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: frontend-dist
+        path: frontend/youthconnect-frontend/dist/
+        retention-days: 7
+
+    - name: Check bundle size
+      run: |
+        echo "### Bundle Size Report" >> $GITHUB_STEP_SUMMARY
+        du -sh dist/ >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "#### Detailed breakdown:" >> $GITHUB_STEP_SUMMARY
+        du -h dist/ | sort -h >> $GITHUB_STEP_SUMMARY
+

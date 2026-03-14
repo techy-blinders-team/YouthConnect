@@ -1,4 +1,4 @@
-# This testing is for Backend
+# Backend CI Pipeline
 name: Backend CI
 
 on:
@@ -13,8 +13,14 @@ on:
       - 'backend/**'
       - '.github/workflows/backend-ci.yml'
 
+env:
+  JAVA_VERSION: '17'
+  JAVA_DISTRIBUTION: 'temurin'
+  WORKING_DIR: backend/youthconnect_id
+
 jobs:
-  build-and-test:
+  test:
+    name: Test & Coverage
     runs-on: ubuntu-latest
     
     defaults:
@@ -25,35 +31,110 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up JDK 17
+    - name: Set up JDK
       uses: actions/setup-java@v4
       with:
-        java-version: '17'
-        distribution: 'temurin'
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: ${{ env.JAVA_DISTRIBUTION }}
         cache: maven
-
-    - name: Cache Maven packages
-      uses: actions/cache@v4
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
 
     - name: Make mvnw executable
       run: chmod +x mvnw
 
-    - name: Build with Maven
-      run: ./mvnw clean install -DskipTests
+    - name: Run tests with coverage
+      run: ./mvnw clean test
 
-    - name: Run tests
-      run: ./mvnw test || echo "No tests found, skipping..."
+    - name: Generate test report
+      if: always()
+      run: ./mvnw surefire-report:report-only
 
-    - name: Build JAR
-      run: ./mvnw package -DskipTests
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: backend-test-results
+        path: |
+          backend/youthconnect_id/target/surefire-reports/
+          backend/youthconnect_id/target/site/
+        retention-days: 7
 
-    - name: Upload build artifact
+    - name: Publish test summary
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: Backend Test Results
+        path: backend/youthconnect_id/target/surefire-reports/*.xml
+        reporter: java-junit
+      continue-on-error: true
+
+  build:
+    name: Build Application
+    runs-on: ubuntu-latest
+    needs: test
+    
+    defaults:
+      run:
+        working-directory: backend/youthconnect_id
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: ${{ env.JAVA_DISTRIBUTION }}
+        cache: maven
+
+    - name: Make mvnw executable
+      run: chmod +x mvnw
+
+    - name: Build application
+      run: ./mvnw clean package -DskipTests
+
+    - name: Upload JAR artifact
       uses: actions/upload-artifact@v4
       with:
         name: backend-jar
         path: backend/youthconnect_id/target/*.jar
         retention-days: 7
+
+    - name: Display build info
+      run: |
+        echo "### Build Information" >> $GITHUB_STEP_SUMMARY
+        echo "- Java Version: ${{ env.JAVA_VERSION }}" >> $GITHUB_STEP_SUMMARY
+        echo "- Distribution: ${{ env.JAVA_DISTRIBUTION }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "#### Artifacts:" >> $GITHUB_STEP_SUMMARY
+        ls -lh target/*.jar >> $GITHUB_STEP_SUMMARY
+
+  code-quality:
+    name: Code Quality Check
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: backend/youthconnect_id
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: ${{ env.JAVA_DISTRIBUTION }}
+        cache: maven
+
+    - name: Make mvnw executable
+      run: chmod +x mvnw
+
+    - name: Run checkstyle
+      run: ./mvnw checkstyle:check || echo "Checkstyle not configured"
+      continue-on-error: true
+
+    - name: Verify code compilation
+      run: ./mvnw clean compile -DskipTests
+
