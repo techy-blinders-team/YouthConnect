@@ -1,1 +1,27 @@
-<p>landing-page works!</p>
+<div class="landing-container">
+    <!-- Navigation Header -->
+    <header class="header">
+        <div class="logo">
+            <img src="assets/youthconnect-logo.png" alt="YouthConnect Logo" />
+        </div>
+        <nav class="nav-menu">
+            <a (click)="navigateTo('/about')" class="nav-link">About</a>
+            <a (click)="navigateTo('/projects')" class="nav-link">Projects</a>
+            <a (click)="navigateTo('/leaders')" class="nav-link">Leaders</a>
+            <a (click)="navigateTo('/login')" class="nav-link">Login</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">YouthConnect</h1>
+            <p class="hero-subtitle">A Centralized Web System for Youth Engagement and SK Governance</p>
+
+            <div class="cta-buttons">
+                <button class="btn-signup" (click)="navigateTo('/sign-up')">Sign Up</button>
+                <button class="btn-login" (click)="navigateTo('/login')">Login</button>
+            </div>
+        </div>
+    </section>
+</div>
