@@ -8,6 +8,7 @@ import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 public class WebConfig {
+
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -17,15 +18,15 @@ public class WebConfig {
         config.addAllowedOrigin("http://localhost:4200");
 
         config.addAllowedHeader("*");
-    
+
         config.addAllowedMethod("GET");
         config.addAllowedMethod("POST");
         config.addAllowedMethod("PUT");
-        config.addAllowedHeader("DELETE");
+        config.addAllowedMethod("DELETE"); // ✅ fixed: was addAllowedHeader by mistake
         config.addAllowedMethod("OPTIONS");
 
         source.registerCorsConfiguration("/api/**", config);
 
-        return (corsFilter());
+        return new CorsFilter(source); // ✅ fixed: was recursively calling corsFilter()
     }
 }
