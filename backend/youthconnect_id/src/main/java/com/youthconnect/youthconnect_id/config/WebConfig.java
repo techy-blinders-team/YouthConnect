@@ -22,11 +22,11 @@ public class WebConfig {
         config.addAllowedMethod("GET");
         config.addAllowedMethod("POST");
         config.addAllowedMethod("PUT");
-        config.addAllowedMethod("DELETE"); // ✅ fixed: was addAllowedHeader by mistake
+        config.addAllowedMethod("DELETE");
         config.addAllowedMethod("OPTIONS");
 
         source.registerCorsConfiguration("/api/**", config);
 
-        return new CorsFilter(source); // ✅ fixed: was recursively calling corsFilter()
+        return new CorsFilter(source);
     }
 }
