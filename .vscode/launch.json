@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-YouthconnectIdApplication<youthconnect_id>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.youthconnect.youthconnect_id.YouthconnectIdApplication",
+            "projectName": "youthconnect_id",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
