@@ -1,8 +1,8 @@
 package com.youthconnect.youthconnect_id.enums;
 
-public enum ConcernStatus {
-    OPEN,
+public enum TaskStatus {
+    PENDING,
     IN_PROGRESS,
-    RESOLVED,
-    CLOSED
+    COMPLETED,
+    CANCELLED
 }
