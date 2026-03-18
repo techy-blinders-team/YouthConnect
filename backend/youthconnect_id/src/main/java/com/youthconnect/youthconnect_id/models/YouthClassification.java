@@ -44,7 +44,6 @@ public class YouthClassification {
 
     @Column(name = "non_attendance_reason")
     private String nonAttendedReason;
-}
 
     public YouthClassification() {}
 
@@ -119,3 +118,4 @@ public class YouthClassification {
     public void setNonAttendedReason(String nonAttendedReason) {
         this.nonAttendedReason = nonAttendedReason;
     }
+}
