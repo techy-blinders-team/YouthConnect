@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
 import { roleGuard } from './guards/role.guard';
+import { guestGuard } from './guards/guest.guard';
 
 export const routes: Routes = [
 
@@ -10,66 +11,86 @@ export const routes: Routes = [
         loadComponent: () => 
             import('./pages/landing-page/landing-page').
             then(move => move.LandingPage),
+        title: 'YouthConnect - Home'
     },
 
     {
         path: 'about',
         loadComponent: () => 
             import('./pages/about-page/about-page').then(move => move.AboutPage),
+        title: 'About Us - YouthConnect'
     },
 
     {
         path: 'leaders',
         loadComponent: () =>
             import('./pages/leaders-page/leaders-page').then(move => move.LeadersPage),
+        title: 'Leaders - YouthConnect'
     },
 
     {
         path: 'projects',
         loadComponent: () =>
             import ('./pages/projects-page/projects-page').then(move => move.ProjectsPage),
+        title: 'Projects - YouthConnect'
     },
 
 
-    // Authentication Route
+    // Authentication Routes
     {
         path: 'login',
         loadComponent: () =>
             import ('./pages/login-page/login-page').then (move => move.LoginPage),
+        title: 'Login - YouthConnect',
+        canActivate: [guestGuard]
     },
 
     {
         path: 'sign-up',
         loadComponent: () =>
             import ('./pages/sign-up-page/sign-up-page').then (move => move.SignUpPage),
+        title: 'Sign Up - YouthConnect',
+        canActivate: [guestGuard]
+    },
+
+    {
+        path: 'forgot-password',
+        loadComponent: () =>
+            import ('./pages/forgot-password-page/forgot-password-page').then (move => move.ForgotPasswordPage),
+        title: 'Forgot Password - YouthConnect',
+        canActivate: [guestGuard]
     },
 
 
-    // User Role Youth Route
+    // User Role Youth Routes
     {
         path: 'youth',
         canActivate: [authGuard, roleGuard],
         data: {roles: ['youth']},
         children: [ 
             {
-            path: 'dashboard',
-            loadComponent: () =>
-                import('./pages/youth-user-page/dashboard/dashboard').then (move => move.Dashboard),
+                path: 'dashboard',
+                loadComponent: () =>
+                    import('./pages/youth-user-page/dashboard/dashboard').then (move => move.Dashboard),
+                title: 'Dashboard - YouthConnect'
             },
             {
                 path: 'create-concern',
                 loadComponent: () => 
                     import ('./pages/youth-user-page/create-concern/create-concern').then (move => move.CreateConcern),
+                title: 'Create Concern - YouthConnect'
             },
             {
                 path: 'events',
                 loadComponent: () =>
                     import ('./pages/youth-user-page/events/events').then (move => move.Events),
+                title: 'Events - YouthConnect'
             },
             {
                 path: 'notifications',
                 loadComponent: () =>
                     import ('./pages/youth-user-page/notification/notification').then (move => move.Notification),
+                title: 'Notifications - YouthConnect'
             },
             {
                 path: '', redirectTo: 'dashboard', pathMatch: 'full'
@@ -78,7 +99,7 @@ export const routes: Routes = [
         ],
     },
 
-    //SK Official Route
+    // SK Official Routes
     {
         path: 'sk-official',
         canActivate: [authGuard, roleGuard],
@@ -88,36 +109,42 @@ export const routes: Routes = [
                 path: 'dashboard',
                 loadComponent: () =>
                     import('./pages/sk-official-page/sk-official-dashboard/sk-official-dashboard').then (move => move.SkOfficialDashboard),
+                title: 'SK Official Dashboard - YouthConnect'
             },
 
             {
                 path: 'concerns',
                 loadComponent: () =>
                     import('./pages/sk-official-page/concerns/concerns').then (move => move.Concerns),
+                title: 'Concerns - YouthConnect'
             },
 
             {
                 path: 'create-event',
                 loadComponent: () => 
                     import('./pages/sk-official-page/create-event/create-event').then (move => move.CreateEvent),
+                title: 'Create Event - YouthConnect'
             },
 
             {
                 path: 'manage-event',
                 loadComponent: () =>
                     import('./pages/sk-official-page/manage-event/manage-event').then (move => move.ManageEvent),
+                title: 'Manage Events - YouthConnect'
             },
 
             {
                 path: 'profiling',
                 loadComponent: () =>
                     import ('./pages/sk-official-page/manage-profiling/manage-profiling').then (move => move.ManageProfiling),
+                title: 'Youth Profiling - YouthConnect'
             },
 
             {
-                path: 'task-trakcer',
+                path: 'task-tracker',
                 loadComponent: () =>
                     import ('./pages/sk-official-page/task-tracker/task-tracker').then (move => move.TaskTracker),
+                title: 'Task Tracker - YouthConnect'
             },
             { 
                 path: '', redirectTo: 'dashboard', pathMatch: 'full' 
@@ -126,7 +153,7 @@ export const routes: Routes = [
         ],
     },
 
-    //Admin Route
+    // Admin Routes
     {
         path: 'admin',
         canActivate: [authGuard, roleGuard],
@@ -136,36 +163,49 @@ export const routes: Routes = [
                 path: 'dashboard',
                 loadComponent: () =>
                     import('./pages/administrator-page/administrator-dashboard/administrator-dashboard').then (move => move.AdministratorDashboard),
+                title: 'Admin Dashboard - YouthConnect'
             },
             {
                 path: 'backup-restore',
                 loadComponent: () =>
                     import ('./pages/administrator-page/backup-restore/backup-restore').then (move => move.BackupRestore),
+                title: 'Backup & Restore - YouthConnect'
             },
             {
                 path: 'manage-sk-officials',
                 loadComponent: () =>
                     import('./pages/administrator-page/manage-sk-officials/manage-sk-officials').then (move => move.ManageSkOfficials),
+                title: 'Manage SK Officials - YouthConnect'
             },
             {
                 path: 'manage-youth-member',
                 loadComponent: () =>
                     import('./pages/administrator-page/manage-youth-member/manage-youth-member').then (move => move.ManageYouthMember),
+                title: 'Manage Youth Members - YouthConnect'
             },
             {
                 path: 'system-control',
                 loadComponent: () =>
                     import ('./pages/administrator-page/system-control/system-control').then (move => move.SystemControl),
+                title: 'System Control - YouthConnect'
             },
             {
-                path: 'system-statics',
+                path: 'system-statistics',
                 loadComponent: () => 
                     import ('./pages/administrator-page/system-statistics/system-statistics').then (move => move.SystemStatistics),
+                title: 'System Statistics - YouthConnect'
             },
             { 
                 path: '', redirectTo: 'dashboard', pathMatch: 'full' 
             },
         ],
     },
+
+    // Wildcard route for 404 - must be last
+    {
+        path: '**',
+        redirectTo: '',
+        pathMatch: 'full'
+    }
 
 ];

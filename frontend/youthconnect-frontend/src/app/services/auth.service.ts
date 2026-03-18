@@ -50,22 +50,16 @@ export class AuthService {
 
     redirectByRole(role: UserRole): void {
         const dashboardRoutes: Record<UserRole, string> = {
-            'youth': '/youth-user-page/dashboard',
-            'sk-official': '/sk-official-page/sk-official-dashboard',
-            'admin': '/administrator-page/administrator-dashboard'
+            'youth': '/youth/dashboard',
+            'sk-official': '/sk-official/dashboard',
+            'admin': '/admin/dashboard'
         };
 
         this.router.navigate([dashboardRoutes[role]]);
     }
 
     redirectToLogin(role: UserRole | null): void {
-        if (role === 'sk-official') {
-            this.router.navigate(['/sk-official-page/sk-official-login']);
-        } else if (role === 'admin') {
-            this.router.navigate(['/administrator-page/administrator-login']);
-        } else {
-            this.router.navigate(['/login-page']);
-        }
+        this.router.navigate(['/login']);
     }
 
 }
