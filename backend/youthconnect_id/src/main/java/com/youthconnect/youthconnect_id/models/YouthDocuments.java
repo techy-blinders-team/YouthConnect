@@ -2,12 +2,12 @@ package com.youthconnect.youthconnect_id.models;
 
 import java.time.LocalDateTime;
 
+import com.youthconnect.youthconnect_id.converters.DocumentTypeConverter;
 import com.youthconnect.youthconnect_id.enums.DocumentType;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,8 +24,8 @@ public class YouthDocuments {
     @Column(name = "youth_id", nullable = false)
     private int youthId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "document_type", nullable = false)
+    @Convert(converter = DocumentTypeConverter.class)
+    @Column(name = "document_type", nullable = false, length = 50)
     private DocumentType documentType;
 
     @Column(name = "file_path", nullable = false, length = 255)

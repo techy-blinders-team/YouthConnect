@@ -19,15 +19,15 @@ public class YouthClassification {
     private int youthId;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "youth_classification")
+    @Column(name = "youth_classification", length = 50)
     private YouthClassificationType youthClassification;
     
     @Enumerated(EnumType.STRING)
-    @Column(name = "education_background")
+    @Column(name = "education_background", length = 50)
     private EducationBackground educationBackground;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "work_status")
+    @Column(name = "work_status", length = 50)
     private WorkStatus workStatus;
 
     @Column(name = "sk_voter")
