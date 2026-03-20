@@ -1,5 +1,15 @@
 package com.youthconnect.youthconnect_id.repositories;
 
-public class UserRepo {
+import java.util.Optional;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.youthconnect.youthconnect_id.models.User;
+
+@Repository
+public interface UserRepo extends JpaRepository<User, Integer> {
+    Optional<User> findByEmail(String email);
+    boolean existsByEmail(String email);
+    Optional<User> findByYouthId(int youthId);
 }

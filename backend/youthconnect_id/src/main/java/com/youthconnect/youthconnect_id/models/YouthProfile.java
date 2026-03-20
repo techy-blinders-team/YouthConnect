@@ -11,6 +11,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -18,6 +20,7 @@ import jakarta.persistence.Table;
 @Table(name = "tbl_youth_profile")
 public class YouthProfile {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "youth_id")
     private int youthId;
 
@@ -31,11 +34,11 @@ public class YouthProfile {
     private String lastName;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "suffix")
+    @Column(name = "suffix", length = 10)
     private Suffix suffix;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "gender")
+    @Column(name = "gender", length = 20)
     private Gender gender;
 
     @Column(name = "birthday")
@@ -48,7 +51,7 @@ public class YouthProfile {
     private String completeAddress;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "civil_status")
+    @Column(name = "civil_status", length = 20)
     private CivilStatus civilStatus;
 
     @Column(name = "created_at")
