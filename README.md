@@ -69,8 +69,6 @@ The system is modular and scalable for future enhancements.
 
 ## 🛠️ Technology Stack
 
-> *(Edit this section based on your actual stack)*
-
 - Frontend: Angular
 - Backend: Java (Spring boot)
 - Database: MySQL  
