@@ -26,6 +26,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/admin/auth/**").permitAll()
                 .requestMatchers("/api/concerns/**").permitAll()
                 .requestMatchers("/api/admin/concerns/**").permitAll()
+                .requestMatchers("/api/events/**").permitAll()
+                .requestMatchers("/api/sk/events/**").permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session

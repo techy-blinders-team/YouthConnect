@@ -1,0 +1,8 @@
+package com.youthconnect.youthconnect_id.dto;
+
+public class MarkAttendanceRequest {
+    private int userId;
+
+    public int getUserId() { return userId; }
+    public void setUserId(int userId) { this.userId = userId; }
+}

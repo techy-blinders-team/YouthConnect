@@ -1,0 +1,49 @@
+package com.youthconnect.youthconnect_id.dto;
+
+import java.time.LocalDateTime;
+
+public class AttendanceResponse {
+    private int attendanceId;
+    private int eventId;
+    private int userId;
+    private boolean isAttended;
+    private LocalDateTime registeredAt;
+    private LocalDateTime attendedAt;
+
+    public int getAttendanceId() {
+        return attendanceId; 
+    }
+    public void setAttendanceId(int attendanceId) {
+        this.attendanceId = attendanceId; 
+    }
+    public int getEventId() {
+        return eventId; 
+    }
+    public void setEventId(int eventId) {
+        this.eventId = eventId; 
+    }
+    public int getUserId() {
+        return userId; 
+    }
+    public void setUserId(int userId) {
+        this.userId = userId; 
+    }
+    public boolean isAttended() {
+        return isAttended; 
+    }
+    public void setAttended(boolean attended) {
+        isAttended = attended; 
+    }
+    public LocalDateTime getRegisteredAt() {
+        return registeredAt; 
+    }
+    public void setRegisteredAt(LocalDateTime registeredAt) {
+        this.registeredAt = registeredAt; 
+    }
+    public LocalDateTime getAttendedAt() {
+        return attendedAt; 
+    }
+    public void setAttendedAt(LocalDateTime attendedAt) {
+        this.attendedAt = attendedAt; 
+    }
+}
