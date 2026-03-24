@@ -1,52 +1,19 @@
-package com.youthconnect.youthconnect_id.models;
+package com.youthconnect.youthconnect_id.dto;
 
 import java.time.LocalDateTime;
 
 import com.youthconnect.youthconnect_id.enums.TaskStatus;
 import com.youthconnect.youthconnect_id.enums.Tasking;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-
-@Entity
-@Table(name = "tbl_task")
-public class Task {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "task_id")
+public class TaskResponse {
     private int taskId;
-
-    @Column(name = "admin_id", nullable = false)
     private int adminId;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "tasking", nullable = false)
     private Tasking tasking;
-
-    @Column(name = "task_description", columnDefinition = "TEXT")
     private String taskDescription;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
-    private TaskStatus status = TaskStatus.PENDING;
-
-    @Column(name = "due_date")
+    private TaskStatus status;
     private LocalDateTime dueDate;
-
-    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
-
-    @Column(name = "hyperlink", length = 50)
     private String hyperlink;
-
-    public Task() {}
 
     public int getTaskId() {
         return taskId; 
@@ -58,7 +25,7 @@ public class Task {
         return adminId; 
     }
     public void setAdminId(int adminId) {
-        this.adminId = adminId;
+        this.adminId = adminId; 
     }
     public Tasking getTasking() {
         return tasking; 
@@ -91,7 +58,7 @@ public class Task {
         this.createdAt = createdAt; 
     }
     public String getHyperlink() {
-        return hyperlink;
+        return hyperlink; 
     }
     public void setHyperlink(String hyperlink) {
         this.hyperlink = hyperlink; 

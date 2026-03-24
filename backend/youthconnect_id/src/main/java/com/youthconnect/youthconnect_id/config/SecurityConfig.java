@@ -28,6 +28,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/admin/concerns/**").permitAll()
                 .requestMatchers("/api/events/**").permitAll()
                 .requestMatchers("/api/sk/events/**").permitAll()
+                .requestMatchers("/api/sk/tasks/**").permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session

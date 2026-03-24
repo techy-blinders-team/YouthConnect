@@ -1,0 +1,37 @@
+package com.youthconnect.youthconnect_id.dto;
+
+import java.time.LocalDateTime;
+
+import com.youthconnect.youthconnect_id.enums.Tasking;
+
+public class TaskRequest {
+    private int adminId;
+    private Tasking tasking;
+    private String taskDescription;
+    private LocalDateTime dueDate;
+
+    public int getAdminId() {
+        return adminId; 
+    }
+    public void setAdminId(int adminId) {
+        this.adminId = adminId; 
+    }
+    public Tasking getTasking() {
+        return tasking; 
+    }
+    public void setTasking(Tasking tasking) {
+        this.tasking = tasking; 
+    }
+    public String getTaskDescription() {
+        return taskDescription; 
+    }
+    public void setTaskDescription(String taskDescription) {
+        this.taskDescription = taskDescription; 
+    }
+    public LocalDateTime getDueDate() {
+        return dueDate; 
+    }
+    public void setDueDate(LocalDateTime dueDate) {
+        this.dueDate = dueDate; 
+    }
+}
