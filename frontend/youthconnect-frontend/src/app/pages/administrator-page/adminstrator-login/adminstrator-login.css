@@ -1,0 +1,21 @@
+.parent {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+}
+
+.element {
+  height: 100vh;
+}
+
+.left, .right {
+  flex: 1;
+}
+
+.left {
+  background-color: #FADA51;
+}
+
+.right {
+  background-color: #6A1992;
+}/*# sourceMappingURL=adminstrator-login.css.map */
