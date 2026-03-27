@@ -45,6 +45,15 @@ export const routes: Routes = [
         canActivate: [guestGuard]
     },
 
+    // Administrator Login Route
+    {
+        path: 'administrator/login',
+        loadComponent: () =>
+            import('./pages/administrator-page/adminstrator-login/adminstrator-login').then(move => move.AdminstratorLogin),
+        title: 'Administrator Login - YouthConnect',
+        canActivate: [guestGuard]
+    },
+
     {
         path: 'sign-up',
         loadComponent: () =>
