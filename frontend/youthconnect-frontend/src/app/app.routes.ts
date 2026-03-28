@@ -165,8 +165,10 @@ export const routes: Routes = [
     // Admin Routes
     {
         path: 'admin',
-        canActivate: [authGuard, roleGuard],
+        canActivate: [authGuard, roleGuard],//comment this for development
         data: {roles: ['admin']},
+        loadComponent: () =>
+            import('./pages/administrator-page/layout/administrator-layout/administrator-layout').then(m => m.AdministratorLayout),
         children: [
             {
                 path: 'dashboard',
