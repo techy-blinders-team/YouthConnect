@@ -13,44 +13,6 @@
     overflow: hidden;
 }
 
-// Header Navigation
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 24px 80px;
-    position: relative;
-    z-index: 10;
-
-    .logo {
-        img {
-            height: 50px;
-            width: auto;
-        }
-    }
-
-    .nav-menu {
-        display: flex;
-        gap: 48px;
-        align-items: center;
-
-        .nav-link {
-            font-family: 'Inter', sans-serif;
-            font-weight: 900;
-            font-size: 20px;
-            color: white;
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-
-            &:hover {
-                opacity: 0.85;
-                transform: translateY(-1px);
-            }
-        }
-    }
-}
-
 // Hero Section
 .hero-section {
     display: flex;
