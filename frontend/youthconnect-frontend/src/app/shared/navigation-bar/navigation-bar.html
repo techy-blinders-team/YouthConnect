@@ -1,1 +1,11 @@
-<p>navigation-bar works!</p>
+<header class="header">
+    <div class="logo">
+        <img src="assets/youthconnect-logo.png" alt="YouthConnect Logo" />
+    </div>
+    <nav class="nav-menu">
+        <a (click)="navigateTo('/about')" class="nav-link">About</a>
+        <a (click)="navigateTo('/projects')" class="nav-link">Projects</a>
+        <a (click)="navigateTo('/leaders')" class="nav-link">Leaders</a>
+        <a (click)="navigateTo('/login')" class="nav-link">Login</a>
+    </nav>
+</header>
