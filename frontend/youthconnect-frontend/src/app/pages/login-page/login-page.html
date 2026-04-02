@@ -1,1 +1,22 @@
-<p>login-page works!</p>
+<div class="login-form">
+    <form [formGroup]="loginForm" (ngSubmit)="loginValidation()">
+        <input formControlName="email" type="text" placeholder="jondoe@gmail.com">
+
+            @if (emailControl?.touched) {
+                @if(emailControl?.errors?.['required']) {
+                    <span>Input a User ID</span>
+                }@else if (emailControl?.errors?.['maxlength']) {
+                    <span>User ID can only contain up to 10 digits</span>
+            }
+        }
+        <input formControlName="password" type="password">
+            @if (passwordControl?.touched) {
+                @if(passwordControl?.errors?.['required']) {
+                    <span>Input a password</span>
+                }
+            }
+
+        <button type="submit">Submit</button>
+    </form>
+
+</div>
