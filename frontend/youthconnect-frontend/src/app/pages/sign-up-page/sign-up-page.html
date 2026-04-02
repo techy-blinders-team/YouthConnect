@@ -1,1 +1,190 @@
-<p>sign-up-page works!</p>
+<div class="registration-form">
+  <form [formGroup]="registrationForm" (ngSubmit)="registrationValidationForm()">
+
+    <!-- Step 1: Youth Profile -->
+    @if (currentStep === 1) {
+
+      <input formControlName="firstName" placeholder="First Name" />
+      @if (firstNameControl?.touched) {
+        @if (firstNameControl?.errors?.['required']) {
+          <span>First name is required</span>
+        } @else if (firstNameControl?.errors?.['maxlength']) {
+          <span>First name can only contain up to 50 characters</span>
+        }
+      }
+
+      <input formControlName="middleName" placeholder="Middle Name" />
+      @if (middleNameControl?.touched) {
+        @if (middleNameControl?.errors?.['required']) {
+          <span>Middle name is required</span>
+        } @else if (middleNameControl?.errors?.['maxlength']) {
+          <span>Middle name can only contain up to 50 characters</span>
+        }
+      }
+
+      <input formControlName="lastName" placeholder="Last Name" />
+      @if (lastNameControl?.touched) {
+        @if (lastNameControl?.errors?.['required']) {
+          <span>Last name is required</span>
+        } @else if (lastNameControl?.errors?.['maxlength']) {
+          <span>Last name can only contain up to 50 characters</span>
+        }
+      }
+
+      <select formControlName="gender">
+        <option value="">Select Gender</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select>
+      @if (genderControl?.touched) {
+        @if (genderControl?.errors?.['required']) {
+          <span>Gender is required</span>
+        }
+      }
+
+      <input type="date" formControlName="birthday" />
+      @if (birthdayControl?.touched) {
+        @if (birthdayControl?.errors?.['required']) {
+          <span>Birthday is required</span>
+        }
+      }
+
+      <input formControlName="contactNumber" placeholder="Contact Number" />
+      @if (contactNumberControl?.touched) {
+        @if (contactNumberControl?.errors?.['required']) {
+          <span>Contact number is required</span>
+        } @else if (contactNumberControl?.errors?.['maxlength']) {
+          <span>Contact number can only contain up to 15 digits</span>
+        }
+      }
+
+      <input formControlName="completeAddress" placeholder="Complete Address" />
+      @if (completeAddressControl?.touched) {
+        @if (completeAddressControl?.errors?.['required']) {
+          <span>Complete address is required</span>
+        } @else if (completeAddressControl?.errors?.['maxlength']) {
+          <span>Address can only contain up to 200 characters</span>
+        }
+      }
+
+      <select formControlName="civilStatus">
+        <option value="">Select Civil Status</option>
+        <option value="Single">Single</option>
+        <option value="Married">Married</option>
+        <option value="Widowed">Widowed</option>
+        <option value="Divorced">Divorced</option>
+        <option value="Annulled">Annulled</option>
+        <option value="Unknown">Unknown</option>
+        <option value="LiveIn">Live in</option>
+      </select>
+      @if (civilStatusControl?.touched) {
+        @if (civilStatusControl?.errors?.['required']) {
+          <span>Civil status is required</span>
+        }
+      }
+
+      <button type="button" (click)="nextStep()">Next</button>
+      <button type="button" (click)="cancel()">Cancel</button>
+    }
+
+    <!-- Step 2: Youth Classification -->
+    @if (currentStep === 2) {
+
+      <select formControlName="youthClassification">
+        <option value="">Select Youth Classification</option>
+        <option value="inSchoolYouth">In School</option>
+        <option value="outOfSchoolYouth">Out of School</option>
+        <option value="workingYouth">Working Youth</option>
+        <option value="personWithDisability">Person with Disability (PWD)</option>
+        <option value="childrenInConflict">Children in Conflict</option>
+        <option value="indigenousPeople">Indigenous People</option>
+      </select>
+      @if (youthClassificationControl?.touched) {
+        @if (youthClassificationControl?.errors?.['required']) {
+          <span>Youth classification is required</span>
+        }
+      }
+
+      <select formControlName="workStatus">
+        <option value="">Select Work Status</option>
+        <option value="employed">Employed</option>
+        <option value="unemployed">Unemployed</option>
+        <option value="selfEmployed">Self Employed</option>
+        <option value="currentlyLooking">Currently Looking</option>
+        <option value="notInterested">Not Interested</option>
+      </select>
+      @if (workStatusControl?.touched) {
+        @if (workStatusControl?.errors?.['required']) {
+          <span>Work status is required</span>
+        }
+      }
+
+      <label>
+        <input type="radio" formControlName="votingStatus" value="skVoter" /> SK Voter
+      </label>
+      <label>
+        <input type="radio" formControlName="votingStatus" value="pastVoter" /> Past Voter
+      </label>
+      <label>
+        <input type="radio" formControlName="votingStatus" value="nationalVoter" /> National Voter
+      </label>
+      @if (votingStatusControl?.touched) {
+        @if (votingStatusControl?.errors?.['required']) {
+          <span>Please select a voting status</span>
+        }
+      }
+
+      <input type="number" formControlName="numberOfAttendedAssemblies" placeholder="Number of Assemblies Attended" />
+      @if (numberOfAttendedAssembliesControl?.touched) {
+        @if (numberOfAttendedAssembliesControl?.errors?.['required']) {
+          <span>Number of attended assemblies is required</span>
+        }
+      }
+
+      <input type="text" formControlName="reason" placeholder="Reason" />
+      @if (reasonControl?.touched) {
+        @if (reasonControl?.errors?.['required']) {
+          <span>Reason is required</span>
+        }
+      }
+
+      <button type="button" (click)="prevStep()">Previous</button>
+      <button type="button" (click)="nextStep()">Next</button>
+    }
+
+    <!-- Step 3: Account Creation -->
+    @if (currentStep === 3) {
+
+      <input type="email" formControlName="email" placeholder="Email" />
+      @if (emailControl?.touched) {
+        @if (emailControl?.errors?.['required']) {
+          <span>Email is required</span>
+        } @else if (emailControl?.errors?.['email']) {
+          <span>Please enter a valid email address</span>
+        }
+      }
+
+      <input type="password" formControlName="password" placeholder="Password" />
+      @if (passwordControl?.touched) {
+        @if (passwordControl?.errors?.['required']) {
+          <span>Password is required</span>
+        } @else if (passwordControl?.errors?.['minlength']) {
+          <span>Password must be at least 8 characters</span>
+        }
+      }
+
+      <input type="password" formControlName="confirmPassword" placeholder="Confirm Password" />
+      @if (confirmPasswordControl?.touched) {
+        @if (confirmPasswordControl?.errors?.['required']) {
+          <span>Please confirm your password</span>
+        } @else if (registrationForm.errors?.['passwordMismatch']) {
+          <span>Passwords do not match</span>
+        }
+      }
+
+      <button type="submit">Register</button>
+      <button type="button" (click)="prevStep()">Previous</button>
+    }
+
+  </form>
+</div>
