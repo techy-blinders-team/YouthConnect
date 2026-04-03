@@ -183,6 +183,12 @@ export const routes: Routes = [
                 title: 'Backup & Restore - YouthConnect'
             },
             {
+                path: 'manage-sk-official',
+                loadComponent: () =>
+                    import('./pages/administrator-page/manage-sk-officials/manage-sk-officials').then (move => move.ManageSkOfficials),
+                title: 'Manage SK Officials - YouthConnect'
+            },
+            {
                 path: 'manage-sk-officials',
                 loadComponent: () =>
                     import('./pages/administrator-page/manage-sk-officials/manage-sk-officials').then (move => move.ManageSkOfficials),
