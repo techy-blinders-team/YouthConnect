@@ -62,4 +62,12 @@ export class AuthService {
         this.router.navigate(['/login']);
     }
 
+    logout(): void {
+        localStorage.removeItem(this.TOKEN_KEY);
+        localStorage.removeItem(this.ROLE_KEY);
+        localStorage.removeItem(this.NAME_KEY);
+        localStorage.removeItem('admin_id');
+        this.router.navigate(['/administrator/login']);
+    }
+
 }
