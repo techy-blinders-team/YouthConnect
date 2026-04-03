@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { AdministratorSidebar } from './administrator-sidebar';
 
@@ -8,7 +9,8 @@ describe('AdministratorSidebar', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AdministratorSidebar]
+      imports: [AdministratorSidebar],
+      providers: [provideRouter([])]
     })
     .compileComponents();
 
