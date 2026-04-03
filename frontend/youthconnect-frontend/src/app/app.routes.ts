@@ -206,6 +206,12 @@ export const routes: Routes = [
                     import ('./pages/administrator-page/system-statistics/system-statistics').then (move => move.SystemStatistics),
                 title: 'System Statistics - YouthConnect'
             },
+            {
+                path: 'manage-administrator',
+                loadComponent: () =>
+                    import('./pages/administrator-page/manage-administrator/manage-administrator').then (move => move.ManageAdministrator),
+                title: 'Manage Administrators - YouthConnect'
+            },
             { 
                 path: '', redirectTo: 'dashboard', pathMatch: 'full' 
             },
