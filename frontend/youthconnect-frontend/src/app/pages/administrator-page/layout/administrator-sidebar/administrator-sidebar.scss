@@ -1,0 +1,149 @@
+.sidebar-container {
+	width: 270px;
+	height: 100vh;
+	background: #a4151a;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: stretch;
+	color: #fff;
+	font-family: 'Inter', Arial, sans-serif;
+}
+
+.side-header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 32px 0 16px 0;
+}
+
+.logo {
+	width: 90px;
+	height: 90px;
+	border-radius: 50%;
+	background: #fff;
+	object-fit: contain;
+	margin-bottom: 16px;
+}
+
+.system-title {
+	text-align: center;
+	font-size: 1.7rem;
+	font-weight: 700;
+	line-height: 1.1;
+}
+
+.side-menu {
+	flex: 1;
+	margin-top: 16px;
+}
+.side-menu ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.side-menu li {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	padding: 14px 28px;
+	font-size: 1.4rem;
+	font-weight: 500;
+	cursor: pointer;
+	border-radius: 12px 0 0 12px;
+	margin-bottom: 6px;
+	transition: background 0.2s;
+    margin-top: 4%;
+
+	.sk-icon {
+		width: 80px;
+		height: 40px;
+		margin-left: -28px;
+	}
+
+	.sk-text {
+		margin-left: -24px;
+	}
+
+	.administrator-icon {
+		height: 35px;
+		width: 60px;
+		margin-left: -14px;
+	}
+
+	.administrator-text {
+		margin-left: -8%;
+	}
+
+	.youth-member-icon {
+		width: 12%;
+	}
+
+	.youth-member-text {
+		margin-left: 1%;
+	}
+
+	.backup-restore-icon {
+		width: 22%;
+		margin-left: -3%;
+	}
+
+	.backup-restore-text {
+		margin-left: -6%;
+	}
+
+	.system-control-icon {
+		width: 15%;
+	}
+}
+
+.menu-icon {
+	width: 28px;
+	height: 28px;
+	object-fit: contain;
+	flex-shrink: 0;
+}
+
+.side-menu li:hover {
+	background: #0d3692;
+	color: #fff;
+}
+
+.side-footer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background: none;
+	padding: 18px 22px;
+	border-top: 2px solid #8d1317;
+}
+.user-email {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 1rem;
+	font-weight: 500;
+}
+
+.footer-icon {
+	width: 28px;
+	height: 28px;
+	object-fit: contain;
+	flex-shrink: 0;
+}
+
+.logout-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: none;
+	border: none;
+	cursor: pointer;
+	padding: 0;
+	margin-left: 10px;
+}
+
+.logout-btn .footer-icon {
+	width: 30px;
+	height: 30px;
+}
