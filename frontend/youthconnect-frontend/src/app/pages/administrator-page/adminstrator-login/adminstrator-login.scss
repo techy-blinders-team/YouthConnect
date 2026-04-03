@@ -2,6 +2,7 @@
   display: flex;
   width: 100vw;
   height: 100vh;
+  overflow: hidden;
 }
 
 .element {
@@ -25,22 +26,21 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 2rem;
+  padding: clamp(1rem, 2vw, 2rem);
 }
 
 .login-container {
-  width: min(650px, 100%);
+  width: min(580px, 100%);
   background: #ffffff;
   border-radius: 16px;
-  padding: 2rem;
+  padding: clamp(1.25rem, 2vw, 1.8rem);
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
-  margin-right: -25px;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
 
   .login-logo {
-    width: 120px;
+    width: 90px;
     height: auto;
     margin: 0 auto 0.8rem;
     display: block;
@@ -86,37 +86,81 @@
 
 .content-container {
   color: #300659;
-  padding: 2rem;
+  padding: clamp(1.25rem, 2.5vw, 2rem);
   text-align: center;
-  margin-left: -20px;
-  margin-top: -70px;
+  max-width: 560px;
 
   .child-1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+    margin-left: -50px;
+
     .youthconnect-logo {
-        width: 550px;
-        height:300px;
-        margin-left: -80px;
+      width: clamp(200px, 50vw,430px);
+        height: auto;
+        margin: 0 -1.5rem 0 0;
+        flex-shrink: 0;
+        display: block;
     }
 
     .sk-logo {
-        width: 330px;
-        margin-left: -100px;
-        margin-bottom: -30px;
+      width: clamp(110px, 15vw, 200px);
+        margin: 0;
+        flex-shrink: 0;
+      transform: translateX(-2rem);
+        display: block;
     }
   }  
 
   .child-2{
-    font-size: 100px;
+    font-size: clamp(2.9rem, 5.3vw, 4.4rem);
     font-weight: bold;
     font-family: Arial, Helvetica, sans-serif;
+    line-height: 1;
+    margin-top: 0.7rem;
   }
 
   .child-3 {
-    font-size: 30px;
+    font-size: clamp(0.95rem, 1.28vw, 1.35rem);
     font-family: Arial, Helvetica, sans-serif;
     max-width: 90%;
-    margin-left: 60px;
-    letter-spacing: 1px;
+    margin: 0.45rem auto 0;
+    line-height: 1.28;
+  }
+}
+
+@media (max-width: 960px) {
+  .parent {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .left,
+  .right {
+    min-height: 50vh;
+  }
+
+  .content-container .child-1 {
+    gap: 0;
+  }
+
+  .content-container .child-1 .youthconnect-logo {
+    margin-right: -1rem;
+  }
+
+  .content-container .child-1 .sk-logo {
+    transform: translateX(-1.5rem);
+  }
+
+  .content-container .child-2 {
+    font-size: clamp(2.4rem, 11vw, 3.5rem);
+  }
+
+  .content-container .child-3 {
+    max-width: 90%;
   }
 }
 /*# sourceMappingURL=adminstrator-login.css.map */
