@@ -116,6 +116,7 @@
 	background: none;
 	padding: 18px 22px;
 	background-color: #5D0711;
+	overflow: hidden;
 
 	.footer-icon {
 		width: 38px;
@@ -138,7 +139,19 @@
 		gap: 8px;
 		font-size: 1rem;
 		font-weight: 500;
-		margin-top: -20px;
+		margin-top: -5px;
+		min-width: 0;
+		max-width: calc(100% - 52px);
+		flex: 1;
+
+		.email-text {
+			display: block;
+			min-width: 0;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			cursor: default;
+		}
 	}
 
 	.logout-btn {
@@ -149,8 +162,8 @@
 		border: none;
 		cursor: pointer;
 		padding: 0;
-		margin-left: 10px;
-		margin-top: -15px;
+		margin-right: -22px;
+		flex-shrink: 0;
 	}
 
 	.logout-btn .footer-icon {
