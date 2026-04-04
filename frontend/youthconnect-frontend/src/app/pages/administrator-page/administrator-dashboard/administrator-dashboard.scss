@@ -1,0 +1,81 @@
+.dashboard-page {
+	height: 100%;
+	overflow-y: auto;
+	background: #e7e7e7;
+	padding: 1rem;
+	font-family: 'Inter', Arial, sans-serif;
+}
+
+.section-title {
+	margin: 0 0 0.75rem;
+	color: #161616;
+	font-size: 2rem;
+	font-weight: 700;
+}
+
+.error-message {
+	margin: 0 0 1rem;
+	color: #b02a37;
+	font-weight: 600;
+}
+
+.dashboard-cards {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(215px, 325px));
+	justify-content: space-between;
+	gap: 1.25rem;
+}
+
+.dashboard-cards.loading {
+	opacity: 0.7;
+}
+
+.dashboard-card {
+	background: #f7f7f7;
+	border-radius: 10px;
+	border-left: 4px solid #d00036;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+	padding: 0.75rem 1rem 1rem;
+	min-height: 140px;
+    text-align: center;
+
+	h3 {
+		margin: 0;
+		color: #111111;
+		font-size: 1.6rem;
+		font-weight: 700;
+	}
+}
+
+.dashboard-card.youth-members {
+	border-left-color: #0b43c7;
+}
+
+.card-value {
+	margin: 1.5rem 0 0;
+	text-align: center;
+	font-size: 4rem;
+	line-height: 1;
+	font-weight: 800;
+	color: #000000;
+}
+
+.system-statistics-section {
+	margin-top: 1.25rem;
+}
+
+@media (max-width: 1024px) {
+	.dashboard-cards {
+		grid-template-columns: repeat(2, minmax(215px, 325px));
+	}
+}
+
+@media (max-width: 720px) {
+	.dashboard-cards {
+		grid-template-columns: 1fr;
+	}
+
+	.section-title {
+		font-size: 1.6rem;
+	}
+}
