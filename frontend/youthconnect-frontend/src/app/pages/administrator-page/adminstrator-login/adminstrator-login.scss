@@ -172,6 +172,7 @@ input.password-input.ng-invalid.ng-touched {
 
 .submit-button:disabled:hover {
   filter: none;
+  cursor: not-allowed;
 }
 
 @media (max-width: 960px) {
