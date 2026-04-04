@@ -10,6 +10,9 @@ import com.youthconnect.youthconnect_id.models.User;
 import com.youthconnect.youthconnect_id.models.YouthProfile;
 
 public interface AdminManagementService {
+    // Administrators
+    long getAdministratorCount();
+
     // Users
     List<User> getAllUsers();
     User getUserById(int userId);
