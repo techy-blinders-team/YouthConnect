@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AdminAuthService, AdminInfoService } from '../services/admin-auth.service';
+import { AdminAuthService, AdminInfoService } from '../../../services/admin-auth.service';
 import { AuthService } from '../../../services/auth.service';
 
 @Component({
