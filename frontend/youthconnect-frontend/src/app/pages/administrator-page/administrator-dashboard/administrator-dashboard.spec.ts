@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { AdministratorDashboard } from './administrator-dashboard';
 
@@ -8,7 +9,7 @@ describe('AdministratorDashboard', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AdministratorDashboard]
+      imports: [AdministratorDashboard, HttpClientTestingModule]
     })
     .compileComponents();
 

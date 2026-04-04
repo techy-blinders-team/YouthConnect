@@ -1,1 +1,28 @@
-<p>administrator-dashboard works!</p>
+<section class="dashboard-page">
+	<h2 class="section-title">Dashboard</h2>
+
+	@if (errorMessage) {
+		<p class="error-message">{{ errorMessage }}</p>
+	}
+
+	<div class="dashboard-cards" [class.loading]="isLoading">
+		<article class="dashboard-card administrator">
+			<h3>Administrator</h3>
+			<p class="card-value">{{ administratorCount }}</p>
+		</article>
+
+		<article class="dashboard-card sk-officials">
+			<h3>SK Officials</h3>
+			<p class="card-value">{{ skOfficialCount }}</p>
+		</article>
+
+		<article class="dashboard-card youth-members">
+			<h3>Youth Members</h3>
+			<p class="card-value">{{ youthMemberCount }}</p>
+		</article>
+	</div>
+
+	<section class="system-statistics-section">
+		<app-system-statistics></app-system-statistics>
+	</section>
+</section>

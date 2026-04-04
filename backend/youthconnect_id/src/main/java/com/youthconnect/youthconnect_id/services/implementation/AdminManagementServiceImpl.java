@@ -16,6 +16,7 @@ import com.youthconnect.youthconnect_id.models.Role;
 import com.youthconnect.youthconnect_id.models.SkOfficialsUser;
 import com.youthconnect.youthconnect_id.models.User;
 import com.youthconnect.youthconnect_id.models.YouthProfile;
+import com.youthconnect.youthconnect_id.repositories.AdministratorRepo;
 import com.youthconnect.youthconnect_id.repositories.RoleRepo;
 import com.youthconnect.youthconnect_id.repositories.SkOfficialRepo;
 import com.youthconnect.youthconnect_id.repositories.UserRepo;
@@ -24,6 +25,9 @@ import com.youthconnect.youthconnect_id.services.AdminManagementService;
 
 @Service
 public class AdminManagementServiceImpl implements AdminManagementService {
+
+    @Autowired
+    private AdministratorRepo administratorRepo;
 
     @Autowired
     private UserRepo userRepo;
@@ -39,6 +43,12 @@ public class AdminManagementServiceImpl implements AdminManagementService {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+
+    // ── Administrators ───────────────────────────────────
+    @Override
+    public long getAdministratorCount() {
+        return administratorRepo.count();
+    }
 
     // ── Users ─────────────────────────────────────────────
     @Override
