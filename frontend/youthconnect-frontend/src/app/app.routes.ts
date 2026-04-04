@@ -17,21 +17,21 @@ export const routes: Routes = [
     {
         path: 'about',
         loadComponent: () =>
-            import('./pages/about-redirect').then(move => move.AboutRedirect),
+            import('./pages/redirect/about-redirect').then(move => move.AboutRedirect),
         title: 'About Us - YouthConnect'
     },
 
     {
         path: 'leaders',
         loadComponent: () =>
-            import('./pages/leaders-page/leaders-page').then(move => move.LeadersPage),
+            import('./pages/redirect/leaders-redirect').then(move => move.LeadersRedirect),
         title: 'Leaders - YouthConnect'
     },
 
     {
         path: 'projects',
         loadComponent: () =>
-            import('./pages/projects-page/projects-page').then(move => move.ProjectsPage),
+            import('./pages/redirect/projects-redirect').then(move => move.ProjectsRedirect),
         title: 'Projects - YouthConnect'
     },
 
@@ -232,3 +232,4 @@ export const routes: Routes = [
     }
 
 ];
+
