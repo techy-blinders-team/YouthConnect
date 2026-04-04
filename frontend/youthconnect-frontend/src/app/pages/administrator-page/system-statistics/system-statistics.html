@@ -1,3 +1,57 @@
 <section class="system-statistics-shell">
 	<h2 class="section-title">System Statistics</h2>
+
+	@if (errorMessage) {
+		<p class="error-message">{{ errorMessage }}</p>
+	}
+
+	<div class="statistics-grid" [class.loading]="isLoading">
+		<article class="statistics-card events-card">
+			<h3>Events</h3>
+			<div class="statistics-row">
+				<span class="row-label">Total Events</span>
+				<span class="row-value">{{ eventStatistics.total }}</span>
+			</div>
+			<div class="statistics-row">
+				<span class="row-label">Open Events</span>
+				<span class="row-value">{{ eventStatistics.open }}</span>
+			</div>
+			<div class="statistics-row">
+				<span class="row-label">Completed Events</span>
+				<span class="row-value">{{ eventStatistics.completed }}</span>
+			</div>
+		</article>
+
+		<article class="statistics-card concerns-card">
+			<h3>Concerns</h3>
+			<div class="statistics-row">
+				<span class="row-label">Total Concerns</span>
+				<span class="row-value">{{ concernStatistics.total }}</span>
+			</div>
+			<div class="statistics-row">
+				<span class="row-label">Open Concerns</span>
+				<span class="row-value">{{ concernStatistics.open }}</span>
+			</div>
+			<div class="statistics-row">
+				<span class="row-label">Resolved Concerns</span>
+				<span class="row-value">{{ concernStatistics.completed }}</span>
+			</div>
+		</article>
+
+		<article class="statistics-card tasks-card">
+			<h3>Task</h3>
+			<div class="statistics-row">
+				<span class="row-label">Total Tasks</span>
+				<span class="row-value">{{ taskStatistics.total }}</span>
+			</div>
+			<div class="statistics-row">
+				<span class="row-label">Completed Task</span>
+				<span class="row-value">{{ taskStatistics.completed }}</span>
+			</div>
+			<div class="statistics-row">
+				<span class="row-label">Pending Tasks</span>
+				<span class="row-value">{{ taskStatistics.open }}</span>
+			</div>
+		</article>
+	</div>
 </section>
