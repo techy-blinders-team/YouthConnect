@@ -12,26 +12,31 @@ export class NavigationBar {
 
   navigateTo(route: string): void {
     if (route === '/about') {
-      // Check if we're on the landing page
-      if (this.router.url === '/' || this.router.url === '') {
-        // Scroll to about section
-        const aboutSection = document.getElementById('about');
-        if (aboutSection) {
-          aboutSection.scrollIntoView({ behavior: 'smooth' });
-        }
-      } else {
-        // Navigate to home and then scroll
-        this.router.navigate(['/']).then(() => {
-          setTimeout(() => {
-            const aboutSection = document.getElementById('about');
-            if (aboutSection) {
-              aboutSection.scrollIntoView({ behavior: 'smooth' });
-            }
-          }, 100);
-        });
-      }
+      this.scrollToSection('about');
+    } else if (route === '/projects') {
+      this.scrollToSection('projects');
+    } else if (route === '/leaders') {
+      this.scrollToSection('leaders');
     } else {
       this.router.navigate([route]);
+    }
+  }
+
+  private scrollToSection(sectionId: string): void {
+    if (this.router.url === '/' || this.router.url === '') {
+      const section = document.getElementById(sectionId);
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      this.router.navigate(['/']).then(() => {
+        setTimeout(() => {
+          const section = document.getElementById(sectionId);
+          if (section) {
+            section.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 100);
+      });
     }
   }
 }
