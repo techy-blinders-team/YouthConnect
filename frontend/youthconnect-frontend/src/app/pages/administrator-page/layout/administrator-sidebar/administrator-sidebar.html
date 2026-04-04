@@ -51,7 +51,7 @@
             <img src="assets/administrator-sidebar/youth-member-icon.png" 
                     alt="User"
                     class="footer-icon" />
-            johndoe@gmail.com
+            <span class="email-text" [attr.title]="(adminInfo$ | async)?.email || null">{{ (adminInfo$ | async)?.email }}</span>
         </div>
         <button type="button" class="logout-btn" aria-label="Logout" (click)="logout()">
             <img src="assets/administrator-sidebar/logout-icon.png"
