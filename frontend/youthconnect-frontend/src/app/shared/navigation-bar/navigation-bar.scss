@@ -3,10 +3,21 @@
     justify-content: space-between;
     align-items: center;
     padding: 24px 80px;
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
     z-index: 10;
+    background: transparent;
 
     .logo {
+        cursor: pointer;
+        transition: opacity 0.3s ease;
+
+        &:hover {
+            opacity: 0.85;
+        }
+
         img {
             height: 50px;
             width: auto;
