@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import {
   AdministratorAccount,
@@ -168,11 +169,25 @@ export class ManageAdministrator implements OnInit {
         this.addAdminErrorMessage = null;
         this.isCreatingAdministrator = false;
       },
-      error: (error) => {
-        this.addAdminErrorMessage = error?.error?.message || 'Unable to create administrator right now.';
+      error: (error: HttpErrorResponse) => {
+        this.addAdminErrorMessage = this.extractCreateAdminErrorMessage(error);
         this.isCreatingAdministrator = false;
       }
     });
+  }
+
+  private extractCreateAdminErrorMessage(error: HttpErrorResponse): string {
+    const responseBody = error?.error;
+
+    if (typeof responseBody === 'string' && responseBody.trim() !== '') {
+      return responseBody;
+    }
+
+    if (responseBody && typeof responseBody === 'object' && typeof responseBody.message === 'string') {
+      return responseBody.message;
+    }
+
+    return 'Unable to create administrator right now.';
   }
 
   private loadAdministrators(): void {
