@@ -14,6 +14,7 @@ export interface AdministratorUpdatePayload {
   username: string;
   email: string;
   active: boolean;
+  password?: string;
 }
 
 export interface CreateAdministratorPayload {
