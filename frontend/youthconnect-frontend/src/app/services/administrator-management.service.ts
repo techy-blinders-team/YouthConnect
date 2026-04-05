@@ -16,6 +16,12 @@ export interface AdministratorUpdatePayload {
   active: boolean;
 }
 
+export interface CreateAdministratorPayload {
+  username: string;
+  email: string;
+  password: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -24,6 +30,10 @@ export class AdministratorManagementService {
 
   getAdministrators(): Observable<AdministratorAccount[]> {
     return this.http.get<AdministratorAccount[]>('/api/administrator/administrators');
+  }
+
+  createAdministrator(payload: CreateAdministratorPayload): Observable<AdministratorAccount> {
+    return this.http.post<AdministratorAccount>('/api/administrator/administrators', payload);
   }
 
   updateAdministratorStatus(administratorId: number, active: boolean): Observable<AdministratorAccount> {

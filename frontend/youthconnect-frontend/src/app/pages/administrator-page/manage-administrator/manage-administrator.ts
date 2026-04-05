@@ -5,13 +5,15 @@ import { FormsModule } from '@angular/forms';
 import {
   AdministratorAccount,
   AdministratorManagementService,
-  AdministratorUpdatePayload
+  AdministratorUpdatePayload,
+  CreateAdministratorPayload
 } from '../../../services/administrator-management.service';
+import { AddAdministratorFeature } from '../feature/add-administrator-feature/add-administrator-feature';
 
 @Component({
   selector: 'app-manage-administrator',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AddAdministratorFeature],
   templateUrl: './manage-administrator.html',
   styleUrl: './manage-administrator.scss',
 })
@@ -22,6 +24,9 @@ export class ManageAdministrator implements OnInit {
   isLoading = false;
   errorMessage: string | null = null;
   private updatingAdministratorIds = new Set<number>();
+  showAddModal = false;
+  isCreatingAdministrator = false;
+  addAdminErrorMessage: string | null = null;
 
   ngOnInit(): void {
     this.loadAdministrators();
@@ -130,6 +135,42 @@ export class ManageAdministrator implements OnInit {
       error: () => {
         this.errorMessage = 'Unable to delete administrator right now.';
         this.updatingAdministratorIds.delete(administrator.administratorId);
+      }
+    });
+  }
+
+  // Add Administrator Modal Methods
+  openAddAdminModal(): void {
+    this.showAddModal = true;
+    this.addAdminErrorMessage = null;
+  }
+
+  closeAddAdminModal(): void {
+    if (this.isCreatingAdministrator) {
+      return;
+    }
+
+    this.showAddModal = false;
+    this.addAdminErrorMessage = null;
+  }
+
+  createAdministrator(payload: CreateAdministratorPayload): void {
+    this.isCreatingAdministrator = true;
+    this.addAdminErrorMessage = null;
+
+    this.administratorManagementService.createAdministrator(payload).subscribe({
+      next: (newAdministrator) => {
+        this.administrators = [
+          ...this.administrators,
+          newAdministrator
+        ].sort((left, right) => left.administratorId - right.administratorId);
+        this.showAddModal = false;
+        this.addAdminErrorMessage = null;
+        this.isCreatingAdministrator = false;
+      },
+      error: (error) => {
+        this.addAdminErrorMessage = error?.error?.message || 'Unable to create administrator right now.';
+        this.isCreatingAdministrator = false;
       }
     });
   }

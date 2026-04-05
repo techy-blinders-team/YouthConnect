@@ -2,7 +2,7 @@
 	<h2 class="section-title">Manage Administrator</h2>
 
 	<div class="controls-row">
-		<button class="add-button" type="button">+ Add New Administrator</button>
+		<button class="add-button" type="button" (click)="openAddAdminModal()">+ Add New Administrator</button>
 
 		<label class="search-wrapper" for="admin-search">
 			<img
@@ -75,4 +75,12 @@
 			</tbody>
 		</table>
 	</div>
+
+	<app-add-administrator-feature
+		[isOpen]="showAddModal"
+		[isSubmitting]="isCreatingAdministrator"
+		[errorMessage]="addAdminErrorMessage"
+		(closeRequested)="closeAddAdminModal()"
+		(submitRequested)="createAdministrator($event)">
+	</app-add-administrator-feature>
 </section>
