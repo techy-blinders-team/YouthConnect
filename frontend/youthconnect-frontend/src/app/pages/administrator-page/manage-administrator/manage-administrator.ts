@@ -10,12 +10,13 @@ import {
   CreateAdministratorPayload
 } from '../../../services/administrator-management.service';
 import { AddAdministratorFeature } from '../feature/add-administrator-feature/add-administrator-feature';
+import { DeleteAdministratorFeature } from '../feature/delete-administrator-feature/delete-administrator-feature';
 import { EditAdministratorFeature } from '../feature/edit-administrator-feature/edit-administrator-feature';
 
 @Component({
   selector: 'app-manage-administrator',
   standalone: true,
-  imports: [CommonModule, FormsModule, AddAdministratorFeature, EditAdministratorFeature],
+  imports: [CommonModule, FormsModule, AddAdministratorFeature, EditAdministratorFeature, DeleteAdministratorFeature],
   templateUrl: './manage-administrator.html',
   styleUrl: './manage-administrator.scss',
 })
@@ -36,6 +37,12 @@ export class ManageAdministrator implements OnInit {
   editAdminErrorMessage: string | null = null;
   showEditSuccessModal = false;
   editSuccessMessage = '';
+  showDeleteModal = false;
+  deletingAdministrator: AdministratorAccount | null = null;
+  isDeletingAdministrator = false;
+  deleteAdminErrorMessage: string | null = null;
+  showDeleteSuccessModal = false;
+  deleteSuccessMessage = '';
 
   ngOnInit(): void {
     this.loadAdministrators();
@@ -141,27 +148,52 @@ export class ManageAdministrator implements OnInit {
     this.editSuccessMessage = '';
   }
 
-  deleteAdministrator(administrator: AdministratorAccount): void {
-    const confirmed = window.confirm(`Delete administrator "${administrator.username}"?`);
-    if (!confirmed) {
+  openDeleteAdminModal(administrator: AdministratorAccount): void {
+    this.deletingAdministrator = administrator;
+    this.showDeleteModal = true;
+    this.deleteAdminErrorMessage = null;
+  }
+
+  closeDeleteAdminModal(): void {
+    if (this.isDeletingAdministrator) {
       return;
     }
 
-    this.errorMessage = null;
-    this.updatingAdministratorIds.add(administrator.administratorId);
+    this.showDeleteModal = false;
+    this.deletingAdministrator = null;
+    this.deleteAdminErrorMessage = null;
+  }
 
-    this.administratorManagementService.deleteAdministrator(administrator.administratorId).subscribe({
+  confirmDeleteAdministrator(): void {
+    if (!this.deletingAdministrator) {
+      return;
+    }
+
+    this.isDeletingAdministrator = true;
+    this.deleteAdminErrorMessage = null;
+
+    const administratorId = this.deletingAdministrator.administratorId;
+    const administratorName = this.deletingAdministrator.username || 'Administrator';
+
+    this.administratorManagementService.deleteAdministrator(administratorId).subscribe({
       next: () => {
-        this.administrators = this.administrators.filter(
-          (item) => item.administratorId !== administrator.administratorId
-        );
-        this.updatingAdministratorIds.delete(administrator.administratorId);
+        this.administrators = this.administrators.filter((item) => item.administratorId !== administratorId);
+        this.showDeleteModal = false;
+        this.deletingAdministrator = null;
+        this.isDeletingAdministrator = false;
+        this.deleteSuccessMessage = `${administratorName} has been deleted successfully.`;
+        this.showDeleteSuccessModal = true;
       },
-      error: () => {
-        this.errorMessage = 'Unable to delete administrator right now.';
-        this.updatingAdministratorIds.delete(administrator.administratorId);
+      error: (error: HttpErrorResponse) => {
+        this.deleteAdminErrorMessage = this.extractDeleteAdminErrorMessage(error);
+        this.isDeletingAdministrator = false;
       }
     });
+  }
+
+  closeDeleteSuccessModal(): void {
+    this.showDeleteSuccessModal = false;
+    this.deleteSuccessMessage = '';
   }
 
   // Add Administrator Modal Methods
@@ -226,6 +258,20 @@ export class ManageAdministrator implements OnInit {
     }
 
     return 'Unable to update administrator right now.';
+  }
+
+  private extractDeleteAdminErrorMessage(error: HttpErrorResponse): string {
+    const responseBody = error?.error;
+
+    if (typeof responseBody === 'string' && responseBody.trim() !== '') {
+      return responseBody;
+    }
+
+    if (responseBody && typeof responseBody === 'object' && typeof responseBody.message === 'string') {
+      return responseBody.message;
+    }
+
+    return 'Unable to delete administrator right now.';
   }
 
   private loadAdministrators(): void {
