@@ -2,6 +2,7 @@ package com.youthconnect.youthconnect_id.services;
 
 import java.util.List;
 
+import com.youthconnect.youthconnect_id.dto.AdministratorResponse;
 import com.youthconnect.youthconnect_id.dto.AdminSkOfficialRequest;
 import com.youthconnect.youthconnect_id.dto.AdminUserUpdateRequest;
 import com.youthconnect.youthconnect_id.dto.AdminYouthProfileUpdateRequest;
@@ -12,6 +13,10 @@ import com.youthconnect.youthconnect_id.models.YouthProfile;
 public interface AdminManagementService {
     // Administrators
     long getAdministratorCount();
+    List<AdministratorResponse> getAllAdministrators();
+    AdministratorResponse updateAdministrator(int administratorId, String username, String email, boolean active);
+    void deleteAdministrator(int administratorId);
+    AdministratorResponse setAdministratorActiveStatus(int administratorId, boolean active);
 
     // Users
     List<User> getAllUsers();
