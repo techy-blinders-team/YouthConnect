@@ -62,6 +62,36 @@ public class AdminManagementServiceImpl implements AdminManagementService {
 
     @Override
     @Transactional
+    public AdministratorResponse createAdministrator(String username, String email, String password) {
+        String normalizedUsername = username == null ? "" : username.trim();
+        String normalizedEmail = email == null ? "" : email.trim();
+        String normalizedPassword = password == null ? "" : password.trim();
+
+        if (normalizedUsername.isEmpty() || normalizedEmail.isEmpty() || normalizedPassword.isEmpty()) {
+            throw new IllegalArgumentException("Username, email, and password are required.");
+        }
+
+        if (administratorRepo.existsByUsername(normalizedUsername)) {
+            throw new IllegalArgumentException("Username is already in use.");
+        }
+
+        if (administratorRepo.existsByEmail(normalizedEmail)) {
+            throw new IllegalArgumentException("Email is already in use.");
+        }
+
+        Administrator administrator = new Administrator();
+        administrator.setUsername(normalizedUsername);
+        administrator.setEmail(normalizedEmail);
+        administrator.setPasswordHash(passwordEncoder.encode(normalizedPassword));
+        administrator.setActive(true);
+        administrator.setCreatedAt(LocalDateTime.now());
+
+        Administrator savedAdministrator = administratorRepo.save(administrator);
+        return toAdministratorResponse(savedAdministrator);
+    }
+
+    @Override
+    @Transactional
     public AdministratorResponse updateAdministrator(int administratorId, String username, String email, boolean active) {
         Administrator administrator = administratorRepo.findById(administratorId)
                 .orElseThrow(() -> new RuntimeException("Administrator not found"));

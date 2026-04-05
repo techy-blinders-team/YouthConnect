@@ -10,4 +10,6 @@ import com.youthconnect.youthconnect_id.models.Administrator;
 @Repository
 public interface AdministratorRepo extends JpaRepository<Administrator, Integer> {
     Optional<Administrator> findByEmail(String email);
+    boolean existsByEmail(String email);
+    boolean existsByUsername(String username);
 }
