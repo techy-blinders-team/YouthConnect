@@ -83,4 +83,27 @@
 		(closeRequested)="closeAddAdminModal()"
 		(submitRequested)="createAdministrator($event)">
 	</app-add-administrator-feature>
+
+	<app-edit-administrator-feature
+		[isOpen]="showEditModal"
+		[administrator]="editingAdministrator"
+		[isSubmitting]="isEditingAdministrator"
+		[errorMessage]="editAdminErrorMessage"
+		(closeRequested)="closeEditAdminModal()"
+		(submitRequested)="updateAdministrator($event)">
+	</app-edit-administrator-feature>
+
+	@if (showEditSuccessModal) {
+		<div class="modal-backdrop success-backdrop" (click)="closeEditSuccessModal()">
+			<div class="modal success-modal" (click)="$event.stopPropagation()">
+				<div class="modal-body success-body">
+					<p>{{ editSuccessMessage }}</p>
+				</div>
+
+				<div class="modal-footer success-footer">
+					<button type="button" class="btn-ok" (click)="closeEditSuccessModal()">OK</button>
+				</div>
+			</div>
+		</div>
+	}
 </section>
