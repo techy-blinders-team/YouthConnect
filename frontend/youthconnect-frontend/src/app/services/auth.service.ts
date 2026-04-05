@@ -16,8 +16,13 @@ export class AuthService {
 
     private apiUrl = 'http://localhost:8080/api/auth';
 
-    private http = inject(HttpClient);
-    private router = inject(Router);
+    private http: HttpClient;
+    private router: Router;
+
+    constructor(http: HttpClient, router: Router) {
+        this.http = http;
+        this.router = router;
+    }
 
     private currentUserSubject = new BehaviorSubject<LoginResponse | null>(
         this.getUserFromStorage()
