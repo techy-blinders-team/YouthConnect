@@ -1,7 +1,7 @@
 import { UserRole } from "./UserRole";
 
 export interface AuthUser {
-    token: string;
+    email: string;
+    password: string;
     role: UserRole;
-    name: string;
 }

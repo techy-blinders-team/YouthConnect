@@ -1,51 +1,75 @@
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { UserRole } from "../models/UserRole";
-import { AuthUser } from "../models/AuthUser";
+import { LoginRequest, LoginResponse } from "../models/auth.model";
+import { BehaviorSubject, map, Observable } from "rxjs";
+import { HttpClient } from "@angular/common/http";
 
 @Injectable({
     providedIn: 'root'
 })
-
 export class AuthService {
 
     private readonly TOKEN_KEY = 'auth_token';
     private readonly ROLE_KEY = 'auth_role';
-    private readonly NAME_KEY = 'auth_name';
+    private readonly USER_KEY = 'auth_user';
 
-    constructor (private router: Router){}
+    private apiUrl = 'http://localhost:8080/api/auth';
+
+    private http = inject(HttpClient);
+    private router = inject(Router);
+
+    private currentUserSubject = new BehaviorSubject<LoginResponse | null>(
+        this.getUserFromStorage()
+    );
 
     isLoggedIn(): boolean {
-        return !! localStorage.getItem(this.TOKEN_KEY);
+        const token = this.getToken();
+        if (!token) return false;
+        const payload = this.parseJwt(token);
+        if (!payload) return false;
+        return payload.exp * 1000 > Date.now();
     }
 
     getUserRole(): UserRole | null {
         return (localStorage.getItem(this.ROLE_KEY) as UserRole) ?? null;
     }
 
-    getUsername(): string {
-        return localStorage.getItem (this.NAME_KEY) ?? '';
+    isYouth(): boolean { return this.getUserRole() === 'youth'; }
+    isSkOfficial(): boolean { return this.getUserRole() === 'sk-official'; }
+    isAdmin(): boolean { return this.getUserRole() === 'admin'; }
+
+    login(request: LoginRequest): Observable<LoginResponse> {
+        return this.http.post<LoginResponse>(`${this.apiUrl}/login`, request).pipe(
+            map(res => {
+                if (res.success && res.token) {
+                    localStorage.setItem(this.TOKEN_KEY, res.token);
+                    localStorage.setItem(this.USER_KEY, JSON.stringify(res));
+
+                    const role = this.mapRoleIdToRole(res.roleId ?? 0);
+                    localStorage.setItem(this.ROLE_KEY, role);
+
+                    this.currentUserSubject.next(res);
+                }
+                return res;
+            })
+        );
     }
 
-    isYouth(): boolean {
-        return this.getUserRole() === 'youth';
+    logout(): void {
+        localStorage.removeItem(this.TOKEN_KEY);
+        localStorage.removeItem(this.ROLE_KEY);
+        localStorage.removeItem(this.USER_KEY);
+        this.currentUserSubject.next(null);
+        this.router.navigate(['/login']);
     }
 
-    isSkOfficial(): boolean {
-        return this.getUserRole() === 'sk-official';
+    getToken(): string | null {
+        return localStorage.getItem(this.TOKEN_KEY);
     }
 
-    isAdmin(): boolean {
-        return this.getUserRole() === 'admin';
-    }
-
-
-    login(user: AuthUser): void {
-        localStorage.setItem(this.TOKEN_KEY, user.token);
-        localStorage.setItem(this.NAME_KEY, user.name);
-        localStorage.setItem(this.ROLE_KEY, user.role);
-
-        this.redirectByRole(user.role);
+    getCurrentUser(): LoginResponse | null {
+        return this.currentUserSubject.value;
     }
 
     redirectByRole(role: UserRole): void {
@@ -54,20 +78,40 @@ export class AuthService {
             'sk-official': '/sk-official/dashboard',
             'admin': '/admin/dashboard'
         };
-
         this.router.navigate([dashboardRoutes[role]]);
     }
 
-    redirectToLogin(role: UserRole | null): void {
+    redirectToLogin(): void {
         this.router.navigate(['/login']);
     }
 
-    logout(): void {
-        localStorage.removeItem(this.TOKEN_KEY);
-        localStorage.removeItem(this.ROLE_KEY);
-        localStorage.removeItem(this.NAME_KEY);
-        localStorage.removeItem('admin_id');
-        this.router.navigate(['/administrator/login']);
+    private getUserFromStorage(): LoginResponse | null {
+        const user = localStorage.getItem(this.USER_KEY);
+        return user ? JSON.parse(user) : null;
     }
 
+    private parseJwt(token: string): any {
+        try {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(
+                atob(base64)
+                    .split('')
+                    .map(c => '%' + c.charCodeAt(0).toString(16).padStart(2, '0'))
+                    .join('')
+            );
+            return JSON.parse(jsonPayload);
+        } catch {
+            return null;
+        }
+    }
+
+    private mapRoleIdToRole(roleId: number): UserRole {
+        const roleMap: Record<number, UserRole> = {
+            1: 'youth',
+            2: 'sk-official',
+            3: 'admin'
+        };
+        return roleMap[roleId] ?? 'youth';
+    }
 }
