@@ -1,10 +1,10 @@
 <div class="login-form">
-    <form [formGroup]="loginForm" (ngSubmit)="loginValidation()">
+    <form [formGroup]="loginForm" (ngSubmit)="login()">
         <input formControlName="email" type="text" placeholder="jondoe@gmail.com">
 
             @if (emailControl?.touched) {
                 @if(emailControl?.errors?.['required']) {
-                    <span>Input a User ID</span>
+                    <span>Invalid Email format</span>
                 }@else if (emailControl?.errors?.['maxlength']) {
                     <span>User ID can only contain up to 10 digits</span>
             }
