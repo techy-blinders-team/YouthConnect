@@ -11,7 +11,7 @@ export const routes: Routes = [
         loadComponent: () =>
             import('./pages/landing-page/landing-page').
                 then(move => move.LandingPage),
-        title: 'YouthConnect - Home'
+        title: 'YouthConnect'
     },
 
     {
@@ -232,4 +232,5 @@ export const routes: Routes = [
     }
 
 ];
+
 
