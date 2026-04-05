@@ -3,15 +3,18 @@ package com.youthconnect.youthconnect_id.services.implementation;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.youthconnect.youthconnect_id.dto.AdministratorResponse;
 import com.youthconnect.youthconnect_id.dto.AdminSkOfficialRequest;
 import com.youthconnect.youthconnect_id.dto.AdminUserUpdateRequest;
 import com.youthconnect.youthconnect_id.dto.AdminYouthProfileUpdateRequest;
+import com.youthconnect.youthconnect_id.models.Administrator;
 import com.youthconnect.youthconnect_id.models.Role;
 import com.youthconnect.youthconnect_id.models.SkOfficialsUser;
 import com.youthconnect.youthconnect_id.models.User;
@@ -48,6 +51,52 @@ public class AdminManagementServiceImpl implements AdminManagementService {
     @Override
     public long getAdministratorCount() {
         return administratorRepo.count();
+    }
+
+    @Override
+    public List<AdministratorResponse> getAllAdministrators() {
+        return administratorRepo.findAll().stream()
+                .map(this::toAdministratorResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public AdministratorResponse updateAdministrator(int administratorId, String username, String email, boolean active) {
+        Administrator administrator = administratorRepo.findById(administratorId)
+                .orElseThrow(() -> new RuntimeException("Administrator not found"));
+        administrator.setUsername(username);
+        administrator.setEmail(email);
+        administrator.setActive(active);
+        Administrator savedAdministrator = administratorRepo.save(administrator);
+        return toAdministratorResponse(savedAdministrator);
+    }
+
+    @Override
+    @Transactional
+    public void deleteAdministrator(int administratorId) {
+        Administrator administrator = administratorRepo.findById(administratorId)
+                .orElseThrow(() -> new RuntimeException("Administrator not found"));
+        administratorRepo.delete(administrator);
+    }
+
+    @Override
+    @Transactional
+    public AdministratorResponse setAdministratorActiveStatus(int administratorId, boolean active) {
+        Administrator administrator = administratorRepo.findById(administratorId)
+                .orElseThrow(() -> new RuntimeException("Administrator not found"));
+        administrator.setActive(active);
+        Administrator savedAdministrator = administratorRepo.save(administrator);
+        return toAdministratorResponse(savedAdministrator);
+    }
+
+    private AdministratorResponse toAdministratorResponse(Administrator administrator) {
+        return new AdministratorResponse(
+                administrator.getAdministratorId(),
+                administrator.getUsername(),
+                administrator.getEmail(),
+                administrator.isActive(),
+                administrator.getCreatedAt());
     }
 
     // ── Users ─────────────────────────────────────────────
