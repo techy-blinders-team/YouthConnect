@@ -22,6 +22,16 @@ export class NavigationBar {
     }
   }
 
+  scrollToTop(): void {
+    if (this.router.url === '/' || this.router.url === '') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      this.router.navigate(['/']).then(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+  }
+
   private scrollToSection(sectionId: string): void {
     if (this.router.url === '/' || this.router.url === '') {
       const section = document.getElementById(sectionId);
