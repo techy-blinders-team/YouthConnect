@@ -186,14 +186,14 @@
 }
 
 .btn-no {
-	background: #e0e0e0;
-	color: #333333;
+	background: #CE1127;
+	color: #ffffff;
 
 	&:hover:not(:disabled) {
-		background: #d0d0d0;
+		background: #ae1123;
 	}
 
 	&:active:not(:disabled) {
-		background: #c0c0c0;
+		background: #ae1123;
 	}
 }

@@ -15,7 +15,8 @@ public interface AdminManagementService {
     long getAdministratorCount();
     List<AdministratorResponse> getAllAdministrators();
     AdministratorResponse createAdministrator(String username, String email, String password);
-    AdministratorResponse updateAdministrator(int administratorId, String username, String email, boolean active);
+        AdministratorResponse updateAdministrator(int administratorId, String username, String email, boolean active,
+            String password);
     void deleteAdministrator(int administratorId);
     AdministratorResponse setAdministratorActiveStatus(int administratorId, boolean active);
 

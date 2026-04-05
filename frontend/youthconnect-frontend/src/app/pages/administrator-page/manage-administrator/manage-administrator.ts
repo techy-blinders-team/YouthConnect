@@ -10,11 +10,12 @@ import {
   CreateAdministratorPayload
 } from '../../../services/administrator-management.service';
 import { AddAdministratorFeature } from '../feature/add-administrator-feature/add-administrator-feature';
+import { EditAdministratorFeature } from '../feature/edit-administrator-feature/edit-administrator-feature';
 
 @Component({
   selector: 'app-manage-administrator',
   standalone: true,
-  imports: [CommonModule, FormsModule, AddAdministratorFeature],
+  imports: [CommonModule, FormsModule, AddAdministratorFeature, EditAdministratorFeature],
   templateUrl: './manage-administrator.html',
   styleUrl: './manage-administrator.scss',
 })
@@ -28,6 +29,13 @@ export class ManageAdministrator implements OnInit {
   showAddModal = false;
   isCreatingAdministrator = false;
   addAdminErrorMessage: string | null = null;
+  
+  showEditModal = false;
+  editingAdministrator: AdministratorAccount | null = null;
+  isEditingAdministrator = false;
+  editAdminErrorMessage: string | null = null;
+  showEditSuccessModal = false;
+  editSuccessMessage = '';
 
   ngOnInit(): void {
     this.loadAdministrators();
@@ -84,37 +92,53 @@ export class ManageAdministrator implements OnInit {
   }
 
   editAdministrator(administrator: AdministratorAccount): void {
-    const nextUsername = window.prompt('Edit username', administrator.username)?.trim();
-    if (!nextUsername) {
+    this.editingAdministrator = administrator;
+    this.showEditModal = true;
+    this.editAdminErrorMessage = null;
+  }
+
+  closeEditAdminModal(): void {
+    if (this.isEditingAdministrator) {
       return;
     }
 
-    const nextEmail = window.prompt('Edit email', administrator.email)?.trim();
-    if (!nextEmail) {
+    this.showEditModal = false;
+    this.editingAdministrator = null;
+    this.editAdminErrorMessage = null;
+  }
+
+  updateAdministrator(payload: AdministratorUpdatePayload): void {
+    if (!this.editingAdministrator) {
       return;
     }
 
-    const payload: AdministratorUpdatePayload = {
-      username: nextUsername,
-      email: nextEmail,
-      active: administrator.active
-    };
+    this.isEditingAdministrator = true;
+    this.editAdminErrorMessage = null;
 
-    this.errorMessage = null;
-    this.updatingAdministratorIds.add(administrator.administratorId);
+    this.administratorManagementService
+      .updateAdministrator(this.editingAdministrator.administratorId, payload)
+      .subscribe({
+        next: (updatedAdministrator) => {
+          this.administrators = this.administrators.map((item) =>
+            item.administratorId === updatedAdministrator.administratorId ? updatedAdministrator : item
+          );
+          this.showEditModal = false;
+          this.editingAdministrator = null;
+          this.editAdminErrorMessage = null;
+          this.isEditingAdministrator = false;
+          this.editSuccessMessage = 'Administrator account has been updated successfully.';
+          this.showEditSuccessModal = true;
+        },
+        error: (error: HttpErrorResponse) => {
+          this.editAdminErrorMessage = this.extractUpdateAdminErrorMessage(error);
+          this.isEditingAdministrator = false;
+        }
+      });
+  }
 
-    this.administratorManagementService.updateAdministrator(administrator.administratorId, payload).subscribe({
-      next: (updatedAdministrator) => {
-        this.administrators = this.administrators.map((item) =>
-          item.administratorId === updatedAdministrator.administratorId ? updatedAdministrator : item
-        );
-        this.updatingAdministratorIds.delete(administrator.administratorId);
-      },
-      error: () => {
-        this.errorMessage = 'Unable to update administrator right now.';
-        this.updatingAdministratorIds.delete(administrator.administratorId);
-      }
-    });
+  closeEditSuccessModal(): void {
+    this.showEditSuccessModal = false;
+    this.editSuccessMessage = '';
   }
 
   deleteAdministrator(administrator: AdministratorAccount): void {
@@ -188,6 +212,20 @@ export class ManageAdministrator implements OnInit {
     }
 
     return 'Unable to create administrator right now.';
+  }
+
+  private extractUpdateAdminErrorMessage(error: HttpErrorResponse): string {
+    const responseBody = error?.error;
+
+    if (typeof responseBody === 'string' && responseBody.trim() !== '') {
+      return responseBody;
+    }
+
+    if (responseBody && typeof responseBody === 'object' && typeof responseBody.message === 'string') {
+      return responseBody.message;
+    }
+
+    return 'Unable to update administrator right now.';
   }
 
   private loadAdministrators(): void {

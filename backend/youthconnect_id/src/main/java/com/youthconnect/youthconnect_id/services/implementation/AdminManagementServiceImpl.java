@@ -29,6 +29,9 @@ import com.youthconnect.youthconnect_id.services.AdminManagementService;
 @Service
 public class AdminManagementServiceImpl implements AdminManagementService {
 
+    private static final String PASSWORD_POLICY_REGEX =
+            "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9\\s])\\S{8,64}$";
+
     @Autowired
     private AdministratorRepo administratorRepo;
 
@@ -71,6 +74,8 @@ public class AdminManagementServiceImpl implements AdminManagementService {
             throw new IllegalArgumentException("Username, email, and password are required.");
         }
 
+        validatePasswordPolicy(normalizedPassword);
+
         if (administratorRepo.existsByUsername(normalizedUsername)) {
             throw new IllegalArgumentException("Username is already in use.");
         }
@@ -92,12 +97,24 @@ public class AdminManagementServiceImpl implements AdminManagementService {
 
     @Override
     @Transactional
-    public AdministratorResponse updateAdministrator(int administratorId, String username, String email, boolean active) {
+    public AdministratorResponse updateAdministrator(int administratorId, String username, String email, boolean active,
+            String password) {
         Administrator administrator = administratorRepo.findById(administratorId)
                 .orElseThrow(() -> new RuntimeException("Administrator not found"));
-        administrator.setUsername(username);
-        administrator.setEmail(email);
+
+        String normalizedUsername = username == null ? "" : username.trim();
+        String normalizedEmail = email == null ? "" : email.trim();
+        String normalizedPassword = password == null ? "" : password.trim();
+
+        administrator.setUsername(normalizedUsername);
+        administrator.setEmail(normalizedEmail);
         administrator.setActive(active);
+
+        if (!normalizedPassword.isEmpty()) {
+            validatePasswordPolicy(normalizedPassword);
+            administrator.setPasswordHash(passwordEncoder.encode(normalizedPassword));
+        }
+
         Administrator savedAdministrator = administratorRepo.save(administrator);
         return toAdministratorResponse(savedAdministrator);
     }
@@ -127,6 +144,13 @@ public class AdminManagementServiceImpl implements AdminManagementService {
                 administrator.getEmail(),
                 administrator.isActive(),
                 administrator.getCreatedAt());
+    }
+
+    private void validatePasswordPolicy(String password) {
+        if (!password.matches(PASSWORD_POLICY_REGEX)) {
+            throw new IllegalArgumentException(
+                    "Password must be 8-64 characters and include at least 1 uppercase, 1 lowercase, 1 number, and 1 special character.");
+        }
     }
 
     // ── Users ─────────────────────────────────────────────
