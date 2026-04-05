@@ -4,6 +4,7 @@ public class AdministratorUpdateRequest {
     private String username;
     private String email;
     private boolean active;
+    private String password;
 
     public String getUsername() {
         return username;
@@ -27,5 +28,13 @@ public class AdministratorUpdateRequest {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

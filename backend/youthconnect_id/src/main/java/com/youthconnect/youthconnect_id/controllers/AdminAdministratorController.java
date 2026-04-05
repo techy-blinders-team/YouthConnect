@@ -75,7 +75,11 @@ public class AdminAdministratorController {
                     administratorId,
                     request.getUsername(),
                     request.getEmail(),
-                    request.isActive()));
+                    request.isActive(),
+                    request.getPassword()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", e.getMessage()));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Failed: " + e.getMessage());
