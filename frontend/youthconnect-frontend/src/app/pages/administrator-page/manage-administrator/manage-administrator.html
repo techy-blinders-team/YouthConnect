@@ -61,7 +61,7 @@
 									(click)="toggleStatus(administrator)">
 									{{ administrator.active ? 'Deactivate' : 'Activate' }}
 								</button>
-								<button class="action-button delete" type="button" (click)="deleteAdministrator(administrator)">Delete</button>
+								<button class="action-button delete" type="button" (click)="openDeleteAdminModal(administrator)">Delete</button>
 							</div>
 						</td>
 					</tr>
@@ -93,6 +93,15 @@
 		(submitRequested)="updateAdministrator($event)">
 	</app-edit-administrator-feature>
 
+	<app-delete-administrator-feature
+		[isOpen]="showDeleteModal"
+		[administrator]="deletingAdministrator"
+		[isSubmitting]="isDeletingAdministrator"
+		[errorMessage]="deleteAdminErrorMessage"
+		(closeRequested)="closeDeleteAdminModal()"
+		(deleteRequested)="confirmDeleteAdministrator()">
+	</app-delete-administrator-feature>
+
 	@if (showEditSuccessModal) {
 		<div class="modal-backdrop success-backdrop" (click)="closeEditSuccessModal()">
 			<div class="modal success-modal" (click)="$event.stopPropagation()">
@@ -102,6 +111,20 @@
 
 				<div class="modal-footer success-footer">
 					<button type="button" class="btn-ok" (click)="closeEditSuccessModal()">OK</button>
+				</div>
+			</div>
+		</div>
+	}
+
+	@if (showDeleteSuccessModal) {
+		<div class="modal-backdrop success-backdrop" (click)="closeDeleteSuccessModal()">
+			<div class="modal success-modal" (click)="$event.stopPropagation()">
+				<div class="modal-body success-body">
+					<p>{{ deleteSuccessMessage }}</p>
+				</div>
+
+				<div class="modal-footer success-footer">
+					<button type="button" class="btn-ok" (click)="closeDeleteSuccessModal()">OK</button>
 				</div>
 			</div>
 		</div>
