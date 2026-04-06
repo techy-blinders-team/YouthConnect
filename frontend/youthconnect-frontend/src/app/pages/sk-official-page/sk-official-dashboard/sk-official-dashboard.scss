@@ -109,3 +109,68 @@
   color: #333;
   margin: 0;
 }
+
+.content-section {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+/* Events Section */
+.content-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 30px;
+  border-bottom: 1px solid #eee;
+}
+
+.card-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  color: #333;
+}
+
+.view-all {
+  font-size: 14px;
+  color: #666;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.view-all:hover {
+  color: #0052cc;
+}
+
+.card-content {
+  padding: 0;
+}
+
+.item {
+  padding: 15px 30px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s;
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+.item:hover {
+  background-color: #f9f9f9;
+}
+
+.item p {
+  margin: 0;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
+}
