@@ -1,1 +1,123 @@
-<p>manage-sk-officials works!</p>
+<section class="manage-sk-officials-page">
+	<h2 class="section-title">Manage SK Official</h2>
+
+	<div class="controls-row">
+		<button class="add-button" type="button" (click)="openAddSkOfficialModal()">+ Add New SK Official</button>
+
+		<label class="search-wrapper" for="sk-official-search">
+			<img
+				class="search-icon"
+				src="assets/administrator/search-icon.png"
+				alt="Search"
+			/>
+			<input
+				id="sk-official-search"
+				name="sk-official-search"
+				type="text"
+				[(ngModel)]="searchTerm"
+				placeholder="Search by name or email..."
+			/>
+		</label>
+	</div>
+
+	@if (errorMessage) {
+		<p class="error-message">{{ errorMessage }}</p>
+	}
+
+	<div class="table-shell" [class.loading]="isLoading">
+		<table>
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Full Name</th>
+					<th>Email</th>
+					<th>Status</th>
+					<th>Created At</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				@for (skOfficial of filteredSkOfficials; track skOfficial.adminId) {
+					<tr>
+						<td>{{ skOfficial.adminId }}</td>
+						<td>{{ getFullName(skOfficial) }}</td>
+						<td>
+							<span class="email-text" [attr.title]="skOfficial.email || null">
+								{{ skOfficial.email }}
+							</span>
+						</td>
+						<td class="status-cell">{{ getStatusLabel(skOfficial.active ?? skOfficial.isActive ?? true) }}</td>
+						<td class="created-at-cell">{{ skOfficial.createdAt | date: 'M/d/yy, h:mm a' }}</td>
+						<td>
+							<div class="action-buttons">
+								<button class="action-button edit" type="button" (click)="editSkOfficial(skOfficial)">Edit</button>
+								<button class="action-button delete" type="button" (click)="openDeleteSkOfficialModal(skOfficial)">Delete</button>
+							</div>
+						</td>
+					</tr>
+				} @empty {
+					<tr>
+						<td class="empty-state" colspan="6">
+							{{ isLoading ? 'Loading SK official accounts...' : 'No SK officials found.' }}
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+
+	<app-add-sk-official-feature
+		[isOpen]="showAddModal"
+		[isSubmitting]="isCreatingSkOfficial"
+		[errorMessage]="addSkOfficialErrorMessage"
+		(closeRequested)="closeAddSkOfficialModal()"
+		(submitRequested)="createSkOfficial($event)">
+	</app-add-sk-official-feature>
+
+	<app-edit-sk-official-feature
+		[isOpen]="showEditModal"
+		[skOfficial]="editingSkOfficial"
+		[isSubmitting]="isEditingSkOfficial"
+		[errorMessage]="editSkOfficialErrorMessage"
+		(closeRequested)="closeEditSkOfficialModal()"
+		(submitRequested)="updateSkOfficial($event)">
+	</app-edit-sk-official-feature>
+
+	<app-delete-sk-official-feature
+		[isOpen]="showDeleteModal"
+		[skOfficial]="deletingSkOfficial"
+		[isSubmitting]="isDeletingSkOfficial"
+		[errorMessage]="deleteSkOfficialErrorMessage"
+		(closeRequested)="closeDeleteSkOfficialModal()"
+		(deleteRequested)="confirmDeleteSkOfficial()">
+	</app-delete-sk-official-feature>
+
+	@if (showEditSuccessModal) {
+		<div class="modal-backdrop success-backdrop" (click)="closeEditSuccessModal()">
+			<div class="modal success-modal" (click)="$event.stopPropagation()">
+				<div class="modal-body success-body">
+					<p>{{ editSuccessMessage }}</p>
+				</div>
+
+				<div class="modal-footer success-footer">
+					<button type="button" class="btn-ok" (click)="closeEditSuccessModal()">OK</button>
+				</div>
+			</div>
+		</div>
+	}
+
+	@if (showDeleteSuccessModal) {
+		<div class="modal-backdrop success-backdrop" (click)="closeDeleteSuccessModal()">
+			<div class="modal success-modal" (click)="$event.stopPropagation()">
+				<div class="modal-body success-body">
+					<p>{{ deleteSuccessMessage }}</p>
+				</div>
+
+				<div class="modal-footer success-footer">
+					<button type="button" class="btn-ok" (click)="closeDeleteSuccessModal()">OK</button>
+				</div>
+			</div>
+		</div>
+	}
+</section>
