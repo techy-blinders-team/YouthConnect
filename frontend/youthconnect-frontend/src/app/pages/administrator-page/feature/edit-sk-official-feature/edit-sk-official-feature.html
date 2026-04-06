@@ -1,0 +1,103 @@
+@if (isOpen) {
+	<div class="modal-backdrop" (click)="onBackdropClick($event)">
+		<div class="modal">
+			<div class="modal-header">
+				<h3>Edit SK Official</h3>
+			</div>
+
+			<div class="modal-body">
+				@if (errorMessage) {
+					<p class="modal-error-message">{{ errorMessage }}</p>
+				}
+
+				<div class="form-group">
+					<label for="edit-sk-first-name">First Name</label>
+					<input
+						id="edit-sk-first-name"
+						type="text"
+						placeholder="Enter first name"
+						[(ngModel)]="editSkOfficialForm.firstName"
+						name="edit-sk-first-name"
+					/>
+				</div>
+
+				<div class="form-group">
+					<label for="edit-sk-last-name">Last Name</label>
+					<input
+						id="edit-sk-last-name"
+						type="text"
+						placeholder="Enter last name"
+						[(ngModel)]="editSkOfficialForm.lastName"
+						name="edit-sk-last-name"
+					/>
+				</div>
+
+				<div class="form-group">
+					<label for="edit-sk-email">Email</label>
+					<input
+						id="edit-sk-email"
+						type="email"
+						placeholder="Enter email"
+						[(ngModel)]="editSkOfficialForm.email"
+						name="edit-sk-email"
+					/>
+				</div>
+
+				<div class="form-group">
+					<label for="edit-sk-new-password">New Password</label>
+					<input
+						id="edit-sk-new-password"
+						type="password"
+						placeholder="Enter new password"
+						[(ngModel)]="editSkOfficialForm.newPassword"
+						name="edit-sk-new-password"
+					/>
+				</div>
+
+				<div class="form-group">
+					<label for="edit-sk-confirm-password">Confirm Password</label>
+					<input
+						id="edit-sk-confirm-password"
+						type="password"
+						placeholder="Confirm password"
+						[(ngModel)]="editSkOfficialForm.confirmPassword"
+						name="edit-sk-confirm-password"
+						[class.password-match]="editSkOfficialForm.confirmPassword.trim() !== '' && passwordsMatch()"
+					/>
+				</div>
+			</div>
+
+			<div class="modal-footer">
+				<button
+					type="button"
+					class="btn btn-save"
+					[disabled]="!isFormValid() || !hasFormChanges() || isSubmitting"
+					(click)="submit()">
+					{{ isSubmitting ? 'Saving...' : 'Save' }}
+				</button>
+				<button
+					type="button"
+					class="btn btn-cancel"
+					[disabled]="isSubmitting"
+					(click)="requestClose()">
+					Cancel
+				</button>
+			</div>
+		</div>
+	</div>
+}
+
+@if (showConfirmationModal) {
+	<div class="modal-backdrop">
+		<div class="modal confirmation-modal">
+			<div class="modal-body confirmation-body">
+				<p>This will cancel your current progress. Will you continue?</p>
+			</div>
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-yes" (click)="confirmClose()">Yes</button>
+				<button type="button" class="btn btn-no" (click)="cancelClose()">No</button>
+			</div>
+		</div>
+	</div>
+}
