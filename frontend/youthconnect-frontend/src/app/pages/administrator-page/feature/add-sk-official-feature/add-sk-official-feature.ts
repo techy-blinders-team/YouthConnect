@@ -12,6 +12,8 @@ import { CreateSkOfficialPayload } from '../../../../services/sk-official-manage
   styleUrl: './add-sk-official-feature.scss',
 })
 export class AddSkOfficialFeature implements OnChanges {
+  private readonly passwordPolicyRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9\s])\S{8,64}$/;
+
   @Input() isOpen = false;
   @Input() isSubmitting = false;
   @Input() errorMessage: string | null = null;
@@ -98,7 +100,13 @@ export class AddSkOfficialFeature implements OnChanges {
       && this.newSkOfficialForm.lastName.trim() !== ''
       && this.newSkOfficialForm.email.trim() !== ''
       && this.newSkOfficialForm.password.trim() !== ''
+      && this.isPasswordPolicyValid()
     );
+  }
+
+  isPasswordPolicyValid(): boolean {
+    const password = this.newSkOfficialForm.password.trim();
+    return this.passwordPolicyRegex.test(password);
   }
 
   private emitCloseAndReset(): void {
