@@ -1,0 +1,38 @@
+@if (isOpen) {
+	<div class="modal-backdrop" (click)="onBackdropClick($event)">
+		<div class="modal delete-modal" (click)="$event.stopPropagation()">
+			<div class="modal-header">
+				<h3>Delete Youth Member</h3>
+			</div>
+
+			<div class="modal-body">
+				@if (errorMessage) {
+					<p class="modal-error-message">{{ errorMessage }}</p>
+				}
+
+				<p class="delete-message">
+					Are you sure you want to delete
+					<strong>{{ getDisplayName() }}</strong>?
+					This action cannot be undone. Before deleting this record, please create a backup to avoid data loss.
+				</p>
+			</div>
+
+			<div class="modal-footer">
+				<button
+					type="button"
+					class="btn btn-yes"
+					[disabled]="isSubmitting"
+					(click)="confirmDelete()">
+					{{ isSubmitting ? 'Deleting...' : 'Yes' }}
+				</button>
+				<button
+					type="button"
+					class="btn btn-no"
+					[disabled]="isSubmitting"
+					(click)="requestClose()">
+					No
+				</button>
+			</div>
+		</div>
+	</div>
+}

@@ -1,1 +1,113 @@
-<p>manage-youth-member works!</p>
+<section class="manage-youth-member-page">
+	<h2 class="section-title">Manage Youth Members</h2>
+
+	<div class="controls-row">
+		<label class="search-wrapper" for="youth-member-search">
+			<img
+				class="search-icon"
+				src="assets/administrator/search-icon.png"
+				alt="Search"
+			/>
+			<input
+				id="youth-member-search"
+				name="youth-member-search"
+				type="text"
+				[(ngModel)]="searchTerm"
+				placeholder="Search by name or email..."
+			/>
+		</label>
+	</div>
+
+	@if (errorMessage) {
+		<p class="error-message">{{ errorMessage }}</p>
+	}
+
+	<div class="table-shell" [class.loading]="isLoading">
+		<table>
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Full Name</th>
+					<th>Email</th>
+					<th>Status</th>
+					<th>Created At</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				@for (youthMember of filteredYouthMembers; track youthMember.youthId) {
+					<tr>
+						<td>{{ youthMember.youthId }}</td>
+						<td>{{ getFullName(youthMember) }}</td>
+						<td>
+							<span class="email-text" [attr.title]="youthMember.email || null">
+								{{ youthMember.email }}
+							</span>
+						</td>
+						<td class="status-cell">{{ getStatusLabel(youthMember.isActive) }}</td>
+						<td class="created-at-cell">{{ youthMember.createdAt | date: 'M/d/yy, h:mm a' }}</td>
+						<td>
+							<div class="action-buttons">
+								<button class="action-button edit" type="button" (click)="editYouthMember(youthMember)">Edit</button>
+								<button class="action-button delete" type="button" (click)="openDeleteYouthMemberModal(youthMember)">Delete</button>
+							</div>
+						</td>
+					</tr>
+				} @empty {
+					<tr>
+						<td class="empty-state" colspan="6">
+							{{ isLoading ? 'Loading youth member accounts...' : 'No youth members found.' }}
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+
+	<app-edit-youth-member-feature
+		[isOpen]="showEditModal"
+		[youthMember]="editingYouthMember"
+		[isSubmitting]="isEditingYouthMember"
+		[errorMessage]="editYouthMemberErrorMessage"
+		(closeRequested)="closeEditYouthMemberModal()"
+		(submitRequested)="updateYouthMember($event)">
+	</app-edit-youth-member-feature>
+
+	<app-delete-youth-member-feature
+		[isOpen]="showDeleteModal"
+		[youthMember]="deletingYouthMember"
+		[isSubmitting]="isDeletingYouthMember"
+		[errorMessage]="deleteYouthMemberErrorMessage"
+		(closeRequested)="closeDeleteYouthMemberModal()"
+		(deleteRequested)="confirmDeleteYouthMember()">
+	</app-delete-youth-member-feature>
+
+	@if (showEditSuccessModal) {
+		<div class="modal-backdrop success-backdrop" (click)="closeEditSuccessModal()">
+			<div class="modal success-modal" (click)="$event.stopPropagation()">
+				<div class="modal-body success-body">
+					<p>{{ editSuccessMessage }}</p>
+				</div>
+
+				<div class="modal-footer success-footer">
+					<button type="button" class="btn-ok" (click)="closeEditSuccessModal()">OK</button>
+				</div>
+			</div>
+		</div>
+	}
+
+	@if (showDeleteSuccessModal) {
+		<div class="modal-backdrop success-backdrop" (click)="closeDeleteSuccessModal()">
+			<div class="modal success-modal" (click)="$event.stopPropagation()">
+				<div class="modal-body success-body">
+					<p>{{ deleteSuccessMessage }}</p>
+				</div>
+
+				<div class="modal-footer success-footer">
+					<button type="button" class="btn-ok" (click)="closeDeleteSuccessModal()">OK</button>
+				</div>
+			</div>
+		</div>
+	}
+</section>
