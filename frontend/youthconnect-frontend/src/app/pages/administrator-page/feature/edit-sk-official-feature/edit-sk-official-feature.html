@@ -52,6 +52,11 @@
 						[(ngModel)]="editSkOfficialForm.newPassword"
 						name="edit-sk-new-password"
 					/>
+					@if (editSkOfficialForm.newPassword.trim() !== '' && !isPasswordPolicyValid()) {
+						<p class="validation-message">
+							Password must be 8-64 characters and include at least 1 uppercase, 1 lowercase, 1 number, and 1 special character.
+						</p>
+					}
 				</div>
 
 				<div class="form-group">

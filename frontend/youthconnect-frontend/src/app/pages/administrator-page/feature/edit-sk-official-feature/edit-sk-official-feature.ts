@@ -12,6 +12,8 @@ import { SkOfficialAccount, UpdateSkOfficialPayload } from '../../../../services
   styleUrl: './edit-sk-official-feature.scss',
 })
 export class EditSkOfficialFeature implements OnChanges {
+  private readonly passwordPolicyRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9\s])\S{8,64}$/;
+
   @Input() isOpen = false;
   @Input() skOfficial: SkOfficialAccount | null = null;
   @Input() isSubmitting = false;
@@ -133,11 +135,22 @@ export class EditSkOfficialFeature implements OnChanges {
     return newPwd === confirmPwd;
   }
 
+  isPasswordPolicyValid(): boolean {
+    const newPwd = this.editSkOfficialForm.newPassword.trim();
+
+    if (newPwd === '') {
+      return true;
+    }
+
+    return this.passwordPolicyRegex.test(newPwd);
+  }
+
   isFormValid(): boolean {
     return (
       this.editSkOfficialForm.firstName.trim() !== ''
       && this.editSkOfficialForm.lastName.trim() !== ''
       && this.editSkOfficialForm.email.trim() !== ''
+      && this.isPasswordPolicyValid()
       && this.passwordsMatch()
     );
   }
