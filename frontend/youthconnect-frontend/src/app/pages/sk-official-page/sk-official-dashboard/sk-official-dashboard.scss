@@ -1,3 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+html, body, :host, .dashboard-container {
+  font-family: 'Poppins', Arial, Helvetica, sans-serif !important;
+}
 html, body, :host, .dashboard-container {
   background-color: #f2f2f2 !important;
   min-height: 100vh;
