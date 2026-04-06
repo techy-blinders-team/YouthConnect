@@ -1,0 +1,271 @@
+.manage-sk-officials-page {
+	height: 100%;
+	overflow-y: auto;
+	background: #e7e7e7;
+	padding: 1rem;
+	font-family: 'Inter', Arial, sans-serif;
+}
+
+.section-title {
+	margin: 0;
+	font-size: 2rem;
+	font-weight: 700;
+	color: #161616;
+}
+
+.controls-row {
+	margin-top: 0.9rem;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	flex-wrap: wrap;
+}
+
+.add-button {
+	border: none;
+	border-radius: 10px;
+	background: #0d47bf;
+	color: #ffffff;
+	font-size: 1rem;
+	font-weight: 700;
+	padding: 0.75rem 1rem;
+	cursor: pointer;
+}
+
+.add-button:hover {
+	background: #0a3896;
+}
+
+.search-wrapper {
+	display: flex;
+	align-items: center;
+	gap: 0.45rem;
+	width: min(430px, 92vw);
+	background: #ffffff;
+	border: 1px solid #bebebe;
+	border-radius: 10px;
+	padding: 0.45rem 0.7rem;
+}
+
+.search-wrapper input {
+	width: 100%;
+	border: none;
+	background: transparent;
+	color: #151515;
+	font-size: 0.95rem;
+	padding: 0.2rem 0;
+}
+
+.search-wrapper input:focus {
+	outline: none;
+}
+
+.search-wrapper:focus-within {
+	border-color: #0d47bf;
+	box-shadow: 0 0 0 2px rgba(13, 71, 191, 0.15);
+}
+
+.search-icon {
+	width: 20px;
+	height: 20px;
+	object-fit: contain;
+	flex-shrink: 0;
+	opacity: 0.85;
+}
+
+.error-message {
+	margin: 0.75rem 0 0;
+	color: #b02a37;
+	font-weight: 600;
+}
+
+.modal-backdrop.success-backdrop {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.45);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1200;
+}
+
+.success-modal {
+	width: min(420px, 92vw);
+	background: #ffffff;
+	border-radius: 12px;
+	box-shadow: 0 18px 48px rgba(0, 0, 0, 0.2);
+	overflow: hidden;
+}
+
+.success-body {
+	padding: 2rem 1.5rem 1rem;
+	text-align: center;
+
+	p {
+		margin: 0;
+		font-size: 1rem;
+		font-weight: 600;
+		color: #161616;
+		line-height: 1.5;
+	}
+}
+
+.success-footer {
+	padding: 0 1.5rem 1.5rem;
+	display: flex;
+	justify-content: center;
+	background: #ffffff;
+	margin-top: 0;
+}
+
+.btn-ok {
+	border: none;
+	border-radius: 6px;
+	background: #0d47bf;
+	color: #ffffff;
+	font-size: 0.9rem;
+	font-weight: 700;
+	padding: 0.5rem 1.5rem;
+	cursor: pointer;
+	transition: background 0.2s ease;
+}
+
+.btn-ok:hover {
+	background: #0a3896;
+}
+
+.btn-ok:active {
+	background: #082970;
+}
+
+.table-shell {
+	margin-top: 1rem;
+	border: 1px solid #b9b9b9;
+	border-radius: 8px;
+	overflow: hidden;
+	background: #ffffff;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.table-shell.loading {
+	opacity: 0.7;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	table-layout: fixed;
+}
+
+thead {
+	background: #a4151a;
+	color: #ffffff;
+}
+
+th,
+td {
+	padding: 0.6rem 0.7rem;
+	text-align: left;
+	font-size: 0.95rem;
+	color: #161616;
+	vertical-align: middle;
+}
+
+th {
+	font-weight: 700;
+	color: #ffffff;
+}
+
+tbody tr {
+	border-top: 1px solid #e6e6e6;
+}
+
+td:nth-child(1),
+th:nth-child(1) {
+	width: 6%;
+}
+
+td:nth-child(2),
+th:nth-child(2) {
+	width: 18%;
+}
+
+td:nth-child(3),
+th:nth-child(3) {
+	width: 29%;
+}
+
+td:nth-child(4),
+th:nth-child(4) {
+	width: 10%;
+	text-align: left;
+}
+
+td:nth-child(5),
+th:nth-child(5) {
+	width: 17%;
+	text-align: left;
+}
+
+td:nth-child(6),
+th:nth-child(6) {
+	width: 20%;
+	text-align: left;
+}
+
+.email-text {
+	display: block;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	cursor: default;
+}
+
+.action-buttons {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 0.4rem;
+	flex-wrap: nowrap;
+}
+
+.action-button {
+	border: none;
+	border-radius: 4px;
+	color: #ffffff;
+	font-size: 0.78rem;
+	font-weight: 700;
+	padding: 0.3rem 0.55rem;
+	cursor: pointer;
+	flex-shrink: 0;
+	min-width: 0;
+}
+
+.action-button.edit {
+	background: #0d47bf;
+}
+
+.action-button.delete {
+	background: #d7263d;
+}
+
+.empty-state {
+	text-align: center;
+	color: #555555;
+	font-weight: 500;
+}
+
+@media (max-width: 900px) {
+	.table-shell {
+		overflow-x: auto;
+	}
+
+	table {
+		min-width: 860px;
+	}
+}
