@@ -1,1 +1,68 @@
-<p>backup-restore works!</p>
+<section class="backup-restore-page">
+	<h2 class="section-title">Backup & Restore</h2>
+
+	<div class="action-grid">
+		<article class="action-card">
+			<header class="card-header">
+				<span class="header-content">
+					<img class="backup-icon"
+                            src="assets/administrator/backup-icon.png"
+                            alt="Backup Icon" 
+                            aria-hidden="true" />
+					<span>Create Backup</span>
+				</span>
+			</header>
+			<div class="card-body">
+				<p class="card-description">
+					Create a complete backup of the YouthConnect database. 
+                    This will download a .SQL file containing all current data.
+				</p>
+				<button type="button" class="card-action">
+                    Create Backup
+                </button>
+			</div>
+		</article>
+
+		<article class="left-action-card">
+			<header class="left-card-header">
+				<span class="left-header-content">
+					<img class="restore-icon"
+                            src="assets/administrator/restore-icon.png" 
+                            alt="Restore Icon" 
+                            aria-hidden="true" />
+					<span class="left-header-text">Restore Database</span>
+				</span>
+			</header>
+			<div class="card-body">
+				<p class="card-warning">
+					<span class="warning-label">Warning:</span> 
+                    Restoring a backup will overwrite all current data
+					in the database. This action cannot be undone.
+				</p>
+				<button type="button" class="restore-card-action">
+                    Restore Database
+                </button>
+			</div>
+		</article>
+	</div>
+
+	<section class="info-card" aria-label="Important information">
+		<p class="info-title">
+			<span class="info-icon" aria-hidden="true">i</span>
+			<span>Important Information</span>
+		</p>
+		<ul class="info-list">
+			<li>Backups are stored as SQL files and can be imported into any 
+                MySQL database
+            </li>
+			<li>Regular backups are recommended to prevent data loss</li>
+			<li>Always test restore operations in a development environment 
+                first
+            </li>
+			<li>Keep backup files in a secure location</li>
+			<li>Backup files contain sensitive information - handle with 
+                care
+            </li>
+		</ul>
+	</section>
+</section>
