@@ -22,8 +22,10 @@ import { EditAdministratorFeature } from '../feature/edit-administrator-feature/
 })
 export class ManageAdministrator implements OnInit {
   private administratorManagementService = inject(AdministratorManagementService);
+  readonly itemsPerPage = 11;
   administrators: AdministratorAccount[] = [];
   searchTerm = '';
+  currentPage = 1;
   isLoading = false;
   errorMessage: string | null = null;
   private updatingAdministratorIds = new Set<number>();
@@ -65,8 +67,97 @@ export class ManageAdministrator implements OnInit {
     });
   }
 
+  get paginatedAdministrators(): AdministratorAccount[] {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    return this.filteredAdministrators.slice(startIndex, startIndex + this.itemsPerPage);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredAdministrators.length / this.itemsPerPage);
+  }
+
+  get paginationItems(): Array<number | string> {
+    const total = this.totalPages;
+
+    if (total <= 7) {
+      return Array.from({ length: total }, (_, index) => index + 1);
+    }
+
+    const pages = new Set<number>([1, total]);
+    pages.add(this.currentPage - 1);
+    pages.add(this.currentPage);
+    pages.add(this.currentPage + 1);
+
+    const sortedPages = Array.from(pages)
+      .filter((page) => page >= 1 && page <= total)
+      .sort((left, right) => left - right);
+
+    const condensed: Array<number | string> = [];
+
+    for (let index = 0; index < sortedPages.length; index += 1) {
+      const page = sortedPages[index];
+      const previousPage = sortedPages[index - 1];
+
+      if (index > 0 && page - previousPage > 1) {
+        condensed.push('...');
+      }
+
+      condensed.push(page);
+    }
+
+    return condensed;
+  }
+
   getStatusLabel(isActive: boolean): string {
     return isActive ? 'Active' : 'Deactivated';
+  }
+
+  onSearchTermChange(): void {
+    this.currentPage = 1;
+  }
+
+  goToFirstPage(): void {
+    if (this.totalPages === 0) {
+      return;
+    }
+
+    this.currentPage = 1;
+  }
+
+  goToPreviousPage(): void {
+    if (this.currentPage <= 1) {
+      return;
+    }
+
+    this.currentPage -= 1;
+  }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.totalPages || page === this.currentPage) {
+      return;
+    }
+
+    this.currentPage = page;
+  }
+
+  goToNextPage(): void {
+    if (this.currentPage >= this.totalPages) {
+      return;
+    }
+
+    this.currentPage += 1;
+  }
+
+  goToLastPage(): void {
+    if (this.totalPages === 0) {
+      return;
+    }
+
+    this.currentPage = this.totalPages;
+  }
+
+  isPaginationNumber(item: number | string): item is number {
+    return typeof item === 'number';
   }
 
   isUpdating(administratorId: number): boolean {
@@ -82,8 +173,14 @@ export class ManageAdministrator implements OnInit {
     this.updatingAdministratorIds.add(administrator.administratorId);
     this.errorMessage = null;
 
+    const payload: AdministratorUpdatePayload = {
+      username: administrator.username,
+      email: administrator.email,
+      active: nextActiveStatus
+    };
+
     this.administratorManagementService
-      .updateAdministratorStatus(administrator.administratorId, nextActiveStatus)
+      .updateAdministrator(administrator.administratorId, payload)
       .subscribe({
         next: (updatedAdministrator) => {
           this.administrators = this.administrators.map((item) =>
@@ -178,6 +275,7 @@ export class ManageAdministrator implements OnInit {
     this.administratorManagementService.deleteAdministrator(administratorId).subscribe({
       next: () => {
         this.administrators = this.administrators.filter((item) => item.administratorId !== administratorId);
+        this.ensureCurrentPageWithinBounds();
         this.showDeleteModal = false;
         this.deletingAdministrator = null;
         this.isDeletingAdministrator = false;
@@ -221,6 +319,7 @@ export class ManageAdministrator implements OnInit {
           ...this.administrators,
           newAdministrator
         ].sort((left, right) => left.administratorId - right.administratorId);
+        this.ensureCurrentPageWithinBounds();
         this.showAddModal = false;
         this.addAdminErrorMessage = null;
         this.isCreatingAdministrator = false;
@@ -283,6 +382,7 @@ export class ManageAdministrator implements OnInit {
         this.administrators = Array.isArray(administrators)
           ? [...administrators].sort((left, right) => left.administratorId - right.administratorId)
           : [];
+        this.ensureCurrentPageWithinBounds();
         this.isLoading = false;
       },
       error: () => {
@@ -290,6 +390,24 @@ export class ManageAdministrator implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  private ensureCurrentPageWithinBounds(): void {
+    const totalPages = this.totalPages;
+
+    if (totalPages === 0) {
+      this.currentPage = 1;
+      return;
+    }
+
+    if (this.currentPage > totalPages) {
+      this.currentPage = totalPages;
+      return;
+    }
+
+    if (this.currentPage < 1) {
+      this.currentPage = 1;
+    }
   }
 
 }

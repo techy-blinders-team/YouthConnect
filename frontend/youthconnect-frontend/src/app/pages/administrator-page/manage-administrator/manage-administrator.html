@@ -15,6 +15,7 @@
 				name="admin-search"
 				type="text"
 				[(ngModel)]="searchTerm"
+				(ngModelChange)="onSearchTermChange()"
 				placeholder="Search by name or email..."
 			/>
 		</label>
@@ -24,56 +25,85 @@
 		<p class="error-message">{{ errorMessage }}</p>
 	}
 
-	<div class="table-shell" [class.loading]="isLoading">
-		<table>
-			<thead>
-				<tr>
-					<th>ID</th>
-					<th>Username</th>
-					<th>Email</th>
-					<th>Status</th>
-					<th>Created At</th>
-					<th>Actions</th>
-				</tr>
-			</thead>
+	<div class="table-section">
+		<div class="table-shell" [class.loading]="isLoading">
+			<div class="table-wrapper">
+				<table>
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Username</th>
+							<th>Email</th>
+							<th>Status</th>
+							<th>Created At</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
 
-			<tbody>
-				@for (administrator of filteredAdministrators; track administrator.administratorId) {
-					<tr>
-						<td>{{ administrator.administratorId }}</td>
-						<td>{{ administrator.username }}</td>
-						<td>
-							<span class="email-text" [attr.title]="administrator.email || null">
-								{{ administrator.email }}
-							</span>
-						</td>
-						<td class="status-cell">{{ getStatusLabel(administrator.active) }}</td>
-						<td class="created-at-cell">{{ administrator.createdAt | date: 'M/d/yy, h:mm a' }}</td>
-						<td>
-							<div class="action-buttons">
-								<button class="action-button edit" type="button" (click)="editAdministrator(administrator)">Edit</button>
-								<button
-									class="action-button status"
-									[class.activate]="!administrator.active"
-									[class.deactivate]="administrator.active"
-									[disabled]="isUpdating(administrator.administratorId)"
-									type="button"
-									(click)="toggleStatus(administrator)">
-									{{ administrator.active ? 'Deactivate' : 'Activate' }}
-								</button>
-								<button class="action-button delete" type="button" (click)="openDeleteAdminModal(administrator)">Delete</button>
-							</div>
-						</td>
-					</tr>
-				} @empty {
-					<tr>
-						<td class="empty-state" colspan="6">
-							{{ isLoading ? 'Loading administrator accounts...' : 'No administrators found.' }}
-						</td>
-					</tr>
+					<tbody>
+						@for (administrator of paginatedAdministrators; track administrator.administratorId) {
+							<tr>
+								<td>{{ administrator.administratorId }}</td>
+								<td>{{ administrator.username }}</td>
+								<td>
+									<span class="email-text" [attr.title]="administrator.email || null">
+										{{ administrator.email }}
+									</span>
+								</td>
+								<td class="status-cell">{{ getStatusLabel(administrator.active) }}</td>
+								<td class="created-at-cell">{{ administrator.createdAt | date: 'M/d/yy, h:mm a' }}</td>
+								<td>
+									<div class="action-buttons">
+										<button class="action-button edit" type="button" (click)="editAdministrator(administrator)">Edit</button>
+										<button
+											class="action-button status"
+											[class.activate]="!administrator.active"
+											[class.deactivate]="administrator.active"
+											[disabled]="isUpdating(administrator.administratorId)"
+											type="button"
+											(click)="toggleStatus(administrator)">
+											{{ administrator.active ? 'Deactivate' : 'Activate' }}
+										</button>
+										<button class="action-button delete" type="button" (click)="openDeleteAdminModal(administrator)">Delete</button>
+									</div>
+								</td>
+							</tr>
+						} @empty {
+							<tr>
+								<td class="empty-state" colspan="6">
+									{{ isLoading ? 'Loading administrator accounts...' : 'No administrators found.' }}
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		@if (totalPages > 0) {
+			<div class="pagination-bar" aria-label="Administrator pagination">
+				<button type="button" class="pagination-button" (click)="goToFirstPage()" [disabled]="currentPage === 1">&lt;&lt;</button>
+				<button type="button" class="pagination-button" (click)="goToPreviousPage()" [disabled]="currentPage === 1">&lt;</button>
+
+				@for (item of paginationItems; track $index) {
+					@if (isPaginationNumber(item)) {
+						<button
+							type="button"
+							class="pagination-button page-number"
+							[class.active]="item === currentPage"
+							(click)="goToPage(item)"
+							[disabled]="item === currentPage">
+							{{ item }}
+						</button>
+					} @else {
+						<span class="pagination-ellipsis">...</span>
+					}
 				}
-			</tbody>
-		</table>
+
+				<button type="button" class="pagination-button" (click)="goToNextPage()" [disabled]="currentPage === totalPages">&gt;</button>
+				<button type="button" class="pagination-button" (click)="goToLastPage()" [disabled]="currentPage === totalPages">&gt;&gt;</button>
+			</div>
+		}
 	</div>
 
 	<app-add-administrator-feature
