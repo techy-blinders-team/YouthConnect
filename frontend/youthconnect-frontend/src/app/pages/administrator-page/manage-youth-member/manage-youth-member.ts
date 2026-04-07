@@ -25,9 +25,11 @@ import {
 })
 export class ManageYouthMember implements OnInit {
   private youthMemberManagementService = inject(YouthMemberManagementService);
+  readonly itemsPerPage = 11;
 
   youthMembers: YouthMemberListItem[] = [];
   searchTerm = '';
+  currentPage = 1;
   isLoading = false;
   errorMessage: string | null = null;
 
@@ -67,6 +69,47 @@ export class ManageYouthMember implements OnInit {
     });
   }
 
+  get paginatedYouthMembers(): YouthMemberListItem[] {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    return this.filteredYouthMembers.slice(startIndex, startIndex + this.itemsPerPage);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredYouthMembers.length / this.itemsPerPage);
+  }
+
+  get paginationItems(): Array<number | string> {
+    const total = this.totalPages;
+
+    if (total <= 7) {
+      return Array.from({ length: total }, (_, index) => index + 1);
+    }
+
+    const pages = new Set<number>([1, total]);
+    pages.add(this.currentPage - 1);
+    pages.add(this.currentPage);
+    pages.add(this.currentPage + 1);
+
+    const sortedPages = Array.from(pages)
+      .filter((page) => page >= 1 && page <= total)
+      .sort((left, right) => left - right);
+
+    const condensed: Array<number | string> = [];
+
+    for (let index = 0; index < sortedPages.length; index += 1) {
+      const page = sortedPages[index];
+      const previousPage = sortedPages[index - 1];
+
+      if (index > 0 && page - previousPage > 1) {
+        condensed.push('...');
+      }
+
+      condensed.push(page);
+    }
+
+    return condensed;
+  }
+
   getFullName(youthMember: YouthMemberListItem): string {
     const firstName = youthMember.firstName?.trim() ?? '';
     const lastName = youthMember.lastName?.trim() ?? '';
@@ -75,6 +118,54 @@ export class ManageYouthMember implements OnInit {
 
   getStatusLabel(isActive: boolean): string {
     return isActive ? 'Active' : 'Deactivated';
+  }
+
+  onSearchTermChange(): void {
+    this.currentPage = 1;
+  }
+
+  goToFirstPage(): void {
+    if (this.totalPages === 0) {
+      return;
+    }
+
+    this.currentPage = 1;
+  }
+
+  goToPreviousPage(): void {
+    if (this.currentPage <= 1) {
+      return;
+    }
+
+    this.currentPage -= 1;
+  }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.totalPages || page === this.currentPage) {
+      return;
+    }
+
+    this.currentPage = page;
+  }
+
+  goToNextPage(): void {
+    if (this.currentPage >= this.totalPages) {
+      return;
+    }
+
+    this.currentPage += 1;
+  }
+
+  goToLastPage(): void {
+    if (this.totalPages === 0) {
+      return;
+    }
+
+    this.currentPage = this.totalPages;
+  }
+
+  isPaginationNumber(item: number | string): item is number {
+    return typeof item === 'number';
   }
 
   editYouthMember(youthMember: YouthMemberListItem): void {
@@ -179,6 +270,7 @@ export class ManageYouthMember implements OnInit {
     this.youthMemberManagementService.deleteYouthProfile(youthId).subscribe({
       next: () => {
         this.youthMembers = this.youthMembers.filter((item) => item.youthId !== youthId);
+        this.ensureCurrentPageWithinBounds();
         this.showDeleteModal = false;
         this.deletingYouthMember = null;
         this.isDeletingYouthMember = false;
@@ -235,6 +327,7 @@ export class ManageYouthMember implements OnInit {
     }).subscribe({
       next: ({ users, profiles }) => {
         this.youthMembers = this.mapYouthMembers(users, profiles);
+        this.ensureCurrentPageWithinBounds();
         this.isLoading = false;
       },
       error: () => {
@@ -282,6 +375,24 @@ export class ManageYouthMember implements OnInit {
       })
       .filter((item): item is YouthMemberListItem => item !== null)
       .sort((left, right) => left.youthId - right.youthId);
+  }
+
+  private ensureCurrentPageWithinBounds(): void {
+    const totalPages = this.totalPages;
+
+    if (totalPages === 0) {
+      this.currentPage = 1;
+      return;
+    }
+
+    if (this.currentPage > totalPages) {
+      this.currentPage = totalPages;
+      return;
+    }
+
+    if (this.currentPage < 1) {
+      this.currentPage = 1;
+    }
   }
 
 }
