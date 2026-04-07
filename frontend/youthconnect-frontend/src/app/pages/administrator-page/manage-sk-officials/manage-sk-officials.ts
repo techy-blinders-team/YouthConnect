@@ -22,9 +22,11 @@ import { EditSkOfficialFeature } from '../feature/edit-sk-official-feature/edit-
 })
 export class ManageSkOfficials implements OnInit {
   private skOfficialManagementService = inject(SkOfficialManagementService);
+  readonly itemsPerPage = 11;
 
   skOfficials: SkOfficialAccount[] = [];
   searchTerm = '';
+  currentPage = 1;
   isLoading = false;
   errorMessage: string | null = null;
 
@@ -68,6 +70,47 @@ export class ManageSkOfficials implements OnInit {
     });
   }
 
+  get paginatedSkOfficials(): SkOfficialAccount[] {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    return this.filteredSkOfficials.slice(startIndex, startIndex + this.itemsPerPage);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredSkOfficials.length / this.itemsPerPage);
+  }
+
+  get paginationItems(): Array<number | string> {
+    const total = this.totalPages;
+
+    if (total <= 7) {
+      return Array.from({ length: total }, (_, index) => index + 1);
+    }
+
+    const pages = new Set<number>([1, total]);
+    pages.add(this.currentPage - 1);
+    pages.add(this.currentPage);
+    pages.add(this.currentPage + 1);
+
+    const sortedPages = Array.from(pages)
+      .filter((page) => page >= 1 && page <= total)
+      .sort((left, right) => left - right);
+
+    const condensed: Array<number | string> = [];
+
+    for (let index = 0; index < sortedPages.length; index += 1) {
+      const page = sortedPages[index];
+      const previousPage = sortedPages[index - 1];
+
+      if (index > 0 && page - previousPage > 1) {
+        condensed.push('...');
+      }
+
+      condensed.push(page);
+    }
+
+    return condensed;
+  }
+
   getFullName(skOfficial: SkOfficialAccount): string {
     const firstName = skOfficial.firstName?.trim() ?? '';
     const lastName = skOfficial.lastName?.trim() ?? '';
@@ -78,6 +121,54 @@ export class ManageSkOfficials implements OnInit {
 
   getStatusLabel(isActive: boolean): string {
     return isActive ? 'Active' : 'Deactivated';
+  }
+
+  onSearchTermChange(): void {
+    this.currentPage = 1;
+  }
+
+  goToFirstPage(): void {
+    if (this.totalPages === 0) {
+      return;
+    }
+
+    this.currentPage = 1;
+  }
+
+  goToPreviousPage(): void {
+    if (this.currentPage <= 1) {
+      return;
+    }
+
+    this.currentPage -= 1;
+  }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.totalPages || page === this.currentPage) {
+      return;
+    }
+
+    this.currentPage = page;
+  }
+
+  goToNextPage(): void {
+    if (this.currentPage >= this.totalPages) {
+      return;
+    }
+
+    this.currentPage += 1;
+  }
+
+  goToLastPage(): void {
+    if (this.totalPages === 0) {
+      return;
+    }
+
+    this.currentPage = this.totalPages;
+  }
+
+  isPaginationNumber(item: number | string): item is number {
+    return typeof item === 'number';
   }
 
   openAddSkOfficialModal(): void {
@@ -101,6 +192,7 @@ export class ManageSkOfficials implements OnInit {
     this.skOfficialManagementService.createSkOfficial(payload).subscribe({
       next: (newSkOfficial) => {
         this.skOfficials = [...this.skOfficials, newSkOfficial].sort((left, right) => left.adminId - right.adminId);
+        this.ensureCurrentPageWithinBounds();
         this.showAddModal = false;
         this.addSkOfficialErrorMessage = null;
         this.isCreatingSkOfficial = false;
@@ -190,6 +282,7 @@ export class ManageSkOfficials implements OnInit {
     this.skOfficialManagementService.deleteSkOfficial(adminId).subscribe({
       next: () => {
         this.skOfficials = this.skOfficials.filter((item) => item.adminId !== adminId);
+        this.ensureCurrentPageWithinBounds();
         this.showDeleteModal = false;
         this.deletingSkOfficial = null;
         this.isDeletingSkOfficial = false;
@@ -263,6 +356,7 @@ export class ManageSkOfficials implements OnInit {
         this.skOfficials = Array.isArray(skOfficials)
           ? [...skOfficials].sort((left, right) => left.adminId - right.adminId)
           : [];
+        this.ensureCurrentPageWithinBounds();
         this.isLoading = false;
       },
       error: () => {
@@ -270,6 +364,24 @@ export class ManageSkOfficials implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  private ensureCurrentPageWithinBounds(): void {
+    const totalPages = this.totalPages;
+
+    if (totalPages === 0) {
+      this.currentPage = 1;
+      return;
+    }
+
+    if (this.currentPage > totalPages) {
+      this.currentPage = totalPages;
+      return;
+    }
+
+    if (this.currentPage < 1) {
+      this.currentPage = 1;
+    }
   }
 
 }

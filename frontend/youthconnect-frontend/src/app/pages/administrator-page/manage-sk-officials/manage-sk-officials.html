@@ -15,6 +15,7 @@
 				name="sk-official-search"
 				type="text"
 				[(ngModel)]="searchTerm"
+				(ngModelChange)="onSearchTermChange()"
 				placeholder="Search by name or email..."
 			/>
 		</label>
@@ -24,47 +25,74 @@
 		<p class="error-message">{{ errorMessage }}</p>
 	}
 
-	<div class="table-shell" [class.loading]="isLoading">
-		<table>
-			<thead>
-				<tr>
-					<th>ID</th>
-					<th>Full Name</th>
-					<th>Email</th>
-					<th>Status</th>
-					<th>Created At</th>
-					<th>Actions</th>
-				</tr>
-			</thead>
+	<div class="table-section">
+		<div class="table-shell" [class.loading]="isLoading">
+			<table>
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Full Name</th>
+						<th>Email</th>
+						<th>Status</th>
+						<th>Created At</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
 
-			<tbody>
-				@for (skOfficial of filteredSkOfficials; track skOfficial.adminId) {
-					<tr>
-						<td>{{ skOfficial.adminId }}</td>
-						<td>{{ getFullName(skOfficial) }}</td>
-						<td>
-							<span class="email-text" [attr.title]="skOfficial.email || null">
-								{{ skOfficial.email }}
-							</span>
-						</td>
-						<td class="status-cell">{{ getStatusLabel(skOfficial.active ?? skOfficial.isActive ?? true) }}</td>
-						<td class="created-at-cell">{{ skOfficial.createdAt | date: 'M/d/yy, h:mm a' }}</td>
-						<td>
-							<div class="action-buttons">
-								<button class="action-button edit" type="button" (click)="editSkOfficial(skOfficial)">Edit</button>
-								<button class="action-button delete" type="button" (click)="openDeleteSkOfficialModal(skOfficial)">Delete</button>
-							</div>
-						</td>
-					</tr>
-				} @empty {
-					<tr>
-						<td class="empty-state" colspan="6">
-							{{ isLoading ? 'Loading SK official accounts...' : 'No SK officials found.' }}
-						</td>
-					</tr>
+				<tbody>
+					@for (skOfficial of paginatedSkOfficials; track skOfficial.adminId) {
+						<tr>
+							<td>{{ skOfficial.adminId }}</td>
+							<td>{{ getFullName(skOfficial) }}</td>
+							<td>
+								<span class="email-text" [attr.title]="skOfficial.email || null">
+									{{ skOfficial.email }}
+								</span>
+							</td>
+							<td class="status-cell">{{ getStatusLabel(skOfficial.active ?? skOfficial.isActive ?? true) }}</td>
+							<td class="created-at-cell">{{ skOfficial.createdAt | date: 'M/d/yy, h:mm a' }}</td>
+							<td>
+								<div class="action-buttons">
+									<button class="action-button edit" type="button" (click)="editSkOfficial(skOfficial)">Edit</button>
+									<button class="action-button delete" type="button" (click)="openDeleteSkOfficialModal(skOfficial)">Delete</button>
+								</div>
+							</td>
+						</tr>
+					} @empty {
+						<tr>
+							<td class="empty-state" colspan="6">
+								{{ isLoading ? 'Loading SK official accounts...' : 'No SK officials found.' }}
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+
+		@if (totalPages > 0) {
+			<div class="pagination-bar" aria-label="SK Officials pagination">
+				<button type="button" class="pagination-button" (click)="goToFirstPage()" [disabled]="currentPage === 1">&lt;&lt;</button>
+				<button type="button" class="pagination-button" (click)="goToPreviousPage()" [disabled]="currentPage === 1">&lt;</button>
+
+				@for (item of paginationItems; track $index) {
+					@if (isPaginationNumber(item)) {
+						<button
+							type="button"
+							class="pagination-button page-number"
+							[class.active]="item === currentPage"
+							(click)="goToPage(item)"
+							[disabled]="item === currentPage">
+							{{ item }}
+						</button>
+					} @else {
+						<span class="pagination-ellipsis">...</span>
+					}
 				}
-			</tbody>
-		</table>
+
+				<button type="button" class="pagination-button" (click)="goToNextPage()" [disabled]="currentPage === totalPages">&gt;</button>
+				<button type="button" class="pagination-button" (click)="goToLastPage()" [disabled]="currentPage === totalPages">&gt;&gt;</button>
+			</div>
+		}
 	</div>
 
 	<app-add-sk-official-feature
