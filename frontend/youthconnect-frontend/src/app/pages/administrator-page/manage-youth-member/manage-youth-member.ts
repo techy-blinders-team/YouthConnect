@@ -290,6 +290,12 @@ export class ManageYouthMember implements OnInit {
   }
 
   private extractUpdateYouthMemberErrorMessage(error: HttpErrorResponse): string {
+    const duplicateFieldMessage = this.extractDuplicateFieldErrorMessage(error);
+
+    if (duplicateFieldMessage) {
+      return duplicateFieldMessage;
+    }
+
     const responseBody = error?.error;
 
     if (typeof responseBody === 'string' && responseBody.trim() !== '') {
@@ -301,6 +307,30 @@ export class ManageYouthMember implements OnInit {
     }
 
     return 'Unable to update youth member right now.';
+  }
+
+  private extractDuplicateFieldErrorMessage(error: HttpErrorResponse): string | null {
+    const responseBody = error?.error;
+    const responseText = typeof responseBody === 'string'
+      ? responseBody
+      : typeof responseBody?.message === 'string'
+        ? responseBody.message
+        : '';
+
+    if (!responseText) {
+      return null;
+    }
+
+    const duplicateFieldMatch = responseText.match(/(?:key|constraint)\s*[\["']?(username|email)[\]"']?/i);
+
+    if (!duplicateFieldMatch) {
+      return null;
+    }
+
+    const fieldName = duplicateFieldMatch[1].toLowerCase();
+    return fieldName === 'username'
+      ? 'Username is already in use.'
+      : 'Email is already in use.';
   }
 
   private extractDeleteYouthMemberErrorMessage(error: HttpErrorResponse): string {
