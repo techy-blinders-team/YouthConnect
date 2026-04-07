@@ -1,6 +1,21 @@
 <section class="backup-restore-page">
 	<h2 class="section-title">Backup & Restore</h2>
 
+	@if (successMessage) {
+		<p class="status-message success">{{ successMessage }}</p>
+	}
+
+	@if (errorMessage) {
+		<p class="status-message error">{{ errorMessage }}</p>
+	}
+
+	<input
+		#restoreFileInput
+		type="file"
+		accept=".sql"
+		class="restore-file-input"
+		(change)="onRestoreFileSelected($event)" />
+
 	<div class="action-grid">
 		<article class="action-card">
 			<header class="card-header">
@@ -17,7 +32,7 @@
 					Create a complete backup of the YouthConnect database. 
                     This will download a .SQL file containing all current data.
 				</p>
-				<button type="button" class="card-action">
+				<button type="button" class="card-action" [disabled]="isBackingUp || isRestoring" (click)="downloadBackup()">
                     Create Backup
                 </button>
 			</div>
@@ -39,7 +54,7 @@
                     Restoring a backup will overwrite all current data
 					in the database. This action cannot be undone.
 				</p>
-				<button type="button" class="restore-card-action">
+				<button type="button" class="restore-card-action" [disabled]="isBackingUp || isRestoring" (click)="openRestoreModal()">
                     Restore Database
                 </button>
 			</div>
@@ -66,3 +81,30 @@
 		</ul>
 	</section>
 </section>
+
+@if (showRestoreModal) {
+	<div class="modal-backdrop" (click)="cancelRestoreModal()">
+		<div class="confirm-modal" (click)="$event.stopPropagation()">
+			<h3>Are you Sure?</h3>
+			<p>
+                <span class="warning-label">Warning:</span> 
+                Restoring a backup will overwrite all current data in the 
+                database. This action cannot be undone.
+            </p>
+			<div class="confirm-actions">
+				<button type="button" 
+                        class="btn btn-yes" 
+                        [disabled]="isRestoring" 
+                        (click)="confirmRestore()">
+                    Yes
+                </button>
+				<button type="button" 
+                        class="btn btn-cancel" 
+                        [disabled]="isRestoring" 
+                        (click)="cancelRestoreModal()">
+                    Cancel
+                </button>
+			</div>
+		</div>
+	</div>
+}

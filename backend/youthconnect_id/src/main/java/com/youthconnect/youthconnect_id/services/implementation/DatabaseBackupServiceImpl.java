@@ -1,11 +1,24 @@
 package com.youthconnect.youthconnect_id.services.implementation;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.support.EncodedResource;
+import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -23,53 +36,60 @@ public class DatabaseBackupServiceImpl implements DatabaseBackupService {
     @Value("${spring.datasource.password}")
     private String dbPassword;
 
+    @Autowired
+    private DataSource dataSource;
+
     @Override
     public byte[] generateBackup() throws Exception {
-        // Extract DB name from URL
-        // e.g. jdbc:mysql://localhost:3306/youthconnectdb
-        String dbName = datasourceUrl.substring(datasourceUrl.lastIndexOf("/") + 1)
-                .split("\\?")[0];
+        String dbName = datasourceUrl.substring(datasourceUrl.lastIndexOf("/") + 1).split("\\?")[0];
+        StringBuilder dump = new StringBuilder(1024 * 128);
 
-        String[] command = {
-            "mysqldump",
-            "-u", dbUsername,
-            "-p" + dbPassword,
-            "--databases", dbName,
-            "--routines",
-            "--triggers",
-            "--single-transaction"
-        };
+        dump.append("-- YouthConnect SQL Backup\n");
+        dump.append("-- Generated at: ").append(LocalDateTime.now()).append("\n");
+        dump.append("-- Database: `").append(dbName).append("`\n\n");
+        dump.append("SET SQL_MODE = \"NO_AUTO_VALUE_ON_ZERO\";\n");
+        dump.append("SET time_zone = \"+00:00\";\n\n");
+        dump.append("START TRANSACTION;\n");
+        dump.append("SET FOREIGN_KEY_CHECKS=0;\n\n");
 
-        ProcessBuilder processBuilder = new ProcessBuilder(command);
-        processBuilder.redirectErrorStream(false);
-        Process process = processBuilder.start();
+        try (Connection connection = dataSource.getConnection(); Statement statement = connection.createStatement()) {
+            List<String> tableNames = getTableNames(connection, dbName);
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int length;
+            for (String tableName : tableNames) {
+                dump.append("-- --------------------------------------------------------\n");
+                dump.append("-- Table structure for table `").append(tableName).append("`\n");
+                dump.append("-- --------------------------------------------------------\n\n");
 
-        try (var inputStream = process.getInputStream()) {
-            while ((length = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, length);
+                String createTableSql = getCreateTableSql(statement, tableName);
+                dump.append("DROP TABLE IF EXISTS `").append(tableName).append("`;\n");
+                dump.append(createTableSql).append(";\n\n");
+
+                appendTableDataDump(statement, tableName, dump);
+                dump.append("\n");
             }
         }
 
-        // Check for errors
-        StringBuilder errorOutput = new StringBuilder();
-        try (BufferedReader errorReader = new BufferedReader(
-                new InputStreamReader(process.getErrorStream()))) {
-            String line;
-            while ((line = errorReader.readLine()) != null) {
-                errorOutput.append(line).append("\n");
-            }
+        dump.append("SET FOREIGN_KEY_CHECKS=1;\n");
+        dump.append("COMMIT;\n");
+
+        return dump.toString().getBytes(StandardCharsets.UTF_8);
+    }
+
+    @Override
+    public void restoreBackup(byte[] sqlBackupData) throws Exception {
+        if (sqlBackupData == null || sqlBackupData.length == 0) {
+            throw new IllegalArgumentException("Backup file is empty.");
         }
 
-        int exitCode = process.waitFor();
-        if (exitCode != 0) {
-            throw new RuntimeException("mysqldump failed: " + errorOutput);
-        }
+        String dbName = datasourceUrl.substring(datasourceUrl.lastIndexOf("/") + 1).split("\\?")[0];
 
-        return outputStream.toByteArray();
+        try (Connection connection = dataSource.getConnection()) {
+            clearExistingTables(connection, dbName);
+            EncodedResource sqlResource = new EncodedResource(new ByteArrayResource(sqlBackupData), StandardCharsets.UTF_8);
+            ScriptUtils.executeSqlScript(connection, sqlResource);
+        } catch (Exception ex) {
+            throw new RuntimeException("Database restore failed: " + ex.getMessage(), ex);
+        }
     }
 
     @Override
@@ -77,5 +97,96 @@ public class DatabaseBackupServiceImpl implements DatabaseBackupService {
         String timestamp = LocalDateTime.now()
                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"));
         return "youthconnectdb_backup_" + timestamp + ".sql";
+    }
+
+    private List<String> getTableNames(Connection connection, String dbName) throws Exception {
+        List<String> tableNames = new ArrayList<>();
+        DatabaseMetaData metaData = connection.getMetaData();
+
+        try (ResultSet resultSet = metaData.getTables(dbName, null, "%", new String[] { "TABLE" })) {
+            while (resultSet.next()) {
+                String tableName = resultSet.getString("TABLE_NAME");
+                if (tableName != null && !tableName.isBlank()) {
+                    tableNames.add(tableName);
+                }
+            }
+        }
+
+        tableNames.sort(String::compareTo);
+        return tableNames;
+    }
+
+    private String getCreateTableSql(Statement statement, String tableName) throws Exception {
+        try (ResultSet resultSet = statement.executeQuery("SHOW CREATE TABLE `" + tableName + "`")) {
+            if (!resultSet.next()) {
+                throw new RuntimeException("Unable to get table definition for " + tableName);
+            }
+            return resultSet.getString(2);
+        }
+    }
+
+    private void appendTableDataDump(Statement statement, String tableName, StringBuilder dump) throws Exception {
+        try (ResultSet resultSet = statement.executeQuery("SELECT * FROM `" + tableName + "`")) {
+            ResultSetMetaData metadata = resultSet.getMetaData();
+            int columnCount = metadata.getColumnCount();
+            boolean hasRows = false;
+
+            while (resultSet.next()) {
+                if (!hasRows) {
+                    dump.append("-- Dumping data for table `").append(tableName).append("`\n");
+                    dump.append("INSERT INTO `").append(tableName).append("` VALUES\n");
+                    hasRows = true;
+                } else {
+                    dump.append(",\n");
+                }
+
+                dump.append("(");
+                for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
+                    if (columnIndex > 1) {
+                        dump.append(", ");
+                    }
+                    Object value = resultSet.getObject(columnIndex);
+                    dump.append(toSqlLiteral(value));
+                }
+                dump.append(")");
+            }
+
+            if (hasRows) {
+                dump.append(";\n");
+            }
+        }
+    }
+
+    private String toSqlLiteral(Object value) {
+        if (value == null) {
+            return "NULL";
+        }
+
+        if (value instanceof Number) {
+            return value.toString();
+        }
+
+        if (value instanceof Boolean) {
+            return ((Boolean) value) ? "1" : "0";
+        }
+
+        String text = value.toString()
+                .replace("\\", "\\\\")
+                .replace("'", "''")
+                .replace("\r", "\\r")
+                .replace("\n", "\\n");
+        return "'" + text + "'";
+    }
+
+    private void clearExistingTables(Connection connection, String dbName) throws Exception {
+        List<String> existingTables = getTableNames(connection, dbName);
+
+        try (Statement statement = connection.createStatement()) {
+            statement.execute("SET FOREIGN_KEY_CHECKS=0");
+            for (String tableName : existingTables) {
+                statement.execute("DROP TABLE IF EXISTS `" + tableName + "`");
+            }
+            statement.execute("SET FOREIGN_KEY_CHECKS=1");
+        }
     }
 }

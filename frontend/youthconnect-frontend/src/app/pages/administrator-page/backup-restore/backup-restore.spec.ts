@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
 
 import { BackupRestore } from './backup-restore';
 
@@ -8,7 +9,8 @@ describe('BackupRestore', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BackupRestore]
+      imports: [BackupRestore],
+      providers: [provideHttpClient()]
     })
     .compileComponents();
 
