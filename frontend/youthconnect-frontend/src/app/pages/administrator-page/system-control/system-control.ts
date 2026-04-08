@@ -14,7 +14,7 @@ interface SystemControlStatusResponse {
   styleUrl: './system-control.scss',
 })
 export class SystemControl {
-  private http = inject(HttpClient);
+  private http = inject(HttpClient, { optional: true });
 
   databaseConnected = false;
   apiServerRunning = false;
@@ -61,6 +61,10 @@ export class SystemControl {
   }
 
   private loadSystemStatus(): void {
+    if (!this.http) {
+      return;
+    }
+
     this.http.get<SystemControlStatusResponse>('/api/administrator/system-control/status').subscribe({
       next: (response) => {
         this.databaseConnected = !!response.databaseConnected;
