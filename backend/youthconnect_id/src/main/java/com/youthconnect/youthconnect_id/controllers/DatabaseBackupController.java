@@ -26,6 +26,7 @@ public class DatabaseBackupController {
         try {
             byte[] backupData = databaseBackupService.generateBackup();
             String filename = databaseBackupService.generateFilename();
+            databaseBackupService.recordBackupCreated();
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")

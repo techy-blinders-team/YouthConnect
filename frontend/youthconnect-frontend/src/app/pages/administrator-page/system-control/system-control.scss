@@ -1,0 +1,140 @@
+.system-control-page {
+	height: 100%;
+	overflow-y: auto;
+	background: #e0e0e0;
+	padding: 0.9rem 1rem;
+	font-family: 'Inter', Arial, sans-serif;
+	color: #121212;
+}
+
+.page-title {
+	margin: 0 0 0.6rem;
+	font-size: 2rem;
+	line-height: 1.1;
+	font-weight: 700;
+}
+
+.panel {
+	background: #efefef;
+	border-radius: 10px;
+	border-left: 4px solid #f0c400;
+	padding: 0.65rem 0.75rem 0.75rem;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+}
+
+.status-panel {
+	margin-bottom: 0.55rem;
+	min-height: 300px;
+}
+
+.panel-title {
+	margin: 0;
+	font-size: 1.05rem;
+	font-weight: 700;
+	color: #1f1f1f;
+}
+
+.status-grid {
+	margin-top: 2rem;
+	display: grid;
+	grid-template-columns: repeat(2, minmax(230px, 1fr));
+	column-gap: 2.4rem;
+	row-gap: 5rem;
+	max-width: 660px;
+}
+
+.status-item {
+	min-width: 0;
+}
+
+.status-label {
+	margin: 0 0 0.28rem;
+	font-size: 0.85rem;
+	font-weight: 700;
+	color: #1f1f1f;
+}
+
+.status-pill,
+.backup-pill {
+	height: 30px;
+	border-radius: 5px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 0.85rem;
+	font-weight: 700;
+}
+
+.status-pill {
+	max-width: 200px;
+    min-height: 40px;
+	background: #93e7ab;
+	color: #0d0d0d;
+	text-transform: none;
+}
+
+.status-pill--up {
+	background: #93e7ab;
+}
+
+.status-pill--down {
+	background: #ef9a9a;
+}
+
+.backup-pill {
+	max-width: 270px;
+	min-height: 40px;
+	justify-content: flex-start;
+	padding: 0 1rem;
+	background: #f7f7f7;
+	border: 1px solid #c8c8c8;
+	border-left: 3px solid #0d56d0;
+	color: #222222;
+	font-weight: 600;
+}
+
+.info-title {
+	font-size: 1.02rem;
+}
+
+.info-panel {
+	min-height: 300px;
+}
+
+.info-list {
+	margin-top: 0.85rem;
+	display: grid;
+	gap: 2.5rem;
+
+	p {
+		margin: 0;
+		font-size: 0.95rem;
+		color: #1e1e1e;
+	}
+}
+
+.info-label {
+	color: #1745b2;
+	font-weight: 500;
+}
+
+@media (max-width: 700px) {
+	.system-control-page {
+		padding: 0.8rem;
+	}
+
+	.page-title {
+		font-size: 1.6rem;
+	}
+
+	.status-grid {
+		grid-template-columns: 1fr;
+		max-width: none;
+		column-gap: 0;
+	}
+
+	.status-pill,
+	.backup-pill {
+		max-width: 100%;
+	}
+}

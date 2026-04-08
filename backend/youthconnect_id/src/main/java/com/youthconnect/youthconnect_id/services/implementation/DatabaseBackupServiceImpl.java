@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.sql.DataSource;
 
@@ -22,6 +23,8 @@ import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.youthconnect.youthconnect_id.models.BackupOperationLog;
+import com.youthconnect.youthconnect_id.repositories.BackupOperationLogRepo;
 import com.youthconnect.youthconnect_id.services.DatabaseBackupService;
 
 @Service
@@ -38,6 +41,9 @@ public class DatabaseBackupServiceImpl implements DatabaseBackupService {
 
     @Autowired
     private DataSource dataSource;
+
+    @Autowired
+    private BackupOperationLogRepo backupOperationLogRepo;
 
     @Override
     public byte[] generateBackup() throws Exception {
@@ -97,6 +103,31 @@ public class DatabaseBackupServiceImpl implements DatabaseBackupService {
         String timestamp = LocalDateTime.now()
                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"));
         return "youthconnectdb_backup_" + timestamp + ".sql";
+    }
+
+    @Override
+    public void recordBackupCreated() {
+        BackupOperationLog operationLog = new BackupOperationLog();
+        operationLog.setAction("CREATE");
+        operationLog.setExecutedAt(LocalDateTime.now());
+        backupOperationLogRepo.save(operationLog);
+    }
+
+    @Override
+    public LocalDateTime getLastBackupCreatedAt() {
+        Optional<BackupOperationLog> latestBackupOperation =
+                backupOperationLogRepo.findTopByActionOrderByExecutedAtDesc("CREATE");
+
+        return latestBackupOperation.map(BackupOperationLog::getExecutedAt).orElse(null);
+    }
+
+    @Override
+    public boolean isDatabaseConnected() {
+        try (Connection connection = dataSource.getConnection()) {
+            return connection.isValid(2);
+        } catch (Exception ex) {
+            return false;
+        }
     }
 
     private List<String> getTableNames(Connection connection, String dbName) throws Exception {
