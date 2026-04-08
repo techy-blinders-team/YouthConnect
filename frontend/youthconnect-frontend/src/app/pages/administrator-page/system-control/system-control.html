@@ -1,1 +1,47 @@
-<p>system-control works!</p>
+<section class="system-control-page">
+	<h1 class="page-title">System Control</h1>
+
+	<section class="panel status-panel" aria-label="System Status">
+		<h2 class="panel-title">System Status</h2>
+
+		<div class="status-grid">
+			<div class="status-item">
+				<p class="status-label">Database</p>
+				<div class="status-pill" [class.status-pill--up]="databaseConnected" [class.status-pill--down]="!databaseConnected">
+					{{ databaseStatusLabel }}
+				</div>
+			</div>
+
+			<div class="status-item">
+				<p class="status-label">API Server</p>
+				<div class="status-pill" [class.status-pill--up]="apiServerRunning" [class.status-pill--down]="!apiServerRunning">
+					{{ apiStatusLabel }}
+				</div>
+			</div>
+
+			<div class="status-item">
+				<p class="status-label">Frontend</p>
+				<div class="status-pill" [class.status-pill--up]="frontendRunning" [class.status-pill--down]="!frontendRunning">
+					{{ frontendStatusLabel }}
+				</div>
+			</div>
+
+			<div class="status-item">
+				<p class="status-label">Last Backup</p>
+				<div class="backup-pill">{{ lastBackupLabel }}</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="panel info-panel" aria-label="System Information">
+		<h2 class="panel-title info-title">&#9432; System Information</h2>
+
+		<div class="info-list">
+			<p><span class="info-label">Application:</span> YouthConnect System</p>
+			<p><span class="info-label">Version:</span> 1.0.0</p>
+			<p><span class="info-label">Database:</span> MySQL 10.4.32-MariaDB</p>
+			<p><span class="info-label">Backend:</span> Spring Boot 3.x</p>
+			<p><span class="info-label">Frontend:</span> Angular 17+</p>
+		</div>
+	</section>
+</section>
