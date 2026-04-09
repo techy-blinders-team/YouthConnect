@@ -17,6 +17,14 @@ html, body, :host, .dashboard-container {
   box-sizing: border-box;
 }
 
+.dashboard-root {
+  display: flex;
+  height: 100dvh;
+  min-height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+}
+
 /* Header Section */
 .header-section {
   display: flex;
