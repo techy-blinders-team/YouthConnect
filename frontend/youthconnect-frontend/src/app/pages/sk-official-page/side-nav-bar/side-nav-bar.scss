@@ -2,12 +2,14 @@
 	min-width: 300px;
 	max-width: 600px;
 	height: 100vh;
-	background: #fff;
+	background: #0038A7;
 	box-shadow: 2px 0 8px rgba(0,0,0,0.04);
 	padding: 32px 0;
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
+	color: #fff;
+	font-weight: 500;
 }
 
 .side-nav-bar ul {
@@ -25,14 +27,15 @@
 	display: block;
 	width: 100%;
 	padding: 16px 32px;
-	color: #222;
+	color: #fff;
 	text-decoration: none;
 	font-size: 18px;
 	border-radius: 0 24px 24px 0;
 	transition: background 0.2s, color 0.2s;
+	font-weight: 500;
 }
 
 .side-nav-bar a:hover {
-	background: #f2f2f2;
-	color: #0052cc;
+	background: #0052cc;
+	color: #fff;
 }
