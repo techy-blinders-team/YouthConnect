@@ -27,7 +27,7 @@ module.exports = function (config) {
             dir: require('path').join(__dirname, './coverage/youthconnect-frontend'),
             subdir: '.',
             reporters: [
-                { type: 'html' },
+                { type: 'lcovonly' },
                 { type: 'text-summary' }
             ]
         },
