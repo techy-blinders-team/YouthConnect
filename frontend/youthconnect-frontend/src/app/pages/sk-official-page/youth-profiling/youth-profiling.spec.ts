@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ManageProfiling } from './manage-profiling';
+import { YouthProfiling } from './youth-profiling';
 
-describe('ManageProfiling', () => {
-  let component: ManageProfiling;
-  let fixture: ComponentFixture<ManageProfiling>;
+describe('YouthProfiling', () => {
+  let component: YouthProfiling;
+  let fixture: ComponentFixture<YouthProfiling>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ManageProfiling]
+      imports: [YouthProfiling]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ManageProfiling);
+    fixture = TestBed.createComponent(YouthProfiling);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
 .sidebar-icon {
 	width: 22px;
 	height: 22px;
@@ -11,7 +13,7 @@
 	align-items: center;
 	gap: 16px;
 	width: 100%;
-	padding: 10px 32px 32px 10px;
+	padding: 10px 30px 32px 10px;
 }
 
 .logo-img {
@@ -124,4 +126,8 @@
 
 .logout-text:hover {
 	opacity: 0.8;
+}
+
+.side-nav-bar, .side-nav-bar * {
+	font-family: 'Poppins', Arial, Helvetica, sans-serif !important;
 }
