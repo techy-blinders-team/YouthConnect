@@ -5,13 +5,36 @@
 	flex-shrink: 0;
 }
 
+/* Sidebar Header */
+.sidebar-header {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	width: 100%;
+	padding: 10px 32px 32px 10px;
+}
+
+.logo-img {
+	width: 54px;
+	height: 54px;
+    margin-top: 10px;
+}
+
+.logo-text {
+	font-size: 24px;
+	font-weight: 600;
+	color: #fff;
+	margin: 0;
+	padding: 0;
+}
+
 .side-nav-bar {
 	min-width: 280px;
 	max-width: 600px;
 	height: 100vh;
 	background: #0038A7;
 	box-shadow: 2px 0 8px rgba(0,0,0,0.04);
-	padding: 32px 0 32px 0;
+	padding: 0 0 32px 0;
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
@@ -53,14 +76,13 @@
 	color: #fff;
 }
 
-/* Logout Section */
 .logout-section {
 	margin-top: auto;
 	width: 100%;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	padding-bottom: 24px;
+	padding: 0;
 	position: relative;
 }
 
@@ -70,7 +92,6 @@
 	width: 80%;
 	height: 2px;
 	background: rgba(255,255,255,0.3);
-	margin: 0 0 0px 0;
 }
 
 .logout-btn {
@@ -78,15 +99,15 @@
 	text-decoration: none;
 	font-size: 20px;
 	font-weight: 500;
-	padding: 0;
-	width: auto;
+	padding: 0 40px;
+	width: 100%;
 	border: none;
 	background: none !important;
 	outline: none;
 	cursor: pointer;
-	display: inline-block;
-	justify-content: center;
-	align-items: center;
+	display: block;
+	text-align: center;
+	box-sizing: border-box;
 }
 
 .logout-btn:hover {
@@ -97,7 +118,7 @@
 	display: block;
 	width: 100%;
 	text-align: center;
-    padding-bottom: 20px;
+    margin-bottom: 10px;
 	transition: opacity 0.2s;
 }
 
