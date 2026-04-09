@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SkOfficialDashboard } from './sk-official-dashboard';
+import { Dashboard } from './dashboard';
 
-describe('SkOfficialDashboard', () => {
-  let component: SkOfficialDashboard;
-  let fixture: ComponentFixture<SkOfficialDashboard>;
+describe('Dashboard', () => {
+  let component: Dashboard;
+  let fixture: ComponentFixture<Dashboard>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SkOfficialDashboard]
+      imports: [Dashboard]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(SkOfficialDashboard);
+    fixture = TestBed.createComponent(Dashboard);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

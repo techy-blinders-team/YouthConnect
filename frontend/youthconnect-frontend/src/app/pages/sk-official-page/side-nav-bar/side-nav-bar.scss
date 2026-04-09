@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+.sidebar-icon {
+	width: 22px;
+	height: 22px;
+	filter: brightness(0) invert(1);
+	flex-shrink: 0;
+}
+
+/* Sidebar Header */
+.sidebar-header {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	width: 100%;
+	padding: 10px 30px 32px 10px;
+}
+
+.logo-img {
+	width: 54px;
+	height: 54px;
+    margin-top: 10px;
+}
+
+.logo-text {
+	font-size: 24px;
+	font-weight: 600;
+	color: #fff;
+	margin: 0;
+	padding: 0;
+}
+
+.side-nav-bar {
+	min-width: 280px;
+	max-width: 600px;
+	height: 100vh;
+	background: #0038A7;
+	box-shadow: 2px 0 8px rgba(0,0,0,0.04);
+	padding: 0 0 32px 0;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	color: #fff;
+	font-weight: 400;
+}
+
+.side-nav-bar ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	width: 100%;
+}
+
+.side-nav-bar li {
+	width: 100%;
+	margin-bottom: 8px;
+}
+.side-nav-bar li:last-child {
+	margin-bottom: 0;
+}
+
+.side-nav-bar a {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	padding: 14px 40px;
+	color: #fff;
+	text-decoration: none;
+	font-size: 18px;
+	border-radius: 0 24px 24px 0;
+	transition: background 0.2s, color 0.2s;
+	font-weight: 400;
+	gap: 20px;
+}
+
+.side-nav-bar a:hover {
+	background: #003585;
+	color: #fff;
+}
+
+.logout-section {
+	margin-top: auto;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 0;
+	position: relative;
+}
+
+.logout-section::before {
+	content: "";
+	display: block;
+	width: 80%;
+	height: 2px;
+	background: rgba(255,255,255,0.3);
+}
+
+.logout-btn {
+	color: #fff;
+	text-decoration: none;
+	font-size: 20px;
+	font-weight: 500;
+	padding: 0 40px;
+	width: 100%;
+	border: none;
+	background: none !important;
+	outline: none;
+	cursor: pointer;
+	display: block;
+	text-align: center;
+	box-sizing: border-box;
+}
+
+.logout-btn:hover {
+	background: none !important;
+}
+
+.logout-text {
+	display: block;
+	width: 100%;
+	text-align: center;
+    margin-bottom: 10px;
+	transition: opacity 0.2s;
+}
+
+.logout-text:hover {
+	opacity: 0.8;
+}
+
+.side-nav-bar, .side-nav-bar * {
+	font-family: 'Poppins', Arial, Helvetica, sans-serif !important;
+}

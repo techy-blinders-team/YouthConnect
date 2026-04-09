@@ -53,10 +53,9 @@ jobs:
       if: always()
       with:
         name: backend-test-results
-        path: |
-          backend/youthconnect_id/target/surefire-reports/
-          backend/youthconnect_id/target/site/
+        path: backend/youthconnect_id/target/surefire-reports/
         retention-days: 7
+      continue-on-error: true
 
     - name: Publish test summary
       uses: dorny/test-reporter@v1
@@ -99,6 +98,7 @@ jobs:
         name: backend-jar
         path: backend/youthconnect_id/target/*.jar
         retention-days: 7
+      continue-on-error: true
 
     - name: Display build info
       run: |

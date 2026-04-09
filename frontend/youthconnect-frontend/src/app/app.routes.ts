@@ -111,44 +111,34 @@ export const routes: Routes = [
     // SK Official Routes
     {
         path: 'sk-official',
-        canActivate: [authGuard, roleGuard],
+        // canActivate: [authGuard, roleGuard],
         data: { roles: ['sk-official'] },
+        loadComponent: () => import('./pages/sk-official-page/sk-official-layout/sk-official-layout').then(m => m.SkOfficialLayout),
         children: [
             {
                 path: 'dashboard',
                 loadComponent: () =>
-                    import('./pages/sk-official-page/sk-official-dashboard/sk-official-dashboard').then(move => move.SkOfficialDashboard),
+                    import('./pages/sk-official-page/dashboard/dashboard').then(move => move.Dashboard),
                 title: 'SK Official Dashboard - YouthConnect'
             },
-
+            {
+                path: 'events',
+                loadComponent: () =>
+                    import('./pages/sk-official-page/events/events.component').then(m => m.EventsComponent),
+                title: 'SK Official Events - YouthConnect'
+            },
             {
                 path: 'concerns',
                 loadComponent: () =>
                     import('./pages/sk-official-page/concerns/concerns').then(move => move.Concerns),
                 title: 'Concerns - YouthConnect'
             },
-
             {
-                path: 'create-event',
+                path: 'youth-profiling',
                 loadComponent: () =>
-                    import('./pages/sk-official-page/create-event/create-event').then(move => move.CreateEvent),
-                title: 'Create Event - YouthConnect'
-            },
-
-            {
-                path: 'manage-event',
-                loadComponent: () =>
-                    import('./pages/sk-official-page/manage-event/manage-event').then(move => move.ManageEvent),
-                title: 'Manage Events - YouthConnect'
-            },
-
-            {
-                path: 'profiling',
-                loadComponent: () =>
-                    import('./pages/sk-official-page/manage-profiling/manage-profiling').then(move => move.ManageProfiling),
+                    import('./pages/sk-official-page/youth-profiling/youth-profiling').then(move => move.YouthProfiling),
                 title: 'Youth Profiling - YouthConnect'
             },
-
             {
                 path: 'task-tracker',
                 loadComponent: () =>

@@ -57,8 +57,9 @@ jobs:
       if: always()
       with:
         name: frontend-test-results
-        path: frontend/youthconnect-frontend/coverage/
+        path: frontend/youthconnect-frontend/coverage/lcov.info
         retention-days: 7
+      continue-on-error: true
 
   build:
     name: Build Application
@@ -92,6 +93,7 @@ jobs:
         name: frontend-dist
         path: frontend/youthconnect-frontend/dist/
         retention-days: 7
+      continue-on-error: true
 
     - name: Check bundle size
       run: |
