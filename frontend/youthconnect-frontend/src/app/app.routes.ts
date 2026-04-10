@@ -100,7 +100,7 @@ export const routes: Routes = [
             {
                 path: 'notifications',
                 loadComponent: () =>
-                    import('./pages/youth-user-page/notification/notification').then(move => move.Notification),
+                    import('./pages/youth-user-page/notification/notification').then(move => move.NotificationPage),
                 title: 'Notifications - YouthConnect'
             },
             {

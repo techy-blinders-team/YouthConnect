@@ -1,1 +1,35 @@
-<p>notification works!</p>
+<div class="notification-container">
+    <div class="notification-content">
+        <div class="notification-header">
+            <div class="header-text">
+                <h1>Notification</h1>
+                <p class="subtitle">Discover and explore all events created by administrators</p>
+            </div>
+            <div class="filter-tabs">
+                <button class="filter-tab" [class.active]="activeFilter === 'all'" (click)="setFilter('all')">
+                    All
+                </button>
+                <button class="filter-tab" [class.active]="activeFilter === 'unread'" (click)="setFilter('unread')">
+                    Unread
+                </button>
+            </div>
+        </div>
+
+        <div class="notifications-list">
+            <div class="notification-card" *ngFor="let notification of filteredNotifications"
+                [ngClass]="'notification-' + notification.color" (click)="markAsRead(notification)">
+                <div class="notification-info">
+                    <h3>{{ notification.title }}</h3>
+                    <p>{{ notification.message }}</p>
+                </div>
+                <div class="notification-status" *ngIf="!notification.isRead">
+                    <span class="unread-badge"></span>
+                </div>
+            </div>
+
+            <div class="empty-state" *ngIf="filteredNotifications.length === 0">
+                <p>No {{ activeFilter === 'unread' ? 'unread' : '' }} notifications</p>
+            </div>
+        </div>
+    </div>
+</div>
