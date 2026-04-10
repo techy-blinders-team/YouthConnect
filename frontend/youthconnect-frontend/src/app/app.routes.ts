@@ -94,7 +94,7 @@ export const routes: Routes = [
             {
                 path: 'events',
                 loadComponent: () =>
-                    import('./pages/youth-user-page/events/events').then(move => move.Events),
+                    import('./pages/youth-user-page/event/event').then(move => move.EventPage),
                 title: 'Events - YouthConnect'
             },
             {
