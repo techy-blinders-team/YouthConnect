@@ -20,7 +20,7 @@ export interface DashboardStatSummary {
   providedIn: 'root'
 })
 export class AdministratorDashboardService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   private countByStatus(items: StatusItem[], completedStatuses: string[]): DashboardStatSummary {
     const normalizedCompletedStatuses = completedStatuses.map((value) => value.toUpperCase());
