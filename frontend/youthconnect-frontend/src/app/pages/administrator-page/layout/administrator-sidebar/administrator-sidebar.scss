@@ -104,7 +104,8 @@
 	flex-shrink: 0;
 }
 
-.side-menu li:hover {
+.side-menu li:hover,
+.side-menu li.active {
 	background: #0d3692;
 	color: #fff;
 }
