@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { YouthLayout } from './youth-layout';
 import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
 
 describe('YouthLayout', () => {
     let component: YouthLayout;
@@ -9,7 +10,7 @@ describe('YouthLayout', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [YouthLayout],
-            providers: [provideRouter([])]
+            providers: [provideRouter([]), provideHttpClient()]
         })
             .compileComponents();
 
