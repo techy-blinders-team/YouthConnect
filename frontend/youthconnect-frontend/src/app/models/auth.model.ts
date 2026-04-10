@@ -3,6 +3,7 @@ import {
   WorkStatus, YouthClassificationType,
   EducationBackground, DocumentType
 } from './enums';
+import { UserRole } from './UserRole';
 
 export interface DocumentUpload {
   documentType: DocumentType;
@@ -29,7 +30,7 @@ export interface RegistrationRequest {
   pastVoter: boolean;
   numAttended: number;
   nonAttendedReason?: string;
-  documents: DocumentUpload[];
+  // documents: DocumentUpload[];
 }
 
 export interface RegistrationResponse {
@@ -38,6 +39,8 @@ export interface RegistrationResponse {
   userId?: number;
   youthId?: number;
   email?: string;
+  token?: string;
+  roleId?: number;
 }
 
 export interface LoginRequest {

@@ -33,7 +33,7 @@ public class RegistrationRequest {
     private int numAttended;
     private String nonAttendedReason;
 
-    private List<DocumentUpload> documents;
+    // private List<DocumentUpload> documents;
 
     public static class DocumentUpload {
         private String documentType;
@@ -212,11 +212,11 @@ public class RegistrationRequest {
         this.nonAttendedReason = nonAttendedReason;
     }
 
-    public List<DocumentUpload> getDocuments() {
-        return documents;
-    }
+    // public List<DocumentUpload> getDocuments() {
+    //     return documents;
+    // }
 
-    public void setDocuments(List<DocumentUpload> documents) {
-        this.documents = documents;
-    }
+    // public void setDocuments(List<DocumentUpload> documents) {
+    //     this.documents = documents;
+    // }
 }
