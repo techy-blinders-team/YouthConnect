@@ -13,14 +13,14 @@ import com.youthconnect.youthconnect_id.dto.LoginRequest;
 import com.youthconnect.youthconnect_id.dto.LoginResponse;
 import com.youthconnect.youthconnect_id.dto.RegistrationRequest;
 import com.youthconnect.youthconnect_id.dto.RegistrationResponse;
-import com.youthconnect.youthconnect_id.enums.DocumentType;
+// import com.youthconnect.youthconnect_id.enums.DocumentType;
 import com.youthconnect.youthconnect_id.models.User;
 import com.youthconnect.youthconnect_id.models.YouthClassification;
-import com.youthconnect.youthconnect_id.models.YouthDocuments;
+// import com.youthconnect.youthconnect_id.models.YouthDocuments;
 import com.youthconnect.youthconnect_id.models.YouthProfile;
 import com.youthconnect.youthconnect_id.repositories.UserRepo;
 import com.youthconnect.youthconnect_id.repositories.YouthClassificationRepo;
-import com.youthconnect.youthconnect_id.repositories.YouthDocumentsRepo;
+// import com.youthconnect.youthconnect_id.repositories.YouthDocumentsRepo;
 import com.youthconnect.youthconnect_id.repositories.YouthProfileRepo;
 import com.youthconnect.youthconnect_id.security.JwtUtil;
 import com.youthconnect.youthconnect_id.services.UserService;
@@ -37,8 +37,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private YouthClassificationRepo youthClassificationRepo;
 
-    @Autowired
-    private YouthDocumentsRepo youthDocumentsRepo;
+    // @Autowired
+    // private YouthDocumentsRepo youthDocumentsRepo;
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
@@ -58,9 +58,9 @@ public class UserServiceImpl implements UserService {
             return new RegistrationResponse(false, "Youth classification, education background, and work status are required");
         }
 
-        if (request.getDocuments() == null || request.getDocuments().isEmpty()) {
-            return new RegistrationResponse(false, "At least one document is required");
-        }
+        // if (request.getDocuments() == null || request.getDocuments().isEmpty()) {
+        //     return new RegistrationResponse(false, "At least one document is required");
+        // }
 
         YouthProfile youthProfile = new YouthProfile();
         youthProfile.setFirstName(request.getFirstName());
@@ -96,15 +96,15 @@ public class UserServiceImpl implements UserService {
         youthClassificationRepo.save(classification);
 
         // Create YouthDocuments
-        for (RegistrationRequest.DocumentUpload doc : request.getDocuments()) {
-            YouthDocuments document = new YouthDocuments();
-            document.setYouthId(youthId);
-            document.setDocumentType(DocumentType.fromValue(doc.getDocumentType()));
-            document.setFilePath(doc.getFilePath());
-            document.setUploadedAt(LocalDateTime.now());
+        // for (RegistrationRequest.DocumentUpload doc : request.getDocuments()) {
+        //     YouthDocuments document = new YouthDocuments();
+        //     document.setYouthId(youthId);
+        //     document.setDocumentType(DocumentType.fromValue(doc.getDocumentType()));
+        //     document.setFilePath(doc.getFilePath());
+        //     document.setUploadedAt(LocalDateTime.now());
             
-            youthDocumentsRepo.save(document);
-        }
+        //     youthDocumentsRepo.save(document);
+        // }
 
         // Create User
         User user = new User();

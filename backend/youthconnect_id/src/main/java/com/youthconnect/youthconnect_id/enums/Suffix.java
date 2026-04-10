@@ -13,11 +13,17 @@ public enum Suffix {
 
     @JsonCreator
     public static Suffix fromValue(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+
         for (Suffix suffix : Suffix.values()) {
             if (suffix.name().equalsIgnoreCase(value)) {
                 return suffix;
             }
         }
-        throw new IllegalArgumentException("Unknown suffix: " + value);
+
+        // ✅ Return null instead of throwing for unknown values
+        return null;
     }
 }

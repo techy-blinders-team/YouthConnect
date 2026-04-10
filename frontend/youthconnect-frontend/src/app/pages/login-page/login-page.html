@@ -6,7 +6,7 @@
                 @if(emailControl?.errors?.['required']) {
                     <span>Invalid Email format</span>
                 }@else if (emailControl?.errors?.['maxlength']) {
-                    <span>User ID can only contain up to 10 digits</span>
+                    <span>Invalid Email Format</span>
             }
         }
         <input formControlName="password" type="password">

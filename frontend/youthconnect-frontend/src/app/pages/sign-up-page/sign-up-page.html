@@ -1,5 +1,5 @@
 <div class="registration-form">
-  <form [formGroup]="registrationForm" (ngSubmit)="registrationValidationForm()">
+  <form [formGroup]="registrationForm" (ngSubmit)="register()">
 
     <!-- Step 1: Youth Profile -->
     @if (currentStep === 1) {
@@ -28,6 +28,13 @@
           <span>Last name is required</span>
         } @else if (lastNameControl?.errors?.['maxlength']) {
           <span>Last name can only contain up to 50 characters</span>
+        }
+      }
+
+      <input formControlName="suffix" placeholder="Suffix (Optional)" />
+      @if (suffixControl?.touched) {
+        @if (suffixControl?.errors?.['maxlength']) {
+          <span>Suffix can only contain up to 50 characters</span>
         }
       }
 
@@ -91,17 +98,37 @@
     @if (currentStep === 2) {
 
       <select formControlName="youthClassification">
-        <option value="">Select Youth Classification</option>
-        <option value="inSchoolYouth">In School</option>
-        <option value="outOfSchoolYouth">Out of School</option>
-        <option value="workingYouth">Working Youth</option>
-        <option value="personWithDisability">Person with Disability (PWD)</option>
-        <option value="childrenInConflict">Children in Conflict</option>
-        <option value="indigenousPeople">Indigenous People</option>
+        <option value="" disabled selected>Select Youth Classification</option>
+        <option value="IN_SCHOOL_YOUTH">In School</option>
+        <option value="OUT_OF_SCHOOL_YOUTH">Out of School</option>
+        <option value="WORKING_YOUTH">Working Youth</option>
+        <option value="PERSON_WITH_DISABILITY">Person with Disability (PWD)</option>
+        <option value="CHILDREN_IN_CONFLICT">Children in Conflict</option>
+        <option value="INDIGENOUS_PEOPLE">Indigenous People</option>
       </select>
       @if (youthClassificationControl?.touched) {
         @if (youthClassificationControl?.errors?.['required']) {
           <span>Youth classification is required</span>
+        }
+      }
+
+      <!-- Education Background Field (ADDED) -->
+    <select formControlName="educationBackground">
+      <option value="" disabled selected>Select Education Background</option>
+      <option value="ELEMENTARY_LEVEL">Elementary Level</option>
+      <option value="ELEMENTARY_GRADUATE">Elementary Graduate</option>
+      <option value="HIGH_SCHOOL_GRADUATE">High School Graduate</option>
+      <option value="VOCATIONAL_GRAD">Vocational Graduate</option>
+      <option value="COLLEGE_LEVEL">College Level</option>
+      <option value="COLLEGE_GRADUATE">College Graduate</option>
+      <option value="MASTERS_LEVEL">Master's Level</option>
+      <option value="MASTERS_GRADUATE">Master's Graduate</option>
+      <option value="DOCTOR_LEVEL">Doctoral Level</option>
+      <option value="DOCTOR_GRADUATE">Doctoral Graduate</option>
+    </select>
+      @if (educationBackgroundControl?.touched) {
+        @if (educationBackgroundControl?.errors?.['required']) {
+          <span>Education background is required</span>
         }
       }
 
@@ -181,8 +208,17 @@
           <span>Passwords do not match</span>
         }
       }
+      <!-- Error and Success Messages -->
+      @if (errorMessage) {
+        <div class="error-message">{{ errorMessage }}</div>
+      }
+      @if (successMessage) {
+        <div class="success-message">{{ successMessage }}</div>
+      }
 
-      <button type="submit">Register</button>
+      <button type="submit" [disabled]="isLoading">
+        {{ isLoading ? 'Registering...' : 'Register' }}
+      </button>
       <button type="button" (click)="prevStep()">Previous</button>
     }
 

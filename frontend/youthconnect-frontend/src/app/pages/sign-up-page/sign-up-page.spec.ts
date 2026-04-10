@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SignUpPage } from './sign-up-page';
+import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
 
 describe('SignUpPage', () => {
   let component: SignUpPage;
@@ -8,7 +10,8 @@ describe('SignUpPage', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SignUpPage]
+      imports: [SignUpPage],
+      providers:[provideRouter([]), provideHttpClient()]
     })
     .compileComponents();
 

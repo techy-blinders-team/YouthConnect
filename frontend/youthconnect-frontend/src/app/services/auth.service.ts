@@ -1,9 +1,9 @@
 import { inject, Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { UserRole } from "../models/UserRole";
-import { LoginRequest, LoginResponse } from "../models/auth.model";
-import { BehaviorSubject, map, Observable } from "rxjs";
-import { HttpClient } from "@angular/common/http";
+import { LoginRequest, LoginResponse, RegistrationRequest, RegistrationResponse } from "../models/auth.model";
+import { BehaviorSubject, map, Observable, catchError, throwError } from "rxjs";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 
 @Injectable({
     providedIn: 'root'
@@ -40,9 +40,17 @@ export class AuthService {
         return (localStorage.getItem(this.ROLE_KEY) as UserRole) ?? null;
     }
 
-    isYouth(): boolean { return this.getUserRole() === 'youth'; }
-    isSkOfficial(): boolean { return this.getUserRole() === 'sk-official'; }
-    isAdmin(): boolean { return this.getUserRole() === 'admin'; }
+    isYouth(): boolean {
+        return this.getUserRole() === 'youth';
+    }
+
+    isSkOfficial(): boolean {
+        return this.getUserRole() === 'sk-official';
+    }
+
+    isAdmin(): boolean {
+        return this.getUserRole() === 'admin';
+    }
 
     login(request: LoginRequest): Observable<LoginResponse> {
         return this.http.post<LoginResponse>(`${this.apiUrl}/login`, request).pipe(
@@ -57,6 +65,32 @@ export class AuthService {
                     this.currentUserSubject.next(res);
                 }
                 return res;
+            }),
+            catchError(error => {
+                console.error('Login error:', error);
+                return throwError(() => error);
+            })
+        );
+    }
+
+    register(request: RegistrationRequest): Observable<RegistrationResponse> {
+        return this.http.post<RegistrationResponse>(`${this.apiUrl}/register`, request).pipe(
+            map(res => {
+                if (res.success && res.token) {
+                    localStorage.setItem(this.TOKEN_KEY, res.token);
+                    localStorage.setItem(this.USER_KEY, JSON.stringify(res));
+
+                    const role = this.mapRoleIdToRole(res.roleId ?? 0);
+                    localStorage.setItem(this.ROLE_KEY, role);
+
+                    this.currentUserSubject.next(res);
+                }
+                // If no token, user needs to login manually after registration
+                return res;
+            }),
+            catchError(error => {
+                console.error('Registration error:', error);
+                return throwError(() => error);
             })
         );
     }
@@ -75,6 +109,10 @@ export class AuthService {
 
     getCurrentUser(): LoginResponse | null {
         return this.currentUserSubject.value;
+    }
+
+    getCurrentUser$(): Observable<LoginResponse | null> {
+        return this.currentUserSubject.asObservable();
     }
 
     redirectByRole(role: UserRole): void {
