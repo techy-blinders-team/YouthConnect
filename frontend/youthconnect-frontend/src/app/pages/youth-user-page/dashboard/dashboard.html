@@ -1,1 +1,59 @@
-<p>dashboard works!</p>
+<div class="dashboard-container">
+    <!-- Header Section -->
+    <div class="dashboard-header">
+        <div class="header-content">
+            <div class="welcome-section">
+                <h1>Welcome, {{ userName }}</h1>
+                <p class="user-email">{{ userEmail }}</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn-create-concern" (click)="createConcern()">Create Concern</button>
+                <button class="btn-browse-events" (click)="browseEvents()">Browse Events</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-section">
+        <div class="stat-card" *ngFor="let stat of stats">
+            <div class="stat-value">{{ stat.value }}</div>
+            <div class="stat-label">{{ stat.label }}</div>
+        </div>
+    </div>
+
+    <!-- Content Grid -->
+    <div class="content-grid">
+        <!-- Upcoming Events -->
+        <div class="content-card events-card">
+            <h2>Up coming Events</h2>
+            <div class="event-list">
+                <div class="event-item" *ngFor="let event of upcomingEvents">
+                    <span class="event-title">{{ event.title }}</span>
+                    <button class="btn-view" (click)="viewEvent(event)">View</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="content-card notifications-card">
+            <div class="notifications-header">
+                <h2>Notifications</h2>
+                <div class="notification-filters">
+                    <button class="filter-btn" [class.active]="notificationFilter === 'all'"
+                        (click)="setNotificationFilter('all')">
+                        All
+                    </button>
+                    <button class="filter-btn" [class.active]="notificationFilter === 'unread'"
+                        (click)="setNotificationFilter('unread')">
+                        Unread
+                    </button>
+                </div>
+            </div>
+            <div class="notification-list">
+                <div class="notification-item" *ngFor="let notification of notifications">
+                    {{ notification.message }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

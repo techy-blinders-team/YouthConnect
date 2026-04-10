@@ -76,6 +76,8 @@ export const routes: Routes = [
         path: 'youth',
         canActivate: [authGuard, roleGuard],
         data: { roles: ['youth'] },
+        loadComponent: () =>
+            import('./pages/youth-user-page/layout/youth-layout/youth-layout').then(m => m.YouthLayout),
         children: [
             {
                 path: 'dashboard',
@@ -92,13 +94,13 @@ export const routes: Routes = [
             {
                 path: 'events',
                 loadComponent: () =>
-                    import('./pages/youth-user-page/events/events').then(move => move.Events),
+                    import('./pages/youth-user-page/event/event').then(move => move.EventPage),
                 title: 'Events - YouthConnect'
             },
             {
                 path: 'notifications',
                 loadComponent: () =>
-                    import('./pages/youth-user-page/notification/notification').then(move => move.Notification),
+                    import('./pages/youth-user-page/notification/notification').then(move => move.NotificationPage),
                 title: 'Notifications - YouthConnect'
             },
             {

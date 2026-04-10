@@ -1,0 +1,13 @@
+.youth-layout {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    gap: 0;
+}
+
+.youth-content {
+    flex: 1;
+    overflow-y: auto;
+    background: #fff;
+    padding: 20px;
+}

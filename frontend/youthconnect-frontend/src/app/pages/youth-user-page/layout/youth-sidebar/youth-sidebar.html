@@ -1,0 +1,38 @@
+<div class="sidebar-container">
+    <div class="side-header">
+        <img src="assets/sk-logo.png" alt="SK Logo" class="logo" />
+        <div class="system-title">
+            <span>Youth</span><br />
+            <span>Portal</span>
+        </div>
+    </div>
+    <div class="side-menu">
+        <ul>
+            <li routerLink="/youth/dashboard" [class.active]="isRouteActive('/youth/dashboard')">
+                <img src="assets/youth-sidebar/dashboard.png" alt="Dashboard" class="menu-icon" />
+                <span>Dashboard</span>
+            </li>
+            <li routerLink="/youth/create-concern" [class.active]="isRouteActive('/youth/create-concern')">
+                <img src="assets/youth-sidebar/attention.png" alt="Concern" class="menu-icon" />
+                <span>Concern</span>
+            </li>
+            <li routerLink="/youth/events" [class.active]="isRouteActive('/youth/events')">
+                <img src="assets/youth-sidebar/event.png" alt="Event" class="menu-icon" />
+                <span>Event</span>
+            </li>
+            <li routerLink="/youth/notifications" [class.active]="isRouteActive('/youth/notifications')">
+                <img src="assets/youth-sidebar/notification.png" alt="Notification" class="menu-icon" />
+                <span>Notification</span>
+            </li>
+        </ul>
+    </div>
+    <div class="side-footer">
+        <img src="assets/youth-sidebar/youth-member-icon.png" alt="User" class="footer-icon" />
+        <div class="user-email">
+            <span class="email-text">{{ userEmail }}</span>
+        </div>
+        <button type="button" class="logout-btn" aria-label="Logout" (click)="logout()">
+            <img src="assets/administrator-sidebar/logout-icon.png" alt="Logout" class="footer-logout-icon" />
+        </button>
+    </div>
+</div>

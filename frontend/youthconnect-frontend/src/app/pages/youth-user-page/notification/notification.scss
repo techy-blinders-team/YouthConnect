@@ -1,0 +1,223 @@
+.notification-container {
+    padding: 20px;
+    height: 100%;
+    background: #002674;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border-radius: 24px;
+    font-family: 'Onest', 'Inter', Arial, sans-serif;
+}
+
+.notification-content {
+    background: #fff;
+    border-radius: 16px;
+    padding: 40px;
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 32px;
+    gap: 24px;
+
+    .header-text {
+        flex: 1;
+
+        h1 {
+            margin: 0 0 8px 0;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .subtitle {
+            margin: 0;
+            font-size: 1rem;
+            color: #666;
+            font-weight: 400;
+        }
+    }
+
+    .filter-tabs {
+        display: flex;
+        gap: 12px;
+        flex-shrink: 0;
+
+        .filter-tab {
+            padding: 10px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Onest', 'Inter', Arial, sans-serif;
+            background: #e0e0e0;
+            color: #666;
+
+            &:hover {
+                background: #d0d0d0;
+                transform: translateY(-2px);
+            }
+
+            &.active {
+                background: #002674;
+                color: #fff;
+
+                &:hover {
+                    background: #001a52;
+                }
+            }
+
+            &:nth-child(2).active {
+                background: #9E1B2B;
+
+                &:hover {
+                    background: #7a1521;
+                }
+            }
+        }
+    }
+}
+
+.notifications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.notification-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 32px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    gap: 24px;
+    cursor: pointer;
+    position: relative;
+
+    &:hover {
+        transform: translateX(4px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    &.notification-red {
+        background: #9E1B2B;
+        color: #fff;
+    }
+
+    &.notification-blue {
+        background: #002674;
+        color: #fff;
+    }
+
+    &.notification-yellow {
+        background: #FBD218;
+        color: #000;
+    }
+
+    .notification-info {
+        flex: 1;
+
+        h3 {
+            margin: 0 0 12px 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        p {
+            margin: 0;
+            font-size: 1rem;
+            line-height: 1.5;
+            opacity: 0.95;
+        }
+    }
+
+    .notification-status {
+        flex-shrink: 0;
+
+        .unread-badge {
+            display: block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            animation: pulse 2s infinite;
+        }
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.7;
+        transform: scale(1.1);
+    }
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+
+    p {
+        font-size: 1.2rem;
+        margin: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .notification-content {
+        padding: 24px;
+    }
+
+    .notification-header {
+        flex-direction: column;
+        align-items: stretch;
+
+        .header-text {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .subtitle {
+                font-size: 0.9rem;
+            }
+        }
+
+        .filter-tabs {
+            justify-content: flex-start;
+
+            .filter-tab {
+                flex: 1;
+            }
+        }
+    }
+
+    .notification-card {
+        padding: 24px;
+
+        .notification-info {
+            h3 {
+                font-size: 1.25rem;
+            }
+
+            p {
+                font-size: 0.9rem;
+            }
+        }
+    }
+}
