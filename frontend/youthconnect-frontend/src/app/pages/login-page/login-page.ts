@@ -76,21 +76,27 @@ export class LoginPage {
       error: (err: HttpErrorResponse) => {
         this.isLoading = false;
 
-        switch (err.status) {
-          case 401:
-            this.errorMessage = 'Invalid email or password.';
-            break;
-          case 403:
-            this.errorMessage = "You don't have permission to access this.";
-            break;
-          case 404:
-            this.errorMessage = 'Account not found.';
-            break;
-          case 500:
-            this.errorMessage = 'Server error. Please try again later.';
-            break;
-          default:
-            this.errorMessage = 'Login failed. Please check your connection.';
+        // Try to get the message from the backend response
+        if (err.error && err.error.message) {
+          this.errorMessage = err.error.message;
+        } else {
+          // Fallback to generic messages based on status code
+          switch (err.status) {
+            case 401:
+              this.errorMessage = 'Invalid email or password.';
+              break;
+            case 403:
+              this.errorMessage = "You don't have permission to access this.";
+              break;
+            case 404:
+              this.errorMessage = 'Account not found.';
+              break;
+            case 500:
+              this.errorMessage = 'Server error. Please try again later.';
+              break;
+            default:
+              this.errorMessage = 'Login failed. Please check your connection.';
+          }
         }
       }
     });
@@ -100,11 +106,11 @@ export class LoginPage {
     this.showPassword = !this.showPassword;
   }
 
-  get emailControl() { 
-    return this.loginForm.get('email'); 
+  get emailControl() {
+    return this.loginForm.get('email');
   }
-  get passwordControl() { 
-    return this.loginForm.get('password'); 
+  get passwordControl() {
+    return this.loginForm.get('password');
   }
 
   isFieldInvalid(field: string): boolean {

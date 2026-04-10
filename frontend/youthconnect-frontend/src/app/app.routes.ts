@@ -76,6 +76,8 @@ export const routes: Routes = [
         path: 'youth',
         canActivate: [authGuard, roleGuard],
         data: { roles: ['youth'] },
+        loadComponent: () =>
+            import('./pages/youth-user-page/layout/youth-layout/youth-layout').then(m => m.YouthLayout),
         children: [
             {
                 path: 'dashboard',
