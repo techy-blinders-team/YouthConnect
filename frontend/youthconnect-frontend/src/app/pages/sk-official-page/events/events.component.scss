@@ -9,6 +9,7 @@ html, body, :host, .events-container {
   min-height: 100vh;
 }
 
+// page header with user's profile
 .events-root {
   display: flex;
   height: 100dvh;
@@ -90,6 +91,7 @@ html, body, :host, .events-container {
   }
 }
 
+// search bar and add event button
 .action-bar {
   display: flex;
   justify-content: flex-start;
@@ -101,7 +103,9 @@ html, body, :host, .events-container {
 .search-box {
   display: flex;
   gap: 10px;
-  flex: 1;
+  flex: 1 1 600px;
+  min-width: 350px;
+  max-width: 700px;
 }
 
 .search-input {
@@ -138,4 +142,35 @@ html, body, :host, .events-container {
   &:hover {
     background-color: #000;
   }
+}
+
+.add-event-btn {
+  padding: 12px 24px;
+  background-color: #0052cc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  white-space: nowrap;
+  margin-left: 400px;
+
+  &:hover {
+    background-color: #0041a3;
+  }
+}
+
+.search-group {
+  display: flex;
+  flex: 1 1 600px;
+  min-width: 400px;
+  max-width: 700px;
+}
+
+.search-input {
+  flex: 1 1 600px;
+  min-width: 350px;
+  max-width: 600px;
 }
