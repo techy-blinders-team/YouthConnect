@@ -1,32 +1,126 @@
 <div class="concern-container">
+    <!-- Success Toast -->
+    <div class="success-toast" *ngIf="successMessage" [@slideIn]>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        <span>{{ successMessage }}</span>
+    </div>
+
     <!-- Header with Create Button -->
     <div class="concern-header">
-        <button class="btn-create-concern" (click)="openModal()">Create Concern</button>
+        <button class="btn-create-concern" (click)="openModal()" [disabled]="isLoading">
+            {{ isLoading ? 'Loading...' : 'Create Concern' }}
+        </button>
+    </div>
+
+    <!-- Error Message -->
+    <div class="error-banner" *ngIf="errorMessage">
+        <p>{{ errorMessage }}</p>
     </div>
 
     <!-- Concerns List -->
     <div class="concerns-content">
-        <h2>Your Concerns</h2>
-        <div class="concerns-list">
-            <div class="concern-item" *ngFor="let concern of concerns">
-                <span class="concern-title">{{ concern.title }}</span>
-                <div class="concern-actions">
-                    <button class="btn-edit" (click)="editConcern(concern)" aria-label="Edit concern">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2">
-                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                        </svg>
-                    </button>
-                    <button class="btn-delete" (click)="deleteConcern(concern)" aria-label="Delete concern">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2">
-                            <polyline points="3 6 5 6 21 6"></polyline>
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
-                            </path>
-                        </svg>
-                    </button>
+        <div class="concerns-header">
+            <h2>Your Concerns</h2>
+            <div class="concerns-stats">
+                <span class="stat-badge">Total: {{ concerns.length }}</span>
+                <span class="stat-badge" *ngIf="filteredConcerns.length !== concerns.length">
+                    Filtered: {{ filteredConcerns.length }}
+                </span>
+            </div>
+        </div>
+
+        <!-- Search and Filters -->
+        <div class="filters-section">
+            <div class="search-box">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" class="search-icon">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                <input type="text" placeholder="Search concerns by title or description..." [value]="searchQuery"
+                    (input)="onSearchChange($event)" class="search-input" />
+                <button *ngIf="searchQuery" class="clear-search" (click)="searchQuery = ''; applyFilters()"
+                    aria-label="Clear search">
+                    ×
+                </button>
+            </div>
+
+            <div class="filter-controls">
+                <select class="filter-select" [value]="selectedStatusFilter"
+                    (change)="onStatusFilterChange($any($event.target).value)">
+                    <option *ngFor="let filter of statusFilters" [value]="filter.value">
+                        {{ filter.label }}
+                    </option>
+                </select>
+
+                <select class="filter-select" [value]="selectedTypeFilter"
+                    (change)="onTypeFilterChange($any($event.target).value)">
+                    <option *ngFor="let filter of typeFilters" [value]="filter.value">
+                        {{ filter.label }}
+                    </option>
+                </select>
+
+                <button class="btn-clear-filters" (click)="clearFilters()"
+                    *ngIf="searchQuery || selectedStatusFilter !== 'ALL' || selectedTypeFilter !== 'ALL'">
+                    Clear Filters
+                </button>
+            </div>
+        </div>
+
+        <div class="loading-state" *ngIf="isLoading && concerns.length === 0">
+            <p>Loading concerns...</p>
+        </div>
+
+        <div class="concerns-list" *ngIf="!isLoading || concerns.length > 0">
+            <div class="concern-item" *ngFor="let concern of filteredConcerns">
+                <div class="concern-content">
+                    <div class="concern-left">
+                        <span class="concern-type-icon">{{ getConcernTypeIcon(concern.typeOfConcern) }}</span>
+                        <div class="concern-text">
+                            <h3 class="concern-title">{{ concern.title }}</h3>
+                            <div class="concern-meta">
+                                <span class="concern-type-label">{{ getConcernTypeLabel(concern.typeOfConcern) }}</span>
+                                <span class="concern-date">{{ getTimeAgo(concern.createdAt) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="concern-right">
+                        <span class="concern-status" [ngClass]="getStatusBadgeClass(concern.status)">
+                            {{ getStatusLabel(concern.status) }}
+                        </span>
+                        <div class="concern-actions">
+                            <button class="btn-edit" (click)="editConcern(concern)"
+                                [disabled]="isLoading || concern.status === 'CLOSED'" aria-label="Edit concern"
+                                title="Edit concern">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                            </button>
+                            <button class="btn-delete" (click)="deleteConcern(concern)" [disabled]="isLoading"
+                                aria-label="Delete concern" title="Delete concern">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path
+                                        d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                    </path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
                 </div>
+            </div>
+
+            <div class="empty-state" *ngIf="filteredConcerns.length === 0 && !isLoading">
+                <p *ngIf="concerns.length === 0">No concerns yet. Create your first concern!</p>
+                <p *ngIf="concerns.length > 0">No concerns match your filters. Try adjusting your search or filters.
+                </p>
             </div>
         </div>
     </div>
@@ -68,7 +162,7 @@
     <div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
         <div class="modal-content" (click)="$event.stopPropagation()">
             <div class="modal-header">
-                <h3>Create New Concern</h3>
+                <h3>{{ editingConcernId ? 'Edit Concern' : 'Create New Concern' }}</h3>
                 <button class="btn-close" (click)="closeModal()" aria-label="Close modal">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2">
@@ -79,10 +173,18 @@
             </div>
 
             <form [formGroup]="concernForm" (ngSubmit)="submitConcern()">
+                <!-- Error Message in Modal -->
+                <div class="form-error" *ngIf="errorMessage">
+                    <p>{{ errorMessage }}</p>
+                </div>>
                 <div class="form-group">
                     <label for="title">Title <span class="required">*</span></label>
                     <input type="text" id="title" formControlName="title" placeholder="Enter concern title"
-                        [class.error]="concernForm.get('title')?.invalid && concernForm.get('title')?.touched" />
+                        [class.error]="concernForm.get('title')?.invalid && concernForm.get('title')?.touched"
+                        maxlength="200" />
+                    <div class="char-counter">
+                        {{ concernForm.get('title')?.value?.length || 0 }} / 200
+                    </div>
                     <div class="error-message"
                         *ngIf="concernForm.get('title')?.invalid && concernForm.get('title')?.touched">
                         <span *ngIf="concernForm.get('title')?.errors?.['required']">Title is required</span>
@@ -108,7 +210,11 @@
                     <label for="description">Description <span class="required">*</span></label>
                     <textarea id="description" formControlName="description" rows="5"
                         placeholder="Describe your concern in detail"
-                        [class.error]="concernForm.get('description')?.invalid && concernForm.get('description')?.touched"></textarea>
+                        [class.error]="concernForm.get('description')?.invalid && concernForm.get('description')?.touched"
+                        maxlength="1000"></textarea>
+                    <div class="char-counter">
+                        {{ concernForm.get('description')?.value?.length || 0 }} / 1000
+                    </div>
                     <div class="error-message"
                         *ngIf="concernForm.get('description')?.invalid && concernForm.get('description')?.touched">
                         <span *ngIf="concernForm.get('description')?.errors?.['required']">Description is
@@ -119,8 +225,11 @@
                 </div>
 
                 <div class="modal-actions">
-                    <button type="button" class="btn-cancel" (click)="closeModal()">Cancel</button>
-                    <button type="submit" class="btn-submit" [disabled]="concernForm.invalid">Submit Concern</button>
+                    <button type="button" class="btn-cancel" (click)="closeModal()"
+                        [disabled]="isLoading">Cancel</button>
+                    <button type="submit" class="btn-submit" [disabled]="concernForm.invalid || isLoading">
+                        {{ isLoading ? 'Saving...' : (editingConcernId ? 'Update Concern' : 'Submit Concern') }}
+                    </button>
                 </div>
             </form>
         </div>

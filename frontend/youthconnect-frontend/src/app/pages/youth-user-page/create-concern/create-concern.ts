@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ConcernService, ConcernResponse } from '../../../services/concern.service';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-create-concern',
@@ -8,18 +10,41 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
   templateUrl: './create-concern.html',
   styleUrl: './create-concern.scss',
 })
-export class CreateConcern {
+export class CreateConcern implements OnInit {
+  private fb = inject(FormBuilder);
+  private concernService = inject(ConcernService);
+  private authService = inject(AuthService);
+
   showModal = false;
   showDeleteModal = false;
   concernForm: FormGroup;
   editingConcernId: number | null = null;
-  concernToDelete: any = null;
+  concernToDelete: ConcernResponse | null = null;
+  youthId: number = 0;
+  isLoading = false;
+  errorMessage = '';
+  successMessage = '';
+  expandedConcernId: number | null = null;
 
-  concerns = [
-    { id: 1, title: 'Sample Concerns', type: 'PROJECT_CONCERN', status: 'OPEN' },
-    { id: 2, title: 'Sample Concerns', type: 'COMMUNITY_CONCERN', status: 'OPEN' },
-    { id: 3, title: 'Sample Concerns', type: 'SYSTEM_CONCERN', status: 'OPEN' },
-    { id: 4, title: 'Sample Concerns', type: 'PROJECT_CONCERN', status: 'OPEN' }
+  concerns: ConcernResponse[] = [];
+  filteredConcerns: ConcernResponse[] = [];
+  searchQuery = '';
+  selectedStatusFilter: string = 'ALL';
+  selectedTypeFilter: string = 'ALL';
+
+  statusFilters = [
+    { value: 'ALL', label: 'All Status' },
+    { value: 'OPEN', label: 'Open' },
+    { value: 'IN_PROGRESS', label: 'In Progress' },
+    { value: 'RESOLVED', label: 'Resolved' },
+    { value: 'CLOSED', label: 'Closed' }
+  ];
+
+  typeFilters = [
+    { value: 'ALL', label: 'All Types' },
+    { value: 'PROJECT_CONCERN', label: 'Project' },
+    { value: 'COMMUNITY_CONCERN', label: 'Community' },
+    { value: 'SYSTEM_CONCERN', label: 'System' }
   ];
 
   concernTypes = [
@@ -28,7 +53,7 @@ export class CreateConcern {
     { value: 'SYSTEM_CONCERN', label: 'System Concern' }
   ];
 
-  constructor(private fb: FormBuilder) {
+  constructor() {
     this.concernForm = this.fb.group({
       title: ['', [Validators.required, Validators.maxLength(200)]],
       typeOfConcern: ['', Validators.required],
@@ -36,82 +61,253 @@ export class CreateConcern {
     });
   }
 
+  ngOnInit(): void {
+    const user = this.authService.getCurrentUser();
+    if (user && user.youthId) {
+      this.youthId = user.youthId;
+      this.loadConcerns();
+    } else {
+      this.errorMessage = 'Unable to load user information';
+    }
+  }
+
+  loadConcerns(): void {
+    this.isLoading = true;
+    this.concernService.getOwnConcerns(this.youthId).subscribe({
+      next: (concerns) => {
+        this.concerns = concerns;
+        this.applyFilters();
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading concerns:', error);
+        this.errorMessage = 'Failed to load concerns';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  applyFilters(): void {
+    let filtered = [...this.concerns];
+
+    // Apply status filter
+    if (this.selectedStatusFilter !== 'ALL') {
+      filtered = filtered.filter(c => c.status === this.selectedStatusFilter);
+    }
+
+    // Apply type filter
+    if (this.selectedTypeFilter !== 'ALL') {
+      filtered = filtered.filter(c => c.typeOfConcern === this.selectedTypeFilter);
+    }
+
+    // Apply search query
+    if (this.searchQuery.trim()) {
+      const query = this.searchQuery.toLowerCase();
+      filtered = filtered.filter(c =>
+        c.title.toLowerCase().includes(query) ||
+        c.description?.toLowerCase().includes(query)
+      );
+    }
+
+    this.filteredConcerns = filtered;
+  }
+
+  onSearchChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.searchQuery = input.value;
+    this.applyFilters();
+  }
+
+  onStatusFilterChange(status: string): void {
+    this.selectedStatusFilter = status;
+    this.applyFilters();
+  }
+
+  onTypeFilterChange(type: string): void {
+    this.selectedTypeFilter = type;
+    this.applyFilters();
+  }
+
+  clearFilters(): void {
+    this.searchQuery = '';
+    this.selectedStatusFilter = 'ALL';
+    this.selectedTypeFilter = 'ALL';
+    this.applyFilters();
+  }
+
   openModal() {
     this.showModal = true;
     this.editingConcernId = null;
     this.concernForm.reset();
+    this.errorMessage = '';
   }
 
   closeModal() {
     this.showModal = false;
     this.editingConcernId = null;
     this.concernForm.reset();
+    this.errorMessage = '';
+  }
+
+  showSuccessToast(message: string): void {
+    this.successMessage = message;
+    setTimeout(() => {
+      this.successMessage = '';
+    }, 3000);
+  }
+
+  toggleConcernDetails(concernId: number): void {
+    this.expandedConcernId = this.expandedConcernId === concernId ? null : concernId;
+  }
+
+  getTimeAgo(dateString: string): string {
+    const date = new Date(dateString);
+    const now = new Date();
+    const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    if (seconds < 60) return 'Just now';
+    if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes ago`;
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`;
+    if (seconds < 604800) return `${Math.floor(seconds / 86400)} days ago`;
+
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  getConcernTypeIcon(type: string): string {
+    const icons: { [key: string]: string } = {
+      'PROJECT_CONCERN': '📋',
+      'COMMUNITY_CONCERN': '🏘️',
+      'SYSTEM_CONCERN': '⚙️'
+    };
+    return icons[type] || '📝';
+  }
+
+  getConcernTypeLabel(type: string): string {
+    const labels: { [key: string]: string } = {
+      'PROJECT_CONCERN': 'Project',
+      'COMMUNITY_CONCERN': 'Community',
+      'SYSTEM_CONCERN': 'System'
+    };
+    return labels[type] || type;
   }
 
   submitConcern() {
     if (this.concernForm.valid) {
+      this.isLoading = true;
+      this.errorMessage = '';
       const formValue = this.concernForm.value;
 
       if (this.editingConcernId) {
         // Update existing concern
-        const index = this.concerns.findIndex(c => c.id === this.editingConcernId);
-        if (index !== -1) {
-          this.concerns[index] = {
-            ...this.concerns[index],
-            title: formValue.title,
-            type: formValue.typeOfConcern
-          };
-          console.log('Concern updated:', this.concerns[index]);
-        }
-      } else {
-        // Add new concern
-        const newConcern = {
-          id: Math.max(...this.concerns.map(c => c.id), 0) + 1,
+        const updateRequest = {
+          typeOfConcern: formValue.typeOfConcern,
           title: formValue.title,
-          type: formValue.typeOfConcern,
-          status: 'OPEN' as const
+          description: formValue.description
         };
-        this.concerns.unshift(newConcern);
-        console.log('New concern created:', newConcern);
-      }
 
-      // TODO: Call API to submit/update concern
-      this.closeModal();
+        this.concernService.editConcern(this.editingConcernId, updateRequest).subscribe({
+          next: (response) => {
+            console.log('Concern updated:', response);
+            this.loadConcerns();
+            this.closeModal();
+            this.showSuccessToast('Concern updated successfully!');
+            this.isLoading = false;
+          },
+          error: (error) => {
+            console.error('Error updating concern:', error);
+            this.errorMessage = error.error?.message || 'Failed to update concern';
+            this.isLoading = false;
+          }
+        });
+      } else {
+        // Create new concern
+        const createRequest = {
+          youthId: this.youthId,
+          typeOfConcern: formValue.typeOfConcern,
+          title: formValue.title,
+          description: formValue.description
+        };
+
+        this.concernService.submitConcern(createRequest).subscribe({
+          next: (response) => {
+            console.log('Concern created:', response);
+            this.loadConcerns();
+            this.closeModal();
+            this.showSuccessToast('Concern created successfully!');
+            this.isLoading = false;
+          },
+          error: (error) => {
+            console.error('Error creating concern:', error);
+            this.errorMessage = error.error?.message || 'Failed to create concern';
+            this.isLoading = false;
+          }
+        });
+      }
     } else {
       this.concernForm.markAllAsTouched();
     }
   }
 
-  editConcern(concern: any) {
-    this.editingConcernId = concern.id;
+  editConcern(concern: ConcernResponse) {
+    this.editingConcernId = concern.concernId;
     this.concernForm.patchValue({
       title: concern.title,
-      typeOfConcern: concern.type,
-      description: '' // Description not stored in sample data
+      typeOfConcern: concern.typeOfConcern,
+      description: concern.description
     });
     this.showModal = true;
+    this.errorMessage = '';
     console.log('Editing concern:', concern);
   }
 
-  deleteConcern(concern: any) {
+  deleteConcern(concern: ConcernResponse) {
     this.concernToDelete = concern;
     this.showDeleteModal = true;
   }
 
   confirmDelete() {
     if (this.concernToDelete) {
-      const index = this.concerns.findIndex(c => c.id === this.concernToDelete.id);
-      if (index !== -1) {
-        this.concerns.splice(index, 1);
-        console.log('Concern deleted:', this.concernToDelete);
-        // TODO: Call API to delete concern
-      }
+      this.isLoading = true;
+      this.concernService.deleteConcern(this.concernToDelete.concernId).subscribe({
+        next: () => {
+          console.log('Concern deleted:', this.concernToDelete);
+          this.loadConcerns();
+          this.cancelDelete();
+          this.showSuccessToast('Concern deleted successfully!');
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error deleting concern:', error);
+          this.errorMessage = 'Failed to delete concern';
+          this.isLoading = false;
+          this.cancelDelete();
+        }
+      });
     }
-    this.cancelDelete();
   }
 
   cancelDelete() {
     this.showDeleteModal = false;
     this.concernToDelete = null;
+  }
+
+  getStatusBadgeClass(status: string): string {
+    const statusMap: { [key: string]: string } = {
+      'OPEN': 'status-open',
+      'IN_PROGRESS': 'status-in-progress',
+      'RESOLVED': 'status-resolved',
+      'CLOSED': 'status-closed'
+    };
+    return statusMap[status] || 'status-open';
+  }
+
+  getStatusLabel(status: string): string {
+    const labelMap: { [key: string]: string } = {
+      'OPEN': 'Open',
+      'IN_PROGRESS': 'In Progress',
+      'RESOLVED': 'Resolved',
+      'CLOSED': 'Closed'
+    };
+    return labelMap[status] || status;
   }
 }
