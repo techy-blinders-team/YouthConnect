@@ -7,7 +7,6 @@
 	flex-shrink: 0;
 }
 
-/* Sidebar Header */
 .sidebar-header {
 	display: flex;
 	align-items: center;
@@ -76,6 +75,24 @@
 .side-nav-bar a:hover {
 	background: #003585;
 	color: #fff;
+}
+
+.side-nav-bar a.active {
+	background: #fff;
+	color: #0038A7;
+	font-weight: 700;
+	box-shadow: 2px 2px 8px rgba(0,0,0,0.06);
+}
+
+.side-nav-bar a.active .sidebar-icon {
+	filter: brightness(0) saturate(100%) invert(17%) sepia(98%) saturate(1800%) hue-rotate(220deg) brightness(0.8);
+}
+
+.side-nav-bar a.active {
+	background: #fff;
+	color: #0038A7;
+	font-weight: 700;
+	box-shadow: 2px 2px 8px rgba(0,0,0,0.06);
 }
 
 .logout-section {
