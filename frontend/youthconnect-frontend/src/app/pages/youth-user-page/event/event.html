@@ -5,16 +5,108 @@
             <p class="subtitle">Discover and explore all events created by administrators</p>
         </div>
 
-        <div class="events-list">
-            <div class="event-card" *ngFor="let event of events" [ngClass]="'event-' + event.color">
-                <div class="event-info">
-                    <h3>{{ event.title }}</h3>
-                    <p>{{ event.description }}</p>
-                </div>
-                <button class="btn-rsvp" [class.confirmed]="event.rsvpStatus === 'confirmed'" (click)="rsvpEvent(event)"
-                    [disabled]="event.rsvpStatus === 'confirmed'">
-                    {{ event.rsvpStatus === 'confirmed' ? 'Confirmed' : 'RSVP' }}
+        <!-- Success Toast -->
+        <div class="success-toast" *ngIf="successMessage">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            <span>{{ successMessage }}</span>
+        </div>
+
+        <!-- Error Message -->
+        <div class="error-banner" *ngIf="errorMessage">
+            <p>{{ errorMessage }}</p>
+        </div>
+
+        <!-- Event Stats -->
+        <div class="event-stats">
+            <span class="stat-badge">Total Events: {{ events.length }}</span>
+            <span class="stat-badge" *ngIf="filteredEvents.length !== events.length">
+                Showing: {{ filteredEvents.length }}
+            </span>
+        </div>
+
+        <!-- Search and Filters -->
+        <div class="filters-section">
+            <div class="search-box">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" class="search-icon">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                <input type="text" placeholder="Search events by title, description, or location..."
+                    [value]="searchQuery" (input)="onSearchChange($event)" class="search-input" />
+                <button *ngIf="searchQuery" class="clear-search" (click)="searchQuery = ''; applyFilters()"
+                    aria-label="Clear search">
+                    ×
                 </button>
+            </div>
+
+            <div class="filter-controls">
+                <select class="filter-select" [value]="selectedStatusFilter"
+                    (change)="onStatusFilterChange($any($event.target).value)">
+                    <option *ngFor="let filter of statusFilters" [value]="filter.value">
+                        {{ filter.label }}
+                    </option>
+                </select>
+
+                <button class="btn-clear-filters" (click)="clearFilters()"
+                    *ngIf="searchQuery || selectedStatusFilter !== 'ALL'">
+                    Clear Filters
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div class="loading-state" *ngIf="isLoading && events.length === 0">
+            <p>Loading events...</p>
+        </div>
+
+        <!-- Events List -->
+        <div class="events-list" *ngIf="!isLoading || events.length > 0">
+            <div class="event-card" *ngFor="let event of filteredEvents; let i = index"
+                [ngClass]="'event-' + getEventColor(i)">
+                <div class="event-info">
+                    <div class="event-title-row">
+                        <h3>{{ event.title }}</h3>
+                        <span class="event-status" [ngClass]="getStatusBadgeClass(event.status)">
+                            {{ event.status }}
+                        </span>
+                    </div>
+                    <p class="event-description">{{ event.description }}</p>
+                    <div class="event-details">
+                        <span class="event-detail">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            {{ formatEventDate(event.eventDate) }}
+                        </span>
+                        <span class="event-detail" *ngIf="event.location">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                            {{ event.location }}
+                        </span>
+                    </div>
+                </div>
+                <button class="btn-rsvp" [class.confirmed]="isRsvped(event.eventId)" (click)="rsvpEvent(event)"
+                    [disabled]="isLoading || isRsvped(event.eventId)">
+                    {{ isRsvped(event.eventId) ? 'Confirmed' : 'RSVP' }}
+                </button>
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" *ngIf="filteredEvents.length === 0 && !isLoading">
+                <p *ngIf="events.length === 0">No upcoming events at the moment. Check back later!</p>
+                <p *ngIf="events.length > 0">No events match your filters. Try adjusting your search or filters.</p>
             </div>
         </div>
     </div>
@@ -22,7 +114,7 @@
     <!-- RSVP Confirmation Modal -->
     <div class="modal-overlay" *ngIf="showRsvpModal" (click)="closeRsvpModal()">
         <div class="modal-content rsvp-modal" (click)="$event.stopPropagation()">
-            <button class="btn-close-x" (click)="closeRsvpModal()" aria-label="Close modal">X</button>
+            <button class="btn-close-x" (click)="closeRsvpModal()" aria-label="Close modal">×</button>
 
             <div class="rsvp-modal-body">
                 <div class="checkmark-icon">

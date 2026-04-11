@@ -2,6 +2,9 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
+import { YouthDashboardService, DashboardStats } from '../../../services/youth-dashboard.service';
+import { EventResponse } from '../../../services/event.service';
+import { NotificationResponse } from '../../../services/notification.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,14 +15,34 @@ import { AuthService } from '../../../services/auth.service';
 export class Dashboard implements OnInit {
   private router = inject(Router);
   private authService = inject(AuthService);
+  private dashboardService = inject(YouthDashboardService);
 
   userName = 'John Doe';
   userEmail = 'johndoe@gmail.com';
+  youthId: number = 0;
+  userId: number = 0;
+  isLoading = false;
+  errorMessage = '';
+
+  stats = [
+    { label: 'My Concern', value: 0, color: 'yellow' },
+    { label: 'Upcoming events', value: 0, color: 'blue' },
+    { label: 'Events Joined', value: 0, color: 'red' },
+    { label: 'Resolved Concern', value: 0, color: 'gray' }
+  ];
+
+  upcomingEvents: EventResponse[] = [];
+  notifications: NotificationResponse[] = [];
+  notificationFilter: 'all' | 'unread' = 'all';
+  readNotifications: Set<number> = new Set();
 
   ngOnInit(): void {
     const user = this.authService.getCurrentUser();
     if (user && user.email) {
       this.userEmail = user.email;
+      this.youthId = user.youthId || 0;
+      this.userId = user.userId || 0;
+
       // Extract name from email (before @) as a fallback
       const emailName = user.email.split('@')[0];
       // Convert email name to readable format (e.g., john.doe -> John Doe)
@@ -27,34 +50,64 @@ export class Dashboard implements OnInit {
         .split(/[._-]/)
         .map(part => part.charAt(0).toUpperCase() + part.slice(1))
         .join(' ');
+
+      this.loadReadNotificationsFromStorage();
+      this.loadDashboardData();
     }
   }
 
-  stats = [
-    { label: 'My Concern', value: 0 },
-    { label: 'Up coming events', value: 0 },
-    { label: 'Events Joined', value: 0 },
-    { label: 'Resolved Concern', value: 0 }
-  ];
+  loadReadNotificationsFromStorage(): void {
+    const storageKey = `readNotifications_${this.youthId}`;
+    const stored = localStorage.getItem(storageKey);
+    if (stored) {
+      try {
+        const readIds = JSON.parse(stored);
+        this.readNotifications = new Set(readIds);
+      } catch (error) {
+        console.error('Error loading read notifications from storage:', error);
+      }
+    }
+  }
 
-  upcomingEvents = [
-    { title: 'Sample Event' },
-    { title: 'Sample Event' },
-    { title: 'Sample Event' },
-    { title: 'Sample Event' },
-    { title: 'Sample Event' }
-  ];
+  loadDashboardData(): void {
+    if (!this.youthId || !this.userId) {
+      this.errorMessage = 'Unable to load user information';
+      return;
+    }
 
-  notifications = [
-    { message: 'Sample Notification' },
-    { message: 'Sample Notification' },
-    { message: 'Sample Notification' },
-    { message: 'Sample Notification' },
-    { message: 'Sample Notification' },
-    { message: 'Sample Notification' }
-  ];
+    this.isLoading = true;
+    this.dashboardService.getDashboardData(this.youthId, this.userId).subscribe({
+      next: (data) => {
+        // Update stats
+        this.stats[0].value = data.stats.myConcerns;
+        this.stats[1].value = data.stats.upcomingEvents;
+        this.stats[2].value = data.stats.eventsJoined;
+        this.stats[3].value = data.stats.resolvedConcerns;
 
-  notificationFilter: 'all' | 'unread' = 'all';
+        // Update events and notifications
+        this.upcomingEvents = data.upcomingEvents;
+        this.notifications = data.notifications;
+
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading dashboard data:', error);
+        this.errorMessage = 'Failed to load dashboard data';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  get filteredNotifications(): NotificationResponse[] {
+    if (this.notificationFilter === 'unread') {
+      return this.notifications.filter(n => !this.isNotificationRead(n));
+    }
+    return this.notifications;
+  }
+
+  isNotificationRead(notification: NotificationResponse): boolean {
+    return this.readNotifications.has(notification.updateId);
+  }
 
   createConcern() {
     this.router.navigate(['/youth/create-concern']);
@@ -64,11 +117,33 @@ export class Dashboard implements OnInit {
     this.router.navigate(['/youth/events']);
   }
 
-  viewEvent(event: any) {
-    console.log('View event:', event);
+  viewEvent(event: EventResponse) {
+    this.router.navigate(['/youth/events']);
   }
 
   setNotificationFilter(filter: 'all' | 'unread') {
     this.notificationFilter = filter;
+  }
+
+  formatEventDate(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  }
+
+  getTimeAgo(dateString: string): string {
+    const date = new Date(dateString);
+    const now = new Date();
+    const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    if (seconds < 60) return 'Just now';
+    if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+    if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
+
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   }
 }
