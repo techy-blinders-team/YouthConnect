@@ -2,8 +2,8 @@
     <div class="notification-content">
         <div class="notification-header">
             <div class="header-text">
-                <h1>Notification</h1>
-                <p class="subtitle">Discover and explore all events created by administrators</p>
+                <h1>Notifications</h1>
+                <p class="subtitle">Stay updated with responses from SK officials on your concerns</p>
             </div>
             <div class="filter-tabs">
                 <button class="filter-tab" [class.active]="activeFilter === 'all'" (click)="setFilter('all')">
@@ -15,20 +15,55 @@
             </div>
         </div>
 
-        <div class="notifications-list">
-            <div class="notification-card" *ngFor="let notification of filteredNotifications"
-                [ngClass]="'notification-' + notification.color" (click)="markAsRead(notification)">
-                <div class="notification-info">
-                    <h3>{{ notification.title }}</h3>
-                    <p>{{ notification.message }}</p>
+        <!-- Error Message -->
+        <div class="error-banner" *ngIf="errorMessage">
+            <p>{{ errorMessage }}</p>
+        </div>
+
+        <!-- Notification Stats -->
+        <div class="notification-stats" *ngIf="notifications.length > 0">
+            <span class="stat-badge">Total: {{ notifications.length }}</span>
+            <span class="stat-badge" *ngIf="filteredNotifications.length !== notifications.length">
+                Showing: {{ filteredNotifications.length }}
+            </span>
+        </div>
+
+        <!-- Loading State -->
+        <div class="loading-state" *ngIf="isLoading && notifications.length === 0">
+            <p>Loading notifications...</p>
+        </div>
+
+        <div class="notifications-list" *ngIf="!isLoading || notifications.length > 0">
+            <div class="notification-card" *ngFor="let notification of filteredNotifications; let i = index"
+                [ngClass]="'notification-' + getNotificationColor(i)" (click)="markAsRead(notification)">
+                <div class="notification-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
                 </div>
-                <div class="notification-status" *ngIf="!notification.isRead">
+                <div class="notification-info">
+                    <div class="notification-title-row">
+                        <h3>{{ notification.updatedByAdminName || 'SK Official' }} replied to your concern</h3>
+                        <span class="notification-time">{{ getTimeAgo(notification.createdAt) }}</span>
+                    </div>
+                    <p class="concern-title">Re: {{ notification.concernTitle }}</p>
+                    <p class="notification-message">{{ notification.updateText }}</p>
+                </div>
+                <div class="notification-status" *ngIf="!isRead(notification)">
                     <span class="unread-badge"></span>
                 </div>
             </div>
 
-            <div class="empty-state" *ngIf="filteredNotifications.length === 0">
-                <p>No {{ activeFilter === 'unread' ? 'unread' : '' }} notifications</p>
+            <div class="empty-state" *ngIf="filteredNotifications.length === 0 && !isLoading">
+                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+                <p *ngIf="notifications.length === 0">No notifications yet</p>
+                <p *ngIf="notifications.length > 0 && activeFilter === 'unread'">No unread notifications</p>
+                <p *ngIf="notifications.length > 0 && activeFilter === 'all'">No notifications match your filters</p>
             </div>
         </div>
     </div>

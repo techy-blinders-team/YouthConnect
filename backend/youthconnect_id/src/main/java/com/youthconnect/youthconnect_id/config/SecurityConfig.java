@@ -30,6 +30,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/sk/events/**").permitAll()
                 .requestMatchers("/api/sk/tasks/**").permitAll()
                 .requestMatchers("/api/administrator/**").permitAll()
+                .requestMatchers("/api/notifications/**").permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
