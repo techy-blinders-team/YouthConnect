@@ -1,13 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-interface YouthEvent {
-    id: number;
-    title: string;
-    description: string;
-    color: 'red' | 'blue' | 'yellow';
-    rsvpStatus: 'pending' | 'confirmed';
-}
+import { EventService, EventResponse } from '../../../services/event.service';
+import { AuthService } from '../../../services/auth.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
     selector: 'app-event',
@@ -15,53 +10,166 @@ interface YouthEvent {
     templateUrl: './event.html',
     styleUrl: './event.scss',
 })
-export class EventPage {
-    showRsvpModal = false;
-    selectedEvent: YouthEvent | null = null;
+export class EventPage implements OnInit {
+    private eventService = inject(EventService);
+    private authService = inject(AuthService);
 
-    events: YouthEvent[] = [
-        {
-            id: 1,
-            title: 'Gender Sensitivity',
-            description: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat',
-            color: 'red',
-            rsvpStatus: 'pending'
-        },
-        {
-            id: 2,
-            title: 'Gender Sensitivity',
-            description: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat',
-            color: 'blue',
-            rsvpStatus: 'pending'
-        },
-        {
-            id: 3,
-            title: 'Gender Sensitivity',
-            description: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat',
-            color: 'yellow',
-            rsvpStatus: 'pending'
-        }
+    showRsvpModal = false;
+    selectedEvent: EventResponse | null = null;
+    userId: number = 0;
+    isLoading = false;
+    errorMessage = '';
+    successMessage = '';
+
+    events: EventResponse[] = [];
+    filteredEvents: EventResponse[] = [];
+    rsvpedEventIds: Set<number> = new Set();
+    searchQuery = '';
+    selectedStatusFilter: string = 'ALL';
+
+    statusFilters = [
+        { value: 'ALL', label: 'All Events' },
+        { value: 'Upcoming', label: 'Upcoming' },
+        { value: 'Open for Registration', label: 'Open' },
+        { value: 'Registration Closed', label: 'Closed' },
+        { value: 'Completed', label: 'Completed' }
     ];
 
-    rsvpEvent(event: YouthEvent) {
-        if (event.rsvpStatus === 'pending') {
-            this.selectedEvent = event;
-            this.showRsvpModal = true;
-
-            // Confirm RSVP immediately
-            event.rsvpStatus = 'confirmed';
-            console.log('RSVP confirmed for event:', event);
-            // TODO: Call API to confirm RSVP
-
-            // Auto-close modal after 2.5 seconds
-            setTimeout(() => {
-                this.closeRsvpModal();
-            }, 2500);
+    ngOnInit(): void {
+        const user = this.authService.getCurrentUser();
+        if (user && user.userId) {
+            this.userId = user.userId;
+            this.loadEvents();
+        } else {
+            this.errorMessage = 'Unable to load user information';
         }
     }
 
-    closeRsvpModal() {
+    loadEvents(): void {
+        this.isLoading = true;
+        forkJoin({
+            events: this.eventService.getAllEvents(),
+            rsvps: this.eventService.getOwnRsvps(this.userId)
+        }).subscribe({
+            next: (result) => {
+                this.events = result.events;
+                this.rsvpedEventIds = new Set(result.rsvps.map(r => r.eventId));
+                this.applyFilters();
+                this.isLoading = false;
+            },
+            error: (error) => {
+                console.error('Error loading events:', error);
+                this.errorMessage = 'Failed to load events';
+                this.isLoading = false;
+            }
+        });
+    }
+
+    applyFilters(): void {
+        let filtered = [...this.events];
+
+        // Apply status filter
+        if (this.selectedStatusFilter !== 'ALL') {
+            filtered = filtered.filter(e => e.status === this.selectedStatusFilter);
+        }
+
+        // Apply search query
+        if (this.searchQuery.trim()) {
+            const query = this.searchQuery.toLowerCase();
+            filtered = filtered.filter(e =>
+                e.title.toLowerCase().includes(query) ||
+                e.description?.toLowerCase().includes(query) ||
+                e.location?.toLowerCase().includes(query)
+            );
+        }
+
+        this.filteredEvents = filtered;
+    }
+
+    onSearchChange(event: Event): void {
+        const input = event.target as HTMLInputElement;
+        this.searchQuery = input.value;
+        this.applyFilters();
+    }
+
+    onStatusFilterChange(status: string): void {
+        this.selectedStatusFilter = status;
+        this.applyFilters();
+    }
+
+    clearFilters(): void {
+        this.searchQuery = '';
+        this.selectedStatusFilter = 'ALL';
+        this.applyFilters();
+    }
+
+    showSuccessToast(message: string): void {
+        this.successMessage = message;
+        setTimeout(() => {
+            this.successMessage = '';
+        }, 3000);
+    }
+
+    isRsvped(eventId: number): boolean {
+        return this.rsvpedEventIds.has(eventId);
+    }
+
+    rsvpEvent(event: EventResponse): void {
+        if (this.isRsvped(event.eventId)) {
+            return;
+        }
+
+        this.isLoading = true;
+        this.eventService.rsvpEvent({ eventId: event.eventId, userId: this.userId }).subscribe({
+            next: () => {
+                this.rsvpedEventIds.add(event.eventId);
+                this.selectedEvent = event;
+                this.showRsvpModal = true;
+                this.showSuccessToast('Successfully RSVPed to event!');
+                this.isLoading = false;
+
+                setTimeout(() => {
+                    this.closeRsvpModal();
+                }, 2500);
+            },
+            error: (error) => {
+                console.error('Error RSVPing event:', error);
+                this.errorMessage = 'Failed to RSVP for event';
+                this.isLoading = false;
+            }
+        });
+    }
+
+    closeRsvpModal(): void {
         this.showRsvpModal = false;
         this.selectedEvent = null;
+    }
+
+    getEventColor(index: number): 'red' | 'blue' | 'yellow' {
+        const colors: ('red' | 'blue' | 'yellow')[] = ['red', 'blue', 'yellow'];
+        return colors[index % 3];
+    }
+
+    formatEventDate(dateString: string): string {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    getStatusBadgeClass(status: string): string {
+        const statusMap: { [key: string]: string } = {
+            'Upcoming': 'status-upcoming',
+            'Open for Registration': 'status-open',
+            'Registration Closed': 'status-closed',
+            'Ongoing': 'status-ongoing',
+            'Completed': 'status-completed',
+            'Cancelled': 'status-cancelled'
+        };
+        return statusMap[status] || 'status-default';
     }
 }
