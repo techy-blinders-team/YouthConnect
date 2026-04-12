@@ -8,5 +8,18 @@ import { CommonModule } from '@angular/common';
   styleUrl: './concerns.scss',
 })
 export class Concerns {
+  isResponseModalOpen = false;
 
+  openResponseModal() {
+    this.isResponseModalOpen = true;
+  }
+
+  closeResponseModal() {
+    this.isResponseModalOpen = false;
+  }
+
+  sendResponse() {
+    // TODO: Add response submission logic
+    this.closeResponseModal();
+  }
 }

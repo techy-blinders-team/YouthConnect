@@ -1,6 +1,6 @@
 <div class="concerns-root">
     <div class="concerns-container">
-        
+
         <!-- Header Section -->
         <div class="header-section">
             <div class="header-content">
@@ -54,9 +54,35 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <button class="action-btn response-btn">Send Response</button>
+                    <button class="action-btn response-btn" (click)="openResponseModal()">Send Response</button>
                     <button class="action-btn resolve-btn">Resolve</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Send Response Modal -->
+    <div class="modal-overlay" *ngIf="isResponseModalOpen" (click)="closeResponseModal()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <div>
+                    <h2 class="modal-title">Concern 1</h2>
+                </div>
+                <button class="close-btn" (click)="closeResponseModal()">✕</button>
+            </div>
+
+            <div class="modal-body">
+                <p class="concern-description">An engaging event designed to inspire participants to explore opportunities, develop skills, and prepare for future success.</p>
+                
+                <div class="form-group">
+                    <label for="response" class="form-label">Response<span class="required">*</span></label>
+                    <textarea id="response" class="form-textarea" placeholder="Enter your response message" rows="6"></textarea>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-cancel" (click)="closeResponseModal()">Mark as Resolved</button>
+                <button class="btn-create" (click)="sendResponse()">Send Response</button>
             </div>
         </div>
     </div>
