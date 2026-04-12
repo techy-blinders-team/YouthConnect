@@ -254,6 +254,34 @@ html, body, :host, .tasks-container {
   }
 }
 
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  background-color: #f0f0f0;
+  color: #333;
+  margin-right: 6px;
+}
+
+.status-badge.prio {
+  background-color: #ffb3b3;
+  color: #a30000;
+}
+.status-badge.todo {
+  background-color: #e2e3e5;
+  color: #383d41;
+}
+.status-badge.in-progress {
+  background-color: #fff3cd;
+  color: #856404;
+}
+.status-badge.done {
+  background-color: #d4edda;
+  color: #155724;
+}
+
 .card-footer {
   padding: 10px 16px;
   border-top: 1px solid #eee;
@@ -303,22 +331,34 @@ html, body, :host, .tasks-container {
   padding: 20px;
 }
 
+
 .modal-content {
   background: white;
   border-radius: 8px;
   width: 100%;
   max-width: 600px;
-  height: auto;
-  max-height: 700px;
+  max-height: 95vh;
+  display: flex;
+  flex-direction: column;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   overflow: hidden;
   animation: slideIn 0.3s ease-out;
 }
 
+.modal-body {
+  padding: 16px 20px;
+  overflow-y: auto;
+  flex: 1 1 auto;
+}
+
+.modal-header, .modal-footer {
+  flex-shrink: 0;
+}
+
 @media (max-width: 600px) {
   .modal-content {
-    max-width: 95vw;
-    max-height: 95vh;
+    max-width: 98vw;
+    max-height: 98vh;
   }
 }
 
@@ -396,7 +436,8 @@ html, body, :host, .tasks-container {
 }
 
 .form-input,
-.form-textarea {
+.form-textarea,
+select.form-input {
   padding: 12px 14px;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -412,7 +453,8 @@ html, body, :host, .tasks-container {
 }
 
 .form-input:focus,
-.form-textarea:focus {
+.form-textarea:focus,
+select.form-input:focus {
   outline: none;
   border-color: #0052cc;
   box-shadow: 0 0 0 2px rgba(0, 82, 204, 0.1);

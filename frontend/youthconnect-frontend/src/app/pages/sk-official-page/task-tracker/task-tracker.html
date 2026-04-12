@@ -52,6 +52,13 @@
                             <span class="label">Note/Hyperlink:</span>
                             <span class="value">Note or Hyperlink</span>
                         </div>
+                        <div class="meta-item">
+                            <span class="label">Status:</span>
+                            <span class="status-badge prio">PRIO</span>
+                            <span class="status-badge todo">To Do</span>
+                            <span class="status-badge in-progress">In Progress</span>
+                            <span class="status-badge done">Done</span>
+                        </div>
                     </div>
                 </div>
                 <div class="card-footer">
@@ -92,6 +99,17 @@
                 <div class="form-group">
                     <label for="noteHyperlink" class="form-label">Note/Hyperlink</label>
                     <input type="text" id="noteHyperlink" class="form-input" placeholder="Enter note or hyperlink">
+                </div>
+
+                <div class="form-group">
+                    <label for="status" class="form-label">Status<span class="required">*</span></label>
+                    <select id="status" class="form-input">
+                        <option value="">Select a status</option>
+                        <option value="prio">PRIO</option>
+                        <option value="todo">To Do</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="done">Done</option>
+                    </select>
                 </div>
             </div>
 
