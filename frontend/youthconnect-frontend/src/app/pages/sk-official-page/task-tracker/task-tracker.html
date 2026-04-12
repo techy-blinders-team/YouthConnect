@@ -1,1 +1,123 @@
-<p>task-tracker works!</p>
+<div class="tasks-root">
+    <div class="tasks-container">
+
+        <!-- Header Section -->
+        <div class="header-section">
+            <div class="header-content">
+                <h1>TASK TRACKER</h1>
+                <p>Create and manage your tasks</p>
+            </div>
+            <div class="user-profile">
+                <div class="profile-badge">
+                    <span class="initials">SK</span>
+                </div>
+                <div class="profile-info">
+                    <p class="name">Full Name</p>
+                    <p class="position">Position</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Bar and Add Task Button -->
+        <div class="action-bar">
+            <div class="search-group">
+                <input type="text" placeholder="Search tasks by title or description" class="search-input">
+                <button class="search-btn">Search</button>
+            </div>
+            <button class="add-task-btn" (click)="openModal()">+ Add Task</button>
+        </div>
+
+        <!-- Tasks List -->
+        <div class="tasks-list">
+            <div class="task-card">
+                <div class="card-header">
+                    <h3>Tasking/Committee</h3>
+                    <div class="card-actions">
+                        <button class="edit-btn">
+                            <img src="../../assets/sk-official-events-icons/edit.svg" alt="Edit" width="18" height="18">
+                        </button>
+                        <button class="delete-btn">
+                            <img src="../../assets/sk-official-events-icons/delete.svg" alt="Delete" width="18" height="18">
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="description">Description of task</p>
+                    <div class="task-meta">
+                        <div class="meta-item">
+                            <span class="label">SK In-charge:</span>
+                            <span class="value">SK name</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="label">Note/Hyperlink:</span>
+                            <span class="value">Note or Hyperlink</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="label">Status:</span>
+                            <span class="status-badge prio">PRIO</span>
+                            <span class="status-badge todo">To Do</span>
+                            <span class="status-badge in-progress">In Progress</span>
+                            <span class="status-badge done">Done</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="action-btn task-status">In Progress</button>
+                    <button class="action-btn task-status completed">Completed</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Task Modal -->
+    <div class="modal-overlay" *ngIf="isModalOpen" (click)="closeModal()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <div>
+                    <h2 class="modal-title">Create New Task</h2>
+                    <p class="modal-subtitle">Set up and assign a new task for tracking</p>
+                </div>
+                <button class="close-btn" (click)="closeModal()">✕</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="taskTitle" class="form-label">Task Title<span class="required">*</span></label>
+                    <input type="text" id="taskTitle" class="form-input" placeholder="Enter task title">
+                </div>
+
+                <div class="form-group">
+                    <label for="description" class="form-label">Description<span class="required">*</span></label>
+                    <textarea id="description" class="form-textarea" placeholder="Enter task description" rows="4"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="skInCharge" class="form-label">SK In-Charge<span class="required">*</span></label>
+                    <input type="text" id="skInCharge" class="form-input" placeholder="Enter SK name">
+                </div>
+
+                <div class="form-group">
+                    <label for="noteHyperlink" class="form-label">Note/Hyperlink</label>
+                    <input type="text" id="noteHyperlink" class="form-input" placeholder="Enter note or hyperlink">
+                </div>
+
+                <div class="form-group">
+                    <label for="status" class="form-label">Status<span class="required">*</span></label>
+                    <select id="status" class="form-input">
+                        <option value="">Select a status</option>
+                        <option value="prio">PRIO</option>
+                        <option value="todo">To Do</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="done">Done</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-cancel" (click)="closeModal()">Cancel</button>
+                <button class="btn-create" (click)="createTask()">Create Task</button>
+            </div>
+        </div>
+    </div>
+
+</div>
