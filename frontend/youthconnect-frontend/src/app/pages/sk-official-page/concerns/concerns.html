@@ -1,1 +1,89 @@
-<p>concerns works!</p>
+<div class="concerns-root">
+    <div class="concerns-container">
+
+        <!-- Header Section -->
+        <div class="header-section">
+            <div class="header-content">
+                <h1>CONCERNS</h1>
+                <p>Manage and track all youth member concerns</p>
+            </div>
+            <div class="user-profile">
+                <div class="profile-badge">
+                    <span class="initials">SK</span>
+                </div>
+                <div class="profile-info">
+                    <p class="name">Full Name</p>
+                    <p class="position">Position</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="action-bar">
+            <div class="search-group">
+                <input type="text" placeholder="Search concerns by title, type, or description" class="search-input">
+                <button class="search-btn">Search</button>
+            </div>
+        </div>
+
+        <!-- Concerns List -->
+        <div class="concerns-list">
+            <div class="concern-card">
+                <div class="card-header">
+                    <h3>Concern Title</h3>
+                    <div class="card-actions">
+                        <button class="edit-btn">
+                            <img src="../../assets/sk-official-events-icons/edit.svg" alt="Edit" width="18" height="18">
+                        </button>
+                        <button class="delete-btn">
+                            <img src="../../assets/sk-official-events-icons/delete.svg" alt="Delete" width="18" height="18">
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="description">Concern Description</p>
+                    <div class="concern-meta">
+                        <div class="meta-item">
+                            <span class="label">Type:</span>
+                            <span class="value">Concern Type</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="label">Created:</span>
+                            <span class="value">Date & Time</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="action-btn response-btn" (click)="openResponseModal()">Send Response</button>
+                    <button class="action-btn resolve-btn">Resolve</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Send Response Modal -->
+    <div class="modal-overlay" *ngIf="isResponseModalOpen" (click)="closeResponseModal()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <div>
+                    <h2 class="modal-title">Concern 1</h2>
+                </div>
+                <button class="close-btn" (click)="closeResponseModal()">✕</button>
+            </div>
+
+            <div class="modal-body">
+                <p class="concern-description">An engaging event designed to inspire participants to explore opportunities, develop skills, and prepare for future success.</p>
+                
+                <div class="form-group">
+                    <label for="response" class="form-label">Response<span class="required">*</span></label>
+                    <textarea id="response" class="form-textarea" placeholder="Enter your response message" rows="6"></textarea>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-cancel" (click)="closeResponseModal()">Mark as Resolved</button>
+                <button class="btn-create" (click)="sendResponse()">Send Response</button>
+            </div>
+        </div>
+    </div>
+</div>
