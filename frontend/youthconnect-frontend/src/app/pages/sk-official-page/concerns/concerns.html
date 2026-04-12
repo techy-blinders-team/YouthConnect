@@ -1,5 +1,6 @@
 <div class="concerns-root">
     <div class="concerns-container">
+        
         <!-- Header Section -->
         <div class="header-section">
             <div class="header-content">
@@ -16,11 +17,46 @@
                 </div>
             </div>
         </div>
-                <!-- Search Bar -->
+
+        <!-- Search Bar -->
         <div class="action-bar">
             <div class="search-group">
                 <input type="text" placeholder="Search concerns by title, type, or description" class="search-input">
                 <button class="search-btn">Search</button>
+            </div>
+        </div>
+
+        <!-- Concerns List -->
+        <div class="concerns-list">
+            <div class="concern-card">
+                <div class="card-header">
+                    <h3>Concern Title</h3>
+                    <div class="card-actions">
+                        <button class="edit-btn">
+                            <img src="../../assets/sk-official-events-icons/edit.svg" alt="Edit" width="18" height="18">
+                        </button>
+                        <button class="delete-btn">
+                            <img src="../../assets/sk-official-events-icons/delete.svg" alt="Delete" width="18" height="18">
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="description">Concern Description</p>
+                    <div class="concern-meta">
+                        <div class="meta-item">
+                            <span class="label">Type:</span>
+                            <span class="value">Concern Type</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="label">Created:</span>
+                            <span class="value">Date & Time</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="action-btn response-btn">Send Response</button>
+                    <button class="action-btn resolve-btn">Resolve</button>
+                </div>
             </div>
         </div>
     </div>
