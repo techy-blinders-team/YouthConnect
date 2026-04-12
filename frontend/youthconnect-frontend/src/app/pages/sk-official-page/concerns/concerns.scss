@@ -148,8 +148,8 @@ html, body, :host, .concerns-container {
 /* Concerns Card Styles */
 .concerns-list {
   margin-top: 32px;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 24px;
 }
 
