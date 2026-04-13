@@ -16,12 +16,14 @@ export class TaskTracker implements OnInit {
 
   // State
   isModalOpen = false;
+  isDetailsModalOpen = false;
   isLoading = false;
   isEditing = false;
   currentEditingTaskId: number | null = null;
   successMessage = '';
   errorMessage = '';
   searchTerm = '';
+  selectedTask: TaskResponse | null = null;
 
   // Tasks data
   tasks: TaskResponse[] = [];
@@ -31,8 +33,11 @@ export class TaskTracker implements OnInit {
   formState = {
     taskingType: '',
     taskDescription: '',
-    status: '',
+    skIncharge: '',
     hyperlink: '',
+    status: '',
+    dueDate: '',
+    customStatus: '',
   };
 
   // Admin info - get from localStorage or use default
@@ -109,8 +114,11 @@ export class TaskTracker implements OnInit {
     this.formState = {
       taskingType: task.tasking,
       taskDescription: task.taskDescription || '',
-      status: task.status,
+      skIncharge: task.skIncharge || '',
       hyperlink: task.hyperlink || '',
+      status: task.status,
+      dueDate: task.dueDate ? this.formatDateForInput(task.dueDate) : '',
+      customStatus: task.status === 'CUSTOM' ? task.status : '',
     };
     this.isModalOpen = true;
   }
@@ -122,17 +130,30 @@ export class TaskTracker implements OnInit {
     this.currentEditingTaskId = null;
   }
 
+  openDetailsModal(task: TaskResponse) {
+    this.selectedTask = task;
+    this.isDetailsModalOpen = true;
+  }
+
+  closeDetailsModal() {
+    this.isDetailsModalOpen = false;
+    this.selectedTask = null;
+  }
+
   resetForm() {
     this.formState = {
       taskingType: '',
       taskDescription: '',
-      status: '',
+      skIncharge: '',
       hyperlink: '',
+      status: '',
+      dueDate: '',
+      customStatus: '',
     };
   }
 
   createTask() {
-    if (!this.formState.taskingType || !this.formState.taskDescription || !this.formState.status) {
+    if (!this.formState.taskingType || !this.formState.taskDescription || !this.formState.skIncharge || !this.formState.status) {
       this.errorMessage = 'Please fill in all required fields';
       return;
     }
@@ -141,63 +162,20 @@ export class TaskTracker implements OnInit {
       adminId: this.currentAdminId,
       tasking: this.formState.taskingType as Tasking,
       taskDescription: this.formState.taskDescription,
-      dueDate: undefined,
+      skIncharge: this.formState.skIncharge,
+      hyperlink: this.formState.hyperlink || undefined,
+      dueDate: this.formState.dueDate || undefined,
+      status: this.formState.status as TaskStatus,
     };
 
     this.taskService.createTask(request).subscribe({
       next: (response) => {
-        // If hyperlink provided, add it
-        if (this.formState.hyperlink) {
-          this.taskService.addHyperlink(response.taskId, { hyperlink: this.formState.hyperlink }).subscribe({
-            next: (updatedTask) => {
-              // Update task status if user selected something other than PENDING
-              if (this.formState.status && this.formState.status !== TaskStatus.PENDING) {
-                this.taskService.updateTaskStatus(updatedTask.taskId, this.formState.status as TaskStatus).subscribe({
-                  next: (finalTask) => {
-                    this.tasks.push(finalTask);
-                    this.filteredTasks = this.tasks;
-                    this.successMessage = 'Task created successfully';
-                    setTimeout(() => this.successMessage = '', 3000);
-                    this.closeModal();
-                    this.loadTasks();
-                  }
-                });
-              } else {
-                this.tasks.push(updatedTask);
-                this.filteredTasks = this.tasks;
-                this.successMessage = 'Task created successfully';
-                setTimeout(() => this.successMessage = '', 3000);
-                this.closeModal();
-                this.loadTasks();
-              }
-            },
-            error: (error) => {
-              console.error('Error adding hyperlink:', error);
-              this.errorMessage = 'Task created but failed to add hyperlink';
-            }
-          });
-        } else {
-          // Update task status if user selected something other than PENDING
-          if (this.formState.status && this.formState.status !== TaskStatus.PENDING) {
-            this.taskService.updateTaskStatus(response.taskId, this.formState.status as TaskStatus).subscribe({
-              next: (finalTask) => {
-                this.tasks.push(finalTask);
-                this.filteredTasks = this.tasks;
-                this.successMessage = 'Task created successfully';
-                setTimeout(() => this.successMessage = '', 3000);
-                this.closeModal();
-                this.loadTasks();
-              }
-            });
-          } else {
-            this.tasks.push(response);
-            this.filteredTasks = this.tasks;
-            this.successMessage = 'Task created successfully';
-            setTimeout(() => this.successMessage = '', 3000);
-            this.closeModal();
-            this.loadTasks();
-          }
-        }
+        this.tasks.push(response);
+        this.filteredTasks = this.tasks;
+        this.successMessage = 'Task created successfully';
+        setTimeout(() => this.successMessage = '', 3000);
+        this.closeModal();
+        this.loadTasks();
       },
       error: (error) => {
         console.error('Error creating task:', error);
@@ -212,85 +190,33 @@ export class TaskTracker implements OnInit {
       return;
     }
 
-    if (!this.formState.taskingType || !this.formState.taskDescription) {
+    if (!this.formState.taskingType || !this.formState.taskDescription || !this.formState.skIncharge || !this.formState.status) {
       this.errorMessage = 'Please fill in all required fields';
       return;
     }
 
     const taskId = this.currentEditingTaskId;
-    const currentTask = this.tasks.find(t => t.taskId === taskId);
-    const statusChanged = currentTask && (currentTask.status !== this.formState.status);
     const request: TaskEditRequest = {
       tasking: this.formState.taskingType as Tasking,
       taskDescription: this.formState.taskDescription,
-      dueDate: undefined,
+      skIncharge: this.formState.skIncharge,
+      hyperlink: this.formState.hyperlink || undefined,
+      dueDate: this.formState.dueDate || undefined,
     };
 
     this.taskService.editTask(taskId, request).subscribe({
       next: (response) => {
-        // If hyperlink provided, update it
-        if (this.formState.hyperlink) {
-          this.taskService.addHyperlink(taskId, { hyperlink: this.formState.hyperlink }).subscribe({
-            next: (updatedTask) => {
-              // Update status if it changed
-              if (statusChanged && this.formState.status) {
-                this.taskService.updateTaskStatus(taskId, this.formState.status as TaskStatus).subscribe({
-                  next: (finalTask) => {
-                    const index = this.tasks.findIndex(t => t.taskId === taskId);
-                    if (index !== -1) {
-                      this.tasks[index] = finalTask;
-                      this.filteredTasks = this.tasks;
-                    }
-                    this.successMessage = 'Task updated successfully';
-                    setTimeout(() => this.successMessage = '', 3000);
-                    this.closeModal();
-                  }
-                });
-              } else {
-                const index = this.tasks.findIndex(t => t.taskId === taskId);
-                if (index !== -1) {
-                  this.tasks[index] = updatedTask;
-                  this.filteredTasks = this.tasks;
-                }
-                this.successMessage = 'Task updated successfully';
-                setTimeout(() => this.successMessage = '', 3000);
-                this.closeModal();
-              }
-            },
-            error: (error) => {
-              console.error('Error adding hyperlink:', error);
-              this.errorMessage = 'Task updated but failed to add hyperlink';
-            }
-          });
-        } else {
-          // Update status if it changed
-          if (statusChanged && this.formState.status) {
-            this.taskService.updateTaskStatus(taskId, this.formState.status as TaskStatus).subscribe({
-              next: (finalTask) => {
-                const index = this.tasks.findIndex(t => t.taskId === taskId);
-                if (index !== -1) {
-                  this.tasks[index] = finalTask;
-                  this.filteredTasks = this.tasks;
-                }
-                this.successMessage = 'Task updated successfully';
-                setTimeout(() => this.successMessage = '', 3000);
-                this.closeModal();
-              }
-            });
-          } else {
-            const index = this.tasks.findIndex(t => t.taskId === taskId);
-            if (index !== -1) {
-              this.tasks[index] = response;
-              this.filteredTasks = this.tasks;
-            }
-            this.successMessage = 'Task updated successfully';
-            setTimeout(() => this.successMessage = '', 3000);
-            this.closeModal();
-          }
+        const index = this.tasks.findIndex(t => t.taskId === taskId);
+        if (index !== -1) {
+          this.tasks[index] = response;
+          this.filteredTasks = this.tasks;
         }
+        this.successMessage = 'Task updated successfully';
+        setTimeout(() => this.successMessage = '', 3000);
+        this.closeModal();
       },
       error: (error) => {
-        console.error('Error editing task:', error);
+        console.error('Error updating task:', error);
         this.errorMessage = 'Failed to update task';
       }
     });
@@ -323,8 +249,8 @@ export class TaskTracker implements OnInit {
     });
   }
 
-  updateTaskStatus(taskId: number, newStatus: TaskStatus) {
-    this.taskService.updateTaskStatus(taskId, newStatus).subscribe({
+  updateTaskStatus(taskId: number, newStatus: string) {
+    this.taskService.updateTaskStatus(taskId, newStatus as TaskStatus).subscribe({
       next: (response) => {
         const index = this.tasks.findIndex(t => t.taskId === taskId);
         if (index !== -1) {

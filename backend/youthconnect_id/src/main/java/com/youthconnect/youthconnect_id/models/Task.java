@@ -33,18 +33,21 @@ public class Task {
     @Column(name = "task_description", columnDefinition = "TEXT")
     private String taskDescription;
 
+    @Column(name = "sk_incharge", length = 255)
+    private String skIncharge;
+
+    @Column(name = "hyperlink", length = 50)
+    private String hyperlink;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private TaskStatus status = TaskStatus.PENDING;
+    private TaskStatus status = TaskStatus.PRIO;
 
     @Column(name = "due_date")
     private LocalDateTime dueDate;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
-
-    @Column(name = "hyperlink", length = 50)
-    private String hyperlink;
 
     public Task() {}
 
@@ -72,6 +75,18 @@ public class Task {
     public void setTaskDescription(String taskDescription) {
         this.taskDescription = taskDescription; 
     }
+    public String getSkIncharge() {
+        return skIncharge;
+    }
+    public void setSkIncharge(String skIncharge) {
+        this.skIncharge = skIncharge;
+    }
+    public String getHyperlink() {
+        return hyperlink;
+    }
+    public void setHyperlink(String hyperlink) {
+        this.hyperlink = hyperlink; 
+    }
     public TaskStatus getStatus() {
         return status; 
     }
@@ -89,11 +104,5 @@ public class Task {
     }
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt; 
-    }
-    public String getHyperlink() {
-        return hyperlink;
-    }
-    public void setHyperlink(String hyperlink) {
-        this.hyperlink = hyperlink; 
     }
 }

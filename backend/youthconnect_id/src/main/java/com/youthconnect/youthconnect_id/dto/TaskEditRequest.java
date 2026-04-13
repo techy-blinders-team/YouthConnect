@@ -7,6 +7,8 @@ import com.youthconnect.youthconnect_id.enums.Tasking;
 public class TaskEditRequest {
     private Tasking tasking;
     private String taskDescription;
+    private String skIncharge;
+    private String hyperlink;
     private LocalDateTime dueDate;
 
     public Tasking getTasking() {
@@ -20,6 +22,18 @@ public class TaskEditRequest {
     }
     public void setTaskDescription(String taskDescription) {
         this.taskDescription = taskDescription; 
+    }
+    public String getSkIncharge() {
+        return skIncharge;
+    }
+    public void setSkIncharge(String skIncharge) {
+        this.skIncharge = skIncharge;
+    }
+    public String getHyperlink() {
+        return hyperlink;
+    }
+    public void setHyperlink(String hyperlink) {
+        this.hyperlink = hyperlink;
     }
     public LocalDateTime getDueDate() {
         return dueDate; 

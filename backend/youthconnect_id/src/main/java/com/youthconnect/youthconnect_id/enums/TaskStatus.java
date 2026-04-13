@@ -4,10 +4,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum TaskStatus {
-    PENDING,
+    PRIO,
+    TODO,
     IN_PROGRESS,
-    COMPLETED,
-    CANCELLED;
+    DONE,
+    CUSTOM;
 
     @JsonValue
     public String getValue() {
