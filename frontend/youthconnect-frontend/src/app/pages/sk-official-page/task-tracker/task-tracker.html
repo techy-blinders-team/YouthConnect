@@ -60,18 +60,13 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <p class="description">{{ task.taskDescription }}</p>
                     <div class="task-info">
                         <div class="info-row">
-                            <span class="label">SK In-charge:</span>
+                            <span class="label">SK INCHARGE:</span>
                             <span class="value">{{ task.skIncharge || getSkOfficialName(task.adminId) }}</span>
                         </div>
-                        <div *ngIf="task.hyperlink" class="info-row">
-                            <span class="label">Note/Hyperlink:</span>
-                            <a [href]="task.hyperlink" target="_blank" class="value link">{{ task.hyperlink }}</a>
-                        </div>
                         <div class="info-row">
-                            <span class="label">Status:</span>
+                            <span class="label">STATUS:</span>
                             <span class="status-badge" [ngClass]="'status-' + task.status.toLowerCase()">
                                 {{ task.status }}
                             </span>
@@ -79,7 +74,10 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <!-- Status action buttons removed as requested -->
+                    <button class="btn-mark-done" (click)="updateTaskStatus(task.taskId, TaskStatus.COMPLETED)" 
+                            [disabled]="task.status === TaskStatus.COMPLETED">
+                        Mark as Done
+                    </button>
                 </div>
             </div>
         </div>

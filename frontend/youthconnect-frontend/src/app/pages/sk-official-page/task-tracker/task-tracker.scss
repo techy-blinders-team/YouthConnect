@@ -177,7 +177,7 @@ html, body, :host, .tasks-container {
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   overflow: hidden;
   transition: box-shadow 0.3s;
-  max-width: 600px;
+  max-width: 450px;
 }
 
 .task-card:hover {
@@ -307,43 +307,27 @@ html, body, :host, .tasks-container {
   border-top: 1px solid #eee;
 }
 
-.action-btn.task-status {
-  flex: 1;
-  padding: 10px 16px;
-  border: 1px solid #ddd;
+.btn-mark-done {
+  width: 100%;
+  padding: 8px 16px;
+  background-color: #0052cc;
+  color: white;
+  border: none;
   border-radius: 4px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s;
-  background: white;
-  color: #333;
+  transition: background-color 0.3s;
+  font-family: 'Poppins', Arial, Helvetica, sans-serif;
 
   &:hover:not(:disabled) {
-    border-color: #0052cc;
-    color: #0052cc;
-  }
-
-  &.active {
-    background-color: #0052cc;
-    color: white;
-    border-color: #0052cc;
-  }
-
-  &.completed {
-    background-color: #0052cc;
-    color: white;
-    border-color: #0052cc;
-
-    &:hover:not(:disabled) {
-      background-color: #0041a3;
-      border-color: #0041a3;
-    }
+    background-color: #0041a3;
   }
 
   &:disabled {
-    opacity: 0.5;
+    background-color: #ccc;
     cursor: not-allowed;
+    opacity: 0.6;
   }
 }
 
