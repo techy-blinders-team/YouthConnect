@@ -16,12 +16,14 @@ export class TaskTracker implements OnInit {
 
   // State
   isModalOpen = false;
+  isDetailsModalOpen = false;
   isLoading = false;
   isEditing = false;
   currentEditingTaskId: number | null = null;
   successMessage = '';
   errorMessage = '';
   searchTerm = '';
+  selectedTask: TaskResponse | null = null;
 
   // Tasks data
   tasks: TaskResponse[] = [];
@@ -122,6 +124,16 @@ export class TaskTracker implements OnInit {
     this.resetForm();
     this.isEditing = false;
     this.currentEditingTaskId = null;
+  }
+
+  openDetailsModal(task: TaskResponse) {
+    this.selectedTask = task;
+    this.isDetailsModalOpen = true;
+  }
+
+  closeDetailsModal() {
+    this.isDetailsModalOpen = false;
+    this.selectedTask = null;
   }
 
   resetForm() {

@@ -47,14 +47,14 @@
                 {{ searchTerm ? 'No tasks match your search.' : 'No tasks found. Create one to get started!' }}
             </div>
 
-            <div *ngFor="let task of filteredTasks" class="task-card">
+            <div *ngFor="let task of filteredTasks" class="task-card" (click)="openDetailsModal(task)">
                 <div class="card-header">
                     <h3>{{ getTaskingDisplayName(task.tasking) }}</h3>
                     <div class="card-actions">
-                        <button class="edit-btn" (click)="openEditModal(task)" title="Edit task">
+                        <button class="edit-btn" (click)="openEditModal(task); $event.stopPropagation()" title="Edit task">
                             <img src="assets/sk-official-events-icons/edit.svg" alt="Edit" width="18" height="18">
                         </button>
-                        <button class="delete-btn" (click)="deleteTask(task.taskId)" title="Delete task">
+                        <button class="delete-btn" (click)="deleteTask(task.taskId); $event.stopPropagation()" title="Delete task">
                             <img src="assets/sk-official-events-icons/delete.svg" alt="Delete" width="18" height="18">
                         </button>
                     </div>
@@ -74,7 +74,7 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <button class="btn-mark-done" (click)="updateTaskStatus(task.taskId, TaskStatus.COMPLETED)" 
+                    <button class="btn-mark-done" (click)="updateTaskStatus(task.taskId, TaskStatus.COMPLETED); $event.stopPropagation()" 
                             [disabled]="task.status === TaskStatus.COMPLETED">
                         Mark as Done
                     </button>
@@ -139,6 +139,68 @@
             <div class="modal-footer">
                 <button class="btn-cancel" (click)="closeModal()">Cancel</button>
                 <button class="btn-create" (click)="saveTask()">{{ isEditing ? 'Update Task' : 'Create Task' }}</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Task Details Modal -->
+    <div class="modal-overlay" *ngIf="isDetailsModalOpen && selectedTask" (click)="closeDetailsModal()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <div>
+                    <h2 class="modal-title">Task Details</h2>
+                    <p class="modal-subtitle">view complete task information</p>
+                </div>
+                <button class="close-btn" (click)="closeDetailsModal()">✕</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="detail-row">
+                    <label class="detail-label">Tasking/Committee</label>
+                    <p class="detail-value">{{ getTaskingDisplayName(selectedTask.tasking) }}</p>
+                </div>
+
+                <div class="detail-row">
+                    <label class="detail-label">Description</label>
+                    <p class="detail-value">{{ selectedTask.taskDescription }}</p>
+                </div>
+
+                <div class="detail-row">
+                    <label class="detail-label">SK In-charge</label>
+                    <p class="detail-value">{{ selectedTask.skIncharge || getSkOfficialName(selectedTask.adminId) }}</p>
+                </div>
+
+                <div class="detail-row">
+                    <label class="detail-label">Note/Hyperlink</label>
+                    <p class="detail-value" *ngIf="selectedTask.hyperlink">
+                        <a [href]="selectedTask.hyperlink" target="_blank" rel="noopener noreferrer">{{ selectedTask.hyperlink }}</a>
+                    </p>
+                    <p class="detail-value" *ngIf="!selectedTask.hyperlink">No hyperlink provided</p>
+                </div>
+
+                <div class="detail-row">
+                    <label class="detail-label">Status</label>
+                    <p class="detail-value">
+                        <span class="status-badge" [ngClass]="'status-' + selectedTask.status.toLowerCase()">
+                            {{ selectedTask.status }}
+                        </span>
+                    </p>
+                </div>
+
+                <div class="detail-row">
+                    <label class="detail-label">Created Date</label>
+                    <p class="detail-value">{{ formatDate(selectedTask.createdAt) }}</p>
+                </div>
+
+                <div class="detail-row">
+                    <label class="detail-label">Due Date</label>
+                    <p class="detail-value">{{ selectedTask.dueDate ? formatDate(selectedTask.dueDate) : 'No due date set' }}</p>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-cancel" (click)="closeDetailsModal()">Close</button>
+                <button class="btn-create" (click)="openEditModal(selectedTask)">Edit Task</button>
             </div>
         </div>
     </div>
