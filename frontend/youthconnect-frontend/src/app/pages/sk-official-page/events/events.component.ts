@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { EventService, EventResponse } from '../../../services/event.service';
 import { AuthService } from '../../../services/auth.service';
 
@@ -9,17 +10,19 @@ import { AuthService } from '../../../services/auth.service';
   templateUrl: './events.component.html',
   styleUrls: ['./events.component.scss'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule]
+  imports: [CommonModule, ReactiveFormsModule, FormsModule]
 })
 export class EventsComponent implements OnInit {
   isModalOpen = false;
   eventForm!: FormGroup;
   events: EventResponse[] = [];
+  filteredEvents: EventResponse[] = [];
   isLoading = false;
   errorMessage: string = '';
   successMessage: string = '';
   currentAdminId: number = 0;
   editingEventId: number | null = null;
+  searchTerm: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -55,6 +58,8 @@ export class EventsComponent implements OnInit {
     this.eventService.getAllEvents().subscribe({
       next: (data) => {
         this.events = data;
+        this.filteredEvents = data;
+        this.searchTerm = '';
         this.isLoading = false;
       },
       error: (error) => {
@@ -63,6 +68,22 @@ export class EventsComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  searchEvents(term: string) {
+    this.searchTerm = term;
+    
+    if (!term.trim()) {
+      this.filteredEvents = this.events;
+      return;
+    }
+
+    const searchLower = term.toLowerCase();
+    this.filteredEvents = this.events.filter(event =>
+      event.title.toLowerCase().includes(searchLower) ||
+      event.description.toLowerCase().includes(searchLower) ||
+      event.location.toLowerCase().includes(searchLower)
+    );
   }
 
   openModal() {

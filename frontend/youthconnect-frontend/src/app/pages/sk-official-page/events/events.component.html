@@ -28,8 +28,13 @@
         <!-- Search Bar and Add Event Button -->
         <div class="action-bar">
             <div class="search-group">
-                <input type="text" placeholder="Search events by title, description, or location" class="search-input">
-                <button class="search-btn">Search</button>
+                <input 
+                    type="text" 
+                    placeholder="Search events by title, description, or location" 
+                    class="search-input"
+                    [(ngModel)]="searchTerm"
+                    (input)="searchEvents(searchTerm)">
+                <button class="search-btn" (click)="searchEvents(searchTerm)">Search</button>
             </div>
             <button class="add-event-btn" (click)="openModal()">+ Add Event</button>
         </div>
@@ -37,11 +42,11 @@
         <!-- Events List -->
         <div class="events-list">
             <div *ngIf="isLoading" class="loading-message">Loading events...</div>
-            <div *ngIf="!isLoading && events.length === 0" class="no-events-message">
-                No events found. Create your first event!
+            <div *ngIf="!isLoading && filteredEvents.length === 0" class="no-events-message">
+                {{ searchTerm ? 'No events match your search.' : 'No events found. Create your first event!' }}
             </div>
             
-            <div *ngFor="let event of events" class="event-card">
+            <div *ngFor="let event of filteredEvents" class="event-card">
                 <div class="card-header">
                     <h3>{{ event.title }}</h3>
                     <div class="card-actions">
