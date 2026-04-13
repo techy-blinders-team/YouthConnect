@@ -17,6 +17,14 @@
             </div>
         </div>
 
+        <!-- Success/Error Messages -->
+        <div *ngIf="successMessage" class="alert alert-success">
+            {{ successMessage }}
+        </div>
+        <div *ngIf="errorMessage && !isModalOpen" class="alert alert-error">
+            {{ errorMessage }}
+        </div>
+
         <!-- Search Bar and Add Event Button -->
         <div class="action-bar">
             <div class="search-group">
@@ -25,36 +33,43 @@
             </div>
             <button class="add-event-btn" (click)="openModal()">+ Add Event</button>
         </div>
-        <!-- Event Card -->
+
+        <!-- Events List -->
         <div class="events-list">
-            <div class="event-card">
+            <div *ngIf="isLoading" class="loading-message">Loading events...</div>
+            <div *ngIf="!isLoading && events.length === 0" class="no-events-message">
+                No events found. Create your first event!
+            </div>
+            
+            <div *ngFor="let event of events" class="event-card">
                 <div class="card-header">
-                    <h3>Event Name</h3>
+                    <h3>{{ event.title }}</h3>
                     <div class="card-actions">
-                        <button class="edit-btn">
+                        <button class="edit-btn" title="Edit event">
                             <img src="../../assets/sk-official-events-icons/edit.svg" alt="Edit" width="18" height="18">
                         </button>
-                        <button class="delete-btn">
+                        <button class="delete-btn" (click)="deleteEvent(event.eventId)" title="Delete event">
                             <img src="../../assets/sk-official-events-icons/delete.svg" alt="Delete" width="18" height="18">
                         </button>
                     </div>
                 </div>
                 <div class="card-body">
-                    <p class="description">Event Description</p>
+                    <p class="description">{{ event.description }}</p>
                     <div class="event-meta">
                         <div class="meta-item">
                             <span class="icon"><img src="../../assets/sk-official-events-icons/location.svg" alt="Location" width="16" height="16"></span>
-                            <span>Location</span>
+                            <span>{{ event.location }}</span>
                         </div>
                         <div class="meta-item">
                             <span class="icon"><img src="../../assets/sk-official-events-icons/time.svg" alt="Time" width="16" height="16"></span>
-                            <span>Date & Time</span>
+                            <span>{{ formatDate(event.eventDate) }}</span>
                         </div>
                     </div>
                 </div>
                 <div class="card-footer">
-                    <button class="status-btn ongoing">Ongoing</button>
-                    <button class="status-btn completed">Completed</button>
+                    <button class="status-btn" [ngClass]="event.status.toLowerCase()">
+                        {{ event.status }}
+                    </button>
                 </div>
             </div>
         </div>
@@ -71,32 +86,80 @@
                 <button class="close-btn" (click)="closeModal()">✕</button>
             </div>
 
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="eventTitle" class="form-label">Event Title<span class="required">*</span></label>
-                    <input type="text" id="eventTitle" class="form-input" placeholder="Enter event title">
-                </div>
-
-                <div class="form-group">
-                    <label for="description" class="form-label">Description<span class="required">*</span></label>
-                    <textarea id="description" class="form-textarea" placeholder="Enter event description" rows="4"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="dateTime" class="form-label">Date & Time<span class="required">*</span></label>
-                    <input type="datetime-local" id="dateTime" class="form-input">
-                </div>
-
-                <div class="form-group">
-                    <label for="location" class="form-label">Location<span class="required">*</span></label>
-                    <input type="text" id="location" class="form-input" placeholder="Enter event location">
-                </div>
+            <!-- Modal Error Message -->
+            <div *ngIf="errorMessage" class="modal-alert alert-error">
+                {{ errorMessage }}
             </div>
 
-            <div class="modal-footer">
-                <button class="btn-cancel" (click)="closeModal()">Cancel</button>
-                <button class="btn-create" (click)="createEvent()">Create Event</button>
+            <!-- Modal Success Message -->
+            <div *ngIf="successMessage" class="modal-alert alert-success">
+                {{ successMessage }}
             </div>
+
+            <form [formGroup]="eventForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="eventTitle" class="form-label">Event Title<span class="required">*</span></label>
+                        <input 
+                            type="text" 
+                            id="eventTitle" 
+                            class="form-input" 
+                            placeholder="Enter event title"
+                            formControlName="eventTitle">
+                        <div *ngIf="eventForm.get('eventTitle')?.invalid && eventForm.get('eventTitle')?.touched" class="form-error">
+                            <span *ngIf="eventForm.get('eventTitle')?.hasError('required')">Event title is required</span>
+                            <span *ngIf="eventForm.get('eventTitle')?.hasError('minlength')">Title must be at least 3 characters</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description" class="form-label">Event Description<span class="required">*</span></label>
+                        <textarea 
+                            id="description" 
+                            class="form-textarea" 
+                            placeholder="Enter event description" 
+                            rows="4"
+                            formControlName="description"></textarea>
+                        <div *ngIf="eventForm.get('description')?.invalid && eventForm.get('description')?.touched" class="form-error">
+                            <span *ngIf="eventForm.get('description')?.hasError('required')">Description is required</span>
+                            <span *ngIf="eventForm.get('description')?.hasError('minlength')">Description must be at least 10 characters</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dateTime" class="form-label">Event Date & Time<span class="required">*</span></label>
+                        <input 
+                            type="datetime-local" 
+                            id="dateTime" 
+                            class="form-input"
+                            formControlName="dateTime">
+                        <div *ngIf="eventForm.get('dateTime')?.invalid && eventForm.get('dateTime')?.touched" class="form-error">
+                            <span>Date and time are required</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="location" class="form-label">Event Location<span class="required">*</span></label>
+                        <input 
+                            type="text" 
+                            id="location" 
+                            class="form-input" 
+                            placeholder="Enter event location"
+                            formControlName="location">
+                        <div *ngIf="eventForm.get('location')?.invalid && eventForm.get('location')?.touched" class="form-error">
+                            <span *ngIf="eventForm.get('location')?.hasError('required')">Location is required</span>
+                            <span *ngIf="eventForm.get('location')?.hasError('minlength')">Location must be at least 3 characters</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" (click)="closeModal()" [disabled]="isLoading">Cancel</button>
+                    <button type="button" class="btn-create" (click)="createEvent()" [disabled]="eventForm.invalid || isLoading">
+                        {{ isLoading ? 'Creating...' : 'Create Event' }}
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
