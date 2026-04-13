@@ -177,7 +177,7 @@ html, body, :host, .tasks-container {
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   overflow: hidden;
   transition: box-shadow 0.3s;
-  max-width: 420px;
+  max-width: 600px;
 }
 
 .task-card:hover {
@@ -188,7 +188,7 @@ html, body, :host, .tasks-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
+  padding: 16px;
   border-bottom: 1px solid #eee;
 }
 
@@ -196,124 +196,212 @@ html, body, :host, .tasks-container {
   font-size: 18px;
   font-weight: 700;
   margin: 0;
-  color: #333;
+  color: #1a1a1a;
+  flex: 1;
 }
 
 .card-actions {
   display: flex;
-  gap: 10px;
+  gap: 8px;
+  margin-left: 16px;
 }
 
 .edit-btn, .delete-btn {
   background: none;
   border: none;
-  color: #0052cc;
-  font-size: 14px;
-  font-weight: 600;
   cursor: pointer;
-  padding: 4px 8px;
+  padding: 6px;
   border-radius: 4px;
   transition: background 0.2s;
-}
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-.edit-btn:hover, .delete-btn:hover {
-  background: #f0f4ff;
+  img {
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    background: #f0f0f0;
+  }
 }
 
 .card-body {
-  padding: 12px 16px;
+  padding: 16px;
 }
 
 .description {
-  font-size: 14px;
+  font-size: 15px;
   color: #666;
-  margin: 0 0 15px 0;
+  margin: 0 0 16px 0;
   line-height: 1.5;
 }
 
-.task-meta {
+.task-info {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.meta-item {
+.info-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
-  font-size: 13px;
-  color: #666;
+  font-size: 14px;
 
   .label {
     font-weight: 600;
-    color: #333;
+    color: #1a1a1a;
+    min-width: 120px;
   }
 
   .value {
     color: #666;
+    word-break: break-word;
+  }
+
+  .value.link {
+    color: #0052cc;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
 
 .status-badge {
   display: inline-block;
-  padding: 4px 12px;
+  padding: 6px 12px;
   border-radius: 12px;
   font-size: 12px;
   font-weight: 600;
-  background-color: #f0f0f0;
-  color: #333;
-  margin-right: 6px;
+  white-space: nowrap;
 }
 
-.status-badge.prio {
-  background-color: #ffb3b3;
-  color: #a30000;
-}
-.status-badge.todo {
+.status-badge.status-pending {
   background-color: #e2e3e5;
   color: #383d41;
 }
-.status-badge.in-progress {
+
+.status-badge.status-in_progress {
   background-color: #fff3cd;
   color: #856404;
 }
-.status-badge.done {
+
+.status-badge.status-completed {
   background-color: #d4edda;
   color: #155724;
 }
 
-.card-footer {
-  padding: 10px 16px;
-  border-top: 1px solid #eee;
-  display: flex;
-  gap: 10px;
+.status-badge.status-cancelled {
+  background-color: #f8d7da;
+  color: #721c24;
 }
 
-.action-btn {
+.card-footer {
+  display: flex;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid #eee;
+}
+
+.action-btn.task-status {
   flex: 1;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
+  padding: 10px 16px;
+  border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
   background: white;
   color: #333;
 
-  &:hover {
-    background-color: #f9f9f9;
+  &:hover:not(:disabled) {
+    border-color: #0052cc;
+    color: #0052cc;
+  }
+
+  &.active {
+    background-color: #0052cc;
+    color: white;
+    border-color: #0052cc;
+  }
+
+  &.completed {
+    background-color: #0052cc;
+    color: white;
+    border-color: #0052cc;
+
+    &:hover:not(:disabled) {
+      background-color: #0041a3;
+      border-color: #0041a3;
+    }
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 }
 
-.task-status.completed {
-  background-color: #0052cc;
-  color: white;
-  border-color: #0052cc;
+// Header info column (tasking type and description label)
+.header-info-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
 }
 
-.task-status.completed:hover {
-  background-color: #0041a3;
+.task-type {
+  display: inline-block;
+  padding: 3px 8px;
+  background-color: #f0f0f0;
+  color: #555;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 500;
+  white-space: nowrap;
+  margin-left: 0;
+}
+
+// Loading and empty state messages
+.loading-message,
+.no-tasks-message {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+  font-size: 16px;
+}
+
+.loading-message {
+  color: #0052cc;
+  font-weight: 600;
+}
+
+// Alert messages
+.alert {
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.alert-error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
 }
 
 /* Modal Styles */
@@ -505,4 +593,99 @@ select.form-input:focus {
 .btn-create:hover {
   background-color: #008844;
   border-color: #008844;
+}
+
+// Header info column (tasking type and description label)
+.header-info-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.task-type {
+  display: inline-block;
+  padding: 3px 8px;
+  background-color: #f0f0f0;
+  color: #555;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 500;
+  white-space: nowrap;
+  margin-left: 0;
+}
+
+// Loading and empty state messages
+.loading-message,
+.no-tasks-message {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+  font-size: 16px;
+}
+
+.loading-message {
+  color: #0052cc;
+  font-weight: 600;
+}
+
+// Alert messages
+.alert {
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.alert-error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+// Status badge styles
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-badge.status-pending {
+  background-color: #e2e3e5;
+  color: #383d41;
+}
+
+.status-badge.status-in_progress {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.status-badge.status-completed {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-badge.status-cancelled {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+// Status actions (task status buttons)
+.status-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
 }
