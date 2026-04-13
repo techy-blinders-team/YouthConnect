@@ -19,6 +19,7 @@ export class EventsComponent implements OnInit {
   errorMessage: string = '';
   successMessage: string = '';
   currentAdminId: number = 0;
+  editingEventId: number | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -66,16 +67,89 @@ export class EventsComponent implements OnInit {
 
   openModal() {
     this.isModalOpen = true;
+    this.editingEventId = null;
     this.eventForm.reset();
     this.errorMessage = '';
     this.successMessage = '';
   }
 
+  editEvent(event: EventResponse) {
+    this.isModalOpen = true;
+    this.editingEventId = event.eventId;
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    // Convert ISO date to datetime-local format
+    const dateObj = new Date(event.eventDate);
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const hours = String(dateObj.getHours()).padStart(2, '0');
+    const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+    const dateTimeLocal = `${year}-${month}-${day}T${hours}:${minutes}`;
+
+    this.eventForm.patchValue({
+      eventTitle: event.title,
+      description: event.description,
+      dateTime: dateTimeLocal,
+      location: event.location
+    });
+  }
+
   closeModal() {
     this.isModalOpen = false;
+    this.editingEventId = null;
     this.eventForm.reset();
     this.errorMessage = '';
     this.successMessage = '';
+  }
+
+  submitEvent() {
+    if (this.editingEventId) {
+      this.saveEditedEvent();
+    } else {
+      this.createEvent();
+    }
+  }
+
+  saveEditedEvent() {
+    if (this.eventForm.invalid) {
+      this.errorMessage = 'Please fill in all required fields correctly';
+      return;
+    }
+
+    if (!this.editingEventId) {
+      this.errorMessage = 'Event ID not found';
+      return;
+    }
+
+    const formValue = this.eventForm.value;
+    const eventDate = new Date(formValue.dateTime).toISOString();
+
+    const request = {
+      title: formValue.eventTitle,
+      description: formValue.description,
+      eventDate: eventDate,
+      location: formValue.location,
+      createdByAdminId: this.currentAdminId,
+      status: 'Upcoming'
+    };
+
+    this.isLoading = true;
+    this.eventService.editEvent(this.editingEventId, request).subscribe({
+      next: (response) => {
+        this.successMessage = 'Event updated successfully!';
+        this.eventForm.reset();
+        this.editingEventId = null;
+        this.loadEvents();
+        setTimeout(() => this.closeModal(), 1500);
+      },
+      error: (error) => {
+        console.error('Error updating event:', error);
+        this.errorMessage = error.error?.message || 'Failed to update event. Please try again.';
+        this.isLoading = false;
+      }
+    });
   }
 
   createEvent() {

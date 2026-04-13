@@ -45,7 +45,7 @@
                 <div class="card-header">
                     <h3>{{ event.title }}</h3>
                     <div class="card-actions">
-                        <button class="edit-btn" title="Edit event">
+                        <button class="edit-btn" (click)="editEvent(event)" title="Edit event">
                             <img src="../../assets/sk-official-events-icons/edit.svg" alt="Edit" width="18" height="18">
                         </button>
                         <button class="delete-btn" (click)="deleteEvent(event.eventId)" title="Delete event">
@@ -80,8 +80,8 @@
         <div class="modal-content" (click)="$event.stopPropagation()">
             <div class="modal-header">
                 <div>
-                    <h2 class="modal-title">Create New Event</h2>
-                    <p class="modal-subtitle">Set up and publish a new event for participants to join</p>
+                    <h2 class="modal-title">{{ editingEventId ? 'Edit Event' : 'Create New Event' }}</h2>
+                    <p class="modal-subtitle">{{ editingEventId ? 'Update event details' : 'Set up and publish a new event for participants to join' }}</p>
                 </div>
                 <button class="close-btn" (click)="closeModal()">✕</button>
             </div>
@@ -155,8 +155,8 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn-cancel" (click)="closeModal()" [disabled]="isLoading">Cancel</button>
-                    <button type="button" class="btn-create" (click)="createEvent()" [disabled]="eventForm.invalid || isLoading">
-                        {{ isLoading ? 'Creating...' : 'Create Event' }}
+                    <button type="button" class="btn-create" (click)="submitEvent()" [disabled]="eventForm.invalid || isLoading">
+                        {{ isLoading ? (editingEventId ? 'Updating...' : 'Creating...') : (editingEventId ? 'Update Event' : 'Create Event') }}
                     </button>
                 </div>
             </form>
