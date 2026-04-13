@@ -18,104 +18,139 @@
             </div>
         </div>
 
+        <!-- Success/Error Messages -->
+        <div *ngIf="successMessage" class="alert alert-success">
+            {{ successMessage }}
+        </div>
+        <div *ngIf="errorMessage" class="alert alert-error">
+            {{ errorMessage }}
+        </div>
+
         <!-- Search Bar and Add Task Button -->
         <div class="action-bar">
             <div class="search-group">
-                <input type="text" placeholder="Search tasks by title or description" class="search-input">
-                <button class="search-btn">Search</button>
+                <input 
+                    type="text" 
+                    placeholder="Search tasks by description, type, or hyperlink" 
+                    class="search-input"
+                    [(ngModel)]="searchTerm"
+                    (input)="searchTasks(searchTerm)">
+                <button class="search-btn" (click)="searchTasks(searchTerm)">Search</button>
             </div>
             <button class="add-task-btn" (click)="openModal()">+ Add Task</button>
         </div>
 
         <!-- Tasks List -->
         <div class="tasks-list">
-            <div class="task-card">
+            <div *ngIf="isLoading" class="loading-message">Loading tasks...</div>
+            <div *ngIf="!isLoading && filteredTasks.length === 0" class="no-tasks-message">
+                {{ searchTerm ? 'No tasks match your search.' : 'No tasks found. Create one to get started!' }}
+            </div>
+
+            <div *ngFor="let task of filteredTasks" class="task-card">
                 <div class="card-header">
-                    <h3>Tasking/Committee</h3>
+                    <h3>{{ getTaskingDisplayName(task.tasking) }}</h3>
                     <div class="card-actions">
-                        <button class="edit-btn">
-                            <img src="../../assets/sk-official-events-icons/edit.svg" alt="Edit" width="18" height="18">
+                        <button class="edit-btn" (click)="openEditModal(task)" title="Edit task">
+                            <img src="assets/sk-official-events-icons/edit.svg" alt="Edit" width="18" height="18">
                         </button>
-                        <button class="delete-btn">
-                            <img src="../../assets/sk-official-events-icons/delete.svg" alt="Delete" width="18" height="18">
+                        <button class="delete-btn" (click)="deleteTask(task.taskId)" title="Delete task">
+                            <img src="assets/sk-official-events-icons/delete.svg" alt="Delete" width="18" height="18">
                         </button>
                     </div>
                 </div>
                 <div class="card-body">
-                    <p class="description">Description of task</p>
-                    <div class="task-meta">
-                        <div class="meta-item">
+                    <p class="description">{{ task.taskDescription }}</p>
+                    <div class="task-info">
+                        <div class="info-row">
                             <span class="label">SK In-charge:</span>
-                            <span class="value">SK name</span>
+                            <span class="value">{{ getSkOfficialName(task.adminId) }}</span>
                         </div>
-                        <div class="meta-item">
+                        <div *ngIf="task.hyperlink" class="info-row">
                             <span class="label">Note/Hyperlink:</span>
-                            <span class="value">Note or Hyperlink</span>
+                            <a [href]="task.hyperlink" target="_blank" class="value link">{{ task.hyperlink }}</a>
                         </div>
-                        <div class="meta-item">
+                        <div class="info-row">
                             <span class="label">Status:</span>
-                            <span class="status-badge prio">PRIO</span>
-                            <span class="status-badge todo">To Do</span>
-                            <span class="status-badge in-progress">In Progress</span>
-                            <span class="status-badge done">Done</span>
+                            <span class="status-badge" [ngClass]="'status-' + task.status.toLowerCase()">
+                                {{ task.status }}
+                            </span>
                         </div>
                     </div>
                 </div>
                 <div class="card-footer">
-                    <button class="action-btn task-status">In Progress</button>
-                    <button class="action-btn task-status completed">Completed</button>
+                    <!-- Status action buttons removed as requested -->
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Create Task Modal -->
+    <!-- Create/Edit Task Modal -->
     <div class="modal-overlay" *ngIf="isModalOpen" (click)="closeModal()">
         <div class="modal-content" (click)="$event.stopPropagation()">
             <div class="modal-header">
                 <div>
-                    <h2 class="modal-title">Create New Task</h2>
-                    <p class="modal-subtitle">Set up and assign a new task for tracking</p>
+                    <h2 class="modal-title">{{ isEditing ? 'Edit Task' : 'Create New Task' }}</h2>
+                    <p class="modal-subtitle">{{ isEditing ? 'Update task details' : 'Set up and organize a new task' }}</p>
                 </div>
                 <button class="close-btn" (click)="closeModal()">✕</button>
             </div>
 
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="taskTitle" class="form-label">Task Title<span class="required">*</span></label>
-                    <input type="text" id="taskTitle" class="form-input" placeholder="Enter task title">
+                    <label for="taskingType" class="form-label">Tasking/Committee<span class="required">*</span></label>
+                    <select id="taskingType" class="form-input" [(ngModel)]="formState.taskingType">
+                        <option value="">Select a tasking/committee</option>
+                        <option *ngFor="let tasking of taskingOptions" [value]="tasking">
+                            {{ getTaskingDisplayName(tasking) }}
+                        </option>
+                    </select>
                 </div>
 
                 <div class="form-group">
                     <label for="description" class="form-label">Description<span class="required">*</span></label>
-                    <textarea id="description" class="form-textarea" placeholder="Enter task description" rows="4"></textarea>
+                    <textarea 
+                        id="description" 
+                        class="form-textarea" 
+                        placeholder="Enter task description" 
+                        rows="4"
+                        [(ngModel)]="formState.taskDescription"></textarea>
                 </div>
 
                 <div class="form-group">
-                    <label for="skInCharge" class="form-label">SK In-Charge<span class="required">*</span></label>
-                    <input type="text" id="skInCharge" class="form-input" placeholder="Enter SK name">
-                </div>
-
-                <div class="form-group">
-                    <label for="noteHyperlink" class="form-label">Note/Hyperlink</label>
-                    <input type="text" id="noteHyperlink" class="form-input" placeholder="Enter note or hyperlink">
+                    <label for="skInCharge" class="form-label">SK In-charge<span class="required">*</span></label>
+                    <input 
+                        type="text" 
+                        id="skInCharge" 
+                        class="form-input" 
+                        [value]="currentSkOfficialName"
+                        readonly>
                 </div>
 
                 <div class="form-group">
                     <label for="status" class="form-label">Status<span class="required">*</span></label>
-                    <select id="status" class="form-input">
+                    <select id="status" class="form-input" [(ngModel)]="formState.status">
                         <option value="">Select a status</option>
-                        <option value="prio">PRIO</option>
-                        <option value="todo">To Do</option>
-                        <option value="in-progress">In Progress</option>
-                        <option value="done">Done</option>
+                        <option *ngFor="let status of taskStatusOptions" [value]="status">
+                            {{ status }}
+                        </option>
                     </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="hyperlink" class="form-label">Note/Hyperlink</label>
+                    <input 
+                        type="text" 
+                        id="hyperlink" 
+                        class="form-input" 
+                        placeholder="Enter note or hyperlink URL"
+                        [(ngModel)]="formState.hyperlink">
                 </div>
             </div>
 
             <div class="modal-footer">
                 <button class="btn-cancel" (click)="closeModal()">Cancel</button>
-                <button class="btn-create" (click)="createTask()">Create Task</button>
+                <button class="btn-create" (click)="saveTask()">{{ isEditing ? 'Update Task' : 'Create Task' }}</button>
             </div>
         </div>
     </div>

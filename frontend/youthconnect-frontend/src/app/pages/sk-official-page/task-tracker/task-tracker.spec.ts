@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { TaskTracker } from './task-tracker';
 
@@ -8,7 +9,7 @@ describe('TaskTracker', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TaskTracker]
+      imports: [TaskTracker, HttpClientTestingModule]
     })
     .compileComponents();
 
