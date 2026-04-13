@@ -1,37 +1,46 @@
-<div class="sidebar-container">
+<div class="sidebar-container" [class.collapsed]="isCollapsed">
+    <button class="toggle-btn" (click)="toggleSidebar()" aria-label="Toggle Sidebar">
+        <span class="toggle-icon">{{ isCollapsed ? '→' : '←' }}</span>
+    </button>
+
     <div class="side-header">
         <img src="assets/sk-logo.png" alt="SK Logo" class="logo" />
-        <div class="system-title">
+        <div class="system-title" *ngIf="!isCollapsed">
             <span>Youth</span><br />
             <span>Portal</span>
         </div>
     </div>
     <div class="side-menu">
         <ul>
-            <li routerLink="/youth/dashboard" [class.active]="isRouteActive('/youth/dashboard')">
+            <li routerLink="/youth/dashboard" [class.active]="isRouteActive('/youth/dashboard')"
+                [title]="isCollapsed ? 'Dashboard' : ''">
                 <img src="assets/youth-sidebar/dashboard.png" alt="Dashboard" class="menu-icon" />
-                <span>Dashboard</span>
+                <span *ngIf="!isCollapsed">Dashboard</span>
             </li>
-            <li routerLink="/youth/create-concern" [class.active]="isRouteActive('/youth/create-concern')">
+            <li routerLink="/youth/create-concern" [class.active]="isRouteActive('/youth/create-concern')"
+                [title]="isCollapsed ? 'Concern' : ''">
                 <img src="assets/youth-sidebar/attention.png" alt="Concern" class="menu-icon" />
-                <span>Concern</span>
+                <span *ngIf="!isCollapsed">Concern</span>
             </li>
-            <li routerLink="/youth/events" [class.active]="isRouteActive('/youth/events')">
+            <li routerLink="/youth/events" [class.active]="isRouteActive('/youth/events')"
+                [title]="isCollapsed ? 'Event' : ''">
                 <img src="assets/youth-sidebar/event.png" alt="Event" class="menu-icon" />
-                <span>Event</span>
+                <span *ngIf="!isCollapsed">Event</span>
             </li>
-            <li routerLink="/youth/notifications" [class.active]="isRouteActive('/youth/notifications')">
+            <li routerLink="/youth/notifications" [class.active]="isRouteActive('/youth/notifications')"
+                [title]="isCollapsed ? 'Notification' : ''">
                 <img src="assets/youth-sidebar/notification.png" alt="Notification" class="menu-icon" />
-                <span>Notification</span>
+                <span *ngIf="!isCollapsed">Notification</span>
             </li>
         </ul>
     </div>
     <div class="side-footer">
         <img src="assets/youth-sidebar/youth-member-icon.png" alt="User" class="footer-icon" />
-        <div class="user-email">
+        <div class="user-email" *ngIf="!isCollapsed">
             <span class="email-text">{{ userEmail }}</span>
         </div>
-        <button type="button" class="logout-btn" aria-label="Logout" (click)="logout()">
+        <button type="button" class="logout-btn" aria-label="Logout" (click)="logout()"
+            [title]="isCollapsed ? 'Logout' : ''">
             <img src="assets/administrator-sidebar/logout-icon.png" alt="Logout" class="footer-logout-icon" />
         </button>
     </div>
