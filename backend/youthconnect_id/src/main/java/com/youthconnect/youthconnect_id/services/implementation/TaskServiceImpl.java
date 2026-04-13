@@ -30,10 +30,11 @@ public class TaskServiceImpl implements TaskService {
         response.setAdminId(task.getAdminId());
         response.setTasking(task.getTasking());
         response.setTaskDescription(task.getTaskDescription());
+        response.setSkIncharge(task.getSkIncharge());
+        response.setHyperlink(task.getHyperlink());
         response.setStatus(task.getStatus());
         response.setDueDate(task.getDueDate());
         response.setCreatedAt(task.getCreatedAt());
-        response.setHyperlink(task.getHyperlink());
         return response;
     }
 
@@ -44,6 +45,8 @@ public class TaskServiceImpl implements TaskService {
         task.setAdminId(request.getAdminId());
         task.setTasking(request.getTasking());
         task.setTaskDescription(request.getTaskDescription());
+        task.setSkIncharge(request.getSkIncharge());
+        task.setHyperlink(request.getHyperlink());
         task.setDueDate(request.getDueDate());
         task.setStatus(TaskStatus.PENDING);
         task.setCreatedAt(LocalDateTime.now());
@@ -57,6 +60,8 @@ public class TaskServiceImpl implements TaskService {
                 .orElseThrow(() -> new RuntimeException("Task not found"));
         task.setTasking(request.getTasking());
         task.setTaskDescription(request.getTaskDescription());
+        task.setSkIncharge(request.getSkIncharge());
+        task.setHyperlink(request.getHyperlink());
         task.setDueDate(request.getDueDate());
         return toResponse(taskRepo.save(task));
     }

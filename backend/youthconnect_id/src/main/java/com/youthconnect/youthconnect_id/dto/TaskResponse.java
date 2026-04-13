@@ -10,10 +10,11 @@ public class TaskResponse {
     private int adminId;
     private Tasking tasking;
     private String taskDescription;
+    private String skIncharge;
+    private String hyperlink;
     private TaskStatus status;
     private LocalDateTime dueDate;
     private LocalDateTime createdAt;
-    private String hyperlink;
 
     public int getTaskId() {
         return taskId; 
@@ -39,6 +40,18 @@ public class TaskResponse {
     public void setTaskDescription(String taskDescription) {
         this.taskDescription = taskDescription; 
     }
+    public String getSkIncharge() {
+        return skIncharge;
+    }
+    public void setSkIncharge(String skIncharge) {
+        this.skIncharge = skIncharge;
+    }
+    public String getHyperlink() {
+        return hyperlink; 
+    }
+    public void setHyperlink(String hyperlink) {
+        this.hyperlink = hyperlink; 
+    }
     public TaskStatus getStatus() {
         return status; 
     }
@@ -56,11 +69,5 @@ public class TaskResponse {
     }
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt; 
-    }
-    public String getHyperlink() {
-        return hyperlink; 
-    }
-    public void setHyperlink(String hyperlink) {
-        this.hyperlink = hyperlink; 
     }
 }
