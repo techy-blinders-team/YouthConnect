@@ -18,44 +18,65 @@
             </div>
         </div>
 
+        <!-- Success/Error Messages -->
+        <div *ngIf="successMessage" class="alert alert-success">
+            {{ successMessage }}
+        </div>
+        <div *ngIf="errorMessage && !isResponseModalOpen" class="alert alert-error">
+            {{ errorMessage }}
+        </div>
+
         <!-- Search Bar -->
         <div class="action-bar">
             <div class="search-group">
-                <input type="text" placeholder="Search concerns by title, type, or description" class="search-input">
-                <button class="search-btn">Search</button>
+                <input 
+                    type="text" 
+                    placeholder="Search concerns by title, type, or description" 
+                    class="search-input"
+                    [(ngModel)]="searchTerm"
+                    (input)="searchConcerns(searchTerm)">
+                <button class="search-btn" (click)="searchConcerns(searchTerm)">Search</button>
             </div>
         </div>
 
         <!-- Concerns List -->
         <div class="concerns-list">
-            <div class="concern-card">
+            <div *ngIf="isLoading" class="loading-message">Loading concerns...</div>
+            <div *ngIf="!isLoading && filteredConcerns.length === 0" class="no-concerns-message">
+                {{ searchTerm ? 'No concerns match your search.' : 'No concerns found.' }}
+            </div>
+
+            <div *ngFor="let concern of filteredConcerns" class="concern-card">
                 <div class="card-header">
-                    <h3>Concern Title</h3>
-                    <div class="card-actions">
-                        <button class="edit-btn">
-                            <img src="../../assets/sk-official-events-icons/edit.svg" alt="Edit" width="18" height="18">
-                        </button>
-                        <button class="delete-btn">
-                            <img src="../../assets/sk-official-events-icons/delete.svg" alt="Delete" width="18" height="18">
-                        </button>
+                    <div class="header-info-col">
+                        <h3>{{ concern.title }}</h3>
+                        <span class="concern-type">{{ getConcernTypeDisplay(concern.typeOfConcern) }}</span>
                     </div>
+                    <span class="status-badge" [ngClass]="'status-' + getStatusClass(concern.status)">
+                        {{ concern.status }}
+                    </span>
                 </div>
                 <div class="card-body">
-                    <p class="description">Concern Description</p>
+                    <p class="description">{{ concern.description }}</p>
                     <div class="concern-meta">
                         <div class="meta-item">
-                            <span class="label">Type:</span>
-                            <span class="value">Concern Type</span>
+                            <span class="label">Youth ID:</span>
+                            <span class="value">#{{ concern.youthId }}</span>
                         </div>
                         <div class="meta-item">
                             <span class="label">Created:</span>
-                            <span class="value">Date & Time</span>
+                            <span class="value">{{ formatDate(concern.createdAt) }}</span>
+                        </div>
+                        <div *ngIf="concern.updatedAt" class="meta-item">
+                            <span class="label">Updated:</span>
+                            <span class="value">{{ formatDate(concern.updatedAt) }}</span>
                         </div>
                     </div>
                 </div>
                 <div class="card-footer">
-                    <button class="action-btn response-btn" (click)="openResponseModal()">Send Response</button>
-                    <button class="action-btn resolve-btn">Resolve</button>
+                    <button class="action-btn response-btn" (click)="openResponseModal(concern)">
+                        Send Response
+                    </button>
                 </div>
             </div>
         </div>
@@ -66,24 +87,64 @@
         <div class="modal-content" (click)="$event.stopPropagation()">
             <div class="modal-header">
                 <div>
-                    <h2 class="modal-title">Concern Title</h2>
+                    <h2 class="modal-title">{{ selectedConcern?.title }}</h2>
+                    <p class="modal-subtitle">Send a response to this concern</p>
                 </div>
                 <button class="close-btn" (click)="closeResponseModal()">✕</button>
             </div>
 
-            <div class="modal-body">
-                <p class="concern-description">Concern Description</p>
-                
-                <div class="form-group">
-                    <label for="response" class="form-label">Response<span class="required">*</span></label>
-                    <textarea id="response" class="form-textarea" placeholder="Enter your response message" rows="6"></textarea>
-                </div>
+            <!-- Modal Error Message -->
+            <div *ngIf="errorMessage" class="modal-alert alert-error">
+                {{ errorMessage }}
             </div>
 
-            <div class="modal-footer">
-                <button class="btn-cancel" (click)="closeResponseModal()">Mark as Resolved</button>
-                <button class="btn-create" (click)="sendResponse()">Send Response</button>
+            <!-- Modal Success Message -->
+            <div *ngIf="successMessage" class="modal-alert alert-success">
+                {{ successMessage }}
             </div>
+
+            <form [formGroup]="responseForm">
+                <div class="modal-body">
+                    <div class="concern-info">
+                        <p><strong>Type:</strong> {{ getConcernTypeDisplay(selectedConcern?.typeOfConcern || '') }}</p>
+                        <p><strong>Status:</strong> {{ selectedConcern?.status }}</p>
+                        <p class="concern-description"><strong>Description:</strong> {{ selectedConcern?.description }}</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="status" class="form-label">Update Status<span class="required">*</span></label>
+                        <select id="status" class="form-input" formControlName="status">
+                            <option value="OPEN">Open</option>
+                            <option value="IN_PROGRESS">In Progress</option>
+                            <option value="RESOLVED">Resolved</option>
+                            <option value="CLOSED">Closed</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="response" class="form-label">Response<span class="required">*</span></label>
+                        <textarea 
+                            id="response" 
+                            class="form-textarea" 
+                            placeholder="Enter your response message" 
+                            rows="6"
+                            formControlName="response"></textarea>
+                        <div *ngIf="responseForm.get('response')?.invalid && responseForm.get('response')?.touched" class="form-error">
+                            <span *ngIf="responseForm.get('response')?.hasError('required')">Response is required</span>
+                            <span *ngIf="responseForm.get('response')?.hasError('minlength')">Response must be at least 10 characters</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" (click)="closeResponseModal()" [disabled]="isLoading">
+                        Cancel
+                    </button>
+                    <button type="button" class="btn-create" (click)="sendResponse()" [disabled]="responseForm.invalid || isLoading">
+                        {{ isLoading ? 'Sending...' : 'Send Response' }}
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
