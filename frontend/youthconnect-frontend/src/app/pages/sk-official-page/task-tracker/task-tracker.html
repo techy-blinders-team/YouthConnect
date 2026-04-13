@@ -144,63 +144,55 @@
     </div>
 
     <!-- Task Details Modal -->
-    <div class="modal-overlay" *ngIf="isDetailsModalOpen && selectedTask" (click)="closeDetailsModal()">
-        <div class="modal-content" (click)="$event.stopPropagation()">
-            <div class="modal-header">
-                <div>
-                    <h2 class="modal-title">Task Details</h2>
-                    <p class="modal-subtitle">view complete task information</p>
-                </div>
-                <button class="close-btn" (click)="closeDetailsModal()">✕</button>
-            </div>
-
-            <div class="modal-body">
-                <div class="detail-row">
-                    <label class="detail-label">Tasking/Committee</label>
-                    <p class="detail-value">{{ getTaskingDisplayName(selectedTask.tasking) }}</p>
-                </div>
-
-                <div class="detail-row">
-                    <label class="detail-label">Description</label>
-                    <p class="detail-value">{{ selectedTask.taskDescription }}</p>
-                </div>
-
-                <div class="detail-row">
-                    <label class="detail-label">SK In-charge</label>
-                    <p class="detail-value">{{ selectedTask.skIncharge || getSkOfficialName(selectedTask.adminId) }}</p>
-                </div>
-
-                <div class="detail-row">
-                    <label class="detail-label">Note/Hyperlink</label>
-                    <p class="detail-value" *ngIf="selectedTask.hyperlink">
-                        <a [href]="selectedTask.hyperlink" target="_blank" rel="noopener noreferrer">{{ selectedTask.hyperlink }}</a>
-                    </p>
-                    <p class="detail-value" *ngIf="!selectedTask.hyperlink">No hyperlink provided</p>
-                </div>
-
-                <div class="detail-row">
-                    <label class="detail-label">Status</label>
-                    <p class="detail-value">
-                        <span class="status-badge" [ngClass]="'status-' + selectedTask.status.toLowerCase()">
-                            {{ selectedTask.status }}
-                        </span>
-                    </p>
-                </div>
-
-                <div class="detail-row">
-                    <label class="detail-label">Created Date</label>
-                    <p class="detail-value">{{ formatDate(selectedTask.createdAt) }}</p>
-                </div>
-
-                <div class="detail-row">
-                    <label class="detail-label">Due Date</label>
-                    <p class="detail-value">{{ selectedTask.dueDate ? formatDate(selectedTask.dueDate) : 'No due date set' }}</p>
+    <div class="modal-overlay details-modal-overlay" *ngIf="isDetailsModalOpen && selectedTask" (click)="closeDetailsModal()">
+        <div class="details-modal-content" (click)="$event.stopPropagation()">
+            <div class="details-modal-header">
+                <h2 class="details-modal-title">{{ getTaskingDisplayName(selectedTask.tasking) }}</h2>
+                <div class="details-modal-actions">
+                    <button class="details-edit-btn" (click)="openEditModal(selectedTask)" title="Edit task">
+                        <img src="assets/sk-official-events-icons/edit.svg" alt="Edit" width="20" height="20">
+                    </button>
+                    <button class="details-delete-btn" (click)="deleteTask(selectedTask.taskId); closeDetailsModal()" title="Delete task">
+                        <img src="assets/sk-official-events-icons/delete.svg" alt="Delete" width="20" height="20">
+                    </button>
+                    <button class="details-close-btn" (click)="closeDetailsModal()" title="Close">✕</button>
                 </div>
             </div>
 
-            <div class="modal-footer">
-                <button class="btn-cancel" (click)="closeDetailsModal()">Close</button>
-                <button class="btn-create" (click)="openEditModal(selectedTask)">Edit Task</button>
+            <div class="details-modal-body">
+                <p class="detail-text">{{ selectedTask.taskDescription }}</p>
+
+                <div class="detail-info-row">
+                    <span class="detail-info-label">SK INCHARGE:</span>
+                    <span class="detail-info-value">{{ selectedTask.skIncharge || getSkOfficialName(selectedTask.adminId) }}</span>
+                </div>
+
+                <div class="detail-info-row">
+                    <span class="detail-info-label">NOTE/HYPERLINK:</span>
+                    <span class="detail-info-value">
+                        <a *ngIf="selectedTask.hyperlink" [href]="selectedTask.hyperlink" target="_blank" rel="noopener noreferrer">{{ selectedTask.hyperlink }}</a>
+                        <span *ngIf="!selectedTask.hyperlink">-</span>
+                    </span>
+                </div>
+
+                <div class="detail-info-row">
+                    <span class="detail-info-label">STATUS:</span>
+                    <span class="status-badge" [ngClass]="'status-' + selectedTask.status.toLowerCase()">
+                        {{ selectedTask.status }}
+                    </span>
+                </div>
+
+                <div class="detail-info-row">
+                    <span class="detail-info-label">DUE DATE:</span>
+                    <span class="detail-info-value">{{ selectedTask.dueDate ? formatDate(selectedTask.dueDate) : 'No due date set' }}</span>
+                </div>
+            </div>
+
+            <div class="details-modal-footer">
+                <button class="details-btn-mark-done" (click)="updateTaskStatus(selectedTask.taskId, TaskStatus.COMPLETED); closeDetailsModal()" 
+                        [disabled]="selectedTask.status === TaskStatus.COMPLETED">
+                    Mark as Done
+                </button>
             </div>
         </div>
     </div>
