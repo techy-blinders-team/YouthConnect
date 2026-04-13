@@ -79,20 +79,7 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <button 
-                        class="action-btn task-status" 
-                        [class.active]="task.status === TaskStatus.IN_PROGRESS"
-                        (click)="updateTaskStatus(task.taskId, TaskStatus.IN_PROGRESS)"
-                        [disabled]="task.status === TaskStatus.IN_PROGRESS">
-                        In Progress
-                    </button>
-                    <button 
-                        class="action-btn task-status completed" 
-                        [class.active]="task.status === TaskStatus.COMPLETED"
-                        (click)="updateTaskStatus(task.taskId, TaskStatus.COMPLETED)"
-                        [disabled]="task.status === TaskStatus.COMPLETED">
-                        Completed
-                    </button>
+                    <!-- Status action buttons removed as requested -->
                 </div>
             </div>
         </div>
