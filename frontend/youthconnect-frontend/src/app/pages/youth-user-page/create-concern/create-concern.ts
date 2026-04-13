@@ -28,9 +28,15 @@ export class CreateConcern implements OnInit {
 
   concerns: ConcernResponse[] = [];
   filteredConcerns: ConcernResponse[] = [];
+  paginatedConcerns: ConcernResponse[] = [];
   searchQuery = '';
   selectedStatusFilter: string = 'ALL';
   selectedTypeFilter: string = 'ALL';
+
+  // Pagination
+  currentPage = 1;
+  itemsPerPage = 5;
+  totalPages = 1;
 
   statusFilters = [
     { value: 'ALL', label: 'All Status' },
@@ -110,6 +116,67 @@ export class CreateConcern implements OnInit {
     }
 
     this.filteredConcerns = filtered;
+    this.currentPage = 1;
+    this.updatePagination();
+  }
+
+  updatePagination(): void {
+    this.totalPages = Math.ceil(this.filteredConcerns.length / this.itemsPerPage);
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.paginatedConcerns = this.filteredConcerns.slice(startIndex, endIndex);
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.updatePagination();
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.updatePagination();
+    }
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.updatePagination();
+    }
+  }
+
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    const maxVisible = 5;
+
+    if (this.totalPages <= maxVisible) {
+      for (let i = 1; i <= this.totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (this.currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) pages.push(i);
+        pages.push(-1); // ellipsis
+        pages.push(this.totalPages);
+      } else if (this.currentPage >= this.totalPages - 2) {
+        pages.push(1);
+        pages.push(-1);
+        for (let i = this.totalPages - 3; i <= this.totalPages; i++) pages.push(i);
+      } else {
+        pages.push(1);
+        pages.push(-1);
+        pages.push(this.currentPage - 1);
+        pages.push(this.currentPage);
+        pages.push(this.currentPage + 1);
+        pages.push(-1);
+        pages.push(this.totalPages);
+      }
+    }
+
+    return pages;
   }
 
   onSearchChange(event: Event): void {
