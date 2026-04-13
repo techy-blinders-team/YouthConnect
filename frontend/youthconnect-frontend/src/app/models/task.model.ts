@@ -4,12 +4,16 @@ export interface TaskRequest {
   adminId: number;
   tasking: Tasking;
   taskDescription?: string;
+  skIncharge?: string;
+  hyperlink?: string;
   dueDate?: string; 
 }
 
 export interface TaskEditRequest {
   tasking: Tasking;
   taskDescription?: string;
+  skIncharge?: string;
+  hyperlink?: string;
   dueDate?: string;
 }
 
@@ -22,8 +26,9 @@ export interface TaskResponse {
   adminId: number;
   tasking: Tasking;
   taskDescription?: string;
+  skIncharge?: string;
+  hyperlink?: string;
   status: TaskStatus;
   dueDate?: string;
   createdAt: string;
-  hyperlink?: string;
 }

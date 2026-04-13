@@ -64,7 +64,7 @@
                     <div class="task-info">
                         <div class="info-row">
                             <span class="label">SK In-charge:</span>
-                            <span class="value">{{ getSkOfficialName(task.adminId) }}</span>
+                            <span class="value">{{ task.skIncharge || getSkOfficialName(task.adminId) }}</span>
                         </div>
                         <div *ngIf="task.hyperlink" class="info-row">
                             <span class="label">Note/Hyperlink:</span>
@@ -118,23 +118,13 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="skInCharge" class="form-label">SK In-charge<span class="required">*</span></label>
+                    <label for="skIncharge" class="form-label">SK In-charge</label>
                     <input 
                         type="text" 
-                        id="skInCharge" 
+                        id="skIncharge" 
                         class="form-input" 
-                        [value]="currentSkOfficialName"
-                        readonly>
-                </div>
-
-                <div class="form-group">
-                    <label for="status" class="form-label">Status<span class="required">*</span></label>
-                    <select id="status" class="form-input" [(ngModel)]="formState.status">
-                        <option value="">Select a status</option>
-                        <option *ngFor="let status of taskStatusOptions" [value]="status">
-                            {{ status }}
-                        </option>
-                    </select>
+                        placeholder="Enter SK official name"
+                        [(ngModel)]="formState.skIncharge">
                 </div>
 
                 <div class="form-group">
