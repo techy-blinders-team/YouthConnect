@@ -28,17 +28,41 @@ export interface AttendanceResponse {
     attendedAt?: string;
 }
 
+export interface EventRequest {
+    title: string;
+    description: string;
+    eventDate: string;
+    location: string;
+    createdByAdminId: number;
+    status?: string;
+}
+
 @Injectable({
     providedIn: 'root'
 })
 export class EventService {
     private http = inject(HttpClient);
     private apiUrl = 'http://localhost:8080/api/events';
+    private skApiUrl = 'http://localhost:8080/api/sk/events';
 
-    getAllEvents(): Observable<EventResponse[]> {
-        return this.http.get<EventResponse[]>(this.apiUrl);
+    // SK Official endpoints
+    createEvent(request: EventRequest): Observable<EventResponse> {
+        return this.http.post<EventResponse>(this.skApiUrl, request);
     }
 
+    editEvent(eventId: number, request: EventRequest): Observable<EventResponse> {
+        return this.http.put<EventResponse>(`${this.skApiUrl}/${eventId}`, request);
+    }
+
+    deleteEvent(eventId: number): Observable<any> {
+        return this.http.delete(`${this.skApiUrl}/${eventId}`, { responseType: 'text' });
+    }
+
+    getAllEvents(): Observable<EventResponse[]> {
+        return this.http.get<EventResponse[]>(this.skApiUrl);
+    }
+
+    // Youth endpoints (existing)
     getEventById(eventId: number): Observable<EventResponse> {
         return this.http.get<EventResponse>(`${this.apiUrl}/${eventId}`);
     }

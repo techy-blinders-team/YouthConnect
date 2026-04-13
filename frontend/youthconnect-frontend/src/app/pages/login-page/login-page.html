@@ -20,3 +20,30 @@
     </form>
 
 </div>
+
+<!-- SK Official Login -->
+<div class="login-form">
+    @if (skOfficialErrorMessage) {
+        <div class="error-message">{{ skOfficialErrorMessage }}</div>
+    }
+    
+    <form [formGroup]="skOfficialLoginForm" (ngSubmit)="loginSkOfficial()">
+        <input formControlName="skEmail" type="text" placeholder="SK Official Email">
+
+            @if (skEmailControl?.touched) {
+                @if(skEmailControl?.errors?.['required']) {
+                    <span>Invalid Email format</span>
+                }@else if (skEmailControl?.errors?.['maxlength']) {
+                    <span>Invalid Email Format</span>
+            }
+        }
+        <input formControlName="skPassword" type="password" placeholder="Password">
+            @if (skPasswordControl?.touched) {
+                @if(skPasswordControl?.errors?.['required']) {
+                    <span>Input a password</span>
+                }
+            }
+
+        <button type="submit" [disabled]="isSkOfficialLoading">{{ isSkOfficialLoading ? 'Loading...' : 'SK Official Login' }}</button>
+    </form>
+</div>

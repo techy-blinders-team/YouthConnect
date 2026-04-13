@@ -113,7 +113,7 @@ export const routes: Routes = [
     // SK Official Routes
     {
         path: 'sk-official',
-        // canActivate: [authGuard, roleGuard],
+        canActivate: [authGuard, roleGuard],
         data: { roles: ['sk-official'] },
         loadComponent: () => import('./pages/sk-official-page/sk-official-layout/sk-official-layout').then(m => m.SkOfficialLayout),
         children: [
