@@ -72,10 +72,11 @@ export enum ConcernStatus {
 }
 
 export enum TaskStatus {
-  PENDING = 'PENDING',
+  PRIO = 'PRIO',
+  TODO = 'TODO',
   IN_PROGRESS = 'IN_PROGRESS',
-  COMPLETED = 'COMPLETED',
-  CANCELLED = 'CANCELLED'
+  DONE = 'DONE',
+  CUSTOM = 'CUSTOM'
 }
 
 export enum Tasking {

@@ -41,7 +41,7 @@ public class Task {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private TaskStatus status = TaskStatus.PENDING;
+    private TaskStatus status = TaskStatus.PRIO;
 
     @Column(name = "due_date")
     private LocalDateTime dueDate;

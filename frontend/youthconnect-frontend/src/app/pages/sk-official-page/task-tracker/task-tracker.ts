@@ -37,6 +37,7 @@ export class TaskTracker implements OnInit {
     hyperlink: '',
     status: '',
     dueDate: '',
+    customStatus: '',
   };
 
   // Admin info - get from localStorage or use default
@@ -117,6 +118,7 @@ export class TaskTracker implements OnInit {
       hyperlink: task.hyperlink || '',
       status: task.status,
       dueDate: task.dueDate ? this.formatDateForInput(task.dueDate) : '',
+      customStatus: task.status === 'CUSTOM' ? task.status : '',
     };
     this.isModalOpen = true;
   }
@@ -146,6 +148,7 @@ export class TaskTracker implements OnInit {
       hyperlink: '',
       status: '',
       dueDate: '',
+      customStatus: '',
     };
   }
 
@@ -162,6 +165,7 @@ export class TaskTracker implements OnInit {
       skIncharge: this.formState.skIncharge,
       hyperlink: this.formState.hyperlink || undefined,
       dueDate: this.formState.dueDate || undefined,
+      status: this.formState.status as TaskStatus,
     };
 
     this.taskService.createTask(request).subscribe({
@@ -245,8 +249,8 @@ export class TaskTracker implements OnInit {
     });
   }
 
-  updateTaskStatus(taskId: number, newStatus: TaskStatus) {
-    this.taskService.updateTaskStatus(taskId, newStatus).subscribe({
+  updateTaskStatus(taskId: number, newStatus: string) {
+    this.taskService.updateTaskStatus(taskId, newStatus as TaskStatus).subscribe({
       next: (response) => {
         const index = this.tasks.findIndex(t => t.taskId === taskId);
         if (index !== -1) {

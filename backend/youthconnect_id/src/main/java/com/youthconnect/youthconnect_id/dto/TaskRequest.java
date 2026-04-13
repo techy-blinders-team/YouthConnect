@@ -3,6 +3,7 @@ package com.youthconnect.youthconnect_id.dto;
 import java.time.LocalDateTime;
 
 import com.youthconnect.youthconnect_id.enums.Tasking;
+import com.youthconnect.youthconnect_id.enums.TaskStatus;
 
 public class TaskRequest {
     private int adminId;
@@ -11,6 +12,7 @@ public class TaskRequest {
     private String skIncharge;
     private String hyperlink;
     private LocalDateTime dueDate;
+    private TaskStatus status;
 
     public int getAdminId() {
         return adminId; 
@@ -47,5 +49,11 @@ public class TaskRequest {
     }
     public void setDueDate(LocalDateTime dueDate) {
         this.dueDate = dueDate; 
+    }
+    public TaskStatus getStatus() {
+        return status;
+    }
+    public void setStatus(TaskStatus status) {
+        this.status = status;
     }
 }

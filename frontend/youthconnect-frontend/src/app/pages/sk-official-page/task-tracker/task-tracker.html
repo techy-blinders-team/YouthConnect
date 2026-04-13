@@ -74,8 +74,8 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <button class="btn-mark-done" (click)="updateTaskStatus(task.taskId, TaskStatus.COMPLETED); $event.stopPropagation()" 
-                            [disabled]="task.status === TaskStatus.COMPLETED">
+                    <button class="btn-mark-done" (click)="updateTaskStatus(task.taskId, 'DONE'); $event.stopPropagation()" 
+                            [disabled]="task.status === 'DONE'">
                         Mark as Done
                     </button>
                 </div>
@@ -97,12 +97,12 @@
             <div class="modal-body">
                 <div class="form-group">
                     <label for="taskingType" class="form-label">Tasking/Committee<span class="required">*</span></label>
-                    <input 
-                        type="text" 
-                        id="taskingType" 
-                        class="form-input" 
-                        placeholder="Enter task title"
-                        [(ngModel)]="formState.taskingType">
+                    <select id="taskingType" class="form-input" [(ngModel)]="formState.taskingType">
+                        <option value="">Select a tasking/committee</option>
+                        <option *ngFor="let tasking of taskingOptions" [value]="tasking">
+                            {{ getTaskingDisplayName(tasking) }}
+                        </option>
+                    </select>
                 </div>
 
                 <div class="form-group">
@@ -139,10 +139,22 @@
                     <label for="status" class="form-label">Status<span class="required">*</span></label>
                     <select id="status" class="form-input" [(ngModel)]="formState.status">
                         <option value="">Select status</option>
-                        <option *ngFor="let status of taskStatusOptions" [value]="status">
-                            {{ status }}
-                        </option>
+                        <option value="PRIO">PRIO</option>
+                        <option value="TODO">TO DO</option>
+                        <option value="IN_PROGRESS">IN PROGRESS</option>
+                        <option value="DONE">DONE</option>
+                        <option value="CUSTOM">CUSTOM</option>
                     </select>
+                </div>
+
+                <div class="form-group" *ngIf="formState.status === 'CUSTOM'">
+                    <label for="customStatus" class="form-label">Custom Status</label>
+                    <input 
+                        type="text" 
+                        id="customStatus" 
+                        class="form-input" 
+                        placeholder="Enter custom status"
+                        [(ngModel)]="formState.customStatus">
                 </div>
 
                 <div class="form-group">
@@ -209,8 +221,8 @@
             </div>
 
             <div class="details-modal-footer">
-                <button class="details-btn-mark-done" (click)="updateTaskStatus(selectedTask.taskId, TaskStatus.COMPLETED); closeDetailsModal()" 
-                        [disabled]="selectedTask.status === TaskStatus.COMPLETED">
+                <button class="details-btn-mark-done" (click)="updateTaskStatus(selectedTask.taskId, 'DONE'); closeDetailsModal()" 
+                        [disabled]="selectedTask.status === 'DONE'">
                     Mark as Done
                 </button>
             </div>

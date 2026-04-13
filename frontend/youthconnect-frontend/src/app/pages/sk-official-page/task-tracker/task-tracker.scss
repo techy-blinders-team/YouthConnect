@@ -280,7 +280,12 @@ html, body, :host, .tasks-container {
   white-space: nowrap;
 }
 
-.status-badge.status-pending {
+.status-badge.status-prio {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.status-badge.status-todo {
   background-color: #e2e3e5;
   color: #383d41;
 }
@@ -290,14 +295,14 @@ html, body, :host, .tasks-container {
   color: #856404;
 }
 
-.status-badge.status-completed {
+.status-badge.status-done {
   background-color: #d4edda;
   color: #155724;
 }
 
-.status-badge.status-cancelled {
-  background-color: #f8d7da;
-  color: #721c24;
+.status-badge.status-custom {
+  background-color: #d1ecf1;
+  color: #0c5460;
 }
 
 .card-footer {
@@ -817,7 +822,12 @@ select.form-input {
   white-space: nowrap;
 }
 
-.status-badge.status-pending {
+.status-badge.status-prio {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.status-badge.status-todo {
   background-color: #e2e3e5;
   color: #383d41;
 }
@@ -827,14 +837,14 @@ select.form-input {
   color: #856404;
 }
 
-.status-badge.status-completed {
+.status-badge.status-done {
   background-color: #d4edda;
   color: #155724;
 }
 
-.status-badge.status-cancelled {
-  background-color: #f8d7da;
-  color: #721c24;
+.status-badge.status-custom {
+  background-color: #d1ecf1;
+  color: #0c5460;
 }
 
 // Status actions (task status buttons)
