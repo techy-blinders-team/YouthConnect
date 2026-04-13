@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { EventService, EventResponse } from '../../../services/event.service';
 import { AuthService } from '../../../services/auth.service';
 
@@ -9,16 +10,19 @@ import { AuthService } from '../../../services/auth.service';
   templateUrl: './events.component.html',
   styleUrls: ['./events.component.scss'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule]
+  imports: [CommonModule, ReactiveFormsModule, FormsModule]
 })
 export class EventsComponent implements OnInit {
   isModalOpen = false;
   eventForm!: FormGroup;
   events: EventResponse[] = [];
+  filteredEvents: EventResponse[] = [];
   isLoading = false;
   errorMessage: string = '';
   successMessage: string = '';
   currentAdminId: number = 0;
+  editingEventId: number | null = null;
+  searchTerm: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -54,6 +58,8 @@ export class EventsComponent implements OnInit {
     this.eventService.getAllEvents().subscribe({
       next: (data) => {
         this.events = data;
+        this.filteredEvents = data;
+        this.searchTerm = '';
         this.isLoading = false;
       },
       error: (error) => {
@@ -64,18 +70,107 @@ export class EventsComponent implements OnInit {
     });
   }
 
+  searchEvents(term: string) {
+    this.searchTerm = term;
+    
+    if (!term.trim()) {
+      this.filteredEvents = this.events;
+      return;
+    }
+
+    const searchLower = term.toLowerCase();
+    this.filteredEvents = this.events.filter(event =>
+      event.title.toLowerCase().includes(searchLower) ||
+      event.description.toLowerCase().includes(searchLower) ||
+      event.location.toLowerCase().includes(searchLower)
+    );
+  }
+
   openModal() {
     this.isModalOpen = true;
+    this.editingEventId = null;
     this.eventForm.reset();
     this.errorMessage = '';
     this.successMessage = '';
   }
 
+  editEvent(event: EventResponse) {
+    this.isModalOpen = true;
+    this.editingEventId = event.eventId;
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    // Convert ISO date to datetime-local format
+    const dateObj = new Date(event.eventDate);
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const hours = String(dateObj.getHours()).padStart(2, '0');
+    const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+    const dateTimeLocal = `${year}-${month}-${day}T${hours}:${minutes}`;
+
+    this.eventForm.patchValue({
+      eventTitle: event.title,
+      description: event.description,
+      dateTime: dateTimeLocal,
+      location: event.location
+    });
+  }
+
   closeModal() {
     this.isModalOpen = false;
+    this.editingEventId = null;
     this.eventForm.reset();
     this.errorMessage = '';
     this.successMessage = '';
+  }
+
+  submitEvent() {
+    if (this.editingEventId) {
+      this.saveEditedEvent();
+    } else {
+      this.createEvent();
+    }
+  }
+
+  saveEditedEvent() {
+    if (this.eventForm.invalid) {
+      this.errorMessage = 'Please fill in all required fields correctly';
+      return;
+    }
+
+    if (!this.editingEventId) {
+      this.errorMessage = 'Event ID not found';
+      return;
+    }
+
+    const formValue = this.eventForm.value;
+    const eventDate = new Date(formValue.dateTime).toISOString();
+
+    const request = {
+      title: formValue.eventTitle,
+      description: formValue.description,
+      eventDate: eventDate,
+      location: formValue.location,
+      createdByAdminId: this.currentAdminId,
+      status: 'Upcoming'
+    };
+
+    this.isLoading = true;
+    this.eventService.editEvent(this.editingEventId, request).subscribe({
+      next: (response) => {
+        this.successMessage = 'Event updated successfully!';
+        this.eventForm.reset();
+        this.editingEventId = null;
+        this.loadEvents();
+        setTimeout(() => this.closeModal(), 1500);
+      },
+      error: (error) => {
+        console.error('Error updating event:', error);
+        this.errorMessage = error.error?.message || 'Failed to update event. Please try again.';
+        this.isLoading = false;
+      }
+    });
   }
 
   createEvent() {
