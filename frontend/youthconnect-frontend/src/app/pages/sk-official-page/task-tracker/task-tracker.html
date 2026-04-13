@@ -97,42 +97,62 @@
             <div class="modal-body">
                 <div class="form-group">
                     <label for="taskingType" class="form-label">Tasking/Committee<span class="required">*</span></label>
-                    <select id="taskingType" class="form-input" [(ngModel)]="formState.taskingType">
-                        <option value="">Select a tasking/committee</option>
-                        <option *ngFor="let tasking of taskingOptions" [value]="tasking">
-                            {{ getTaskingDisplayName(tasking) }}
+                    <input 
+                        type="text" 
+                        id="taskingType" 
+                        class="form-input" 
+                        placeholder="Enter task title"
+                        [(ngModel)]="formState.taskingType">
+                </div>
+
+                <div class="form-group">
+                    <label for="description" class="form-label">Description of Tasks<span class="required">*</span></label>
+                    <textarea 
+                        id="description" 
+                        class="form-textarea" 
+                        placeholder="Enter task description" 
+                        rows="5"
+                        [(ngModel)]="formState.taskDescription"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="skIncharge" class="form-label">SK Incharge<span class="required">*</span></label>
+                    <input 
+                        type="text" 
+                        id="skIncharge" 
+                        class="form-input" 
+                        placeholder="Enter SK incharge"
+                        [(ngModel)]="formState.skIncharge">
+                </div>
+
+                <div class="form-group">
+                    <label for="hyperlink" class="form-label">Notes/Hyperlink</label>
+                    <input 
+                        type="text" 
+                        id="hyperlink" 
+                        class="form-input" 
+                        placeholder="Enter notes/hyperlink"
+                        [(ngModel)]="formState.hyperlink">
+                </div>
+
+                <div class="form-group">
+                    <label for="status" class="form-label">Status<span class="required">*</span></label>
+                    <select id="status" class="form-input" [(ngModel)]="formState.status">
+                        <option value="">Select status</option>
+                        <option *ngFor="let status of taskStatusOptions" [value]="status">
+                            {{ status }}
                         </option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label for="description" class="form-label">Description<span class="required">*</span></label>
-                    <textarea 
-                        id="description" 
-                        class="form-textarea" 
-                        placeholder="Enter task description" 
-                        rows="4"
-                        [(ngModel)]="formState.taskDescription"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="skIncharge" class="form-label">SK In-charge</label>
+                    <label for="dueDate" class="form-label">Due Date</label>
                     <input 
-                        type="text" 
-                        id="skIncharge" 
+                        type="datetime-local" 
+                        id="dueDate" 
                         class="form-input" 
-                        placeholder="Enter SK official name"
-                        [(ngModel)]="formState.skIncharge">
-                </div>
-
-                <div class="form-group">
-                    <label for="hyperlink" class="form-label">Note/Hyperlink</label>
-                    <input 
-                        type="text" 
-                        id="hyperlink" 
-                        class="form-input" 
-                        placeholder="Enter note or hyperlink URL"
-                        [(ngModel)]="formState.hyperlink">
+                        placeholder="mm/dd/yyyy --:-- --"
+                        [(ngModel)]="formState.dueDate">
                 </div>
             </div>
 

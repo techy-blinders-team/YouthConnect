@@ -36,6 +36,7 @@ export class TaskTracker implements OnInit {
     skIncharge: '',
     hyperlink: '',
     status: '',
+    dueDate: '',
   };
 
   // Admin info - get from localStorage or use default
@@ -115,6 +116,7 @@ export class TaskTracker implements OnInit {
       skIncharge: task.skIncharge || '',
       hyperlink: task.hyperlink || '',
       status: task.status,
+      dueDate: task.dueDate ? this.formatDateForInput(task.dueDate) : '',
     };
     this.isModalOpen = true;
   }
@@ -143,11 +145,12 @@ export class TaskTracker implements OnInit {
       skIncharge: '',
       hyperlink: '',
       status: '',
+      dueDate: '',
     };
   }
 
   createTask() {
-    if (!this.formState.taskingType || !this.formState.taskDescription || !this.formState.status) {
+    if (!this.formState.taskingType || !this.formState.taskDescription || !this.formState.skIncharge || !this.formState.status) {
       this.errorMessage = 'Please fill in all required fields';
       return;
     }
@@ -156,9 +159,9 @@ export class TaskTracker implements OnInit {
       adminId: this.currentAdminId,
       tasking: this.formState.taskingType as Tasking,
       taskDescription: this.formState.taskDescription,
-      skIncharge: this.formState.skIncharge || undefined,
+      skIncharge: this.formState.skIncharge,
       hyperlink: this.formState.hyperlink || undefined,
-      dueDate: undefined,
+      dueDate: this.formState.dueDate || undefined,
     };
 
     this.taskService.createTask(request).subscribe({
@@ -183,7 +186,7 @@ export class TaskTracker implements OnInit {
       return;
     }
 
-    if (!this.formState.taskingType || !this.formState.taskDescription) {
+    if (!this.formState.taskingType || !this.formState.taskDescription || !this.formState.skIncharge || !this.formState.status) {
       this.errorMessage = 'Please fill in all required fields';
       return;
     }
@@ -192,9 +195,9 @@ export class TaskTracker implements OnInit {
     const request: TaskEditRequest = {
       tasking: this.formState.taskingType as Tasking,
       taskDescription: this.formState.taskDescription,
-      skIncharge: this.formState.skIncharge || undefined,
+      skIncharge: this.formState.skIncharge,
       hyperlink: this.formState.hyperlink || undefined,
-      dueDate: undefined,
+      dueDate: this.formState.dueDate || undefined,
     };
 
     this.taskService.editTask(taskId, request).subscribe({
