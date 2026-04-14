@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { SkOfficialAuthService } from '../../services/sk-official-auth.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -10,7 +10,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, RouterModule],
   templateUrl: './login-page.html',
   styleUrl: './login-page.scss',
 })
@@ -23,6 +23,7 @@ export class LoginPage {
 
   loginForm: FormGroup;
   skOfficialLoginForm: FormGroup;
+  activeTab: 'youth' | 'sk' = 'youth';
   isLoading = false;
   isSkOfficialLoading = false;
   errorMessage = '';
@@ -182,11 +183,17 @@ export class LoginPage {
     });
   }
 
-  togglePassword() {
+  switchTab(tab: 'youth' | 'sk') {
+    this.activeTab = tab;
+    this.errorMessage = '';
+    this.skOfficialErrorMessage = '';
+  }
+
+  togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
   }
 
-  toggleSkOfficialPassword() {
+  toggleSkOfficialPasswordVisibility() {
     this.showSkOfficialPassword = !this.showSkOfficialPassword;
   }
 

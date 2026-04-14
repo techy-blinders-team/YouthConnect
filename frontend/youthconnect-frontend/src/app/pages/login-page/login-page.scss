@@ -1,0 +1,352 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+$primary-blue: #0052cc;
+$primary-red: #dc143c;
+$light-gray: #f5f5f5;
+$border-gray: #e0e0e0;
+$text-dark: #333333;
+$text-light: #666666;
+$error-color: #d32f2f;
+
+.login-container {
+  min-height: 100vh;
+  width: 100%;
+  background-image: url('/assets/login\ page/pasay-sk-bg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-attachment: fixed;
+
+  .login-modal {
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 450px;
+    padding: 40px 30px;
+    position: relative;
+
+    @media (max-width: 600px) {
+      max-width: 100%;
+      padding: 30px 20px;
+      border-radius: 15px;
+    }
+  }
+}
+
+.login-header {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 30px;
+  align-items: center;
+
+  .logo {
+    height: 60px;
+    width: auto;
+    object-fit: contain;
+
+    @media (max-width: 600px) {
+      height: 50px;
+    }
+
+    &.youthconnect-logo {
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    }
+
+    &.sk-logo {
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    }
+  }
+}
+
+.login-title {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 500;
+  color: $text-dark;
+  margin-bottom: 20px;
+  letter-spacing: 0.5px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.tab-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  background-color: $light-gray;
+  padding: 4px;
+  border-radius: 50px;
+
+  .tab-btn {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: transparent;
+    color: #999999;
+    letter-spacing: 0.5px;
+    font-family: 'Poppins', sans-serif;
+
+    &:hover {
+      color: $text-dark;
+    }
+
+    &.active {
+      color: white;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    &.youth-tab.active {
+      background-color: $primary-blue;
+    }
+
+    &.sk-tab.active {
+      background-color: $primary-red;
+    }
+  }
+}
+
+.login-form {
+  animation: fadeIn 0.3s ease-in;
+
+  .error-message {
+    background-color: #ffebee;
+    color: $error-color;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    border-left: 4px solid $error-color;
+    font-family: 'Poppins', sans-serif;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form-group {
+  margin-bottom: 20px;
+
+  label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: $text-dark;
+    margin-bottom: 8px;
+    letter-spacing: 0.3px;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid $border-gray;
+    border-radius: 8px;
+    font-size: 14px;
+    color: $text-dark;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+
+    &::placeholder {
+      color: #cccccc;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $primary-blue;
+      box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.1);
+    }
+
+    &:disabled {
+      background-color: #f0f0f0;
+      color: #999999;
+    }
+  }
+
+  .password-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .form-input {
+      padding-right: 45px;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 12px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      padding: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $text-light;
+      transition: color 0.2s ease;
+      font-family: 'Poppins', sans-serif;
+
+      &:hover {
+        color: $text-dark;
+      }
+    }
+  }
+
+  .error-text {
+    display: block;
+    color: $error-color;
+    font-size: 12px;
+    margin-top: 6px;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+  }
+}
+
+.forgot-password {
+  text-align: right;
+  margin-bottom: 25px;
+  font-family: 'Poppins', sans-serif;
+
+  a {
+    color: $primary-blue;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    transition: color 0.2s ease;
+    font-family: 'Poppins', sans-serif;
+
+    &:hover {
+      color: darken($primary-blue, 10%);
+      text-decoration: underline;
+    }
+  }
+}
+
+.btn-login {
+  width: 100%;
+  padding: 13px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: white;
+  letter-spacing: 0.5px;
+  margin-bottom: 20px;
+  font-family: 'Poppins', sans-serif;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  &.youth-btn {
+    background-color: $primary-blue;
+
+    &:hover:not(:disabled) {
+      background-color: darken($primary-blue, 5%);
+    }
+  }
+
+  &.sk-btn {
+    background-color: $primary-red;
+
+    &:hover:not(:disabled) {
+      background-color: darken($primary-red, 5%);
+    }
+  }
+}
+
+.signup-link {
+  text-align: center;
+  font-size: 14px;
+  color: $text-light;
+  font-family: 'Poppins', sans-serif;
+
+  a {
+    color: $primary-blue;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+    margin-left: 4px;
+    font-family: 'Poppins', sans-serif;
+
+    &:hover {
+      color: darken($primary-blue, 10%);
+      text-decoration: underline;
+    }
+  }
+}
+
+// Responsive design adjustments
+@media (max-width: 768px) {
+  .login-header {
+    gap: 20px;
+
+    .logo {
+      height: 50px;
+    }
+  }
+
+  .login-title {
+    font-size: 16px;
+  }
+
+  .tab-buttons {
+    margin-bottom: 25px;
+
+    .tab-btn {
+      padding: 10px 16px;
+      font-size: 13px;
+    }
+  }
+
+  .form-group {
+    margin-bottom: 18px;
+
+    label {
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .form-input {
+      padding: 10px 12px;
+      font-size: 13px;
+    }
+  }
+
+  .btn-login {
+    padding: 12px 15px;
+    font-size: 14px;
+  }
+}
