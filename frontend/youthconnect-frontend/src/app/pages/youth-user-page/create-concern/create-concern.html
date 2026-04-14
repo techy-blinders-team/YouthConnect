@@ -24,7 +24,10 @@
     <!-- Concerns List -->
     <div class="concerns-content">
         <div class="concerns-header">
-            <h2>Your Concerns</h2>
+            <div class="header-text">
+                <h1>Your Concerns</h1>
+                <p class="subtitle">Submit and track your concerns to SK officials for resolution</p>
+            </div>
             <div class="concerns-stats">
                 <span class="stat-badge">Total: {{ concerns.length }}</span>
                 <span class="stat-badge" *ngIf="filteredConcerns.length !== concerns.length">
