@@ -5,101 +5,104 @@
     position: relative;
 }
 
-// Hero Section
-.hero-section {
-    height: 100vh;
-    background-image: url('/assets/header_background.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 60px 40px;
-    position: relative;
+// .hero-section {
+//     height: 95vh;
+//     background-image: url('/assets/landing-page-bg.png');
+//     background-size: cover;
+//     background-position: center;
+//     background-repeat: no-repeat;
+//     display: flex;
+//     justify-content: center;
+//     align-items: center;
+//     padding: 60px 40px;
+//     position: relative;
+    
+//     &::before {
+//         background-color: rgba(0, 0, 0, 100);
+//     }
+//     .hero-content {
+//         text-align: center;
+//         max-width: 1400px;
 
-    .hero-content {
-        text-align: center;
-        max-width: 1400px;
+//         .hero-title {
+//             font-family: 'Inter', sans-serif;
+//             font-weight: 800;
+//             font-size: 120px;
+//             color: white;
+//             margin: 0 0 24px 0;
+//             line-height: 1;
+//             text-shadow: 3px 3px 12px rgba(0, 0, 0, 0.4);
+//             letter-spacing: -2px;
+//         }
 
-        .hero-title {
-            font-family: 'Inter', sans-serif;
-            font-weight: 800;
-            font-size: 120px;
-            color: white;
-            margin: 0 0 24px 0;
-            line-height: 1;
-            text-shadow: 3px 3px 12px rgba(0, 0, 0, 0.4);
-            letter-spacing: -2px;
-        }
+//         .hero-subtitle {
+//             font-family: 'Inter', sans-serif;
+//             font-weight: 400;
+//             font-size: 28px;
+//             color: white;
+//             margin: 0 0 56px 0;
+//             line-height: 1.5;
+//             text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+//             max-width: 900px;
+//             margin-left: auto;
+//             margin-right: auto;
+//         }
 
-        .hero-subtitle {
-            font-family: 'Inter', sans-serif;
-            font-weight: 400;
-            font-size: 28px;
-            color: white;
-            margin: 0 0 56px 0;
-            line-height: 1.5;
-            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
-            max-width: 900px;
-            margin-left: auto;
-            margin-right: auto;
-        }
+//         .cta-buttons {
+//             display: flex;
+//             justify-content: center;
+//             gap: 24px;
+//             flex-wrap: wrap;
 
-        .cta-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 24px;
-            flex-wrap: wrap;
+//             button {
+//                 width: 240px;
+//                 height: 64px;
+//                 border-radius: 50px;
+//                 border: none;
+//                 cursor: pointer;
+//                 font-family: 'Open Sans', sans-serif;
+//                 font-weight: 500;
+//                 font-size: 20px;
+//                 transition: all 0.3s ease;
+//                 opacity: 1;
 
-            button {
-                width: 240px;
-                height: 64px;
-                border-radius: 50px;
-                border: none;
-                cursor: pointer;
-                font-family: 'Open Sans', sans-serif;
-                font-weight: 500;
-                font-size: 20px;
-                transition: all 0.3s ease;
-                opacity: 1;
+//                 &:hover {
+//                     transform: translateY(-3px);
+//                     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+//                 }
 
-                &:hover {
-                    transform: translateY(-3px);
-                    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-                }
+//                 &:active {
+//                     transform: translateY(-1px);
+//                     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+//                 }
+//             }
 
-                &:active {
-                    transform: translateY(-1px);
-                    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-                }
-            }
+//             .btn-signup {
+//                 background-color: #452F5D;
+//                 color: white;
+//             }
 
-            .btn-signup {
-                background-color: #452F5D;
-                color: white;
-            }
+//             .btn-login {
+//                 background-color: white;
+//                 color: #452F5D;
+//                 border: 2px solid transparent;
 
-            .btn-login {
-                background-color: white;
-                color: #452F5D;
-                border: 2px solid transparent;
-
-                &:hover {
-                    border-color: #452F5D;
-                }
-            }
-        }
-    }
-}
+//                 &:hover {
+//                     border-color: #452F5D;
+//                 }
+//             }
+//         }
+//     }
+// }
 
 // About Section
 .about-section {
-    min-height: 100vh;
+    min-height: 80vh;
     background: url('/assets/about_background.png') no-repeat center center;
     background-size: cover;
     position: relative;
     font-family: 'Open Sans', sans-serif;
+    width: 100%;
 
     &::before {
         content: '';
@@ -133,7 +136,7 @@
 
     .text-section {
         color: white;
-
+        margin-left: 30%;
         h2 {
             font-size: 2rem;
             font-weight: 700;
@@ -152,18 +155,17 @@
     }
 
     .image-section {
-        display: flex;
         justify-content: center;
         align-items: center;
+        width: 100%;
+        padding: 20px;
+
+    }
+    
+    .image-placeholder img {
+        width: 70%;
     }
 
-    .image-placeholder {
-        width: 100%;
-        max-width: 600px;
-        aspect-ratio: 16 / 11;
-        background: rgba(217, 195, 195, 0.9);
-        border-radius: 0;
-    }
 }
 
 // Projects Section
@@ -277,7 +279,6 @@
     }
 
     .card-light {
-        background: rgba(192, 192, 192, 0.9);
         color: white;
 
         h3,
@@ -287,12 +288,12 @@
     }
 
     .card-beige {
-        background: rgba(245, 235, 220, 0.9);
-        color: #000000;
+        background: url('/assets/sample-project1.png');
+        color: white;
 
         h3,
         p {
-            color: #000000;
+            color: white;
         }
     }
 
