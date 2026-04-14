@@ -1,10 +1,11 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-carousel-component',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './carousel-component.html',
   styleUrl: './carousel-component.scss',
 })
