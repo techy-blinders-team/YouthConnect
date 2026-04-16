@@ -2,6 +2,8 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AbstractControl, ValidationErrors } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 
@@ -11,15 +13,38 @@ const STEP_FIELDS: Record<number, string[]> = {
   3: ['email', 'password', 'confirmPassword'],
 };
 
+type PasswordCriterion = {
+  label: string;
+  met: boolean;
+};
+
 function passwordMatchValidator(form: AbstractControl): ValidationErrors | null {
   const password = form.get('password')?.value;
   const confirmPassword = form.get('confirmPassword')?.value;
   return password === confirmPassword ? null : { passwordMismatch: true };
 }
 
+function strongPasswordValidator(control: AbstractControl): ValidationErrors | null {
+  const value = (control.value ?? '') as string;
+
+  if (!value) {
+    return null;
+  }
+
+  const hasLength = value.length >= 8;
+  const hasUppercase = /[A-Z]/.test(value);
+  const hasLowercase = /[a-z]/.test(value);
+  const hasNumber = /\d/.test(value);
+  const hasSpecialChar = /[^A-Za-z0-9]/.test(value);
+
+  return hasLength && hasUppercase && hasLowercase && hasNumber && hasSpecialChar
+    ? null
+    : { weakPassword: true };
+}
+
 @Component({
   selector: 'app-sign-up-page',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CommonModule, RouterModule],
   templateUrl: './sign-up-page.html',
   styleUrl: './sign-up-page.scss',
 })
@@ -33,6 +58,8 @@ export class SignUpPage {
   isLoading = false;
   errorMessage = '';
   successMessage = '';
+  showPassword = false;
+  showConfirmPassword = false;
 
   constructor() {
     this.registrationForm = this.formBuilder.group(
@@ -63,7 +90,7 @@ export class SignUpPage {
           updateOn: 'change'
         }],
         contactNumber: ['', {
-          validators: [Validators.required, Validators.maxLength(15)],
+          validators: [Validators.required, Validators.pattern(/^9\d{9}$/)],
           updateOn: 'change'
         }],
         completeAddress: ['', {
@@ -88,7 +115,7 @@ export class SignUpPage {
           validators: [Validators.required],
           updateOn: 'change'
         }],
-        votingStatus: ['', {
+        votingStatus: [[], {
           validators: [Validators.required],
           updateOn: 'change'
         }],
@@ -107,7 +134,7 @@ export class SignUpPage {
           updateOn: 'change'
         }],
         password: ['', {
-          validators: [Validators.required, Validators.minLength(8)],
+          validators: [Validators.required, Validators.minLength(8), strongPasswordValidator],
           updateOn: 'change'
         }],
         confirmPassword: ['', {
@@ -156,11 +183,47 @@ nextStep(): void {
     }
   }
 
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleConfirmPasswordVisibility(): void {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
+
+  isVotingStatusSelected(status: string): boolean {
+    const selectedStatuses = this.votingStatusControl?.value as string[] | null;
+    return Array.isArray(selectedStatuses) && selectedStatuses.includes(status);
+  }
+
+  onVotingStatusChange(event: Event, status: string): void {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    const selectedStatuses = [...((this.votingStatusControl?.value as string[] | null) ?? [])];
+
+    if (isChecked && !selectedStatuses.includes(status)) {
+      selectedStatuses.push(status);
+    }
+
+    if (!isChecked) {
+      const updatedStatuses = selectedStatuses.filter((selectedStatus) => selectedStatus !== status);
+      this.votingStatusControl?.setValue(updatedStatuses);
+      this.votingStatusControl?.markAsTouched();
+      this.votingStatusControl?.updateValueAndValidity();
+      return;
+    }
+
+    this.votingStatusControl?.setValue(selectedStatuses);
+    this.votingStatusControl?.markAsTouched();
+    this.votingStatusControl?.updateValueAndValidity();
+  }
+
   cancel(): void {
     this.registrationForm.reset();
     this.currentStep = 1;
     this.errorMessage = '';
     this.successMessage = '';
+    this.showPassword = false;
+    this.showConfirmPassword = false;
     this.router.navigate(['/login']);
   }
 
@@ -184,6 +247,8 @@ nextStep(): void {
           this.successMessage = 'Registration successful! Redirecting to login...';
           console.log('Registration successful:', res);
           this.registrationForm.reset();
+          this.showPassword = false;
+          this.showConfirmPassword = false;
 
           setTimeout(() => {
             this.router.navigate(['/login']);
@@ -290,5 +355,57 @@ nextStep(): void {
 
   get confirmPasswordControl() {
     return this.registrationForm.get('confirmPassword');
+  }
+
+  get passwordCriteria(): PasswordCriterion[] {
+    const passwordValue = (this.passwordControl?.value ?? '') as string;
+
+    return [
+      { label: 'At least 8 characters', met: passwordValue.length >= 8 },
+      { label: 'One uppercase letter', met: /[A-Z]/.test(passwordValue) },
+      { label: 'One lowercase letter', met: /[a-z]/.test(passwordValue) },
+      { label: 'One number', met: /\d/.test(passwordValue) },
+      { label: 'One special character', met: /[^A-Za-z0-9]/.test(passwordValue) },
+    ];
+  }
+
+  get passwordStrengthScore(): number {
+    return this.passwordCriteria.filter((criterion) => criterion.met).length;
+  }
+
+  get passwordStrengthPercent(): number {
+    return (this.passwordStrengthScore / this.passwordCriteria.length) * 100;
+  }
+
+  get passwordStrengthLabel(): string {
+    if (this.passwordStrengthScore <= 1) {
+      return 'Weak';
+    }
+
+    if (this.passwordStrengthScore <= 3) {
+      return 'Fair';
+    }
+
+    if (this.passwordStrengthScore === 4) {
+      return 'Good';
+    }
+
+    return 'Strong';
+  }
+
+  get passwordStrengthClass(): string {
+    if (this.passwordStrengthScore <= 1) {
+      return 'weak';
+    }
+
+    if (this.passwordStrengthScore <= 3) {
+      return 'fair';
+    }
+
+    if (this.passwordStrengthScore === 4) {
+      return 'good';
+    }
+
+    return 'strong';
   }
 }
