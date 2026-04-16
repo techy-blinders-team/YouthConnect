@@ -46,6 +46,16 @@ export interface YouthMemberListItem {
   middleName?: string | null;
   suffix?: Suffix | null;
   completeAddress?: string;
+  youthClassification?: {
+    youthClassification?: string;
+    educationBackground?: string;
+    workStatus?: string;
+    skVoter?: boolean;
+    nationalVoter?: boolean;
+    pastVoter?: boolean;
+    numAttended?: number;
+    nonAttendedReason?: string;
+  };
 }
 
 export interface UpdateYouthUserPayload {

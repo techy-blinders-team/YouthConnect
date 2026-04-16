@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { YouthProfiling } from './youth-profiling';
 
@@ -8,7 +9,7 @@ describe('YouthProfiling', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [YouthProfiling]
+      imports: [YouthProfiling, HttpClientTestingModule]
     })
     .compileComponents();
 
