@@ -32,6 +32,7 @@ export interface YouthProfileAccount {
 
 export interface YouthMemberListItem {
   userId: number;
+  roleId?: number;
   youthId: number;
   firstName: string;
   lastName: string;

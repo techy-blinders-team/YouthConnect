@@ -30,6 +30,7 @@
         <button class="search-btn" (click)="onSearch()">Search</button>
       </div>
       <div class="export-buttons">
+        <button class="btn btn-approval-panel" (click)="openApprovalPanel()">Approval Panel</button>
         <button class="btn btn-pdf" (click)="exportToPDF()">Export PDF</button>
         <button class="btn btn-excel" (click)="exportToExcel()">Export Excel</button>
       </div>
@@ -124,6 +125,87 @@
       <p style="margin: 0; background: transparent;">Showing {{ filteredProfiles.length }} of {{ youthProfiles.length }} youth profiles</p>
     </div>
   </div>
+
+  <div class="approval-panel-backdrop" *ngIf="isApprovalPanelOpen" (click)="closeApprovalPanel()"></div>
+
+  <aside class="approval-panel" [class.open]="isApprovalPanelOpen" [attr.aria-hidden]="!isApprovalPanelOpen">
+    <div class="approval-panel-header">
+      <div>
+        <h2>Registration Approval</h2>
+        <p>Review pending registrations and allow login access</p>
+      </div>
+      <button class="close-btn" type="button" (click)="closeApprovalPanel()" aria-label="Close approval panel">&times;</button>
+    </div>
+
+    <div class="approval-filter-group">
+      <button
+        type="button"
+        class="filter-chip"
+        [class.active]="approvalFilter === 'pending'"
+        (click)="setApprovalFilter('pending')">
+        Pending
+      </button>
+      <button
+        type="button"
+        class="filter-chip"
+        [class.active]="approvalFilter === 'approved'"
+        (click)="setApprovalFilter('approved')">
+        Approved
+      </button>
+      <button
+        type="button"
+        class="filter-chip"
+        [class.active]="approvalFilter === 'all'"
+        (click)="setApprovalFilter('all')">
+        All
+      </button>
+    </div>
+
+    <div *ngIf="approvalError" class="approval-alert approval-alert-error">
+      {{ approvalError }}
+    </div>
+
+    <div *ngIf="approvalMessage" class="approval-alert approval-alert-success">
+      {{ approvalMessage }}
+    </div>
+
+    <div class="approval-list" *ngIf="approvalProfiles.length > 0; else noApprovalRows">
+      <article class="approval-card" *ngFor="let profile of approvalProfiles">
+        <div class="approval-card-head">
+          <h3>{{ profile.firstName }} {{ profile.lastName }}</h3>
+          <span class="approval-status" [class.pending]="profile.isApprove !== true" [class.approved]="profile.isApprove === true">
+            {{ profile.isApprove === true ? 'Approved' : 'Pending' }}
+          </span>
+        </div>
+
+        <p class="approval-meta">{{ profile.email || 'No email available' }}</p>
+        <p class="approval-meta">Contact: {{ profile.contactNumber }}</p>
+
+        <div class="approval-actions">
+          <button
+            type="button"
+            class="btn-approve"
+            [disabled]="profile.isApprove === true || updatingApprovalUserId === profile.userId"
+            (click)="setRegistrationApproval(profile, true)">
+            {{ updatingApprovalUserId === profile.userId && profile.isApprove !== true ? 'Updating...' : 'Approve Login' }}
+          </button>
+          <button
+            type="button"
+            class="btn-pending"
+            [disabled]="profile.isApprove !== true || updatingApprovalUserId === profile.userId"
+            (click)="setRegistrationApproval(profile, false)">
+            {{ updatingApprovalUserId === profile.userId && profile.isApprove === true ? 'Updating...' : 'Set Pending' }}
+          </button>
+        </div>
+      </article>
+    </div>
+
+    <ng-template #noApprovalRows>
+      <div class="approval-empty-state">
+        <p>No records found for this filter.</p>
+      </div>
+    </ng-template>
+  </aside>
 
   <!-- Edit Modal -->
   <div class="modal-overlay" *ngIf="isEditModalOpen" (click)="closeEditModal()">
