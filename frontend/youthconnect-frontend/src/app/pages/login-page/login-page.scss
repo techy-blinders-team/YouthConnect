@@ -50,73 +50,33 @@ $error-color: #d32f2f;
   align-items: center;
 
   .logo {
-    height: 60px;
-    width: auto;
-    object-fit: contain;
+    height: 80px;
+    width: 80px;
+    display: block;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 
     @media (max-width: 600px) {
-      height: 50px;
+      height: 60px;
+      width: 60px;
     }
+  }
 
-    &.youthconnect-logo {
-      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-    }
-
-    &.sk-logo {
-      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-    }
+  .sk-logo {
+    background-color: rgb(255, 255, 255);
+    border-radius: 50%;
+    padding: 8px;
+    box-sizing: border-box;
   }
 }
 
 .login-title {
   text-align: center;
-  font-size: 18px;
-  font-weight: 500;
-  color: $text-dark;
-  margin-bottom: 20px;
+  font-size: 24px;
+  font-weight: 600;
+  color: $primary-blue;
+  margin-bottom: 30px;
   letter-spacing: 0.5px;
   font-family: 'Poppins', sans-serif;
-}
-
-.tab-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 30px;
-  background-color: $light-gray;
-  padding: 4px;
-  border-radius: 50px;
-
-  .tab-btn {
-    flex: 1;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 50px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    background-color: transparent;
-    color: #999999;
-    letter-spacing: 0.5px;
-    font-family: 'Poppins', sans-serif;
-
-    &:hover {
-      color: $text-dark;
-    }
-
-    &.active {
-      color: white;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    &.youth-tab.active {
-      background-color: $primary-blue;
-    }
-
-    &.sk-tab.active {
-      background-color: $primary-red;
-    }
-  }
 }
 
 .login-form {
@@ -255,6 +215,7 @@ $error-color: #d32f2f;
   cursor: pointer;
   transition: all 0.3s ease;
   color: white;
+  background-color: $primary-blue;
   letter-spacing: 0.5px;
   margin-bottom: 20px;
   font-family: 'Poppins', sans-serif;
@@ -262,6 +223,7 @@ $error-color: #d32f2f;
   &:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background-color: darken($primary-blue, 5%);
   }
 
   &:active:not(:disabled) {
@@ -272,22 +234,6 @@ $error-color: #d32f2f;
   &:disabled {
     opacity: 0.7;
     cursor: not-allowed;
-  }
-
-  &.youth-btn {
-    background-color: $primary-blue;
-
-    &:hover:not(:disabled) {
-      background-color: darken($primary-blue, 5%);
-    }
-  }
-
-  &.sk-btn {
-    background-color: $primary-red;
-
-    &:hover:not(:disabled) {
-      background-color: darken($primary-red, 5%);
-    }
   }
 }
 
