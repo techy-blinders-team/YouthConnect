@@ -60,6 +60,14 @@
             <th>Contact Number</th>
             <th>Complete Address</th>
             <th>Civil Status</th>
+            <th>Youth Classification</th>
+            <th>Education Background</th>
+            <th>Work Status</th>
+            <th>SK Voter</th>
+            <th>National Voter</th>
+            <th>Past Voter</th>
+            <th>Assemblies Attended</th>
+            <th>Non-Attendance Reason</th>
           </tr>
         </thead>
         <tbody>
@@ -74,6 +82,14 @@
             <td>{{ profile.contactNumber }}</td>
             <td>{{ profile.completeAddress || 'N/A' }}</td>
             <td>{{ profile.civilStatus }}</td>
+            <td>{{ profile.youthClassification?.youthClassification || 'N/A' }}</td>
+            <td>{{ profile.youthClassification?.educationBackground || 'N/A' }}</td>
+            <td>{{ profile.youthClassification?.workStatus || 'N/A' }}</td>
+            <td>{{ profile.youthClassification?.skVoter ? 'Yes' : 'No' }}</td>
+            <td>{{ profile.youthClassification?.nationalVoter ? 'Yes' : 'No' }}</td>
+            <td>{{ profile.youthClassification?.pastVoter ? 'Yes' : 'No' }}</td>
+            <td>{{ profile.youthClassification?.numAttended || 0 }}</td>
+            <td>{{ profile.youthClassification?.nonAttendedReason || 'N/A' }}</td>
           </tr>
         </tbody>
       </table>

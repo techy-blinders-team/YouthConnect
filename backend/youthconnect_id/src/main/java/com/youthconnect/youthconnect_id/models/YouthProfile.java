@@ -11,9 +11,13 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.ForeignKey;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
 
 @Entity
@@ -62,6 +66,10 @@ public class YouthProfile {
 
     @Column(name = "age")
     private int age;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "youth_id", referencedColumnName = "youth_id", foreignKey = @ForeignKey(name = "fk_youth_classification"), insertable = false, updatable = false)
+    private YouthClassification youthClassification;
 
       public YouthProfile() {}
 
@@ -167,5 +175,13 @@ public class YouthProfile {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public YouthClassification getYouthClassification() {
+        return youthClassification;
+    }
+
+    public void setYouthClassification(YouthClassification youthClassification) {
+        this.youthClassification = youthClassification;
     }
 }
