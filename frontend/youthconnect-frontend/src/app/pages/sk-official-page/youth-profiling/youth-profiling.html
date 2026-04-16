@@ -1,1 +1,102 @@
-<p>youth-profiling works!</p>
+<div class="profiling-root">
+  <div class="youth-profiling-container">
+    <!-- Header Section -->
+    <div class="header-section">
+      <div class="header-content">
+        <h1>YOUTH PROFILING</h1>
+        <p>Create, manage, and maintain youth member profiles</p>
+      </div>
+      <div class="user-profile">
+        <div class="profile-badge">
+          <span class="initials">SK</span>
+        </div>
+        <div class="profile-info">
+          <p class="name">Full Name</p>
+          <p class="position">Position</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search Bar Section -->
+    <div class="search-section">
+      <div class="search-group">
+        <input 
+          type="text" 
+          class="search-input" 
+          placeholder="Search by name, contact, address, classification"
+          [(ngModel)]="searchQuery"
+          (keyup)="onSearch()"
+        />
+        <button class="search-btn" (click)="onSearch()">Search</button>
+      </div>
+      <div class="export-buttons">
+        <button class="btn btn-pdf" (click)="exportToPDF()">Export PDF</button>
+        <button class="btn btn-excel" (click)="exportToExcel()">Export Excel</button>
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Loading Indicator -->
+    <div *ngIf="isLoading" class="loading-indicator">
+      <p>Loading youth profiles...</p>
+    </div>
+
+    <!-- Youth Profiles Table -->
+    <div *ngIf="!isLoading && filteredProfiles.length > 0" class="profiles-table-container">
+      <table class="profiles-table">
+        <thead>
+          <tr>
+            <th>Full Name</th>
+            <th>Age</th>
+            <th>Gender</th>
+            <th>Birthday</th>
+            <th>Contact Number</th>
+            <th>Email</th>
+            <th>Complete Address</th>
+            <th>Civil Status</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let profile of filteredProfiles" class="profile-row">
+            <td class="name-cell">{{ getFullName(profile) }}</td>
+            <td>{{ getAge(profile.birthday) }}</td>
+            <td>{{ profile.gender }}</td>
+            <td>{{ formatDate(profile.birthday) }}</td>
+            <td>{{ profile.contactNumber }}</td>
+            <td>{{ profile.email }}</td>
+            <td>{{ profile.completeAddress || 'N/A' }}</td>
+            <td>{{ profile.civilStatus }}</td>
+            <td>
+              <span 
+                class="status-badge" 
+                [ngClass]="profile.isActive ? 'status-active' : 'status-inactive'"
+              >
+                {{ profile.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- No Results Message -->
+    <div *ngIf="!isLoading && filteredProfiles.length === 0 && searchQuery" class="no-results">
+      <p>No youth profiles found matching "{{ searchQuery }}"</p>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && youthProfiles.length === 0 && !searchQuery" class="empty-state">
+      <p>No youth profiles available yet</p>
+    </div>
+
+    <!-- Results Count -->
+    <div *ngIf="!isLoading && filteredProfiles.length > 0" class="results-footer" style="background: transparent; box-shadow: none; border: none; padding: 0; margin: 0;">
+      <p style="margin: 0; background: transparent;">Showing {{ filteredProfiles.length }} of {{ youthProfiles.length }} youth profiles</p>
+    </div>
+  </div>
+</div>
