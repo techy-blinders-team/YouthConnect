@@ -45,7 +45,17 @@ export class YouthProfiling implements OnInit {
           createdAt: profile.createdAt,
           middleName: profile.middleName || null,
           suffix: profile.suffix || null,
-          completeAddress: profile.completeAddress
+          completeAddress: profile.completeAddress,
+          youthClassification: profile.youthClassification ? {
+            youthClassification: profile.youthClassification.youthClassification || null,
+            educationBackground: profile.youthClassification.educationBackground || null,
+            workStatus: profile.youthClassification.workStatus || null,
+            skVoter: profile.youthClassification.skVoter || false,
+            nationalVoter: profile.youthClassification.nationalVoter || false,
+            pastVoter: profile.youthClassification.pastVoter || false,
+            numAttended: profile.youthClassification.numAttended || 0,
+            nonAttendedReason: profile.youthClassification.nonAttendedReason || null
+          } : undefined
         }));
         this.filteredProfiles = [...this.youthProfiles];
         this.isLoading = false;
