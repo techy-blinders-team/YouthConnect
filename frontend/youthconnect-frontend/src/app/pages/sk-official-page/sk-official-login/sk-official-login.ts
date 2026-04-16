@@ -1,23 +1,23 @@
 import { Component, inject } from '@angular/core';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
+import { Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { SkOfficialAuthService } from '../../../services/sk-official-auth.service';
+import { AuthService } from '../../../services/auth.service';
 import { CommonModule } from '@angular/common';
-import { LoginRequest } from '../../models/auth.model';
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
-  selector: 'app-login-page',
+  selector: 'app-sk-official-login',
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule, RouterModule],
-  templateUrl: './login-page.html',
-  styleUrl: './login-page.scss',
+  templateUrl: './sk-official-login.html',
+  styleUrl: './sk-official-login.scss',
 })
-export class LoginPage {
+export class SkOfficialLogin {
   private formBuilder = inject(FormBuilder);
+  private skOfficialAuthService = inject(SkOfficialAuthService);
   private authService = inject(AuthService);
   private router = inject(Router);
-  private activatedRoute = inject(ActivatedRoute);
 
   loginForm: FormGroup;
   isLoading = false;
@@ -35,15 +35,25 @@ export class LoginPage {
         updateOn: 'change'
       }],
     });
-
-    this.activatedRoute.queryParams.subscribe(params => {
-      if (params['expired']) {
-        this.errorMessage = 'Your session has expired. Please login again.';
-      }
-    });
   }
 
-  login() {
+  get emailControl() {
+    return this.loginForm.get('email');
+  }
+
+  get passwordControl() {
+    return this.loginForm.get('password');
+  }
+
+  isFormValid(): boolean {
+    return this.loginForm.valid && this.emailControl?.value && this.passwordControl?.value;
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
+
+  login(): void {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       return;
@@ -52,25 +62,35 @@ export class LoginPage {
     this.isLoading = true;
     this.errorMessage = '';
 
-    const userData: LoginRequest = {
-      email: this.emailControl?.value,
-      password: this.passwordControl?.value
+    const email = this.emailControl?.value;
+    const password = this.passwordControl?.value;
+
+    const skOfficialData = {
+      email: email,
+      password: password
     };
 
-    this.authService.login(userData).subscribe({
-      next: (res) => {
+    this.skOfficialAuthService.login(skOfficialData).subscribe({
+      next: (response: any) => {
         this.isLoading = false;
 
-        if (res.success) {
-          console.log('Login successful');
+        if (response.success) {
+          console.log('SK Official login successful');
           this.loginForm.reset();
 
-          const role = this.authService.getUserRole();
-          if (role) {
-            this.authService.redirectByRole(role);
+          // Store token and role for SK Official
+          if (response.token) {
+            localStorage.setItem('auth_token', response.token);
           }
+          localStorage.setItem('auth_role', 'sk-official');
+          if (response.skOfficialId) {
+            localStorage.setItem('sk_official_id', response.skOfficialId.toString());
+          }
+
+          // Redirect to SK Official dashboard
+          this.router.navigate(['/sk-official/dashboard']);
         } else {
-          this.errorMessage = res.message ?? 'Login failed. Please try again.';
+          this.errorMessage = response.message ?? 'Login failed. Please try again.';
         }
       },
       error: (err: HttpErrorResponse) => {
@@ -100,24 +120,5 @@ export class LoginPage {
         }
       }
     });
-  }
-
-
-
-  togglePasswordVisibility() {
-    this.showPassword = !this.showPassword;
-  }
-
-  get emailControl() {
-    return this.loginForm.get('email');
-  }
-  
-  get passwordControl() {
-    return this.loginForm.get('password');
-  }
-
-  isFieldInvalid(field: string): boolean {
-    const control = this.loginForm.get(field);
-    return !!(control && control.invalid && (control.dirty || control.touched));
   }
 }

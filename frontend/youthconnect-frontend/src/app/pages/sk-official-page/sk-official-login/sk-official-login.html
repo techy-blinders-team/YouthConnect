@@ -1,15 +1,12 @@
 <div class="login-container">
     <div class="login-modal">
-        <!-- Header with Logos -->
         <div class="login-header">
             <img src="assets/login page/youthconnect-logo.svg" alt="YouthConnect Logo" class="logo youthconnect-logo">
             <img src="assets/login page/sk-logo.svg" alt="SK Logo" class="logo sk-logo">
         </div>
 
-        <!-- Title -->
-        <h2 class="login-title">Welcome Youths!</h2>
+        <h2 class="login-title">Welcome SK Officials!</h2>
 
-        <!-- Youth Login Form -->
         <div>
             <form [formGroup]="loginForm" (ngSubmit)="login()" class="login-form">
                 @if (errorMessage) {
@@ -77,11 +74,6 @@
                     {{ isLoading ? 'Logging in...' : 'Login' }}
                 </button>
             </form>
-
-        <!-- Sign Up Link -->
-        <div class="signup-link">
-            Don't have an account? <a routerLink="/sign-up">Sign up</a>
-        </div>
         </div>
     </div>
 </div>

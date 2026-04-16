@@ -54,6 +54,15 @@ export const routes: Routes = [
         canActivate: [guestGuard]
     },
 
+    // SK Official Login Route
+    {
+        path: 'sk-official/login',
+        loadComponent: () =>
+            import('./pages/sk-official-page/sk-official-login/sk-official-login').then(move => move.SkOfficialLogin),
+        title: 'SK Official Login - YouthConnect',
+        canActivate: [guestGuard]
+    },
+
     {
         path: 'sign-up',
         loadComponent: () =>
