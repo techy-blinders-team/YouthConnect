@@ -303,11 +303,42 @@
               }
             </button>
           </div>
+
+          <div class="password-strength-card" [ngClass]="passwordStrengthClass">
+            <div class="strength-top-row">
+              <span class="strength-label">Password Strength</span>
+              <span class="strength-value">{{ passwordStrengthLabel }}</span>
+            </div>
+
+            <div class="strength-meter">
+              <div class="strength-meter-fill" [style.width.%]="passwordStrengthPercent"></div>
+            </div>
+
+            <div class="criteria-grid">
+              @for (criterion of passwordCriteria; track criterion.label) {
+                <div class="criterion-item" [class.met]="criterion.met">
+                  <span class="criterion-icon">
+                    @if (criterion.met) {
+                      <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" fill="currentColor"/>
+                      </svg>
+                    } @else {
+                      <span class="pending-dot">•</span>
+                    }
+                  </span>
+                  <span class="criterion-text">{{ criterion.label }}</span>
+                </div>
+              }
+            </div>
+          </div>
+
           @if (passwordControl?.touched) {
             @if (passwordControl?.errors?.['required']) {
               <span class="error-text">Password is required</span>
             } @else if (passwordControl?.errors?.['minlength']) {
               <span class="error-text">Password must be at least 8 characters</span>
+            } @else if (passwordControl?.errors?.['weakPassword']) {
+              <span class="error-text">Use uppercase, lowercase, number, and special character for a strong password</span>
             }
           }
         </div>
