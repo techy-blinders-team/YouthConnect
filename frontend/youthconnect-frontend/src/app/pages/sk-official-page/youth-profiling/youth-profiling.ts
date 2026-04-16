@@ -32,7 +32,6 @@ export class YouthProfiling implements OnInit {
     
     this.youthMemberManagementService.getYouthProfiles().subscribe({
       next: (data: any) => {
-        // Transform the response to match YouthMemberListItem
         this.youthProfiles = data.map((profile: any) => ({
           userId: profile.userId || 0,
           youthId: profile.youthId,
@@ -94,79 +93,136 @@ export class YouthProfiling implements OnInit {
       return;
     }
 
-    const doc = new jsPDF('l', 'mm', 'a4'); // landscape orientation
+    const doc = new jsPDF('l', 'mm', 'a4');
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
-    const margin = 10;
-    let yPosition = margin;
+    const margin = 5;
+    const cellPaddingX = 0.8;
+    const cellPaddingY = 1.1;
+    const lineHeight = 3.4;
+    let yPosition = 14;
 
-    // Title
     doc.setFontSize(16);
-    doc.text('Youth Profiles Report', margin, yPosition);
-    yPosition += 15;
-
-    // Metadata
-    doc.setFontSize(10);
-    doc.text(`Generated: ${new Date().toLocaleDateString()}`, margin, yPosition);
-    doc.text(`Total Records: ${this.filteredProfiles.length}`, pageWidth - 60, yPosition);
-    yPosition += 10;
-
-    // Table headers
-    const headers = ['First Name', 'Last Name', 'Age', 'Gender', 'Contact', 'Civil Status', 'Classification', 'Education', 'Work Status'];
-    const colWidth = (pageWidth - 2 * margin) / headers.length;
-
-    doc.setFontSize(9);
-    doc.setFillColor(0, 51, 102);
-    doc.setTextColor(255, 255, 255);
-    headers.forEach((header, index) => {
-      doc.text(header, margin + index * colWidth + 2, yPosition, { maxWidth: colWidth - 2 });
-    });
+    doc.setFont('', 'bold');
+    doc.text('YOUTH PROFILES REPORT', margin, yPosition);
     yPosition += 8;
 
-    // Table data
-    doc.setFontSize(8);
-    doc.setTextColor(0, 0, 0);
-    doc.setFillColor(240, 240, 240);
+    doc.setFontSize(9);
+    doc.setFont('', 'normal');
+    doc.text(`Generated: ${new Date().toLocaleDateString('en-US')} | Total Records: ${this.filteredProfiles.length}`, margin, yPosition);
+    yPosition += 6;
+
+    const headers = [
+      'First Name', 'Middle Name', 'Last Name', 'Suffix', 'Age', 'Gender', 'Birthday', 'Contact', 'Address',
+      'Civil Status', 'Classification', 'Education', 'Work Status', 'SK Voter', 'National Voter', 'Past Voter', 'Assemblies', 'Reason'
+    ];
+    const widthWeights = [1.25, 1.15, 1.25, 0.65, 0.55, 0.75, 1.05, 1.1, 2.2, 1.0, 1.3, 1.25, 1.05, 0.8, 0.95, 0.85, 0.85, 1.5];
+    const totalWeight = widthWeights.reduce((sum, weight) => sum + weight, 0);
+    const availableWidth = pageWidth - margin * 2;
+    const colWidths = widthWeights.map((weight) => (weight / totalWeight) * availableWidth);
+
+    const wrapText = (value: string, maxWidth: number): string[] => {
+      const text = value?.trim() ? value : 'N/A';
+      const lines = doc.splitTextToSize(text, maxWidth);
+      return lines.length > 0 ? lines : ['N/A'];
+    };
+
+    const getRowMetrics = (values: string[], isHeader: boolean) => {
+      doc.setFont('', isHeader ? 'bold' : 'normal');
+      doc.setFontSize(isHeader ? 7.4 : 6.8);
+
+      const wrapped = values.map((value, index) => wrapText(value, colWidths[index] - cellPaddingX * 2));
+      const maxLines = wrapped.reduce((max, lines) => Math.max(max, lines.length), 1);
+      const height = Math.max(6, maxLines * lineHeight + cellPaddingY * 2);
+
+      return { wrapped, height };
+    };
+
+    const drawRow = (values: string[], isHeader: boolean, isStriped: boolean) => {
+      const { wrapped, height } = getRowMetrics(values, isHeader);
+      const rowTop = yPosition;
+      const rowBottom = rowTop + height;
+
+      if (isHeader) {
+        doc.setFillColor(33, 66, 122);
+        doc.rect(margin, rowTop, availableWidth, height, 'F');
+      } else if (isStriped) {
+        doc.setFillColor(245, 247, 250);
+        doc.rect(margin, rowTop, availableWidth, height, 'F');
+      }
+
+      doc.setDrawColor(180, 190, 205);
+      doc.setLineWidth(0.25);
+      doc.line(margin, rowTop, margin + availableWidth, rowTop);
+      doc.line(margin, rowBottom, margin + availableWidth, rowBottom);
+
+      let x = margin;
+      for (let i = 0; i < values.length; i++) {
+        const colWidth = colWidths[i];
+
+        doc.line(x, rowTop, x, rowBottom);
+
+        doc.setFont('', isHeader ? 'bold' : 'normal');
+        doc.setFontSize(isHeader ? 7.4 : 6.8);
+        doc.setTextColor(isHeader ? 255 : 0, isHeader ? 255 : 0, isHeader ? 255 : 0);
+
+        const textLines = wrapped[i];
+        let textY = rowTop + cellPaddingY + lineHeight - 0.5;
+        textLines.forEach((line) => {
+          doc.text(line, x + cellPaddingX, textY, {
+            maxWidth: colWidth - cellPaddingX * 2,
+            align: 'left'
+          });
+          textY += lineHeight;
+        });
+
+        x += colWidth;
+      }
+
+      doc.line(margin + availableWidth, rowTop, margin + availableWidth, rowBottom);
+      yPosition = rowBottom;
+    };
+
+    const drawHeader = () => {
+      drawRow(headers, true, false);
+    };
+
+    drawHeader();
 
     this.filteredProfiles.forEach((profile, rowIndex) => {
-      if (yPosition > pageHeight - 20) {
-        doc.addPage();
-        yPosition = margin;
-        // Repeat headers
-        doc.setFillColor(0, 51, 102);
-        doc.setTextColor(255, 255, 255);
-        headers.forEach((header, index) => {
-          doc.text(header, margin + index * colWidth + 2, yPosition, { maxWidth: colWidth - 2 });
-        });
-        yPosition += 8;
-        doc.setTextColor(0, 0, 0);
-      }
-
-      if (rowIndex % 2 === 0) {
-        doc.setFillColor(240, 240, 240);
-      } else {
-        doc.setFillColor(255, 255, 255);
-      }
-
       const rowData = [
-        profile.firstName,
-        profile.lastName,
+        profile.firstName || 'N/A',
+        profile.middleName || 'N/A',
+        profile.lastName || 'N/A',
+        profile.suffix || 'N/A',
         this.getAge(profile.birthday).toString(),
-        profile.gender,
-        profile.contactNumber,
-        profile.civilStatus,
+        profile.gender || 'N/A',
+        profile.birthday ? profile.birthday.substring(0, 10) : 'N/A',
+        profile.contactNumber || 'N/A',
+        profile.completeAddress || 'N/A',
+        profile.civilStatus || 'N/A',
         profile.youthClassification?.youthClassification || 'N/A',
         profile.youthClassification?.educationBackground || 'N/A',
-        profile.youthClassification?.workStatus || 'N/A'
+        profile.youthClassification?.workStatus || 'N/A',
+        profile.youthClassification?.skVoter ? 'Yes' : 'No',
+        profile.youthClassification?.nationalVoter ? 'Yes' : 'No',
+        profile.youthClassification?.pastVoter ? 'Yes' : 'No',
+        (profile.youthClassification?.numAttended || 0).toString(),
+        profile.youthClassification?.nonAttendedReason || 'N/A'
       ];
 
-      rowData.forEach((data, index) => {
-        doc.text(data.substring(0, 8), margin + index * colWidth + 2, yPosition, { maxWidth: colWidth - 2 });
-      });
-      yPosition += 7;
+      const { height } = getRowMetrics(rowData, false);
+      if (yPosition + height > pageHeight - 8) {
+        doc.addPage();
+        yPosition = 10;
+        drawHeader();
+      }
+
+      drawRow(rowData, false, rowIndex % 2 === 0);
     });
 
-    doc.save('youth-profiles-report.pdf');
+    const dateTime = this.getFormattedDateTime();
+    doc.save(`youth-profiles-report-${dateTime}.pdf`);
   }
 
   exportToExcel(): void {
@@ -178,7 +234,6 @@ export class YouthProfiling implements OnInit {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Youth Profiles');
 
-    // Define columns
     worksheet.columns = [
       { header: 'First Name', key: 'firstName', width: 15 },
       { header: 'Middle Name', key: 'middleName', width: 15 },
@@ -200,13 +255,11 @@ export class YouthProfiling implements OnInit {
       { header: 'Non-Attendance Reason', key: 'nonAttendedReason', width: 25 }
     ];
 
-    // Style header row
     const headerRow = worksheet.getRow(1);
     headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
     headerRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF003366' } };
     headerRow.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
 
-    // Add data rows
     this.filteredProfiles.forEach((profile) => {
       worksheet.addRow({
         firstName: profile.firstName,
@@ -230,7 +283,6 @@ export class YouthProfiling implements OnInit {
       });
     });
 
-    // Auto-fit columns and center data
     worksheet.eachRow((row) => {
       row.alignment = { horizontal: 'left', vertical: 'middle' };
       row.eachCell((cell) => {
@@ -243,13 +295,13 @@ export class YouthProfiling implements OnInit {
       });
     });
 
-    // Save the workbook
     workbook.xlsx.writeBuffer().then((data) => {
       const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `youth-profiles-${new Date().getTime()}.xlsx`;
+      const dateTime = this.getFormattedDateTime();
+      link.download = `youth-profiles-report-${dateTime}.xlsx`;
       link.click();
       URL.revokeObjectURL(url);
     });
@@ -280,5 +332,16 @@ export class YouthProfiling implements OnInit {
       day: 'numeric' 
     };
     return new Date(dateString).toLocaleDateString('en-US', options);
+  }
+
+  getFormattedDateTime(): string {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    return `${year}-${month}-${day}-${hours}-${minutes}-${seconds}`;
   }
 }
