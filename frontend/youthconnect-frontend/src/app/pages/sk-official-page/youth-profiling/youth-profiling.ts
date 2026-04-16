@@ -344,4 +344,22 @@ export class YouthProfiling implements OnInit {
     const seconds = String(now.getSeconds()).padStart(2, '0');
     return `${year}-${month}-${day}-${hours}-${minutes}-${seconds}`;
   }
+
+  onEdit(profile: YouthMemberListItem): void {
+    console.log('Edit profile:', profile);
+    // TODO: Implement edit functionality
+    // Navigate to edit page or open modal with profile data
+    alert(`Edit profile for ${profile.firstName} ${profile.lastName}`);
+  }
+
+  onDeactivate(profile: YouthMemberListItem): void {
+    const confirmed = confirm(`Are you sure you want to deactivate ${profile.firstName} ${profile.lastName}?`);
+    if (confirmed) {
+      console.log('Deactivate profile:', profile);
+      // TODO: Implement deactivate functionality
+      // Call service to deactivate profile
+      alert(`Profile for ${profile.firstName} ${profile.lastName} has been deactivated.`);
+      this.loadYouthProfiles(); // Reload the list
+    }
+  }
 }
