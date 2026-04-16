@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { YouthMemberManagementService, YouthMemberListItem } from '../../../services/youth-member-management.service';
 import { CivilStatus, Gender } from '../../../models/enums';
+import { forkJoin } from 'rxjs';
 import jsPDF from 'jspdf';
 import ExcelJS from 'exceljs';
 
@@ -15,10 +16,16 @@ import ExcelJS from 'exceljs';
 export class YouthProfiling implements OnInit {
   youthProfiles: YouthMemberListItem[] = [];
   filteredProfiles: YouthMemberListItem[] = [];
+  userAccountByUserId = new Map<number, { email: string; roleId: number; isActive: boolean; isApprove: boolean | null }>();
   searchQuery: string = '';
   isLoading: boolean = false;
   errorMessage: string = '';
   successMessage: string = '';
+  isApprovalPanelOpen = false;
+  approvalFilter: 'pending' | 'approved' | 'all' = 'pending';
+  approvalMessage: string = '';
+  approvalError: string = '';
+  updatingApprovalUserId: number | null = null;
   
   // Modal states
   isEditModalOpen = false;
@@ -61,22 +68,41 @@ export class YouthProfiling implements OnInit {
   loadYouthProfiles(): void {
     this.isLoading = true;
     this.errorMessage = '';
-    
-    this.youthMemberManagementService.getYouthProfiles().subscribe({
-      next: (data: any) => {
-        this.youthProfiles = data.map((profile: any) => ({
+
+    forkJoin({
+      users: this.youthMemberManagementService.getUsers(),
+      profiles: this.youthMemberManagementService.getYouthProfiles()
+    }).subscribe({
+      next: ({ users, profiles }) => {
+        const userMap = new Map(users.map((user) => [user.userId, user]));
+        this.userAccountByUserId = new Map(
+          users.map((user) => [
+            user.userId,
+            {
+              email: user.email,
+              roleId: user.roleId,
+              isActive: user.isActive,
+              isApprove: user.isApprove
+            }
+          ])
+        );
+
+        this.youthProfiles = profiles.map((profile: any) => {
+          const matchingUser = userMap.get(profile.userId || 0);
+
+          return {
           userId: profile.userId || 0,
           youthId: profile.youthId,
           firstName: profile.firstName,
           lastName: profile.lastName,
-          email: profile.email || '',
+          email: matchingUser?.email || profile.email || '',
           gender: profile.gender as Gender,
           birthday: profile.birthday,
           contactNumber: profile.contactNumber,
           civilStatus: profile.civilStatus as CivilStatus,
-          isActive: profile.isActive !== undefined ? profile.isActive : true,
-          isApprove: profile.isApprove || null,
-          createdAt: profile.createdAt,
+          isActive: matchingUser?.isActive ?? (profile.isActive !== undefined ? profile.isActive : true),
+          isApprove: matchingUser?.isApprove ?? (profile.isApprove ?? null),
+          createdAt: matchingUser?.createdAt || profile.createdAt,
           middleName: profile.middleName || null,
           suffix: profile.suffix || null,
           completeAddress: profile.completeAddress,
@@ -90,7 +116,8 @@ export class YouthProfiling implements OnInit {
             numAttended: profile.youthClassification.numAttended || 0,
             nonAttendedReason: profile.youthClassification.nonAttendedReason || null
           } : undefined
-        }));
+          };
+        });
         this.filteredProfiles = [...this.youthProfiles];
         this.isLoading = false;
       },
@@ -117,6 +144,105 @@ export class YouthProfiling implements OnInit {
       (profile.completeAddress && profile.completeAddress.toLowerCase().includes(query)) ||
       profile.civilStatus.toLowerCase().includes(query)
     );
+  }
+
+  get approvalProfiles(): YouthMemberListItem[] {
+    return this.youthProfiles.filter((profile) => {
+      if (this.approvalFilter === 'approved') {
+        return profile.isApprove === true;
+      }
+
+      if (this.approvalFilter === 'pending') {
+        return profile.isApprove !== true;
+      }
+
+      return true;
+    });
+  }
+
+  openApprovalPanel(): void {
+    this.isApprovalPanelOpen = true;
+    this.approvalError = '';
+    this.approvalMessage = '';
+  }
+
+  closeApprovalPanel(): void {
+    if (this.updatingApprovalUserId !== null) {
+      return;
+    }
+
+    this.isApprovalPanelOpen = false;
+    this.approvalError = '';
+    this.approvalMessage = '';
+  }
+
+  setApprovalFilter(filter: 'pending' | 'approved' | 'all'): void {
+    this.approvalFilter = filter;
+  }
+
+  setRegistrationApproval(profile: YouthMemberListItem, approve: boolean): void {
+    const accountData = this.userAccountByUserId.get(profile.userId);
+
+    if (!profile.userId || !accountData) {
+      this.approvalError = 'Unable to update approval status for this account due to incomplete account data.';
+      this.approvalMessage = '';
+      return;
+    }
+
+    this.updatingApprovalUserId = profile.userId;
+    this.approvalError = '';
+    this.approvalMessage = '';
+
+    this.youthMemberManagementService.updateUser(profile.userId, {
+      email: accountData.email,
+      roleId: accountData.roleId,
+      active: accountData.isActive,
+      isApprove: approve ? true : null
+    }).subscribe({
+      next: (updatedUser) => {
+        this.userAccountByUserId.set(updatedUser.userId, {
+          email: updatedUser.email,
+          roleId: updatedUser.roleId,
+          isActive: updatedUser.isActive,
+          isApprove: updatedUser.isApprove
+        });
+
+        this.youthProfiles = this.youthProfiles.map((item) =>
+          item.userId === updatedUser.userId
+            ? {
+                ...item,
+                isApprove: updatedUser.isApprove,
+                isActive: updatedUser.isActive,
+                email: updatedUser.email
+              }
+            : item
+        );
+
+        this.filteredProfiles = this.searchQuery.trim()
+          ? this.filteredProfiles.map((item) =>
+              item.userId === updatedUser.userId
+                ? {
+                    ...item,
+                    isApprove: updatedUser.isApprove,
+                    isActive: updatedUser.isActive,
+                    email: updatedUser.email
+                  }
+                : item
+            )
+          : [...this.youthProfiles];
+
+        const fullName = `${profile.firstName} ${profile.lastName}`.trim();
+        this.approvalMessage = approve
+          ? `${fullName} has been approved for login.`
+          : `${fullName} has been moved back to pending registration.`;
+        this.updatingApprovalUserId = null;
+      },
+      error: (error) => {
+        console.error('Error updating approval status:', error);
+        this.approvalError = 'Failed to update registration approval status. Please try again.';
+        this.updatingApprovalUserId = null;
+      }
+    });
   }
 
   exportToPDF(): void {

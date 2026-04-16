@@ -201,11 +201,11 @@
           <label>Work Status</label>
           <select formControlName="workStatus" class="form-input">
             <option value="">Select Work Status</option>
-            <option value="employed">Employed</option>
-            <option value="unemployed">Unemployed</option>
-            <option value="selfEmployed">Self Employed</option>
-            <option value="currentlyLooking">Currently Looking</option>
-            <option value="notInterested">Not Interested</option>
+            <option value="EMPLOYED">Employed</option>
+            <option value="UNEMPLOYED">Unemployed</option>
+            <option value="SELF_EMPLOYED">Self Employed</option>
+            <option value="CURRENTLY_LOOKING">Currently Looking</option>
+            <option value="NOT_INTERESTED">Not Interested</option>
           </select>
           @if (workStatusControl?.touched) {
             @if (workStatusControl?.errors?.['required']) {
