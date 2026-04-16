@@ -2,6 +2,8 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AbstractControl, ValidationErrors } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 
@@ -19,7 +21,7 @@ function passwordMatchValidator(form: AbstractControl): ValidationErrors | null 
 
 @Component({
   selector: 'app-sign-up-page',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CommonModule, RouterModule],
   templateUrl: './sign-up-page.html',
   styleUrl: './sign-up-page.scss',
 })
@@ -33,6 +35,8 @@ export class SignUpPage {
   isLoading = false;
   errorMessage = '';
   successMessage = '';
+  showPassword = false;
+  showConfirmPassword = false;
 
   constructor() {
     this.registrationForm = this.formBuilder.group(
@@ -63,7 +67,7 @@ export class SignUpPage {
           updateOn: 'change'
         }],
         contactNumber: ['', {
-          validators: [Validators.required, Validators.maxLength(15)],
+          validators: [Validators.required, Validators.pattern(/^\d{1,15}$/)],
           updateOn: 'change'
         }],
         completeAddress: ['', {
@@ -88,7 +92,7 @@ export class SignUpPage {
           validators: [Validators.required],
           updateOn: 'change'
         }],
-        votingStatus: ['', {
+        votingStatus: [[], {
           validators: [Validators.required],
           updateOn: 'change'
         }],
@@ -156,11 +160,47 @@ nextStep(): void {
     }
   }
 
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleConfirmPasswordVisibility(): void {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
+
+  isVotingStatusSelected(status: string): boolean {
+    const selectedStatuses = this.votingStatusControl?.value as string[] | null;
+    return Array.isArray(selectedStatuses) && selectedStatuses.includes(status);
+  }
+
+  onVotingStatusChange(event: Event, status: string): void {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    const selectedStatuses = [...((this.votingStatusControl?.value as string[] | null) ?? [])];
+
+    if (isChecked && !selectedStatuses.includes(status)) {
+      selectedStatuses.push(status);
+    }
+
+    if (!isChecked) {
+      const updatedStatuses = selectedStatuses.filter((selectedStatus) => selectedStatus !== status);
+      this.votingStatusControl?.setValue(updatedStatuses);
+      this.votingStatusControl?.markAsTouched();
+      this.votingStatusControl?.updateValueAndValidity();
+      return;
+    }
+
+    this.votingStatusControl?.setValue(selectedStatuses);
+    this.votingStatusControl?.markAsTouched();
+    this.votingStatusControl?.updateValueAndValidity();
+  }
+
   cancel(): void {
     this.registrationForm.reset();
     this.currentStep = 1;
     this.errorMessage = '';
     this.successMessage = '';
+    this.showPassword = false;
+    this.showConfirmPassword = false;
     this.router.navigate(['/login']);
   }
 
@@ -184,6 +224,8 @@ nextStep(): void {
           this.successMessage = 'Registration successful! Redirecting to login...';
           console.log('Registration successful:', res);
           this.registrationForm.reset();
+          this.showPassword = false;
+          this.showConfirmPassword = false;
 
           setTimeout(() => {
             this.router.navigate(['/login']);

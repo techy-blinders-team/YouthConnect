@@ -1,0 +1,507 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+$primary-blue: #0052cc;
+$primary-red: #dc143c;
+$light-gray: #f5f5f5;
+$border-gray: #e0e0e0;
+$text-dark: #333333;
+$text-light: #666666;
+$error-color: #d32f2f;
+$success-color: #2e7d32;
+
+:host {
+  display: block;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+html, body {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+.registration-container {
+  height: 100vh;
+  width: 100vw;
+  background-image: url('/assets/login\ page/pasay-sk-bg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  background-attachment: fixed;
+  overflow: hidden;
+
+  .registration-modal {
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    width: 600px;
+    padding: 40px 30px;
+    position: relative;
+    height: auto;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+
+    @media (max-width: 600px) {
+      width: 90vw;
+      max-width: 500px;
+      padding: 30px 20px;
+      border-radius: 15px;
+      height: auto;
+      max-height: 90vh;
+    }
+  }
+}
+
+.registration-header {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 20px;
+  align-items: center;
+
+  .logo {
+    height: 80px;
+    width: 80px;
+    display: block;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+
+    @media (max-width: 600px) {
+      height: 60px;
+      width: 60px;
+    }
+  }
+
+  .sk-logo {
+    background-color: rgb(255, 255, 255);
+    border-radius: 50%;
+    padding: 8px;
+    box-sizing: border-box;
+  }
+}
+
+.registration-title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+  color: $primary-blue;
+  margin-bottom: 20px;
+  letter-spacing: 0.5px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.step-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 30px;
+
+  .step {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    border: 2px solid $border-gray;
+    color: $text-light;
+    background-color: white;
+    transition: all 0.3s ease;
+
+    &.active {
+      border-color: $primary-blue;
+      color: white;
+      background-color: $primary-blue;
+    }
+
+    &.completed {
+      border-color: $primary-blue;
+      color: white;
+      background-color: $primary-blue;
+    }
+  }
+
+  .step-line {
+    width: 40px;
+    height: 2px;
+    background-color: $border-gray;
+    transition: all 0.3s ease;
+
+    &.completed {
+      background-color: $primary-blue;
+    }
+  }
+}
+
+.step-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: $text-dark;
+  margin-bottom: 25px;
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
+}
+
+.registration-form {
+  animation: fadeIn 0.3s ease-in;
+
+  .error-message {
+    background-color: #ffebee;
+    color: $error-color;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    border-left: 4px solid $error-color;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .success-message {
+    background-color: #e8f5e9;
+    color: $success-color;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    border-left: 4px solid $success-color;
+    font-family: 'Poppins', sans-serif;
+  }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 25px;
+
+  .form-group-full {
+    grid-column: 1 / -1;
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+    gap: 12px;
+
+    .form-group-full {
+      grid-column: 1;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form-group {
+  margin-bottom: 20px;
+
+  label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: $text-dark;
+    margin-bottom: 8px;
+    letter-spacing: 0.3px;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid $border-gray;
+    border-radius: 8px;
+    font-size: 14px;
+    color: $text-dark;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+
+    &::placeholder {
+      color: #cccccc;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $primary-blue;
+      box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.1);
+    }
+
+    &:disabled {
+      background-color: #f0f0f0;
+      color: #999999;
+    }
+  }
+
+  .password-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .form-input {
+      padding-right: 45px;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 12px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      padding: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $text-light;
+      transition: color 0.2s ease;
+      font-family: 'Poppins', sans-serif;
+      line-height: 1;
+
+      svg {
+        display: block;
+      }
+
+      &:hover {
+        color: $text-dark;
+      }
+    }
+  }
+
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      font-size: 14px;
+      color: $text-dark;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+
+      input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        margin-right: 10px;
+        cursor: pointer;
+        accent-color: $primary-blue;
+      }
+
+      &:hover {
+        color: $primary-blue;
+      }
+    }
+  }
+
+  .error-text {
+    display: block;
+    color: $error-color;
+    font-size: 12px;
+    margin-top: 6px;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+  }
+}
+
+.form-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 30px;
+
+  button {
+    flex: 1;
+    padding: 13px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+    font-family: 'Poppins', sans-serif;
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.btn-primary {
+  color: white;
+  background-color: $primary-blue;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background-color: darken($primary-blue, 5%);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.btn-secondary {
+  color: $text-dark;
+  background-color: $light-gray;
+  border: 1px solid $border-gray;
+
+  &:hover:not(:disabled) {
+    background-color: #e8e8e8;
+    border-color: #d0d0d0;
+  }
+
+  &:active:not(:disabled) {
+    background-color: $light-gray;
+  }
+}
+
+.login-link {
+  text-align: center;
+  font-size: 14px;
+  color: $text-light;
+  font-family: 'Poppins', sans-serif;
+  margin-top: 20px;
+
+  a {
+    color: $primary-blue;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+    margin-left: 4px;
+    font-family: 'Poppins', sans-serif;
+
+    &:hover {
+      color: darken($primary-blue, 10%);
+      text-decoration: underline;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .registration-header {
+    gap: 20px;
+
+    .logo {
+      height: 50px;
+      width: 50px;
+    }
+  }
+
+  .registration-title {
+    font-size: 20px;
+  }
+
+  .step-indicator {
+    .step {
+      width: 30px;
+      height: 30px;
+      font-size: 12px;
+    }
+
+    .step-line {
+      width: 30px;
+    }
+  }
+
+  .step-title {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+
+    label {
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .form-input {
+      padding: 10px 12px;
+      font-size: 13px;
+    }
+
+    .error-text {
+      font-size: 11px;
+    }
+  }
+
+  .form-buttons {
+    gap: 10px;
+    margin-top: 25px;
+
+    button {
+      padding: 11px 16px;
+      font-size: 13px;
+    }
+  }
+
+  .login-link {
+    font-size: 13px;
+    margin-top: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .registration-modal {
+    width: 95vw;
+    padding: 20px 15px;
+  }
+
+  .registration-header {
+    margin-bottom: 15px;
+  }
+
+  .registration-title {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+
+  .step-indicator {
+    margin-bottom: 25px;
+  }
+
+  .form-group {
+    margin-bottom: 14px;
+
+    .radio-group {
+      gap: 10px;
+
+      .radio-label {
+        font-size: 13px;
+      }
+    }
+  }
+
+  .form-buttons {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+}
