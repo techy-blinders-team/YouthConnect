@@ -1,0 +1,79 @@
+<div class="login-container">
+    <div class="login-modal">
+        <div class="login-header">
+            <img src="assets/login page/youthconnect-logo.svg" alt="YouthConnect Logo" class="logo youthconnect-logo">
+            <img src="assets/login page/sk-logo.svg" alt="SK Logo" class="logo sk-logo">
+        </div>
+
+        <h2 class="login-title">Welcome SK Officials!</h2>
+
+        <div>
+            <form [formGroup]="loginForm" (ngSubmit)="login()" class="login-form">
+                @if (errorMessage) {
+                    <div class="error-message">{{ errorMessage }}</div>
+                }
+
+                <div class="form-group">
+                    <label>Email</label>
+                    <input 
+                        formControlName="email" 
+                        type="email" 
+                        placeholder="Enter your email"
+                        class="form-input">
+                    
+                    @if (emailControl?.touched && emailControl?.errors) {
+                        <span class="error-text">
+                            @if(emailControl?.errors?.['required']) {
+                                Email is required
+                            }@else if (emailControl?.errors?.['email']) {
+                                Invalid Email format
+                            }@else if (emailControl?.errors?.['maxlength']) {
+                                Email is too long
+                            }
+                        </span>
+                    }
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="password-input-wrapper">
+                        <input 
+                            formControlName="password" 
+                            [type]="showPassword ? 'text' : 'password'"
+                            placeholder="Enter your password"
+                            class="form-input">
+                        <button 
+                            type="button" 
+                            (click)="togglePasswordVisibility()"
+                            class="password-toggle">
+                            @if (showPassword) {
+                                👁️
+                            } @else {
+                                👁️‍🗨️
+                            }
+                        </button>
+                    </div>
+                    
+                    @if (passwordControl?.touched && passwordControl?.errors) {
+                        <span class="error-text">
+                            @if(passwordControl?.errors?.['required']) {
+                                Password is required
+                            }
+                        </span>
+                    }
+                </div>
+
+                <div class="forgot-password">
+                    <a routerLink="/forgot-password">forgot password?</a>
+                </div>
+
+                <button 
+                    type="submit" 
+                    [disabled]="isLoading"
+                    class="btn-login">
+                    {{ isLoading ? 'Logging in...' : 'Login' }}
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
