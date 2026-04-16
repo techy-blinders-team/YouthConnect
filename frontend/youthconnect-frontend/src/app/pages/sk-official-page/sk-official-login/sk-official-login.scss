@@ -178,14 +178,16 @@ html, body {
       background: none;
       border: none;
       cursor: pointer;
-      font-size: 18px;
       padding: 5px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: $text-light;
       transition: color 0.2s ease;
-      font-family: 'Poppins', sans-serif;
+
+      svg {
+        display: block;
+      }
 
       &:hover {
         color: $text-dark;
