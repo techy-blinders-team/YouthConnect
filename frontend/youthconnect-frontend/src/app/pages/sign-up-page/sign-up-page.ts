@@ -67,7 +67,7 @@ export class SignUpPage {
           updateOn: 'change'
         }],
         contactNumber: ['', {
-          validators: [Validators.required, Validators.pattern(/^\d{1,15}$/)],
+          validators: [Validators.required, Validators.pattern(/^9\d{9}$/)],
           updateOn: 'change'
         }],
         completeAddress: ['', {

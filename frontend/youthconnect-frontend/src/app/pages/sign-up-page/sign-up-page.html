@@ -97,12 +97,20 @@
 
           <div class="form-group">
             <label>Contact Number</label>
-            <input type="number" formControlName="contactNumber" placeholder="Enter your contact number" class="form-input" min="0" step="1" />
+            <div class="phone-input-wrapper">
+              <span class="phone-prefix">+63</span>
+              <input 
+                type="tel" 
+                formControlName="contactNumber" 
+                placeholder="9XX XXX XXXX" 
+                class="form-input" 
+                maxlength="10" />
+            </div>
             @if (contactNumberControl?.touched) {
               @if (contactNumberControl?.errors?.['required']) {
                 <span class="error-text">Contact number is required</span>
               } @else if (contactNumberControl?.errors?.['pattern']) {
-                <span class="error-text">Contact number must be digits only (max 15 digits)</span>
+                <span class="error-text">Philippine mobile number must be 10 digits (e.g., 9123456789)</span>
               }
             }
           </div>

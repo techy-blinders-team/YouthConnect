@@ -251,6 +251,26 @@ html, body {
     }
   }
 
+  .phone-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .phone-prefix {
+      position: absolute;
+      left: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      color: $text-dark;
+      font-family: 'Poppins', sans-serif;
+      pointer-events: none;
+    }
+
+    .form-input {
+      padding-left: 50px;
+    }
+  }
+
   .password-input-wrapper {
     position: relative;
     display: flex;
