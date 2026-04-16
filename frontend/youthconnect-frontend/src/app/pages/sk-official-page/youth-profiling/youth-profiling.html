@@ -124,4 +124,215 @@
       <p style="margin: 0; background: transparent;">Showing {{ filteredProfiles.length }} of {{ youthProfiles.length }} youth profiles</p>
     </div>
   </div>
+
+  <!-- Edit Modal -->
+  <div class="modal-overlay" *ngIf="isEditModalOpen" (click)="closeEditModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title">Edit Youth Profile</h2>
+          <p class="modal-subtitle">Update the profile information for {{ selectedProfile?.firstName }} {{ selectedProfile?.lastName }}</p>
+        </div>
+        <button class="close-btn" (click)="closeEditModal()">✕</button>
+      </div>
+
+      <!-- Modal Error Message -->
+      <div *ngIf="errorMessage" class="modal-alert alert-error">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Modal Success Message -->
+      <div *ngIf="successMessage" class="modal-alert alert-success">
+        {{ successMessage }}
+      </div>
+
+      <form [formGroup]="editForm" (ngSubmit)="submitEditForm()">
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="firstName" class="form-label">First Name<span class="required">*</span></label>
+              <input type="text" id="firstName" class="form-input" formControlName="firstName" />
+            </div>
+            <div class="form-group">
+              <label for="middleName" class="form-label">Middle Name</label>
+              <input type="text" id="middleName" class="form-input" formControlName="middleName" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="lastName" class="form-label">Last Name<span class="required">*</span></label>
+              <input type="text" id="lastName" class="form-input" formControlName="lastName" />
+            </div>
+            <div class="form-group">
+              <label for="suffix" class="form-label">Suffix</label>
+              <select id="suffix" class="form-input" formControlName="suffix">
+                <option value="">Select Suffix (Optional)</option>
+                <option value="JR">JR</option>
+                <option value="SR">SR</option>
+                <option value="I">I</option>
+                <option value="II">II</option>
+                <option value="III">III</option>
+                <option value="OTHER">OTHER</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="gender" class="form-label">Gender<span class="required">*</span></label>
+              <select id="gender" class="form-input" formControlName="gender">
+                <option value="">Select Gender</option>
+                <option value="MALE">Male</option>
+                <option value="FEMALE">Female</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="birthday" class="form-label">Birthday<span class="required">*</span></label>
+              <input type="date" id="birthday" class="form-input" formControlName="birthday" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="contactNumber" class="form-label">Contact Number<span class="required">*</span></label>
+              <input type="text" id="contactNumber" class="form-input" formControlName="contactNumber" />
+            </div>
+            <div class="form-group">
+              <label for="civilStatus" class="form-label">Civil Status<span class="required">*</span></label>
+              <select id="civilStatus" class="form-input" formControlName="civilStatus">
+                <option value="">Select Civil Status</option>
+                <option value="SINGLE">Single</option>
+                <option value="MARRIED">Married</option>
+                <option value="WIDOWED">Widowed</option>
+                <option value="DIVORCED">Divorced</option>
+                <option value="ANNULLED">Annulled</option>
+                <option value="UNKNOWN">Unknown</option>
+                <option value="LIVE_IN">Live In</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="completeAddress" class="form-label">Complete Address<span class="required">*</span></label>
+            <textarea id="completeAddress" class="form-textarea" rows="3" formControlName="completeAddress"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="youthClassification" class="form-label">Youth Classification</label>
+            <select id="youthClassification" class="form-input" formControlName="youthClassification">
+              <option value="">Select Youth Classification</option>
+              <option value="IN_SCHOOL_YOUTH">In School Youth</option>
+              <option value="OUT_OF_SCHOOL_YOUTH">Out of School Youth</option>
+              <option value="WORKING_YOUTH">Working Youth</option>
+              <option value="PERSON_WITH_DISABILITY">Person with Disability</option>
+              <option value="CHILDREN_IN_CONFLICT">Children in Conflict</option>
+              <option value="CHILDREN_IN_CONFLICT_LAW">Children in Conflict with Law</option>
+              <option value="INDIGENOUS_PEOPLE">Indigenous People</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="educationBackground" class="form-label">Education Background</label>
+              <select id="educationBackground" class="form-input" formControlName="educationBackground">
+                <option value="">Select Education Background</option>
+                <option value="ELEMENTARY_LEVEL">Elementary Level</option>
+                <option value="ELEMENTARY_GRADUATE">Elementary Graduate</option>
+                <option value="HIGH_SCHOOL_GRADUATE">High School Graduate</option>
+                <option value="VOCATIONAL_GRAD">Vocational Graduate</option>
+                <option value="COLLEGE_LEVEL">College Level</option>
+                <option value="COLLEGE_GRADUATE">College Graduate</option>
+                <option value="MASTERS_LEVEL">Master's Level</option>
+                <option value="MASTERS_GRADUATE">Master's Graduate</option>
+                <option value="DOCTOR_LEVEL">Doctoral Level</option>
+                <option value="DOCTOR_GRADUATE">Doctoral Graduate</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="workStatus" class="form-label">Work Status</label>
+              <select id="workStatus" class="form-input" formControlName="workStatus">
+                <option value="">Select Work Status</option>
+                <option value="EMPLOYED">Employed</option>
+                <option value="UNEMPLOYED">Unemployed</option>
+                <option value="SELF_EMPLOYED">Self Employed</option>
+                <option value="CURRENTLY_LOOKING">Currently Looking</option>
+                <option value="NOT_INTERESTED">Not Interested</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group voting-group">
+            <label class="radio-label">
+              <input type="radio" formControlName="votingStatus" value="skVoter" />
+              SK Voter
+            </label>
+            <label class="radio-label">
+              <input type="radio" formControlName="votingStatus" value="pastVoter" />
+              Past Voter
+            </label>
+            <label class="radio-label">
+              <input type="radio" formControlName="votingStatus" value="nationalVoter" />
+              National Voter
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label for="numberOfAttendedAssemblies" class="form-label">Number of Attended Assemblies</label>
+            <input type="number" id="numberOfAttendedAssemblies" class="form-input" formControlName="numberOfAttendedAssemblies" min="0" />
+          </div>
+
+          <div class="form-group">
+            <label for="reason" class="form-label">Reason</label>
+            <textarea id="reason" class="form-textarea" rows="2" formControlName="reason"></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeEditModal()" [disabled]="isSubmitting">
+            Cancel
+          </button>
+          <button type="submit" class="btn-create" [disabled]="editForm.invalid || isSubmitting">
+            {{ isSubmitting ? 'Saving...' : 'Save Changes' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Deactivate Confirmation Modal -->
+  <div class="modal-overlay" *ngIf="isDeactivateModalOpen" (click)="closeDeactivateModal()">
+    <div class="modal-content modal-small" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title">Deactivate Profile</h2>
+          <p class="modal-subtitle">Confirm deactivation</p>
+        </div>
+        <button class="close-btn" (click)="closeDeactivateModal()">✕</button>
+      </div>
+
+      <!-- Modal Error Message -->
+      <div *ngIf="errorMessage" class="modal-alert alert-error">
+        {{ errorMessage }}
+      </div>
+
+      <div class="modal-body">
+        <p class="confirmation-text">
+          Are you sure you want to deactivate the profile for <strong>{{ selectedProfile?.firstName }} {{ selectedProfile?.lastName }}</strong>?
+        </p>
+        <p class="confirmation-warning">
+          This action will mark the profile as inactive but will not delete the data.
+        </p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" (click)="closeDeactivateModal()" [disabled]="isSubmitting">
+          Cancel
+        </button>
+        <button type="button" class="btn-delete" (click)="confirmDeactivate()" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Deactivating...' : 'Deactivate' }}
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

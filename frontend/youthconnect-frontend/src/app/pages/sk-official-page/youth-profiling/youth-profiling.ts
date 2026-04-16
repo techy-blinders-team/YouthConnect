@@ -1,15 +1,14 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { YouthMemberManagementService, YouthMemberListItem } from '../../../services/youth-member-management.service';
 import { CivilStatus, Gender } from '../../../models/enums';
 import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 import ExcelJS from 'exceljs';
 
 @Component({
   selector: 'app-youth-profiling',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './youth-profiling.html',
   styleUrl: './youth-profiling.scss',
 })
@@ -19,11 +18,44 @@ export class YouthProfiling implements OnInit {
   searchQuery: string = '';
   isLoading: boolean = false;
   errorMessage: string = '';
+  successMessage: string = '';
+  
+  // Modal states
+  isEditModalOpen = false;
+  isDeactivateModalOpen = false;
+  selectedProfile: YouthMemberListItem | null = null;
+  editForm!: FormGroup;
+  isSubmitting = false;
 
-  constructor(private youthMemberManagementService: YouthMemberManagementService) {}
+  constructor(
+    private youthMemberManagementService: YouthMemberManagementService,
+    private fb: FormBuilder
+  ) {
+    this.initForms();
+  }
 
   ngOnInit(): void {
     this.loadYouthProfiles();
+  }
+
+  initForms(): void {
+    this.editForm = this.fb.group({
+      firstName: ['', [Validators.required, Validators.maxLength(50)]],
+      middleName: ['', [Validators.required, Validators.maxLength(50)]],
+      lastName: ['', [Validators.required, Validators.maxLength(50)]],
+      suffix: [''],
+      gender: ['', Validators.required],
+      birthday: ['', Validators.required],
+      contactNumber: ['', [Validators.required, Validators.maxLength(15)]],
+      civilStatus: ['', Validators.required],
+      completeAddress: ['', [Validators.required, Validators.maxLength(200)]],
+      youthClassification: ['', Validators.required],
+      educationBackground: ['', Validators.required],
+      workStatus: ['', Validators.required],
+      votingStatus: ['', Validators.required],
+      numberOfAttendedAssemblies: [0, Validators.required],
+      reason: ['', Validators.required]
+    });
   }
 
   loadYouthProfiles(): void {
@@ -346,20 +378,135 @@ export class YouthProfiling implements OnInit {
   }
 
   onEdit(profile: YouthMemberListItem): void {
-    console.log('Edit profile:', profile);
-    // TODO: Implement edit functionality
-    // Navigate to edit page or open modal with profile data
-    alert(`Edit profile for ${profile.firstName} ${profile.lastName}`);
+    const normalizedGender = (profile.gender || '').toString().toUpperCase();
+    const normalizedCivilStatus = (profile.civilStatus || '').toString().toUpperCase();
+    const normalizedSuffix = (profile.suffix || '').toString().toUpperCase();
+    const normalizedYouthClassification = (profile.youthClassification?.youthClassification || '').toString().toUpperCase();
+    const normalizedEducationBackground = (profile.youthClassification?.educationBackground || '').toString().toUpperCase();
+    const normalizedWorkStatus = (profile.youthClassification?.workStatus || '').toString().toUpperCase();
+    const votingStatus = profile.youthClassification?.skVoter
+      ? 'skVoter'
+      : profile.youthClassification?.pastVoter
+        ? 'pastVoter'
+        : profile.youthClassification?.nationalVoter
+          ? 'nationalVoter'
+          : '';
+
+    this.selectedProfile = profile;
+    this.editForm.patchValue({
+      firstName: profile.firstName,
+      middleName: profile.middleName || '',
+      lastName: profile.lastName,
+      suffix: normalizedSuffix,
+      gender: normalizedGender,
+      birthday: profile.birthday ? profile.birthday.substring(0, 10) : '',
+      contactNumber: profile.contactNumber,
+      civilStatus: normalizedCivilStatus,
+      completeAddress: profile.completeAddress || '',
+      youthClassification: normalizedYouthClassification,
+      educationBackground: normalizedEducationBackground,
+      workStatus: normalizedWorkStatus,
+      votingStatus,
+      numberOfAttendedAssemblies: profile.youthClassification?.numAttended ?? 0,
+      reason: profile.youthClassification?.nonAttendedReason || ''
+    });
+    this.isEditModalOpen = true;
+    this.errorMessage = '';
+    this.successMessage = '';
+  }
+
+  closeEditModal(): void {
+    this.isEditModalOpen = false;
+    this.selectedProfile = null;
+    this.editForm.reset({ numberOfAttendedAssemblies: 0 });
+    this.errorMessage = '';
+    this.successMessage = '';
+  }
+
+  submitEditForm(): void {
+    if (this.editForm.invalid || !this.selectedProfile) {
+      return;
+    }
+
+    this.isSubmitting = true;
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    const formValue = this.editForm.value;
+    const votingStatus = formValue.votingStatus;
+
+    const payload = {
+      firstName: formValue.firstName,
+      middleName: formValue.middleName || null,
+      lastName: formValue.lastName,
+      suffix: formValue.suffix || null,
+      gender: formValue.gender,
+      birthday: formValue.birthday,
+      contactNumber: formValue.contactNumber,
+      completeAddress: formValue.completeAddress,
+      civilStatus: formValue.civilStatus,
+      youthClassification: {
+        youthClassification: formValue.youthClassification,
+        educationBackground: formValue.educationBackground,
+        workStatus: formValue.workStatus,
+        skVoter: votingStatus === 'skVoter',
+        nationalVoter: votingStatus === 'nationalVoter',
+        pastVoter: votingStatus === 'pastVoter',
+        numAttended: Number(formValue.numberOfAttendedAssemblies || 0),
+        nonAttendedReason: formValue.reason
+      }
+    };
+
+    this.youthMemberManagementService.updateYouthProfile(this.selectedProfile.youthId, payload).subscribe({
+      next: () => {
+        this.successMessage = `Profile for ${this.selectedProfile?.firstName} ${this.selectedProfile?.lastName} has been updated successfully.`;
+        this.isSubmitting = false;
+        this.closeEditModal();
+        this.loadYouthProfiles();
+      },
+      error: (error) => {
+        console.error('Error updating profile:', error);
+        this.errorMessage = 'Failed to update profile. Please try again.';
+        this.isSubmitting = false;
+      }
+    });
   }
 
   onDeactivate(profile: YouthMemberListItem): void {
-    const confirmed = confirm(`Are you sure you want to deactivate ${profile.firstName} ${profile.lastName}?`);
-    if (confirmed) {
-      console.log('Deactivate profile:', profile);
-      // TODO: Implement deactivate functionality
-      // Call service to deactivate profile
-      alert(`Profile for ${profile.firstName} ${profile.lastName} has been deactivated.`);
-      this.loadYouthProfiles(); // Reload the list
+    this.selectedProfile = profile;
+    this.isDeactivateModalOpen = true;
+    this.errorMessage = '';
+    this.successMessage = '';
+  }
+
+  closeDeactivateModal(): void {
+    this.isDeactivateModalOpen = false;
+    this.selectedProfile = null;
+    this.errorMessage = '';
+    this.successMessage = '';
+  }
+
+  confirmDeactivate(): void {
+    if (!this.selectedProfile) {
+      return;
     }
+
+    this.isSubmitting = true;
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    this.youthMemberManagementService.deleteYouthProfile(this.selectedProfile.youthId).subscribe({
+      next: () => {
+        this.successMessage = `Profile for ${this.selectedProfile?.firstName} ${this.selectedProfile?.lastName} has been deactivated successfully.`;
+        this.isSubmitting = false;
+        this.closeDeactivateModal();
+        this.loadYouthProfiles();
+      },
+      error: (error) => {
+        console.error('Error deactivating profile:', error);
+        this.errorMessage = 'Failed to deactivate profile. Please try again.';
+        this.isSubmitting = false;
+      }
+    });
   }
 }
