@@ -122,7 +122,7 @@ export class YouthProfiling implements OnInit {
       profiles: this.youthMemberManagementService.getYouthProfiles()
     }).subscribe({
       next: ({ users, profiles }) => {
-        const userMap = new Map(users.map((user) => [user.userId, user]));
+        const userByYouthIdMap = new Map(users.map((user) => [user.youthId, user]));
         this.userAccountByUserId = new Map(
           users.map((user) => [
             user.userId,
@@ -136,10 +136,10 @@ export class YouthProfiling implements OnInit {
         );
 
         this.youthProfiles = profiles.map((profile: any) => {
-          const matchingUser = userMap.get(profile.userId || 0);
+          const matchingUser = userByYouthIdMap.get(profile.youthId);
 
           return {
-          userId: profile.userId || 0,
+          userId: matchingUser?.userId || 0,
           youthId: profile.youthId,
           firstName: profile.firstName,
           lastName: profile.lastName,
