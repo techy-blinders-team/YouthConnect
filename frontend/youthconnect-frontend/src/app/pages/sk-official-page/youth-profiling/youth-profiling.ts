@@ -675,7 +675,7 @@ export class YouthProfiling implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
 
-    this.youthMemberManagementService.deleteYouthProfile(this.selectedProfile.youthId).subscribe({
+    this.youthMemberManagementService.deactivateYouthProfile(this.selectedProfile.youthId).subscribe({
       next: () => {
         this.successMessage = `Profile for ${this.selectedProfile?.firstName} ${this.selectedProfile?.lastName} has been deactivated successfully.`;
         this.isSubmitting = false;
