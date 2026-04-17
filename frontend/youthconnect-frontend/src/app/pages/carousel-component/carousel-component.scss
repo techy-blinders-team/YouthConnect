@@ -1,18 +1,19 @@
 .carousel-container {
-    height: 100vh;
+    min-height: 100vh;        
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
     display: flex;
+    flex-direction: column;  
     justify-content: center;
     align-items: center;
     padding: 60px 40px;
     position: relative;
-    transition: background-image 2s ease-in-out; 
-
+    background-color: #000;
+    transition: background-image 2s ease-in-out;
+    
   .carousel-overlay {
-    position: absolute;
     top: 0;
     left: 0;
     right: 0;
@@ -37,20 +38,21 @@
 }
 
 .hero-section {
-    height: 95vh;
+    min-height: 95vh;         
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 60px 40px;
     position: relative;
-    
+
     &::before {
         background-color: rgba(0, 0, 0, 100);
-    }
-    .hero-content {
+  }
+
+  .hero-content {
         text-align: center;
         max-width: 1400px;
-
+        margin-top: -10%;
         .hero-title {
             font-family: 'Inter', sans-serif;
             font-weight: 800;
@@ -119,5 +121,9 @@
                 }
             }
         }
+    }
+    
+    html {
+    scroll-behavior: smooth;
     }
 }

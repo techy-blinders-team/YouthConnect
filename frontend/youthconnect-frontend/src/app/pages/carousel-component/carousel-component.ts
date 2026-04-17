@@ -21,6 +21,7 @@ export class CarouselComponent implements OnInit, OnDestroy {
 
   constructor (private router: Router){}
   ngOnInit(): void {
+    this.preloadImages();
     this.startAutoplay();
   }
 
@@ -54,5 +55,12 @@ export class CarouselComponent implements OnInit, OnDestroy {
 
   navigateTo(route: string): void {
     this.router.navigate([route]);
+  }
+
+  preloadImages(): void {
+  this.backgroundImages.forEach(src => {
+    const img = new Image();
+    img.src = src;
+  });
   }
 }
