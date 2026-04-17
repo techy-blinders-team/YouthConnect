@@ -4,6 +4,7 @@ import { EventService, EventResponse } from '../../../services/event.service';
 import { TaskTrackerService } from '../../../services/task-tracker.service';
 import { ConcernService, ConcernResponse } from '../../../services/concern.service';
 import { YouthMemberManagementService } from '../../../services/youth-member-management.service';
+import { SkOfficialManagementService } from '../../../services/sk-official-management.service';
 import { TaskResponse } from '../../../models/task.model';
 
 @Component({
@@ -17,6 +18,13 @@ export class Dashboard implements OnInit {
   private taskService = inject(TaskTrackerService);
   private concernService = inject(ConcernService);
   private youthService = inject(YouthMemberManagementService);
+  private skOfficialService = inject(SkOfficialManagementService);
+
+  // SK Official Profile
+  skOfficialName = '';
+  skOfficialEmail = '';
+  skOfficialPosition = '';
+  skOfficialInitials = 'SK';
 
   // Counts
   youthMembersCount = 0;
@@ -34,10 +42,55 @@ export class Dashboard implements OnInit {
   }
 
   loadDashboardData(): void {
+    this.loadSkOfficialProfile();
     this.loadYouthMembers();
     this.loadEvents();
     this.loadConcerns();
     this.loadTasks();
+  }
+
+  loadSkOfficialProfile(): void {
+    const fallbackName = localStorage.getItem('sk_official_name') || 'SK Official';
+    const fallbackEmail = localStorage.getItem('sk_official_email') || 'Not available';
+    const currentAdminId = Number(localStorage.getItem('sk_official_id') || localStorage.getItem('adminId'));
+
+    this.skOfficialName = fallbackName;
+    this.skOfficialEmail = fallbackEmail;
+    this.skOfficialInitials = this.getInitials(fallbackName);
+    this.skOfficialPosition = 'SK Official';
+
+    this.skOfficialService.getSkOfficials().subscribe({
+      next: (officials) => {
+        const matched = officials.find((official) => official.adminId === currentAdminId)
+          || officials.find((official) => official.email === fallbackEmail);
+
+        if (!matched) {
+          return;
+        }
+
+        this.skOfficialName = `${matched.firstName} ${matched.lastName}`.trim();
+        this.skOfficialEmail = matched.email;
+        this.skOfficialInitials = this.getInitials(this.skOfficialName);
+        localStorage.setItem('adminId', matched.adminId.toString());
+        localStorage.setItem('sk_official_id', matched.adminId.toString());
+        localStorage.setItem('sk_official_name', this.skOfficialName);
+        localStorage.setItem('sk_official_email', matched.email);
+      },
+      error: (err) => {
+        console.error('Error loading SK Official profile:', err);
+      }
+    });
+  }
+
+  getInitials(name: string): string {
+    const parts = name.split(' ').filter(Boolean);
+    if (parts.length === 0) {
+      return 'SK';
+    }
+    if (parts.length === 1) {
+      return parts[0].substring(0, 2).toUpperCase();
+    }
+    return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
   }
 
   loadYouthMembers(): void {
@@ -68,11 +121,11 @@ export class Dashboard implements OnInit {
 
   loadConcerns(): void {
     this.concernService.getAllConcernsForSkOfficial().subscribe({
-      next: (concernsList) => {
+      next: (concernsList: ConcernResponse[]) => {
         this.concerns = concernsList;
         this.concernsCount = concernsList.length;
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error loading concerns:', err);
         this.concerns = [];
         this.concernsCount = 0;

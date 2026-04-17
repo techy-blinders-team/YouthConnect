@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { FormsModule } from '@angular/forms';
 import { EventService, EventResponse } from '../../../services/event.service';
 import { AuthService } from '../../../services/auth.service';
+import { SkOfficialManagementService } from '../../../services/sk-official-management.service';
 
 @Component({
   selector: 'app-events',
@@ -23,17 +24,23 @@ export class EventsComponent implements OnInit {
   currentAdminId: number = 0;
   editingEventId: number | null = null;
   searchTerm: string = '';
+  skOfficialName = 'SK Official';
+  skOfficialEmail = '';
+  skOfficialPosition = 'SK Official';
+  skOfficialInitials = 'SK';
 
   constructor(
     private fb: FormBuilder,
     private eventService: EventService,
-    private authService: AuthService
+    private authService: AuthService,
+    private skOfficialService: SkOfficialManagementService
   ) {
     this.initForm();
   }
 
   ngOnInit() {
     this.getCurrentUser();
+    this.loadSkOfficialProfile();
     this.loadEvents();
   }
 
@@ -50,7 +57,55 @@ export class EventsComponent implements OnInit {
     const user = this.authService.getCurrentUser() as any;
     if (user && user.adminId) {
       this.currentAdminId = user.adminId;
+      localStorage.setItem('adminId', user.adminId.toString());
     }
+
+    if (!this.currentAdminId) {
+      const storedAdminId = localStorage.getItem('sk_official_id') || localStorage.getItem('adminId');
+      this.currentAdminId = storedAdminId ? Number(storedAdminId) : 0;
+    }
+  }
+
+  loadSkOfficialProfile() {
+    const fallbackName = localStorage.getItem('sk_official_name') || 'SK Official';
+    const fallbackEmail = localStorage.getItem('sk_official_email') || '';
+    const fallbackInitials = this.getInitials(fallbackName);
+    const currentAdminId = Number(localStorage.getItem('sk_official_id') || localStorage.getItem('adminId'));
+
+    this.skOfficialName = fallbackName;
+    this.skOfficialEmail = fallbackEmail;
+    this.skOfficialInitials = fallbackInitials;
+
+    this.skOfficialService.getSkOfficials().subscribe({
+      next: (officials) => {
+        const matched = officials.find((official) => official.adminId === currentAdminId)
+          || officials.find((official) => official.email === fallbackEmail);
+
+        if (!matched) {
+          return;
+        }
+
+        this.skOfficialName = `${matched.firstName} ${matched.lastName}`.trim();
+        this.skOfficialEmail = matched.email;
+        this.skOfficialInitials = this.getInitials(this.skOfficialName);
+        localStorage.setItem('sk_official_name', this.skOfficialName);
+        localStorage.setItem('sk_official_email', matched.email);
+      },
+      error: (error) => {
+        console.error('Error loading SK Official profile:', error);
+      }
+    });
+  }
+
+  getInitials(name: string): string {
+    const parts = name.split(' ').filter(Boolean);
+    if (parts.length === 0) {
+      return 'SK';
+    }
+    if (parts.length === 1) {
+      return parts[0].substring(0, 2).toUpperCase();
+    }
+    return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
   }
 
   loadEvents() {

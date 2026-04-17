@@ -83,8 +83,17 @@ export class SkOfficialLogin {
             localStorage.setItem('auth_token', response.token);
           }
           localStorage.setItem('auth_role', 'sk-official');
-          if (response.skOfficialId) {
-            localStorage.setItem('sk_official_id', response.skOfficialId.toString());
+          const adminId = response.adminId ?? response.skOfficialId;
+          if (adminId) {
+            localStorage.setItem('sk_official_id', adminId.toString());
+            localStorage.setItem('adminId', adminId.toString());
+          }
+          if (response.email) {
+            localStorage.setItem('sk_official_email', response.email);
+          }
+          if (response.firstName || response.lastName) {
+            const fullName = `${response.firstName ?? ''} ${response.lastName ?? ''}`.trim();
+            localStorage.setItem('sk_official_name', fullName || 'SK Official');
           }
 
           // Redirect to SK Official dashboard

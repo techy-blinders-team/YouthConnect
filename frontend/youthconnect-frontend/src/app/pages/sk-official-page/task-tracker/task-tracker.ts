@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { TaskTrackerService } from '../../../services/task-tracker.service';
 import { TaskResponse, TaskRequest, TaskEditRequest } from '../../../models/task.model';
 import { Tasking, TaskStatus } from '../../../models/enums';
+import { SkOfficialManagementService } from '../../../services/sk-official-management.service';
 
 @Component({
   selector: 'app-task-tracker',
@@ -13,6 +14,7 @@ import { Tasking, TaskStatus } from '../../../models/enums';
 })
 export class TaskTracker implements OnInit {
   private taskService = inject(TaskTrackerService);
+  private skOfficialService = inject(SkOfficialManagementService);
 
   // State
   isModalOpen = false;
@@ -42,7 +44,10 @@ export class TaskTracker implements OnInit {
 
   // Admin info - get from localStorage or use default
   currentAdminId: number;
-  currentSkOfficialName = 'SK Official';
+  skOfficialName = 'SK Official';
+  skOfficialEmail = '';
+  skOfficialPosition = 'SK Official';
+  skOfficialInitials = 'SK';
 
   // Enums for template
   TaskStatus = TaskStatus;
@@ -50,22 +55,47 @@ export class TaskTracker implements OnInit {
   taskingOptions = Object.values(Tasking);
   taskStatusOptions = Object.values(TaskStatus);
 
-  // Mock SK Official data (in production, fetch from backend)
-  skOfficials: { [key: number]: string } = {
-    1: 'John Doe',
-    3: 'Michael Mosquito',
-    4: 'Kirby Consultado'
-  };
-
   constructor() {
-    // Get adminId from localStorage (set during login) or default to 1
-    const storedAdminId = localStorage.getItem('adminId');
-    this.currentAdminId = storedAdminId ? parseInt(storedAdminId, 10) : 1;
-    this.currentSkOfficialName = this.getSkOfficialName(this.currentAdminId);
+    const storedAdminId = localStorage.getItem('sk_official_id') || localStorage.getItem('adminId');
+    this.currentAdminId = storedAdminId ? parseInt(storedAdminId, 10) : 0;
   }
 
   ngOnInit() {
+    this.loadSkOfficialProfile();
     this.loadTasks();
+  }
+
+  loadSkOfficialProfile() {
+    const fallbackName = localStorage.getItem('sk_official_name') || 'SK Official';
+    const fallbackEmail = localStorage.getItem('sk_official_email') || '';
+    const currentAdminId = Number(localStorage.getItem('sk_official_id') || localStorage.getItem('adminId'));
+
+    this.skOfficialName = fallbackName;
+    this.skOfficialEmail = fallbackEmail;
+    this.skOfficialInitials = this.getInitials(fallbackName);
+
+    this.skOfficialService.getSkOfficials().subscribe({
+      next: (officials) => {
+        const matched = officials.find((official) => official.adminId === currentAdminId)
+          || officials.find((official) => official.email === fallbackEmail);
+
+        if (!matched) {
+          return;
+        }
+
+        this.currentAdminId = matched.adminId;
+        this.skOfficialName = `${matched.firstName} ${matched.lastName}`.trim();
+        this.skOfficialEmail = matched.email;
+        this.skOfficialInitials = this.getInitials(this.skOfficialName);
+        localStorage.setItem('adminId', matched.adminId.toString());
+        localStorage.setItem('sk_official_id', matched.adminId.toString());
+        localStorage.setItem('sk_official_name', this.skOfficialName);
+        localStorage.setItem('sk_official_email', matched.email);
+      },
+      error: (error) => {
+        console.error('Error loading SK Official profile:', error);
+      }
+    });
   }
 
   loadTasks() {
@@ -272,7 +302,21 @@ export class TaskTracker implements OnInit {
   }
 
   getSkOfficialName(adminId: number): string {
-    return this.skOfficials[adminId] || 'Unknown SK Official';
+    if (adminId === this.currentAdminId) {
+      return this.skOfficialName;
+    }
+    return `SK Official #${adminId}`;
+  }
+
+  getInitials(name: string): string {
+    const parts = name.split(' ').filter(Boolean);
+    if (parts.length === 0) {
+      return 'SK';
+    }
+    if (parts.length === 1) {
+      return parts[0].substring(0, 2).toUpperCase();
+    }
+    return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
   }
 
   formatDate(dateString?: string): string {
