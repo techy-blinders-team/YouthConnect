@@ -223,19 +223,19 @@ public class AdminManagementServiceImpl implements AdminManagementService {
     // ── Youth Profile ─────────────────────────────────────
     @Override
     public List<YouthProfile> getAllYouthProfiles() {
-        return youthProfileRepo.findAll();
+        return youthProfileRepo.findAllActiveProfiles();
     }
 
     @Override
     public YouthProfile getYouthProfileById(int youthId) {
-        return youthProfileRepo.findById(youthId)
+        return youthProfileRepo.findActiveByYouthId(youthId)
                 .orElseThrow(() -> new RuntimeException("Youth profile not found"));
     }
 
     @Override
     @Transactional
     public YouthProfile updateYouthProfile(int youthId, AdminYouthProfileUpdateRequest request) {
-        YouthProfile profile = youthProfileRepo.findById(youthId)
+        YouthProfile profile = youthProfileRepo.findActiveByYouthId(youthId)
                 .orElseThrow(() -> new RuntimeException("Youth profile not found"));
         profile.setFirstName(request.getFirstName());
         profile.setMiddleName(request.getMiddleName());
@@ -252,6 +252,19 @@ public class AdminManagementServiceImpl implements AdminManagementService {
                     LocalDateTime.now().toLocalDate()).getYears());
         }
         return youthProfileRepo.save(profile);
+    }
+
+    @Override
+    @Transactional
+    public User deactivateYouthProfile(int youthId) {
+        YouthProfile profile = youthProfileRepo.findById(youthId)
+                .orElseThrow(() -> new RuntimeException("Youth profile not found"));
+
+        User user = userRepo.findByYouthId(profile.getYouthId())
+                .orElseThrow(() -> new RuntimeException("Linked user account not found"));
+
+        user.setActive(false);
+        return userRepo.save(user);
     }
 
     @Override

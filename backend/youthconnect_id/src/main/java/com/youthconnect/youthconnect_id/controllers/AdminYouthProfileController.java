@@ -51,6 +51,16 @@ public class AdminYouthProfileController {
         }
     }
 
+    @PutMapping("/{youthId}/deactivate")
+    public ResponseEntity<?> deactivateYouthProfile(@PathVariable int youthId) {
+        try {
+            return ResponseEntity.ok(adminManagementService.deactivateYouthProfile(youthId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed: " + e.getMessage());
+        }
+    }
+
     @DeleteMapping("/{youthId}")
     public ResponseEntity<?> deleteYouthProfile(@PathVariable int youthId) {
         try {

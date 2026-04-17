@@ -32,6 +32,7 @@ public interface AdminManagementService {
     List<YouthProfile> getAllYouthProfiles();
     YouthProfile getYouthProfileById(int youthId);
     YouthProfile updateYouthProfile(int youthId, AdminYouthProfileUpdateRequest request);
+    User deactivateYouthProfile(int youthId);
     void deleteYouthProfile(int youthId);
 
     // SK Officials

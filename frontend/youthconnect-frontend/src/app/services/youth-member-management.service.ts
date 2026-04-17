@@ -114,6 +114,10 @@ export class YouthMemberManagementService {
     return this.http.put<YouthProfileAccount>(`/api/administrator/youth-profiles/${youthId}`, payload);
   }
 
+  deactivateYouthProfile(youthId: number): Observable<YouthUserAccount> {
+    return this.http.put<YouthUserAccount>(`/api/administrator/youth-profiles/${youthId}/deactivate`, {});
+  }
+
   deleteYouthProfile(youthId: number): Observable<{ message: string } | string> {
     return this.http.delete<{ message: string } | string>(`/api/administrator/youth-profiles/${youthId}`);
   }
