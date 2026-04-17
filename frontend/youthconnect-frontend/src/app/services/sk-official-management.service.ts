@@ -47,6 +47,10 @@ export class SkOfficialManagementService {
     return this.http.get<SkOfficialAccount[]>('/api/administrator/sk-officials');
   }
 
+  getSkOfficialById(adminId: number): Observable<SkOfficialAccount> {
+    return this.http.get<SkOfficialAccount>(`/api/administrator/sk-officials/${adminId}`);
+  }
+
   createSkOfficial(payload: CreateSkOfficialPayload): Observable<SkOfficialAccount> {
     return this.http.post<SkOfficialAccount>('/api/administrator/sk-officials', payload);
   }

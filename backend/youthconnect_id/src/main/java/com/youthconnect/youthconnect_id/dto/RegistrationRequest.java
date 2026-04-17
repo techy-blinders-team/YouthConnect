@@ -1,7 +1,6 @@
 package com.youthconnect.youthconnect_id.dto;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import com.youthconnect.youthconnect_id.enums.CivilStatus;
 import com.youthconnect.youthconnect_id.enums.EducationBackground;

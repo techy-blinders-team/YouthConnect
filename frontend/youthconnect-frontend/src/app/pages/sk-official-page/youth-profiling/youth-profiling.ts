@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { YouthMemberManagementService, YouthMemberListItem } from '../../../services/youth-member-management.service';
+import { SkOfficialManagementService } from '../../../services/sk-official-management.service';
 import { CivilStatus, Gender } from '../../../models/enums';
 import { forkJoin } from 'rxjs';
 import jsPDF from 'jspdf';
@@ -26,6 +27,10 @@ export class YouthProfiling implements OnInit {
   approvalMessage: string = '';
   approvalError: string = '';
   updatingApprovalUserId: number | null = null;
+  skOfficialName = 'SK Official';
+  skOfficialEmail = '';
+  skOfficialPosition = 'SK Official';
+  skOfficialInitials = 'SK';
   
   // Modal states
   isEditModalOpen = false;
@@ -36,13 +41,56 @@ export class YouthProfiling implements OnInit {
 
   constructor(
     private youthMemberManagementService: YouthMemberManagementService,
+    private skOfficialService: SkOfficialManagementService,
     private fb: FormBuilder
   ) {
     this.initForms();
   }
 
   ngOnInit(): void {
+    this.loadSkOfficialProfile();
     this.loadYouthProfiles();
+  }
+
+  loadSkOfficialProfile(): void {
+    const fallbackName = localStorage.getItem('sk_official_name') || 'SK Official';
+    const fallbackEmail = localStorage.getItem('sk_official_email') || '';
+    const currentAdminId = Number(localStorage.getItem('sk_official_id') || localStorage.getItem('adminId'));
+
+    this.skOfficialName = fallbackName;
+    this.skOfficialEmail = fallbackEmail;
+    this.skOfficialInitials = this.getInitials(fallbackName);
+
+    this.skOfficialService.getSkOfficials().subscribe({
+      next: (officials) => {
+        const matched = officials.find((official) => official.adminId === currentAdminId)
+          || officials.find((official) => official.email === fallbackEmail);
+
+        if (!matched) {
+          return;
+        }
+
+        this.skOfficialName = `${matched.firstName} ${matched.lastName}`.trim();
+        this.skOfficialEmail = matched.email;
+        this.skOfficialInitials = this.getInitials(this.skOfficialName);
+        localStorage.setItem('sk_official_name', this.skOfficialName);
+        localStorage.setItem('sk_official_email', matched.email);
+      },
+      error: (error) => {
+        console.error('Error loading SK Official profile:', error);
+      }
+    });
+  }
+
+  getInitials(name: string): string {
+    const parts = name.split(' ').filter(Boolean);
+    if (parts.length === 0) {
+      return 'SK';
+    }
+    if (parts.length === 1) {
+      return parts[0].substring(0, 2).toUpperCase();
+    }
+    return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
   }
 
   initForms(): void {

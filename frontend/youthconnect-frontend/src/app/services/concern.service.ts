@@ -56,4 +56,8 @@ export class ConcernService {
     cancelConcern(concernId: number): Observable<any> {
         return this.http.patch(`${this.apiUrl}/${concernId}/cancel`, {}, { responseType: 'text' });
     }
+
+    getAllConcernsForSkOfficial(): Observable<ConcernResponse[]> {
+        return this.http.get<ConcernResponse[]>(`${this.apiUrl}`);
+    }
 }

@@ -5,15 +5,16 @@
     <div class="header-section">
         <div class="greeting-area">
             <h1>Welcome, SK Official!</h1>
-            <p>skofficial@gmail.com</p>
+            <p>{{ skOfficialEmail }}</p>
         </div>
         <div class="user-profile">
             <div class="profile-badge">
-                <span class="initials">SK</span>
+                <span class="initials">{{ skOfficialInitials }}</span>
             </div>
             <div class="profile-info">
-                <p class="name">Full Name</p>
-                <p class="position">Position</p>
+                <p class="name">{{ skOfficialName }}</p>
+                <p class="email">{{ skOfficialEmail }}</p>
+                <p class="position">{{ skOfficialPosition }}</p>
             </div>
         </div>
     </div>
@@ -22,19 +23,19 @@
     <div class="stats-section">
         <div class="stat-card blue-border">
             <p class="stat-label">YOUTH MEMBERS</p>
-            <p class="stat-number">0</p>
+            <p class="stat-number">{{ youthMembersCount }}</p>
         </div>
         <div class="stat-card red-border">
             <p class="stat-label">EVENTS</p>
-            <p class="stat-number">0</p>
+            <p class="stat-number">{{ eventsCount }}</p>
         </div>
         <div class="stat-card yellow-border">
             <p class="stat-label">CONCERNS</p>
-            <p class="stat-number">0</p>
+            <p class="stat-number">{{ concernsCount }}</p>
         </div>
         <div class="stat-card gray-border">
             <p class="stat-label">TASKS</p>
-            <p class="stat-number">0</p>
+            <p class="stat-number">{{ tasksCount }}</p>
         </div>
     </div>
 
@@ -45,24 +46,20 @@
         <div class="content-card">
             <div class="card-header">
                 <h2>Events</h2>
-                <span class="view-all">5 →</span>
+                <span class="view-all">{{ eventsCount }} →</span>
             </div>
             <div class="card-content">
-                <div class="item">
-                    <p>Event 1: Title of the event</p>
+                <div class="item-card" 
+                     *ngFor="let event of events; let i = index"
+                     [ngClass]="'item-border-' + getNotificationColor(i)">
+                    <div class="item-header">
+                        <h3>{{ event.title }}</h3>
+                        <span class="item-date">{{ getEventDate(event.eventDate) }}</span>
+                    </div>
+                    <p class="item-description">{{ event.description }}</p>
+                    <p class="item-location">{{ event.location }}</p>
                 </div>
-                <div class="item">
-                    <p>Event 2: Title of the event</p>
-                </div>
-                <div class="item">
-                    <p>Event 3: Title of the event</p>
-                </div>
-                <div class="item">
-                    <p>Event 4: Title of the event</p>
-                </div>
-                <div class="item">
-                    <p>Event 5: Title of the event</p>
-                </div>
+                <div *ngIf="events.length === 0" class="no-data-message">No events available</div>
             </div>
         </div>
 
@@ -70,24 +67,22 @@
         <div class="content-card">
             <div class="card-header">
                 <h2>Tasks</h2>
-                <span class="view-all">5 →</span>
+                <span class="view-all">{{ tasksCount }} →</span>
             </div>
             <div class="card-content">
-                <div class="item">
-                    <p>Task 1: Title of the task</p>
+                <div class="item-card" 
+                     *ngFor="let task of tasks; let i = index"
+                     [ngClass]="'item-border-' + getNotificationColor(i)">
+                    <div class="item-header">
+                        <h3>{{ task.tasking }}</h3>
+                        <span class="item-date">Due: {{ getTaskDueDate(task.dueDate) }}</span>
+                    </div>
+                    <p class="item-description">{{ task.taskDescription }}</p>
+                    <div class="item-footer">
+                        <span class="item-status" [ngClass]="'status-' + task.status.toLowerCase()">{{ task.status }}</span>
+                    </div>
                 </div>
-                <div class="item">
-                    <p>Task 2: Title of the task</p>
-                </div>
-                <div class="item">
-                    <p>Task 3: Title of the task</p>
-                </div>
-                <div class="item">
-                    <p>Task 4: Title of the task</p>
-                </div>
-                <div class="item">
-                    <p>Task 5: Title of the task</p>
-                </div>
+                <div *ngIf="tasks.length === 0" class="no-data-message">No tasks available</div>
             </div>
         </div>
         
