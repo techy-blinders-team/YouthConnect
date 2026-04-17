@@ -63,7 +63,15 @@
 
           <div class="form-group">
             <label>Suffix (Optional)</label>
-            <input formControlName="suffix" placeholder="e.g., Jr., Sr., III" class="form-input" />
+            <select formControlName="suffix" class="form-input">
+              <option value="">Select Suffix (Optional)</option>
+              <option value="JR">JR</option>
+              <option value="SR">SR</option>
+              <option value="I">I</option>
+              <option value="II">II</option>
+              <option value="III">III</option>
+              <option value="OTHER">OTHER</option>
+            </select>
             @if (suffixControl?.touched) {
               @if (suffixControl?.errors?.['maxlength']) {
                 <span class="error-text">Suffix can only contain up to 50 characters</span>
@@ -75,8 +83,8 @@
             <label>Gender</label>
             <select formControlName="gender" class="form-input">
               <option value="">Select Gender</option>
-              <option value="Male">Male</option>
-            <option value="Female">Female</option>
+              <option value="MALE">Male</option>
+            <option value="FEMALE">Female</option>
           </select>
             @if (genderControl?.touched) {
               @if (genderControl?.errors?.['required']) {
@@ -119,13 +127,13 @@
             <label>Civil Status</label>
             <select formControlName="civilStatus" class="form-input">
               <option value="">Select Civil Status</option>
-              <option value="Single">Single</option>
-              <option value="Married">Married</option>
-              <option value="Widowed">Widowed</option>
-              <option value="Divorced">Divorced</option>
-              <option value="Annulled">Annulled</option>
-              <option value="Unknown">Unknown</option>
-              <option value="LiveIn">Live in</option>
+              <option value="SINGLE">Single</option>
+              <option value="MARRIED">Married</option>
+              <option value="WIDOWED">Widowed</option>
+              <option value="DIVORCED">Divorced</option>
+              <option value="ANNULLED">Annulled</option>
+              <option value="UNKNOWN">Unknown</option>
+              <option value="LIVE_IN">Live in</option>
             </select>
             @if (civilStatusControl?.touched) {
               @if (civilStatusControl?.errors?.['required']) {
@@ -165,7 +173,7 @@
             <option value="OUT_OF_SCHOOL_YOUTH">Out of School</option>
             <option value="WORKING_YOUTH">Working Youth</option>
             <option value="PERSON_WITH_DISABILITY">Person with Disability (PWD)</option>
-            <option value="CHILDREN_IN_CONFLICT">Children in Conflict</option>
+            <option value="CHILDREN_IN_CONFLICT_LAW">Children in Conflict</option>
             <option value="INDIGENOUS_PEOPLE">Indigenous People</option>
           </select>
           @if (youthClassificationControl?.touched) {
