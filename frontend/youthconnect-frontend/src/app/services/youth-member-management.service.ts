@@ -9,7 +9,8 @@ export interface YouthUserAccount {
   youthId: number;
   roleId: number;
   email: string;
-  isActive: boolean;
+  active?: boolean;
+  isActive?: boolean;
   isApprove: boolean | null;
   createdAt: string;
 }
@@ -96,9 +97,17 @@ export class YouthMemberManagementService {
     return this.http.put<YouthUserAccount>(`/api/administrator/users/${userId}`, {
       email: payload.email,
       roleId: payload.roleId,
-      isActive: payload.active,
+      active: payload.active,
       isApprove: payload.isApprove
     });
+  }
+
+  approveUser(userId: number): Observable<YouthUserAccount> {
+    return this.http.put<YouthUserAccount>(`/api/administrator/users/${userId}/approve`, {});
+  }
+
+  deactivateUser(userId: number): Observable<YouthUserAccount> {
+    return this.http.put<YouthUserAccount>(`/api/administrator/users/${userId}/deactivate`, {});
   }
 
   updateYouthProfile(youthId: number, payload: UpdateYouthProfilePayload): Observable<YouthProfileAccount> {

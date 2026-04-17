@@ -2,9 +2,9 @@ package com.youthconnect.youthconnect_id.dto;
 
 public class AdminUserUpdateRequest {
     private String email;
-    private boolean isActive;
-    private boolean isApprove;
-    private int roleId;
+    private Boolean active;
+    private Boolean isApprove;
+    private Integer roleId;
 
     public String getEmail() {
         return email; 
@@ -12,22 +12,22 @@ public class AdminUserUpdateRequest {
     public void setEmail(String email) {
         this.email = email; 
     }
-    public boolean isActive() {
-        return isActive; 
+    public Boolean getActive() {
+        return active; 
     }
-    public void setActive(boolean active) {
-        isActive = active; 
+    public void setActive(Boolean active) {
+        this.active = active; 
     }
-    public boolean isApprove() {
+    public Boolean getIsApprove() {
         return isApprove; 
     }
-    public void setApprove(boolean approve) {
-        isApprove = approve; 
+    public void setIsApprove(Boolean isApprove) {
+        this.isApprove = isApprove; 
     }
-    public int getRoleId() {
+    public Integer getRoleId() {
         return roleId; 
     }
-    public void setRoleId(int roleId) {
+    public void setRoleId(Integer roleId) {
         this.roleId = roleId; 
     }
 }
