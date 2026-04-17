@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Concerns } from './concerns';
 import { AuthService } from '../../../services/auth.service';
 import { AdminConcernService } from '../../../services/admin-concern.service';
+import { SkOfficialManagementService } from '../../../services/sk-official-management.service';
 
 describe('Concerns', () => {
   let component: Concerns;
@@ -46,6 +47,7 @@ describe('Concerns', () => {
       imports: [Concerns, HttpClientTestingModule, ReactiveFormsModule, FormsModule],
       providers: [
         AdminConcernService,
+        SkOfficialManagementService,
         { provide: AuthService, useValue: authServiceSpy }
       ]
     }).compileComponents();
@@ -72,11 +74,27 @@ describe('Concerns', () => {
   });
 
   it('should load concerns on init', () => {
+    const mockSkOfficials = [
+      {
+        adminId: 1,
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'johndoe@gmail.com',
+        isActive: true
+      }
+    ];
+
     component.ngOnInit();
     
-    const req = httpMock.expectOne('http://localhost:8080/api/admin/concerns');
-    expect(req.request.method).toBe('GET');
-    req.flush(mockConcerns);
+    // Mock the SK Officials request (uses relative URL)
+    const skOfficialsReq = httpMock.expectOne('/api/administrator/sk-officials');
+    expect(skOfficialsReq.request.method).toBe('GET');
+    skOfficialsReq.flush(mockSkOfficials);
+
+    // Mock the concerns request (uses absolute URL)
+    const concernsReq = httpMock.expectOne('http://localhost:8080/api/admin/concerns');
+    expect(concernsReq.request.method).toBe('GET');
+    concernsReq.flush(mockConcerns);
 
     expect(component.concerns.length).toBe(2);
     expect(component.filteredConcerns.length).toBe(2);
