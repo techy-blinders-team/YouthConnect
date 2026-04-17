@@ -96,11 +96,20 @@ export class AuthService {
     }
 
     logout(): void {
+        const role = this.getUserRole();
+        
         localStorage.removeItem(this.TOKEN_KEY);
         localStorage.removeItem(this.ROLE_KEY);
         localStorage.removeItem(this.USER_KEY);
         this.currentUserSubject.next(null);
-        this.router.navigate(['/login']);
+        
+        if (role === 'sk-official') {
+            this.router.navigate(['/sk-official/login']);
+        } else if (role === 'admin') {
+            this.router.navigate(['/admin/login']);
+        } else {
+            this.router.navigate(['/login']);
+        }
     }
 
     getToken(): string | null {
