@@ -3,7 +3,7 @@
    <section class="hero-section">
         <div class="hero-content">
             <h1 class="hero-title">YouthConnect</h1>
-            <p class="hero-subtitle">A Centralized Web System for Youth Engagement and SK Governance</p>
+            <p class="hero-subtitle">A Centralized Web System for Youth Engagement and Sangguniaang Kabataan Governance</p>
 
             <div class="cta-buttons">
                 <button class="btn-signup" (click)="navigateTo('/sign-up')">Sign Up</button>
@@ -13,11 +13,13 @@
     </section>
 
   <div class="carousel-dots">
-    <span 
-      *ngFor="let image of backgroundImages; let i = index"
-      class="dot"
-      [class.active]="i === currentImageIndex"
-      (click)="goToImage(i)">
-    </span>
+    @for (set of backgroundImages; track set; let i = $index) {
+        <span 
+            class="dot"
+            [class.active]="i === currentImageIndex"
+            (click)="goToImage(i)"
+            [title]="'Go to set ' + (i + 1)">
+        </span>
+    }
   </div>
 </div>

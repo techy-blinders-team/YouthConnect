@@ -1,0 +1,76 @@
+<section class="leaders-section" id="leaders">
+    <div class="leaders-content">
+        <h2 class="leaders-title">SK Officials of Barangay 183</h2>
+
+        <div class="carousel-info">
+            <span>Set {{ currentSetIndex + 1 }} of {{ skOfficialSets.length }}</span>
+        </div>
+
+        <div class="leaders-grid">
+            <div class="leader-card">
+                <div 
+                    class="leader-image leader-image-one"
+                    [style.backgroundImage]="'url(' + official1Image + ')'">
+                </div>
+                <h3>Official 1</h3>
+                <p>Position/Role</p>
+            </div>
+
+            <div class="leader-card">
+                <div 
+                    class="leader-image leader-image-two"
+                    [style.backgroundImage]="'url(' + official2Image + ')'">
+                </div>
+                <h3>Official 2</h3>
+                <p>Position/Role</p>
+            </div>
+
+            <div class="leader-card">
+                <div 
+                    class="leader-image leader-image-three"
+                    [style.backgroundImage]="'url(' + official3Image + ')'">
+                </div>
+                <h3>Official 3</h3>
+                <p>Position/Role</p>
+            </div>
+
+            <div class="leader-card">
+                <div 
+                    class="leader-image leader-image-four"
+                    [style.backgroundImage]="'url(' + official4Image + ')'">
+                </div>
+                <h3>Official 4</h3>
+                <p>Position/Role</p>
+            </div>
+        </div>
+
+        <button 
+            class="carousel-btn prev-btn" 
+            (click)="prevImage()"
+            title="Previous set"
+            [disabled]="skOfficialSets.length <= 1">
+            ❮
+        </button>
+
+        <button 
+            class="carousel-btn next-btn" 
+            (click)="nextImage()"
+            title="Next set"
+            [disabled]="skOfficialSets.length <= 1">
+            ❯
+        </button>
+
+        @if (skOfficialSets.length > 1) {
+            <div class="carousel-dots">
+                @for (image of skOfficialSets; track image; let i = $index) {
+                    <span 
+                        class="dot"
+                        [class.active]="i === currentSetIndex"
+                        (click)="goToSet(i)"
+                        [title]="'Go to image ' + (i + 1)">
+                    </span>
+                }
+            </div>
+        }
+    </div>
+</section>
