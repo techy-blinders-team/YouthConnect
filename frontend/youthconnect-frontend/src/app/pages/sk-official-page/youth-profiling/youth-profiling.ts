@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 import { YouthMemberManagementService, YouthMemberListItem } from '../../../services/youth-member-management.service';
 import { SkOfficialManagementService } from '../../../services/sk-official-management.service';
 import { CivilStatus, Gender } from '../../../models/enums';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import jsPDF from 'jspdf';
 import ExcelJS from 'exceljs';
 
@@ -122,24 +122,24 @@ export class YouthProfiling implements OnInit {
       profiles: this.youthMemberManagementService.getYouthProfiles()
     }).subscribe({
       next: ({ users, profiles }) => {
-        const userMap = new Map(users.map((user) => [user.userId, user]));
+        const userByYouthIdMap = new Map(users.map((user) => [user.youthId, user]));
         this.userAccountByUserId = new Map(
           users.map((user) => [
             user.userId,
             {
               email: user.email,
               roleId: user.roleId,
-              isActive: user.isActive,
+              isActive: user.isActive ?? user.active ?? true,
               isApprove: user.isApprove
             }
           ])
         );
 
         this.youthProfiles = profiles.map((profile: any) => {
-          const matchingUser = userMap.get(profile.userId || 0);
+          const matchingUser = userByYouthIdMap.get(profile.youthId);
 
           return {
-          userId: profile.userId || 0,
+          userId: matchingUser?.userId || 0,
           youthId: profile.youthId,
           firstName: profile.firstName,
           lastName: profile.lastName,
@@ -148,7 +148,7 @@ export class YouthProfiling implements OnInit {
           birthday: profile.birthday,
           contactNumber: profile.contactNumber,
           civilStatus: profile.civilStatus as CivilStatus,
-          isActive: matchingUser?.isActive ?? (profile.isActive !== undefined ? profile.isActive : true),
+          isActive: matchingUser?.isActive ?? matchingUser?.active ?? (profile.isActive !== undefined ? profile.isActive : true),
           isApprove: matchingUser?.isApprove ?? (profile.isApprove ?? null),
           createdAt: matchingUser?.createdAt || profile.createdAt,
           middleName: profile.middleName || null,
@@ -241,17 +241,23 @@ export class YouthProfiling implements OnInit {
     this.approvalError = '';
     this.approvalMessage = '';
 
-    this.youthMemberManagementService.updateUser(profile.userId, {
-      email: accountData.email,
-      roleId: accountData.roleId,
-      active: accountData.isActive,
-      isApprove: approve ? true : null
-    }).subscribe({
+    const approvalRequest$: Observable<{ userId: number; email: string; roleId: number; active?: boolean; isActive?: boolean; isApprove: boolean | null; }> = approve
+      ? this.youthMemberManagementService.approveUser(profile.userId)
+      : this.youthMemberManagementService.updateUser(profile.userId, {
+          email: accountData.email,
+          roleId: accountData.roleId,
+          active: accountData.isActive,
+          isApprove: null
+        });
+
+    approvalRequest$.subscribe({
       next: (updatedUser) => {
+        const updatedIsActive = updatedUser.isActive ?? updatedUser.active ?? true;
+
         this.userAccountByUserId.set(updatedUser.userId, {
           email: updatedUser.email,
           roleId: updatedUser.roleId,
-          isActive: updatedUser.isActive,
+          isActive: updatedIsActive,
           isApprove: updatedUser.isApprove
         });
 
@@ -260,7 +266,7 @@ export class YouthProfiling implements OnInit {
             ? {
                 ...item,
                 isApprove: updatedUser.isApprove,
-                isActive: updatedUser.isActive,
+                isActive: updatedIsActive,
                 email: updatedUser.email
               }
             : item
@@ -272,7 +278,7 @@ export class YouthProfiling implements OnInit {
                 ? {
                     ...item,
                     isApprove: updatedUser.isApprove,
-                    isActive: updatedUser.isActive,
+                    isActive: updatedIsActive,
                     email: updatedUser.email
                   }
                 : item

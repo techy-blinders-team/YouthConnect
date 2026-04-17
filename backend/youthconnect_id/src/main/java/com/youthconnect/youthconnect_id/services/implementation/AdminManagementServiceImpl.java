@@ -170,10 +170,27 @@ public class AdminManagementServiceImpl implements AdminManagementService {
     public User updateUser(int userId, AdminUserUpdateRequest request) {
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        user.setEmail(request.getEmail());
-        user.setActive(request.isActive());
-        user.setIsApprove(request.isApprove());
-        user.setRoleId(request.getRoleId());
+
+        if (request.getEmail() != null) {
+            user.setEmail(request.getEmail());
+        }
+
+        if (request.getActive() != null) {
+            user.setActive(request.getActive());
+        }
+
+        if (request.getIsApprove() != null) {
+            user.setIsApprove(request.getIsApprove());
+        }
+
+        if (request.getRoleId() != null) {
+            user.setRoleId(request.getRoleId());
+        }
+
+        if (Boolean.TRUE.equals(user.getIsApprove())) {
+            user.setActive(true);
+        }
+
         return userRepo.save(user);
     }
 
@@ -190,6 +207,7 @@ public class AdminManagementServiceImpl implements AdminManagementService {
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setIsApprove(true);
+        user.setActive(true);
         return userRepo.save(user);
     }
 

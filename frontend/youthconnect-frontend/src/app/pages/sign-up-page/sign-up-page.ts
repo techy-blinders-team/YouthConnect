@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { RegistrationRequest } from '../../models/auth.model';
 
 const STEP_FIELDS: Record<number, string[]> = {
   1: ['firstName', 'middleName', 'lastName', 'suffix', 'gender', 'birthday', 'contactNumber', 'completeAddress', 'civilStatus'],
@@ -237,7 +238,30 @@ nextStep(): void {
     this.errorMessage = '';
     this.successMessage = '';
 
-    const registrationData = this.registrationForm.value;
+    const formValue = this.registrationForm.value;
+    const votingStatus = Array.isArray(formValue.votingStatus) ? formValue.votingStatus : [];
+
+    const registrationData: RegistrationRequest = {
+      firstName: formValue.firstName,
+      middleName: formValue.middleName,
+      lastName: formValue.lastName,
+      suffix: formValue.suffix || undefined,
+      gender: formValue.gender,
+      birthday: formValue.birthday,
+      contactNumber: formValue.contactNumber,
+      completeAddress: formValue.completeAddress,
+      civilStatus: formValue.civilStatus,
+      email: formValue.email,
+      password: formValue.password,
+      youthClassification: formValue.youthClassification,
+      educationBackground: formValue.educationBackground,
+      workStatus: formValue.workStatus,
+      skVoter: votingStatus.includes('skVoter'),
+      nationalVoter: votingStatus.includes('nationalVoter'),
+      pastVoter: votingStatus.includes('pastVoter'),
+      numAttended: Number(formValue.numberOfAttendedAssemblies ?? 0),
+      nonAttendedReason: formValue.reason || undefined,
+    };
 
     this.authService.register(registrationData).subscribe({
       next: (res) => {
