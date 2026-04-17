@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { interval, Subscription } from 'rxjs';
 
 interface SkOfficialSet {
   images: string[];
@@ -52,6 +52,12 @@ export class LeadersLandingPage implements OnInit, OnDestroy {
     }
   }
 
+  startAutoplay(): void {
+    this.carouselSubscription = interval(this.autoplayInterval).subscribe(() => {
+      this.nextImage();
+    });
+  }
+
 
   nextImage(): void {
     this.currentSetIndex = (this.currentSetIndex + 1) % this.skOfficialSets.length;
@@ -89,16 +95,6 @@ export class LeadersLandingPage implements OnInit, OnDestroy {
 
   get official4Image(): string {
     return this.currentSkOfficialSet.images[3];
-  }
-
-
-  startAutoplay(): void {
-    this.carouselSubscription = new Promise(resolve => 
-      setInterval(() => {
-        this.nextImage();
-        resolve(null);
-      }, this.autoplayInterval)
-    ) as any;
   }
 
   navigateTo(route: string): void {
