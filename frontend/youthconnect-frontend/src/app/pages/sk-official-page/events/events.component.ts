@@ -284,6 +284,10 @@ export class EventsComponent implements OnInit {
     }
   }
 
+  isEventOngoing(status?: string): boolean {
+    return (status || '').toLowerCase() === 'ongoing';
+  }
+
   getStatusActionLabel(status?: string): string {
     const normalizedStatus = (status || 'Upcoming').toLowerCase();
 
@@ -292,7 +296,7 @@ export class EventsComponent implements OnInit {
     }
 
     if (normalizedStatus === 'ongoing') {
-      return 'Completed';
+      return 'Set as complete';
     }
 
     return 'Completed';

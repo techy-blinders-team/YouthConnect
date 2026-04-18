@@ -285,8 +285,13 @@ html, body, :host, .events-container {
   }
 }
 
-.edit-btn:hover, .delete-btn:hover {
+.edit-btn:hover:not(:disabled), .delete-btn:hover:not(:disabled) {
   transform: scale(1.08);
+}
+
+.edit-btn:disabled, .delete-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .card-body {
@@ -339,7 +344,7 @@ html, body, :host, .events-container {
   border: none;
   border-radius: 8px;
   font-size: 0.95rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: filter 0.2s ease;
   color: #fff;
