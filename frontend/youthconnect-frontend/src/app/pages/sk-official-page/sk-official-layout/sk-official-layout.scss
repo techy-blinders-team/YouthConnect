@@ -1,6 +1,7 @@
 .sk-official-layout-root {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .sk-official-layout-content {
@@ -8,4 +9,5 @@
   min-width: 0;
   background: #f7f8fa;
   padding: 0;
+  overflow: hidden;
 }

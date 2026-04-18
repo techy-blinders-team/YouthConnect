@@ -32,7 +32,7 @@
 .side-nav-bar {
 	min-width: 280px;
 	max-width: 600px;
-	height: 100vh;
+	height: 100%;
 	background: #0038A7;
 	box-shadow: 2px 0 8px rgba(0,0,0,0.04);
 	padding: 0 0 32px 0;
@@ -41,6 +41,7 @@
 	align-items: flex-start;
 	color: #fff;
 	font-weight: 400;
+	overflow: hidden;
 }
 
 .side-nav-bar ul {
