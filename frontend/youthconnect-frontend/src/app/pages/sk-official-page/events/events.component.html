@@ -49,7 +49,12 @@
             
             <div *ngFor="let event of filteredEvents" class="event-card">
                 <div class="card-header">
-                    <h3>{{ event.title }}</h3>
+                    <div class="title-status-group">
+                        <h3>{{ event.title }}</h3>
+                        <span class="status-pill" [ngClass]="(event.status || 'upcoming').toLowerCase()">
+                            {{ event.status || 'Upcoming' }}
+                        </span>
+                    </div>
                     <div class="card-actions">
                         <button class="edit-btn" (click)="editEvent(event)" title="Edit event">
                             <img src="../../assets/sk-official-events-icons/edit.svg" alt="Edit" width="18" height="18">
@@ -73,8 +78,12 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <button class="status-btn" [ngClass]="event.status.toLowerCase()">
-                        {{ event.status }}
+                    <button
+                        class="status-btn"
+                        [ngClass]="getStatusActionClass(event.status)"
+                        [disabled]="isStatusActionDisabled(event.status)"
+                        (click)="updateEventStatus(event)">
+                        {{ getStatusActionLabel(event.status) }}
                     </button>
                 </div>
             </div>

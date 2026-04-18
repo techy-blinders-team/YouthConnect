@@ -190,125 +190,178 @@ html, body, :host, .events-container {
 .events-list {
   margin-top: 32px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
   gap: 24px;
 }
 
 .event-card {
   background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border-radius: 14px;
+  border: 1px solid #cfcfcf;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.14);
   overflow: hidden;
   transition: box-shadow 0.3s;
-  max-width: 420px;
+  flex: 1 1 calc(33.333% - 16px);
+  min-width: 320px;
+  max-width: 350px;
 }
 
 .event-card:hover {
-  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  box-shadow: 0 5px 16px rgba(0,0,0,0.16);
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-  border-bottom: 1px solid #eee;
+  align-items: flex-start;
+  padding: 16px 22px;
+  border-bottom: 2px solid #cfcfcf;
 }
 
-.card-header h3 {
-  font-size: 18px;
-  font-weight: 700;
-  margin: 0;
-  color: #333;
+.title-status-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0;
+    color: #111;
+    line-height: 1;
+  }
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 16px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.status-pill.upcoming {
+  background: #f4be67;
+  color: #1f1f1f;
+}
+
+.status-pill.ongoing {
+  background: #9bc6ff;
+  color: #0f2f67;
+}
+
+.status-pill.completed {
+  background: #bfe4c4;
+  color: #1b4f26;
 }
 
 .card-actions {
   display: flex;
-  gap: 10px;
+  gap: 12px;
+  align-items: center;
 }
 
 .edit-btn, .delete-btn {
   background: none;
   border: none;
-  color: #0052cc;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  padding: 4px 8px;
+  padding: 0;
   border-radius: 4px;
-  transition: background 0.2s;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+
+  img {
+    filter: brightness(0);
+  }
 }
 
 .edit-btn:hover, .delete-btn:hover {
-  background: #f0f4ff;
+  transform: scale(1.08);
 }
 
 .card-body {
-  padding: 12px 16px;
+  padding: 20px 22px 12px;
 }
 
 .description {
-  font-size: 14px;
-  color: #666;
-  margin: 0 0 15px 0;
-  line-height: 1.5;
+  font-size: 0.95rem;
+  color: #1d1d1d;
+  margin: 0 0 16px;
+  line-height: 1.4;
 }
 
 .event-meta {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .meta-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: #666;
-}
+  gap: 10px;
+  font-size: 0.85rem;
+  color: #111;
+  font-weight: 500;
 
-.icon {
-  font-size: 15px;
+  .icon {
+    display: inline-flex;
+    width: 18px;
+    height: 18px;
+
+    img {
+      width: 18px;
+      height: 18px;
+    }
+  }
 }
 
 .card-footer {
-  padding: 10px 16px;
-  border-top: 1px solid #eee;
+  padding: 12px 10px 14px;
+  border-top: 2px solid #cfcfcf;
   display: flex;
-  gap: 10px;
+  gap: 0;
 }
 
 .status-btn {
   flex: 1;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 600;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s;
-  background: white;
-  color: #333;
+  transition: filter 0.2s ease;
+  color: #fff;
+  line-height: 1;
 }
 
-.status-btn.ongoing {
-  border-color: #ddd;
-  color: #333;
+.status-btn.ongoing-action {
+  background: #0d43aa;
 }
 
-.status-btn.ongoing:hover {
-  background-color: #f9f9f9;
+.status-btn.completed-action {
+  background: #0b6d38;
 }
 
-.status-btn.completed {
-  background-color: #0052cc;
-  color: white;
-  border-color: #0052cc;
+.status-btn.disabled-completed {
+  background: #d2d2d2cc;
+  color: #585858;
+  cursor: not-allowed;
 }
 
-.status-btn.completed:hover {
-  background-color: #0041a3;
+.status-btn:hover:not(:disabled) {
+  filter: brightness(1.06);
 }
 
 /* Modal Styles */

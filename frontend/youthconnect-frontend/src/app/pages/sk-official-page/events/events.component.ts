@@ -284,6 +284,72 @@ export class EventsComponent implements OnInit {
     }
   }
 
+  getStatusActionLabel(status?: string): string {
+    const normalizedStatus = (status || 'Upcoming').toLowerCase();
+
+    if (normalizedStatus === 'upcoming') {
+      return 'Ongoing';
+    }
+
+    if (normalizedStatus === 'ongoing') {
+      return 'Completed';
+    }
+
+    return 'Completed';
+  }
+
+  getStatusActionClass(status?: string): string {
+    const normalizedStatus = (status || 'Upcoming').toLowerCase();
+
+    if (normalizedStatus === 'upcoming') {
+      return 'ongoing-action';
+    }
+
+    if (normalizedStatus === 'ongoing') {
+      return 'completed-action';
+    }
+
+    return 'disabled-completed';
+  }
+
+  isStatusActionDisabled(status?: string): boolean {
+    return (status || '').toLowerCase() === 'completed' || this.isLoading;
+  }
+
+  updateEventStatus(event: EventResponse) {
+    if (this.isStatusActionDisabled(event.status)) {
+      return;
+    }
+
+    const currentStatus = (event.status || 'Upcoming').toLowerCase();
+    const nextStatus = currentStatus === 'upcoming' ? 'Ongoing' : 'Completed';
+
+    const request = {
+      title: event.title,
+      description: event.description,
+      eventDate: event.eventDate,
+      location: event.location,
+      createdByAdminId: event.createdByAdminId,
+      status: nextStatus
+    };
+
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    this.eventService.editEvent(event.eventId, request).subscribe({
+      next: () => {
+        event.status = nextStatus;
+        this.successMessage = `Event marked as ${nextStatus}.`;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error updating event status:', error);
+        this.errorMessage = error.error?.message || 'Failed to update event status.';
+        this.isLoading = false;
+      }
+    });
+  }
+
   formatDate(dateString: string): string {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
