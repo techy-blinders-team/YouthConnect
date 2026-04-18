@@ -32,6 +32,7 @@ export interface ConcernResponse {
 export class ConcernService {
     private http = inject(HttpClient);
     private apiUrl = 'http://localhost:8080/api/concerns';
+    private adminConcernsUrl = 'http://localhost:8080/api/admin/concerns';
 
     submitConcern(request: ConcernRequest): Observable<ConcernResponse> {
         return this.http.post<ConcernResponse>(this.apiUrl, request);
@@ -58,6 +59,6 @@ export class ConcernService {
     }
 
     getAllConcernsForSkOfficial(): Observable<ConcernResponse[]> {
-        return this.http.get<ConcernResponse[]>(`${this.apiUrl}`);
+        return this.http.get<ConcernResponse[]>(this.adminConcernsUrl);
     }
 }
