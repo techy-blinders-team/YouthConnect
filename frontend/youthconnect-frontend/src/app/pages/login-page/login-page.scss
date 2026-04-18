@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
-$primary-blue: #0052cc;
 $primary-red: #dc143c;
 $light-gray: #f5f5f5;
 $border-gray: #e0e0e0;
@@ -92,7 +91,7 @@ html, body {
   text-align: center;
   font-size: 24px;
   font-weight: 600;
-  color: $primary-blue;
+  color: $primary-red;
   margin-bottom: 30px;
   letter-spacing: 0.5px;
   font-family: 'Poppins', sans-serif;
@@ -154,8 +153,8 @@ html, body {
 
     &:focus {
       outline: none;
-      border-color: $primary-blue;
-      box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.1);
+      border-color: $primary-red;
+      box-shadow: 0 0 0 3px rgba(220, 20, 60, 0.1);
     }
 
     &:disabled {
@@ -212,7 +211,7 @@ html, body {
   font-family: 'Poppins', sans-serif;
 
   a {
-    color: $primary-blue;
+    color: $primary-red;
     text-decoration: none;
     font-size: 13px;
     font-weight: 500;
@@ -220,7 +219,7 @@ html, body {
     font-family: 'Poppins', sans-serif;
 
     &:hover {
-      color: darken($primary-blue, 10%);
+      color: darken($primary-red, 10%);
       text-decoration: underline;
     }
   }
@@ -236,7 +235,7 @@ html, body {
   cursor: pointer;
   transition: all 0.3s ease;
   color: white;
-  background-color: $primary-blue;
+  background-color: $primary-red;
   letter-spacing: 0.5px;
   margin-bottom: 20px;
   font-family: 'Poppins', sans-serif;
@@ -244,7 +243,7 @@ html, body {
   &:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    background-color: darken($primary-blue, 5%);
+    background-color: darken($primary-red, 5%);
   }
 
   &:active:not(:disabled) {
@@ -265,7 +264,7 @@ html, body {
   font-family: 'Poppins', sans-serif;
 
   a {
-    color: $primary-blue;
+    color: $primary-red;
     text-decoration: none;
     font-weight: 600;
     transition: color 0.2s ease;
@@ -273,7 +272,7 @@ html, body {
     font-family: 'Poppins', sans-serif;
 
     &:hover {
-      color: darken($primary-blue, 10%);
+      color: darken($primary-red, 10%);
       text-decoration: underline;
     }
   }
