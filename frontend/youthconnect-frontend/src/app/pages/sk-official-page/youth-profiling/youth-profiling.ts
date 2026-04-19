@@ -107,7 +107,9 @@ export class YouthProfiling implements OnInit {
       youthClassification: ['', Validators.required],
       educationBackground: ['', Validators.required],
       workStatus: ['', Validators.required],
-      votingStatus: ['', Validators.required],
+      skVoter: [false],
+      nationalVoter: [false],
+      pastVoter: [false],
       numberOfAttendedAssemblies: [0, Validators.required],
       reason: ['', Validators.required]
     });
@@ -564,13 +566,6 @@ export class YouthProfiling implements OnInit {
     const normalizedYouthClassification = (profile.youthClassification?.youthClassification || '').toString().toUpperCase();
     const normalizedEducationBackground = (profile.youthClassification?.educationBackground || '').toString().toUpperCase();
     const normalizedWorkStatus = (profile.youthClassification?.workStatus || '').toString().toUpperCase();
-    const votingStatus = profile.youthClassification?.skVoter
-      ? 'skVoter'
-      : profile.youthClassification?.pastVoter
-        ? 'pastVoter'
-        : profile.youthClassification?.nationalVoter
-          ? 'nationalVoter'
-          : '';
 
     this.selectedProfile = profile;
     this.editForm.patchValue({
@@ -586,7 +581,9 @@ export class YouthProfiling implements OnInit {
       youthClassification: normalizedYouthClassification,
       educationBackground: normalizedEducationBackground,
       workStatus: normalizedWorkStatus,
-      votingStatus,
+      skVoter: profile.youthClassification?.skVoter ?? false,
+      nationalVoter: profile.youthClassification?.nationalVoter ?? false,
+      pastVoter: profile.youthClassification?.pastVoter ?? false,
       numberOfAttendedAssemblies: profile.youthClassification?.numAttended ?? 0,
       reason: profile.youthClassification?.nonAttendedReason || ''
     });
@@ -613,7 +610,6 @@ export class YouthProfiling implements OnInit {
     this.successMessage = '';
 
     const formValue = this.editForm.value;
-    const votingStatus = formValue.votingStatus;
 
     const payload = {
       firstName: formValue.firstName,
@@ -629,9 +625,9 @@ export class YouthProfiling implements OnInit {
         youthClassification: formValue.youthClassification,
         educationBackground: formValue.educationBackground,
         workStatus: formValue.workStatus,
-        skVoter: votingStatus === 'skVoter',
-        nationalVoter: votingStatus === 'nationalVoter',
-        pastVoter: votingStatus === 'pastVoter',
+        skVoter: formValue.skVoter ?? false,
+        nationalVoter: formValue.nationalVoter ?? false,
+        pastVoter: formValue.pastVoter ?? false,
         numAttended: Number(formValue.numberOfAttendedAssemblies || 0),
         nonAttendedReason: formValue.reason
       }
