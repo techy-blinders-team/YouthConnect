@@ -189,14 +189,17 @@ html, body, :host, .tasks-container {
   border: 1px solid #cfcfcf;
   box-shadow: 0 3px 8px rgba(0,0,0,0.14);
   overflow: hidden;
-  transition: box-shadow 0.3s;
+  transition: box-shadow 0.3s, transform 0.3s, border-color 0.3s;
   flex: 1 1 calc(33.333% - 16px);
   min-width: 320px;
   max-width: 350px;
+  cursor: pointer;
 }
 
 .task-card:hover {
-  box-shadow: 0 5px 16px rgba(0,0,0,0.16);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+  transform: translateY(-4px);
+  border-color: #0052cc;
 }
 
 .card-header {
