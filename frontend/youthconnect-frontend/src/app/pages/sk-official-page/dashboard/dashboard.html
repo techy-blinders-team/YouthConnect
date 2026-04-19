@@ -44,9 +44,9 @@
 
         <!-- Events -->
         <div class="content-card">
-            <div class="card-header">
+            <div class="card-header" (click)="navigateToEvents()" style="cursor: pointer;">
                 <h2>Events</h2>
-                <span class="view-all">{{ eventsCount }} →</span>
+                <span class="view-all">{{ eventsCount }} ➜</span>
             </div>
             <div class="card-content">
                 <div class="item-card" 
@@ -65,9 +65,9 @@
 
         <!-- Tasks -->
         <div class="content-card">
-            <div class="card-header">
+            <div class="card-header" (click)="navigateToTasks()" style="cursor: pointer;">
                 <h2>Tasks</h2>
-                <span class="view-all">{{ tasksCount }} →</span>
+                <span class="view-all">{{ tasksCount }} ➜</span>
             </div>
             <div class="card-content">
                 <div class="item-card" 
