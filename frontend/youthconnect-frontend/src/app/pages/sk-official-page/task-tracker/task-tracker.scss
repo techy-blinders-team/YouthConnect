@@ -215,12 +215,17 @@ html, body, :host, .tasks-container {
   color: #111;
   line-height: 1.2;
   flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .card-actions {
   display: flex;
   gap: 12px;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .edit-btn, .delete-btn {

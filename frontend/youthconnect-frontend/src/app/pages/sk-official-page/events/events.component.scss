@@ -214,22 +214,30 @@ html, body, :host, .events-container {
 .card-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   padding: 16px 22px;
   border-bottom: 2px solid #cfcfcf;
+  gap: 12px;
 }
 
 .title-status-group {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex: 1;
+  min-width: 0;
 
   h3 {
     font-size: 1.3rem;
     font-weight: 700;
     margin: 0;
     color: #111;
-    line-height: 1;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    min-width: 0;
   }
 }
 
@@ -263,6 +271,7 @@ html, body, :host, .events-container {
   display: flex;
   gap: 12px;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .edit-btn, .delete-btn {
