@@ -178,98 +178,115 @@ html, body, :host, .tasks-container {
 .tasks-list {
   margin-top: 32px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
   gap: 24px;
 }
 
 .task-card {
   background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border-radius: 14px;
+  border: 1px solid #cfcfcf;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.14);
   overflow: hidden;
   transition: box-shadow 0.3s;
-  max-width: 450px;
+  flex: 1 1 calc(33.333% - 16px);
+  min-width: 320px;
+  max-width: 350px;
 }
 
 .task-card:hover {
-  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  box-shadow: 0 5px 16px rgba(0,0,0,0.16);
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px;
-  border-bottom: 1px solid #eee;
+  padding: 16px 22px;
+  border-bottom: 2px solid #cfcfcf;
+  min-height: 60px;
 }
 
 .card-header h3 {
-  font-size: 18px;
+  font-size: 1.3rem;
   font-weight: 700;
   margin: 0;
-  color: #1a1a1a;
+  color: #111;
+  line-height: 1.2;
   flex: 1;
 }
 
 .card-actions {
   display: flex;
-  gap: 8px;
-  margin-left: 16px;
+  gap: 12px;
+  align-items: center;
 }
 
 .edit-btn, .delete-btn {
   background: none;
   border: none;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
-  padding: 6px;
+  padding: 0;
   border-radius: 4px;
-  transition: background 0.2s;
-  display: flex;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  transition: transform 0.2s;
 
   img {
-    width: 18px;
-    height: 18px;
+    filter: brightness(0);
   }
+}
 
-  &:hover {
-    background: #f0f0f0;
-  }
+.edit-btn:hover:not(:disabled), .delete-btn:hover:not(:disabled) {
+  transform: scale(1.08);
+}
+
+.edit-btn:disabled, .delete-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .card-body {
-  padding: 16px;
+  padding: 20px 22px 12px;
 }
 
 .description {
-  font-size: 15px;
-  color: #666;
-  margin: 0 0 16px 0;
-  line-height: 1.5;
+  font-size: 0.95rem;
+  color: #1d1d1d;
+  margin: 0 0 16px;
+  line-height: 1.4;
 }
 
 .task-info {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .info-row {
   display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  font-size: 14px;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: #111;
+  font-weight: 500;
 
   .label {
     font-weight: 600;
-    color: #1a1a1a;
-    min-width: 120px;
+    color: #111;
+    min-width: auto;
   }
 
   .value {
-    color: #666;
+    color: #1d1d1d;
     word-break: break-word;
+    font-weight: 500;
   }
 
   .value.link {
@@ -318,32 +335,33 @@ html, body, :host, .tasks-container {
 
 .card-footer {
   display: flex;
-  gap: 12px;
-  padding: 12px 16px;
-  border-top: 1px solid #eee;
+  gap: 0;
+  padding: 12px 10px 14px;
+  border-top: 2px solid #cfcfcf;
 }
 
 .btn-mark-done {
-  width: 100%;
-  padding: 8px 16px;
-  background-color: #0052cc;
+  flex: 1;
+  padding: 10px 12px;
+  background-color: #0b6d38;
   color: white;
   border: none;
-  border-radius: 4px;
-  font-size: 14px;
+  border-radius: 8px;
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: filter 0.2s ease;
   font-family: 'Poppins', Arial, Helvetica, sans-serif;
+  line-height: 1;
 
   &:hover:not(:disabled) {
-    background-color: #0041a3;
+    filter: brightness(1.06);
   }
 
   &:disabled {
-    background-color: #ccc;
+    background-color: #d2d2d2cc;
+    color: #585858;
     cursor: not-allowed;
-    opacity: 0.6;
   }
 }
 
