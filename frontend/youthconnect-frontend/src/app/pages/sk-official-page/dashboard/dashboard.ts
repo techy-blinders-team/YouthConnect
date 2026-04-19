@@ -1,5 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { EventService, EventResponse } from '../../../services/event.service';
 import { TaskTrackerService } from '../../../services/task-tracker.service';
 import { ConcernService, ConcernResponse } from '../../../services/concern.service';
@@ -19,6 +20,7 @@ export class Dashboard implements OnInit {
   private concernService = inject(ConcernService);
   private youthService = inject(YouthMemberManagementService);
   private skOfficialService = inject(SkOfficialManagementService);
+  private router = inject(Router);
 
   // SK Official Profile
   skOfficialName = '';
@@ -162,5 +164,13 @@ export class Dashboard implements OnInit {
   getNotificationColor(index: number): string {
     const colors = ['red', 'blue', 'yellow', 'gray', 'green'];
     return colors[index % colors.length];
+  }
+
+  navigateToEvents(): void {
+    this.router.navigate(['/sk-official/events']);
+  }
+
+  navigateToTasks(): void {
+    this.router.navigate(['/sk-official/task-tracker']);
   }
 }
