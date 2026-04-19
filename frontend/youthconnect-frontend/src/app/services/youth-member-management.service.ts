@@ -77,6 +77,16 @@ export interface UpdateYouthProfilePayload {
   contactNumber: string;
   completeAddress: string;
   civilStatus: CivilStatus;
+  youthClassification?: {
+    youthClassification?: string;
+    educationBackground?: string;
+    workStatus?: string;
+    skVoter?: boolean;
+    nationalVoter?: boolean;
+    pastVoter?: boolean;
+    numAttended?: number;
+    nonAttendedReason?: string;
+  };
 }
 
 @Injectable({

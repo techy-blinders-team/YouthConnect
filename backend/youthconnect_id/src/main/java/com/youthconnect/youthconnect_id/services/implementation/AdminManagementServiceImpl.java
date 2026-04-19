@@ -18,11 +18,13 @@ import com.youthconnect.youthconnect_id.models.Administrator;
 import com.youthconnect.youthconnect_id.models.Role;
 import com.youthconnect.youthconnect_id.models.SkOfficialsUser;
 import com.youthconnect.youthconnect_id.models.User;
+import com.youthconnect.youthconnect_id.models.YouthClassification;
 import com.youthconnect.youthconnect_id.models.YouthProfile;
 import com.youthconnect.youthconnect_id.repositories.AdministratorRepo;
 import com.youthconnect.youthconnect_id.repositories.RoleRepo;
 import com.youthconnect.youthconnect_id.repositories.SkOfficialRepo;
 import com.youthconnect.youthconnect_id.repositories.UserRepo;
+import com.youthconnect.youthconnect_id.repositories.YouthClassificationRepo;
 import com.youthconnect.youthconnect_id.repositories.YouthProfileRepo;
 import com.youthconnect.youthconnect_id.services.AdminManagementService;
 
@@ -40,6 +42,9 @@ public class AdminManagementServiceImpl implements AdminManagementService {
 
     @Autowired
     private YouthProfileRepo youthProfileRepo;
+
+    @Autowired
+    private YouthClassificationRepo youthClassificationRepo;
 
     @Autowired
     private SkOfficialRepo skOfficialsRepo;
@@ -251,6 +256,29 @@ public class AdminManagementServiceImpl implements AdminManagementService {
             profile.setAge(Period.between(request.getBirthday(),
                     LocalDateTime.now().toLocalDate()).getYears());
         }
+
+        if (request.getYouthClassification() != null) {
+            AdminYouthProfileUpdateRequest.YouthClassificationUpdateRequest classificationRequest = request.getYouthClassification();
+
+            YouthClassification classification = youthClassificationRepo.findById(youthId)
+                    .orElseGet(() -> {
+                        YouthClassification newClassification = new YouthClassification();
+                        newClassification.setYouthId(youthId);
+                        return newClassification;
+                    });
+
+            classification.setYouthClassification(classificationRequest.getYouthClassification());
+            classification.setEducationBackground(classificationRequest.getEducationBackground());
+            classification.setWorkStatus(classificationRequest.getWorkStatus());
+            classification.setSkVoter(Boolean.TRUE.equals(classificationRequest.getSkVoter()));
+            classification.setNationalVoter(Boolean.TRUE.equals(classificationRequest.getNationalVoter()));
+            classification.setPastVoter(Boolean.TRUE.equals(classificationRequest.getPastVoter()));
+            classification.setNumAttended(classificationRequest.getNumAttended() == null ? 0 : classificationRequest.getNumAttended());
+            classification.setNonAttendedReason(classificationRequest.getNonAttendedReason());
+
+            youthClassificationRepo.save(classification);
+        }
+
         return youthProfileRepo.save(profile);
     }
 
