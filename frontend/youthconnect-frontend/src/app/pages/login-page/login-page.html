@@ -12,9 +12,6 @@
         <!-- Youth Login Form -->
         <div>
             <form [formGroup]="loginForm" (ngSubmit)="login()" class="login-form">
-                @if (errorMessage) {
-                    <div class="error-message">{{ errorMessage }}</div>
-                }
 
                 <div class="form-group">
                     <label>Email</label>
@@ -77,9 +74,9 @@
 
                 <button 
                     type="submit" 
-                    [disabled]="isLoading"
+                    [disabled]="isLoading()"
                     class="btn-login">
-                    {{ isLoading ? 'Logging in...' : 'Login' }}
+                    {{ isLoading() ? 'Logging in...' : 'Login' }}
                 </button>
             </form>
 
@@ -89,4 +86,25 @@
         </div>
         </div>
     </div>
+
+    @if (successModalOpen()) {
+        <div class="modal-backdrop"></div>
+        <div class="success-modal">
+            <div class="modal-content">
+                <div class="spinner"></div>
+                <h2>Logging In</h2>
+                <p>Please wait while we verify your credentials</p>
+            </div>
+        </div>
+    }
+ 
+    @if (errorModalOpen() && errorMessage()) {
+        <div class="popup-overlay" (click)="closeErrorModal()">
+            <div class="popup warning" (click)="$event.stopPropagation()">
+                <h2>Login Failed</h2>
+                <p>{{ errorMessage() }}</p>
+                <button (click)="closeErrorModal()" class="error-close-btn">Try Again</button>
+            </div>
+        </div>
+    }
 </div>
