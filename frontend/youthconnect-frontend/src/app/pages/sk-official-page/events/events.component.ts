@@ -302,15 +302,20 @@ export class EventsComponent implements OnInit {
     return (status || '').toLowerCase() === 'ongoing';
   }
 
+  isEditDisabled(status?: string): boolean {
+    const normalizedStatus = (status || '').toLowerCase();
+    return normalizedStatus === 'ongoing' || normalizedStatus === 'completed';
+  }
+
   getStatusActionLabel(status?: string): string {
     const normalizedStatus = (status || 'Upcoming').toLowerCase();
 
     if (normalizedStatus === 'upcoming') {
-      return 'Ongoing';
+      return 'Set as Ongoing';
     }
 
     if (normalizedStatus === 'ongoing') {
-      return 'Set as completed';
+      return 'Set as Completed';
     }
 
     return 'Completed';
