@@ -491,6 +491,11 @@ html, body, :host, .tasks-container {
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   overflow: hidden;
   animation: slideIn 0.3s ease-out;
+
+  &.modal-small {
+    max-width: 400px;
+    max-height: auto;
+  }
 }
 
 .modal-body {
@@ -647,7 +652,8 @@ select.form-input {
 }
 
 .btn-cancel,
-.btn-create {
+.btn-create,
+.btn-confirm-edit {
   padding: 10px 24px;
   border-radius: 4px;
   font-size: 14px;
@@ -678,6 +684,34 @@ select.form-input {
 .btn-create:hover {
   background-color: #008844;
   border-color: #008844;
+}
+
+.btn-confirm-edit {
+  background-color: #0052cc;
+  color: white;
+  border-color: #0052cc;
+}
+
+.btn-confirm-edit:hover {
+  background-color: #003fa0;
+  border-color: #003fa0;
+}
+
+.btn-confirm-edit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-confirm-edit:disabled:hover {
+  background-color: #0052cc;
+  border-color: #0052cc;
+}
+
+.confirmation-text {
+  font-size: 16px;
+  color: #333;
+  margin: 0 0 12px 0;
+  line-height: 1.6;
 }
 
 /* Details Modal Styles */
