@@ -28,6 +28,8 @@ export class EventsComponent implements OnInit {
   skOfficialEmail = '';
   skOfficialPosition = 'SK Official';
   skOfficialInitials = 'SK';
+  notifications: { id: number; message: string; type: 'success' | 'error' }[] = [];
+  private notificationCounter = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -188,6 +190,15 @@ export class EventsComponent implements OnInit {
     }
   }
 
+  private showNotification(message: string, type: 'success' | 'error' = 'success'): void {
+    const id = ++this.notificationCounter;
+    this.notifications = [...this.notifications, { id, message, type }];
+
+    setTimeout(() => {
+      this.notifications = this.notifications.filter(notification => notification.id !== id);
+    }, 3000);
+  }
+
   saveEditedEvent() {
     if (this.eventForm.invalid) {
       this.errorMessage = 'Please fill in all required fields correctly';
@@ -213,12 +224,13 @@ export class EventsComponent implements OnInit {
 
     this.isLoading = true;
     this.eventService.editEvent(this.editingEventId, request).subscribe({
-      next: (response) => {
-        this.successMessage = 'Event updated successfully!';
+      next: () => {
+        this.successMessage = '';
+        this.showNotification('Event updated successfully!');
         this.eventForm.reset();
         this.editingEventId = null;
         this.loadEvents();
-        setTimeout(() => this.closeModal(), 1500);
+        this.closeModal();
       },
       error: (error) => {
         console.error('Error updating event:', error);
@@ -255,11 +267,12 @@ export class EventsComponent implements OnInit {
 
     this.isLoading = true;
     this.eventService.createEvent(request).subscribe({
-      next: (response) => {
-        this.successMessage = 'Event created successfully!';
+      next: () => {
+        this.successMessage = '';
+        this.showNotification('Event created successfully!');
         this.eventForm.reset();
         this.loadEvents();
-        setTimeout(() => this.closeModal(), 1500);
+        this.closeModal();
       },
       error: (error) => {
         console.error('Error creating event:', error);
@@ -273,7 +286,8 @@ export class EventsComponent implements OnInit {
     if (confirm('Are you sure you want to delete this event?')) {
       this.eventService.deleteEvent(eventId).subscribe({
         next: () => {
-          this.successMessage = 'Event deleted successfully!';
+          this.successMessage = '';
+          this.showNotification('Event deleted successfully!');
           this.loadEvents();
         },
         error: (error) => {
