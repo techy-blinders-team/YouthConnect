@@ -1149,3 +1149,48 @@ html, body, :host, .youth-profiling-container {
     align-self: flex-end;
   }
 }
+
+// Toast notifications
+.notification-stack {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 10px;
+  z-index: 1200;
+  width: min(360px, calc(100vw - 32px));
+  pointer-events: none;
+}
+
+.toast-notification {
+  padding: 12px 14px;
+  font-size: 14px;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  animation: toastSlideIn 0.25s ease-out;
+  pointer-events: auto;
+}
+
+.toast-success {
+  background-color: #e8f6ec;
+  color: #1f6f3a;
+  border: 1px solid #b8e2c4;
+}
+
+.toast-error {
+  background-color: #fdecee;
+  color: #8f1d2c;
+  border: 1px solid #f4c2c8;
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) translateX(0);
+  }
+}

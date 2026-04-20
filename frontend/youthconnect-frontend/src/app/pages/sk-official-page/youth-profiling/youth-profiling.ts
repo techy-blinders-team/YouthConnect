@@ -32,6 +32,10 @@ export class YouthProfiling implements OnInit {
   skOfficialPosition = 'SK Official';
   skOfficialInitials = 'SK';
   
+  // Notification system
+  notifications: { id: number; message: string; type: 'success' | 'error' }[] = [];
+  private notificationCounter = 0;
+
   // Modal states
   isEditModalOpen = false;
   isDeactivateModalOpen = false;
@@ -437,6 +441,7 @@ export class YouthProfiling implements OnInit {
 
     const dateTime = this.getFormattedDateTime();
     doc.save(`youth-profiles-report-${dateTime}.pdf`);
+    this.showNotification('PDF exported successfully!');
   }
 
   exportToExcel(): void {
@@ -518,6 +523,7 @@ export class YouthProfiling implements OnInit {
       link.download = `youth-profiles-report-${dateTime}.xlsx`;
       link.click();
       URL.revokeObjectURL(url);
+      this.showNotification('Excel exported successfully!');
     });
   }
 
@@ -684,5 +690,13 @@ export class YouthProfiling implements OnInit {
         this.isSubmitting = false;
       }
     });
+  }
+
+  private showNotification(message: string, type: 'success' | 'error' = 'success'): void {
+    const id = ++this.notificationCounter;
+    this.notifications = [...this.notifications, { id, message, type }];
+    setTimeout(() => {
+      this.notifications = this.notifications.filter(notification => notification.id !== id);
+    }, 3000);
   }
 }
