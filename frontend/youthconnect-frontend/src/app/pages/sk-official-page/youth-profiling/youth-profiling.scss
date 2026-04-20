@@ -1183,6 +1183,30 @@ html, body, :host, .youth-profiling-container {
   }
 }
 
+.btn-confirm-deactivate {
+  padding: 10px 24px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #CE1127;
+  background-color: #CE1127;
+  color: white;
+  transition: all 0.2s;
+  font-family: 'Poppins', Arial, Helvetica, sans-serif;
+
+  &:hover {
+    background-color: #a30d1f;
+    border-color: #a30d1f;
+  }
+
+  &:disabled {
+    background-color: #d9a8b3;
+    border-color: #d9a8b3;
+    cursor: not-allowed;
+  }
+}
+
 @media (max-width: 768px) {
   .modal-content {
     max-width: 100%;

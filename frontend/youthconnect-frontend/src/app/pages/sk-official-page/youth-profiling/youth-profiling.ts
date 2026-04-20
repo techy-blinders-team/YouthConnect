@@ -40,6 +40,7 @@ export class YouthProfiling implements OnInit {
   isEditModalOpen = false;
   isDeactivateModalOpen = false;
   isEditConfirmationModalOpen = false;
+  isDeactivateConfirmationModalOpen = false;
   selectedProfile: YouthMemberListItem | null = null;
   editForm!: FormGroup;
   isSubmitting = false;
@@ -672,32 +673,28 @@ export class YouthProfiling implements OnInit {
 
   onDeactivate(profile: YouthMemberListItem): void {
     this.selectedProfile = profile;
-    this.isDeactivateModalOpen = true;
-    this.errorMessage = '';
-    this.successMessage = '';
+    this.isDeactivateConfirmationModalOpen = true;
   }
 
-  closeDeactivateModal(): void {
-    this.isDeactivateModalOpen = false;
+  closeDeactivateConfirmationModal(): void {
+    this.isDeactivateConfirmationModalOpen = false;
     this.selectedProfile = null;
-    this.errorMessage = '';
-    this.successMessage = '';
   }
 
-  confirmDeactivate(): void {
+  confirmDeactivateSubmission(): void {
     if (!this.selectedProfile) {
       return;
     }
 
     this.isSubmitting = true;
     this.errorMessage = '';
-    this.successMessage = '';
 
     this.youthMemberManagementService.deactivateYouthProfile(this.selectedProfile.youthId).subscribe({
       next: () => {
-        this.successMessage = `Profile for ${this.selectedProfile?.firstName} ${this.selectedProfile?.lastName} has been deactivated successfully.`;
+        const fullName = `${this.selectedProfile?.firstName} ${this.selectedProfile?.lastName}`;
+        this.showNotification(`Profile for ${fullName} has been deactivated successfully!`);
         this.isSubmitting = false;
-        this.closeDeactivateModal();
+        this.closeDeactivateConfirmationModal();
         this.loadYouthProfiles();
       },
       error: (error) => {
