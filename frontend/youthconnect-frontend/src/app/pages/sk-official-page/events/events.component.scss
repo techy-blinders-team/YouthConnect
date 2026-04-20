@@ -555,7 +555,7 @@ html, body, :host, .events-container {
 
 .modal-footer {
   padding: 14px 20px;
-  border-top: 1px solid #eee;
+  /* border-top: 1px solid #eee; */
   display: flex;
   gap: 12px;
   justify-content: flex-end;
@@ -563,7 +563,8 @@ html, body, :host, .events-container {
 
 .btn-cancel,
 .btn-create,
-.btn-delete {
+.btn-delete,
+.btn-confirm-edit {
   padding: 10px 24px;
   border-radius: 4px;
   font-size: 14px;
@@ -598,7 +599,8 @@ html, body, :host, .events-container {
 
 .btn-cancel:disabled,
 .btn-create:disabled,
-.btn-delete:disabled {
+.btn-delete:disabled,
+.btn-confirm-edit:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
@@ -641,6 +643,22 @@ html, body, :host, .events-container {
 .btn-delete:hover {
   background-color: #a30d1f;
   border-color: #a30d1f;
+}
+
+.btn-confirm-edit {
+  background-color: #0052cc;
+  color: white;
+  border-color: #0052cc;
+}
+
+.btn-confirm-edit:hover {
+  background-color: #003fa0;
+  border-color: #003fa0;
+}
+
+.btn-confirm-edit:disabled:hover {
+  background-color: #0052cc;
+  border-color: #0052cc;
 }
 
 /* Alert Styles */

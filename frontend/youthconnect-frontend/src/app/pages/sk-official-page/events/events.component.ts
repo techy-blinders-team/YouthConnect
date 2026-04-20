@@ -32,6 +32,8 @@ export class EventsComponent implements OnInit {
   private notificationCounter = 0;
   isDeleteConfirmationModalOpen = false;
   pendingDeleteEvent: EventResponse | null = null;
+  isEditConfirmationModalOpen = false;
+  pendingEditPayload: any = null;
 
   constructor(
     private fb: FormBuilder,
@@ -186,7 +188,25 @@ export class EventsComponent implements OnInit {
 
   submitEvent() {
     if (this.editingEventId) {
-      this.saveEditedEvent();
+      // Show confirmation modal for edit
+      if (this.eventForm.invalid) {
+        this.errorMessage = 'Please fill in all required fields correctly';
+        return;
+      }
+
+      const formValue = this.eventForm.value;
+      const eventDate = new Date(formValue.dateTime).toISOString();
+
+      this.pendingEditPayload = {
+        title: formValue.eventTitle,
+        description: formValue.description,
+        eventDate: eventDate,
+        location: formValue.location,
+        createdByAdminId: this.currentAdminId,
+        status: 'Upcoming'
+      };
+
+      this.isEditConfirmationModalOpen = true;
     } else {
       this.createEvent();
     }
@@ -311,6 +331,36 @@ export class EventsComponent implements OnInit {
       error: (error) => {
         console.error('Error deleting event:', error);
         this.errorMessage = 'Failed to delete event';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  closeEditConfirmationModal(): void {
+    this.isEditConfirmationModalOpen = false;
+    this.pendingEditPayload = null;
+  }
+
+  confirmEditSubmission(): void {
+    if (!this.pendingEditPayload || !this.editingEventId) {
+      return;
+    }
+
+    this.isLoading = true;
+
+    this.eventService.editEvent(this.editingEventId, this.pendingEditPayload).subscribe({
+      next: () => {
+        this.showNotification('Event updated successfully!');
+        this.isLoading = false;
+        this.closeEditConfirmationModal();
+        this.eventForm.reset();
+        this.editingEventId = null;
+        this.loadEvents();
+        this.closeModal();
+      },
+      error: (error) => {
+        console.error('Error updating event:', error);
+        this.errorMessage = error.error?.message || 'Failed to update event. Please try again.';
         this.isLoading = false;
       }
     });

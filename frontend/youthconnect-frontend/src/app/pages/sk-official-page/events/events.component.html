@@ -205,4 +205,31 @@
             </div>
         </div>
     </div>
+
+    <!-- Edit Event Confirmation Modal -->
+    <div class="modal-overlay" *ngIf="isEditConfirmationModalOpen" (click)="closeEditConfirmationModal()">
+        <div class="modal-content modal-small" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <div>
+                    <h2 class="modal-title">Confirm Update</h2>
+                </div>
+                <button class="close-btn" (click)="closeEditConfirmationModal()">✕</button>
+            </div>
+
+            <div class="modal-body">
+                <p class="confirmation-text">
+                    Are you sure you want to update <strong>{{ eventForm.get('eventTitle')?.value }}</strong>?
+                </p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" (click)="closeEditConfirmationModal()" [disabled]="isLoading">
+                    Cancel
+                </button>
+                <button type="button" class="btn-confirm-edit" (click)="confirmEditSubmission()" [disabled]="isLoading">
+                    {{ isLoading ? 'Updating...' : 'Update' }}
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
