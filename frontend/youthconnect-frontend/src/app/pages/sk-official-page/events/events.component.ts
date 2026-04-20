@@ -310,7 +310,7 @@ export class EventsComponent implements OnInit {
     }
 
     if (normalizedStatus === 'ongoing') {
-      return 'Set as complete';
+      return 'Set as completed';
     }
 
     return 'Completed';
