@@ -5,6 +5,8 @@ import { Observable } from 'rxjs';
 export interface Concern {
   concernId: number;
   youthId: number;
+  youthFirstName?: string;
+  youthLastName?: string;
   typeOfConcern: 'PROJECT_CONCERN' | 'COMMUNITY_CONCERN' | 'SYSTEM_CONCERN';
   title: string;
   description: string;

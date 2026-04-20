@@ -8,6 +8,8 @@ import com.youthconnect.youthconnect_id.enums.ConcernType;
 public class ConcernResponse {
     private int concernId;
     private int youthId;
+    private String youthFirstName;
+    private String youthLastName;
     private ConcernType typeOfConcern;
     private String title;
     private String description;
@@ -26,6 +28,18 @@ public class ConcernResponse {
     }
     public void setYouthId(int youthId) {
         this.youthId = youthId; 
+    }
+    public String getYouthFirstName() {
+        return youthFirstName;
+    }
+    public void setYouthFirstName(String youthFirstName) {
+        this.youthFirstName = youthFirstName;
+    }
+    public String getYouthLastName() {
+        return youthLastName;
+    }
+    public void setYouthLastName(String youthLastName) {
+        this.youthLastName = youthLastName;
     }
     public ConcernType getTypeOfConcern() {
         return typeOfConcern; 
