@@ -241,9 +241,9 @@ html, body, :host, .tasks-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 22px;
+  padding: 0px 20px 0px 20px;
   border-bottom: 2px solid #cfcfcf;
-  min-height: 60px;
+  min-height: 50px;
 }
 
 .card-header h3 {
@@ -380,7 +380,6 @@ html, body, :host, .tasks-container {
   display: flex;
   gap: 0;
   padding: 12px 10px 14px;
-  border-top: 2px solid #cfcfcf;
 }
 
 .btn-mark-done {
@@ -492,6 +491,11 @@ html, body, :host, .tasks-container {
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   overflow: hidden;
   animation: slideIn 0.3s ease-out;
+
+  &.modal-small {
+    max-width: 400px;
+    max-height: auto;
+  }
 }
 
 .modal-body {
@@ -535,22 +539,18 @@ html, body, :host, .tasks-container {
 }
 
 .modal-header {
-  padding: 24px 28px;
+  padding: 16px 20px;
   border-bottom: 1px solid #eee;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-
-  > div {
-    flex: 1;
-  }
 }
 
 .modal-title {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
   margin: 0 0 8px 0;
-  color: #1a1a1a;
+  color: #333;
 }
 
 .modal-subtitle {
@@ -563,40 +563,39 @@ html, body, :host, .tasks-container {
 .close-btn {
   background: none;
   border: none;
-  font-size: 32px;
-  color: #333;
+  font-size: 28px;
+  color: #666;
   cursor: pointer;
   padding: 0;
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: color 0.2s;
-  line-height: 1;
 }
 
 .close-btn:hover {
-  color: #000;
+  color: #333;
 }
 
 .modal-body {
-  padding: 24px 28px;
+  padding: 16px 20px;
   overflow-y: auto;
   flex: 1 1 auto;
 }
 
 .form-group {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   display: flex;
   flex-direction: column;
 }
 
 .form-label {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
-  color: #1a1a1a;
-  margin-bottom: 10px;
+  color: #333;
+  margin-bottom: 8px;
 }
 
 .required {
@@ -608,12 +607,12 @@ html, body, :host, .tasks-container {
 .form-textarea,
 select.form-input {
   padding: 12px 14px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
   font-size: 14px;
   font-family: 'Poppins', Arial, Helvetica, sans-serif;
   background: white;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s;
   color: #333;
 }
 
@@ -632,7 +631,7 @@ select.form-input:focus {
 
 .form-textarea {
   resize: vertical;
-  min-height: 150px;
+  min-height: 120px;
 }
 
 select.form-input {
@@ -645,34 +644,36 @@ select.form-input {
 }
 
 .modal-footer {
-  padding: 20px 28px;
-  border-top: 1px solid #eee;
+  padding: 14px 20px;
+  /* border-top: 1px solid #eee; */
   display: flex;
-  gap: 16px;
+  gap: 12px;
   justify-content: flex-end;
 }
 
 .btn-cancel,
-.btn-create {
-  padding: 12px 28px;
-  border-radius: 6px;
-  font-size: 16px;
+.btn-create,
+.btn-confirm-edit,
+.btn-delete {
+  padding: 10px 24px;
+  border-radius: 4px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  border: 2px solid #333;
+  border: 1px solid #ccc;
   transition: all 0.2s;
   font-family: 'Poppins', Arial, Helvetica, sans-serif;
-  min-width: 140px;
 }
 
 .btn-cancel {
   background: white;
   color: #333;
-  border-color: #333;
+  border-color: #ddd;
 }
 
 .btn-cancel:hover {
   background-color: #f5f5f5;
+  border-color: #bbb;
 }
 
 .btn-create {
@@ -684,6 +685,58 @@ select.form-input {
 .btn-create:hover {
   background-color: #008844;
   border-color: #008844;
+}
+
+.btn-confirm-edit {
+  background-color: #0052cc;
+  color: white;
+  border-color: #0052cc;
+}
+
+.btn-confirm-edit:hover {
+  background-color: #003fa0;
+  border-color: #003fa0;
+}
+
+.btn-delete {
+  background-color: #CE1127;
+  color: white;
+  border-color: #CE1127;
+}
+
+.btn-delete:hover {
+  background-color: #a30d1f;
+  border-color: #a30d1f;
+}
+
+.btn-cancel:disabled,
+.btn-create:disabled,
+.btn-confirm-edit:disabled,
+.btn-delete:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-create:disabled:hover {
+  background-color: #00a651;
+  border-color: #00a651;
+}
+
+.btn-confirm-edit:disabled:hover {
+  background-color: #0052cc;
+  border-color: #0052cc;
+}
+
+.btn-delete:disabled:hover {
+  background-color: #CE1127;
+  border-color: #CE1127;
+}
+
+.confirmation-text {
+  font-size: 16px;
+  color: #333;
+  margin: 0 0 12px 0;
+  line-height: 1.6;
 }
 
 /* Details Modal Styles */

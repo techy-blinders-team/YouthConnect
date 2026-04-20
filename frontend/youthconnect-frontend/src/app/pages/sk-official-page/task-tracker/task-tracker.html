@@ -182,6 +182,60 @@
         </div>
     </div>
 
+    <!-- Edit Task Confirmation Modal -->
+    <div class="modal-overlay" *ngIf="isEditConfirmationModalOpen" (click)="closeEditConfirmationModal()">
+        <div class="modal-content modal-small" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <div>
+                    <h2 class="modal-title">Confirm Update</h2>
+                </div>
+                <button class="close-btn" (click)="closeEditConfirmationModal()">✕</button>
+            </div>
+
+            <div class="modal-body">
+                <p class="confirmation-text">
+                    Are you sure you want to update this task?
+                </p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" (click)="closeEditConfirmationModal()" [disabled]="isLoading">
+                    Cancel
+                </button>
+                <button type="button" class="btn-confirm-edit" (click)="confirmEditSubmission()" [disabled]="isLoading">
+                    {{ isLoading ? 'Updating...' : 'Update' }}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Task Confirmation Modal -->
+    <div class="modal-overlay" *ngIf="isDeleteConfirmationModalOpen" (click)="closeDeleteConfirmationModal()">
+        <div class="modal-content modal-small" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <div>
+                    <h2 class="modal-title">Confirm Delete</h2>
+                </div>
+                <button class="close-btn" (click)="closeDeleteConfirmationModal()">✕</button>
+            </div>
+
+            <div class="modal-body">
+                <p class="confirmation-text">
+                    Are you sure you want to permanently delete <strong>{{ pendingDeleteTaskTitle }}</strong>?
+                </p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" (click)="closeDeleteConfirmationModal()" [disabled]="isLoading">
+                    Cancel
+                </button>
+                <button type="button" class="btn-delete" (click)="confirmDeleteSubmission()" [disabled]="isLoading">
+                    {{ isLoading ? 'Deleting...' : 'Delete' }}
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Task Details Modal -->
     <div class="modal-overlay details-modal-overlay" *ngIf="isDetailsModalOpen && selectedTask" (click)="closeDetailsModal()">
         <div class="details-modal-content" (click)="$event.stopPropagation()">

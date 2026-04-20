@@ -58,6 +58,11 @@ export class TaskTracker implements OnInit {
   // Toast notifications
   notifications: { id: number; message: string; type: 'success' | 'error' }[] = [];
   private notificationCounter = 0;
+  isEditConfirmationModalOpen = false;
+  pendingEditPayload: any = null;
+  isDeleteConfirmationModalOpen = false;
+  pendingDeleteTaskId: number | null = null;
+  pendingDeleteTaskTitle: string = '';
 
   constructor() {
     const storedAdminId = localStorage.getItem('sk_official_id') || localStorage.getItem('adminId');
@@ -256,9 +261,96 @@ export class TaskTracker implements OnInit {
     });
   }
 
+  closeEditConfirmationModal(): void {
+    this.isEditConfirmationModalOpen = false;
+    this.pendingEditPayload = null;
+  }
+
+  confirmEditSubmission(): void {
+    if (!this.pendingEditPayload || !this.currentEditingTaskId) {
+      return;
+    }
+
+    this.isLoading = true;
+
+    const taskId = this.currentEditingTaskId;
+    const request = this.pendingEditPayload as TaskEditRequest;
+
+    this.taskService.editTask(taskId, request).subscribe({
+      next: (response) => {
+        const index = this.tasks.findIndex(t => t.taskId === taskId);
+        if (index !== -1) {
+          this.tasks[index] = response;
+          this.filteredTasks = this.tasks;
+        }
+        this.successMessage = '';
+        this.showNotification('Task updated successfully!');
+        this.isLoading = false;
+        this.closeEditConfirmationModal();
+        this.closeModal();
+      },
+      error: (error) => {
+        console.error('Error updating task:', error);
+        this.errorMessage = 'Failed to update task';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  closeDeleteConfirmationModal(): void {
+    this.isDeleteConfirmationModalOpen = false;
+    this.pendingDeleteTaskId = null;
+    this.pendingDeleteTaskTitle = '';
+  }
+
+  confirmDeleteSubmission(): void {
+    if (!this.pendingDeleteTaskId) {
+      return;
+    }
+
+    this.isLoading = true;
+
+    this.taskService.deleteTask(this.pendingDeleteTaskId).subscribe({
+      next: () => {
+        this.tasks = this.tasks.filter(t => t.taskId !== this.pendingDeleteTaskId);
+        this.filteredTasks = this.tasks;
+        this.successMessage = '';
+        this.showNotification('Task deleted successfully!');
+        this.isLoading = false;
+        this.closeDeleteConfirmationModal();
+        this.closeDetailsModal();
+      },
+      error: (error) => {
+        console.error('Error deleting task:', error);
+        this.errorMessage = 'Failed to delete task';
+        this.isLoading = false;
+      }
+    });
+  }
+
   saveTask() {
     if (this.isEditing) {
-      this.editTask();
+      // Show confirmation modal for edit
+      if (!this.currentEditingTaskId) {
+        this.errorMessage = 'Task ID not found';
+        return;
+      }
+
+      if (!this.formState.taskingType || !this.formState.taskDescription || !this.formState.skIncharge || !this.formState.status) {
+        this.errorMessage = 'Please fill in all required fields';
+        return;
+      }
+
+      const request: TaskEditRequest = {
+        tasking: this.formState.taskingType as Tasking,
+        taskDescription: this.formState.taskDescription,
+        skIncharge: this.formState.skIncharge,
+        hyperlink: this.formState.hyperlink || undefined,
+        dueDate: this.formState.dueDate || undefined,
+      };
+
+      this.pendingEditPayload = request;
+      this.isEditConfirmationModalOpen = true;
     } else {
       this.createTask();
     }
@@ -274,22 +366,12 @@ export class TaskTracker implements OnInit {
   }
 
   deleteTask(taskId: number) {
-    if (!confirm('Are you sure you want to delete this task?')) {
-      return;
+    const task = this.tasks.find(t => t.taskId === taskId);
+    if (task) {
+      this.pendingDeleteTaskId = taskId;
+      this.pendingDeleteTaskTitle = this.getTaskingDisplayName(task.tasking);
+      this.isDeleteConfirmationModalOpen = true;
     }
-
-    this.taskService.deleteTask(taskId).subscribe({
-      next: () => {
-        this.tasks = this.tasks.filter(t => t.taskId !== taskId);
-        this.filteredTasks = this.tasks;
-        this.successMessage = '';
-        this.showNotification('Task deleted successfully!');
-      },
-      error: (error) => {
-        console.error('Error deleting task:', error);
-        this.errorMessage = 'Failed to delete task';
-      }
-    });
   }
 
   updateTaskStatus(taskId: number, newStatus: string) {
