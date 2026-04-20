@@ -30,6 +30,8 @@ export class EventsComponent implements OnInit {
   skOfficialInitials = 'SK';
   notifications: { id: number; message: string; type: 'success' | 'error' }[] = [];
   private notificationCounter = 0;
+  isDeleteConfirmationModalOpen = false;
+  pendingDeleteEvent: EventResponse | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -282,20 +284,36 @@ export class EventsComponent implements OnInit {
     });
   }
 
-  deleteEvent(eventId: number) {
-    if (confirm('Are you sure you want to delete this event?')) {
-      this.eventService.deleteEvent(eventId).subscribe({
-        next: () => {
-          this.successMessage = '';
-          this.showNotification('Event deleted successfully!');
-          this.loadEvents();
-        },
-        error: (error) => {
-          console.error('Error deleting event:', error);
-          this.errorMessage = 'Failed to delete event';
-        }
-      });
+  deleteEvent(event: EventResponse) {
+    this.pendingDeleteEvent = event;
+    this.isDeleteConfirmationModalOpen = true;
+  }
+
+  closeDeleteConfirmationModal(): void {
+    this.isDeleteConfirmationModalOpen = false;
+    this.pendingDeleteEvent = null;
+  }
+
+  confirmDeleteSubmission(): void {
+    if (!this.pendingDeleteEvent) {
+      return;
     }
+
+    this.isLoading = true;
+
+    this.eventService.deleteEvent(this.pendingDeleteEvent.eventId).subscribe({
+      next: () => {
+        this.showNotification('Event deleted successfully!');
+        this.isLoading = false;
+        this.closeDeleteConfirmationModal();
+        this.loadEvents();
+      },
+      error: (error) => {
+        console.error('Error deleting event:', error);
+        this.errorMessage = 'Failed to delete event';
+        this.isLoading = false;
+      }
+    });
   }
 
   isEventOngoing(status?: string): boolean {
