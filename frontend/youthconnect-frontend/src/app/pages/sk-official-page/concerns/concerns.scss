@@ -40,7 +40,6 @@ html, body, :host, .concerns-container {
         h1 {
           font-size: 32px;
           font-weight: 700;
-          margin: 0;
           color: #333;
           letter-spacing: -0.5px;
         }
@@ -216,7 +215,7 @@ html, body, :host, .concerns-container {
 .card-header h3 {
   font-size: 1.3rem;
   font-weight: 700;
-  margin: 0;
+  margin-bottom: 10px;
   color: #111;
   line-height: 1.2;
   word-break: break-word;
@@ -310,7 +309,6 @@ html, body, :host, .concerns-container {
 
 .card-footer {
   padding: 12px 10px 14px;
-  border-top: 2px solid #cfcfcf;
   display: flex;
   gap: 0;
 }
@@ -653,7 +651,7 @@ html, body, :host, .concerns-container {
   gap: 16px;
   margin-bottom: 12px;
   padding-bottom: 12px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 2px solid #cfcfcf;
 }
 
 .header-info {
@@ -663,7 +661,6 @@ html, body, :host, .concerns-container {
   gap: 12px;
 
   h3 {
-    margin: 0;
     font-size: 16px;
     color: #333;
     font-weight: 600;

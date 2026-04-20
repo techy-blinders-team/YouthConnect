@@ -17,7 +17,9 @@ import com.youthconnect.youthconnect_id.models.Concern;
 import com.youthconnect.youthconnect_id.models.ConcernUpdate;
 import com.youthconnect.youthconnect_id.repositories.ConcernRepo;
 import com.youthconnect.youthconnect_id.repositories.ConcernUpdateRepo;
+import com.youthconnect.youthconnect_id.repositories.YouthProfileRepo;
 import com.youthconnect.youthconnect_id.services.ConcernService;
+import com.youthconnect.youthconnect_id.models.YouthProfile;
 
 @Service
 public class ConcernServiceImpl implements ConcernService {
@@ -28,11 +30,28 @@ public class ConcernServiceImpl implements ConcernService {
     @Autowired
     private ConcernUpdateRepo concernUpdateRepo;
 
+    @Autowired
+    private YouthProfileRepo youthProfileRepo;
+
     // ── Helper ────────────────────────────────────────────
     private ConcernResponse toResponse(Concern concern) {
         ConcernResponse response = new ConcernResponse();
         response.setConcernId(concern.getConcernId());
         response.setYouthId(concern.getYouthId());
+        
+        // Fetch youth name from YouthProfile
+        try {
+            YouthProfile youth = youthProfileRepo.findById(concern.getYouthId()).orElse(null);
+            if (youth != null) {
+                response.setYouthFirstName(youth.getFirstName());
+                response.setYouthLastName(youth.getLastName());
+            }
+        } catch (Exception e) {
+            // If youth not found, leave names as null
+            response.setYouthFirstName(null);
+            response.setYouthLastName(null);
+        }
+        
         response.setTypeOfConcern(concern.getTypeOfConcern());
         response.setTitle(concern.getTitle());
         response.setDescription(concern.getDescription());
