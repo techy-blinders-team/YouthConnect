@@ -49,13 +49,15 @@
 
             <div *ngFor="let concern of filteredConcerns" class="concern-card">
                 <div class="card-header">
-                    <div class="header-info-col">
+                    <div class="header-content">
                         <h3>{{ concern.title }}</h3>
-                        <span class="concern-type">{{ getConcernTypeDisplay(concern.typeOfConcern) }}</span>
+                        <div class="badges-group">
+                            <span class="concern-type">{{ getConcernTypeDisplay(concern.typeOfConcern) }}</span>
+                            <span class="status-badge" [ngClass]="'status-' + getStatusClass(concern.status)">
+                                {{ concern.status }}
+                            </span>
+                        </div>
                     </div>
-                    <span class="status-badge" [ngClass]="'status-' + getStatusClass(concern.status)">
-                        {{ concern.status }}
-                    </span>
                 </div>
                 <div class="card-body">
                     <p class="description">{{ concern.description }}</p>
