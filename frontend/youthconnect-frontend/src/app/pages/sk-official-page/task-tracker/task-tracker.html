@@ -1,4 +1,13 @@
 <div class="tasks-root">
+    <div class="notification-stack">
+        <div
+            *ngFor="let notification of notifications"
+            class="toast-notification"
+            [ngClass]="notification.type === 'success' ? 'toast-success' : 'toast-error'">
+            {{ notification.message }}
+        </div>
+    </div>
+
     <div class="tasks-container">
 
         <!-- Header Section -->
@@ -20,9 +29,6 @@
         </div>
 
         <!-- Success/Error Messages -->
-        <div *ngIf="successMessage" class="alert alert-success">
-            {{ successMessage }}
-        </div>
         <div *ngIf="errorMessage" class="alert alert-error">
             {{ errorMessage }}
         </div>
