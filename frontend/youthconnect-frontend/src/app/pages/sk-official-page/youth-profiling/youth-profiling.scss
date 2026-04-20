@@ -819,7 +819,7 @@ html, body, :host, .youth-profiling-container {
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   z-index: 1000;
   padding: 20px;
@@ -856,7 +856,7 @@ html, body, :host, .youth-profiling-container {
 }
 
 .modal-header {
-  padding: 16px 20px;
+  padding: 10px 20px;
   border-bottom: 1px solid #eee;
   display: flex;
   justify-content: space-between;
@@ -914,7 +914,6 @@ html, body, :host, .youth-profiling-container {
 
 .modal-footer {
   padding: 14px 20px;
-  border-top: 1px solid #eee;
   display: flex;
   gap: 12px;
   justify-content: flex-end;
@@ -1119,7 +1118,6 @@ html, body, :host, .youth-profiling-container {
 .confirmation-text {
   font-size: 16px;
   color: #333;
-  margin: 0 0 12px 0;
   line-height: 1.5;
 }
 
@@ -1128,6 +1126,61 @@ html, body, :host, .youth-profiling-container {
   color: #d32f2f;
   margin: 0;
   line-height: 1.5;
+}
+
+.confirmation-message {
+  font-size: 16px;
+  color: #333;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.btn-confirm-success {
+  padding: 10px 24px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #00a651;
+  background-color: #00a651;
+  color: white;
+  transition: all 0.2s;
+  font-family: 'Poppins', Arial, Helvetica, sans-serif;
+
+  &:hover {
+    background-color: #008844;
+    border-color: #008844;
+  }
+
+  &:disabled {
+    background-color: #b3d9b3;
+    border-color: #b3d9b3;
+    cursor: not-allowed;
+  }
+}
+
+.btn-confirm-edit {
+  padding: 10px 24px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #0052cc;
+  background-color: #0052cc;
+  color: white;
+  transition: all 0.2s;
+  font-family: 'Poppins', Arial, Helvetica, sans-serif;
+
+  &:hover {
+    background-color: #0041a3;
+    border-color: #0041a3;
+  }
+
+  &:disabled {
+    background-color: #a8c5f0;
+    border-color: #a8c5f0;
+    cursor: not-allowed;
+  }
 }
 
 @media (max-width: 768px) {

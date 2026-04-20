@@ -39,9 +39,11 @@ export class YouthProfiling implements OnInit {
   // Modal states
   isEditModalOpen = false;
   isDeactivateModalOpen = false;
+  isEditConfirmationModalOpen = false;
   selectedProfile: YouthMemberListItem | null = null;
   editForm!: FormGroup;
   isSubmitting = false;
+  pendingEditPayload: any = null;
 
   constructor(
     private youthMemberManagementService: YouthMemberManagementService,
@@ -611,13 +613,9 @@ export class YouthProfiling implements OnInit {
       return;
     }
 
-    this.isSubmitting = true;
-    this.errorMessage = '';
-    this.successMessage = '';
-
     const formValue = this.editForm.value;
 
-    const payload = {
+    this.pendingEditPayload = {
       firstName: formValue.firstName,
       middleName: formValue.middleName || null,
       lastName: formValue.lastName,
@@ -639,12 +637,23 @@ export class YouthProfiling implements OnInit {
       }
     };
 
-    this.youthMemberManagementService.updateYouthProfile(this.selectedProfile.youthId, payload).subscribe({
+    this.isEditConfirmationModalOpen = true;
+  }
+
+  confirmEditSubmission(): void {
+    if (!this.selectedProfile || !this.pendingEditPayload) {
+      return;
+    }
+
+    this.isSubmitting = true;
+    this.errorMessage = '';
+
+    this.youthMemberManagementService.updateYouthProfile(this.selectedProfile.youthId, this.pendingEditPayload).subscribe({
       next: () => {
-        this.successMessage = `Profile for ${this.selectedProfile?.firstName} ${this.selectedProfile?.lastName} has been updated successfully.`;
+        const fullName = `${this.selectedProfile?.firstName} ${this.selectedProfile?.lastName}`;
+        this.showNotification(`Profile for ${fullName} has been updated successfully!`);
         this.isSubmitting = false;
-        this.closeEditModal();
-        this.loadYouthProfiles();
+        this.closeEditConfirmationModal();
       },
       error: (error) => {
         console.error('Error updating profile:', error);
@@ -652,6 +661,13 @@ export class YouthProfiling implements OnInit {
         this.isSubmitting = false;
       }
     });
+  }
+
+  closeEditConfirmationModal(): void {
+    this.isEditConfirmationModalOpen = false;
+    this.pendingEditPayload = null;
+    this.closeEditModal();
+    this.loadYouthProfiles();
   }
 
   onDeactivate(profile: YouthMemberListItem): void {

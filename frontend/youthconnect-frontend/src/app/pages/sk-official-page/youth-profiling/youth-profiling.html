@@ -427,4 +427,31 @@
       </div>
     </div>
   </div>
+
+  <!-- Edit Confirmation Modal -->
+  <div class="modal-overlay" *ngIf="isEditConfirmationModalOpen" (click)="closeEditConfirmationModal()">
+    <div class="modal-content modal-small" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title">Confirm Changes</h2>
+        </div>
+        <button class="close-btn" (click)="closeEditConfirmationModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <p class="confirmation-text">
+          Are you sure you want to update the profile for <strong>{{ selectedProfile?.firstName }} {{ selectedProfile?.lastName }}</strong>?
+        </p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" (click)="closeEditConfirmationModal()" [disabled]="isSubmitting">
+          Cancel
+        </button>
+        <button type="button" class="btn-confirm-edit" (click)="confirmEditSubmission()" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Updating...' : 'Confirm' }}
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
