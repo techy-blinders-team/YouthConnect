@@ -62,10 +62,10 @@
                         </span>
                     </div>
                     <div class="card-actions">
-                        <button class="edit-btn" (click)="editEvent(event)" title="Edit event" [disabled]="isEventOngoing(event.status)">
+                        <button class="edit-btn" (click)="editEvent(event)" title="Edit event" [disabled]="isEditDisabled(event.status)">
                             <img src="../../assets/sk-official-events-icons/edit.svg" alt="Edit" width="18" height="18">
                         </button>
-                        <button class="delete-btn" (click)="deleteEvent(event.eventId)" title="Delete event" [disabled]="isEventOngoing(event.status)">
+                        <button class="delete-btn" (click)="deleteEvent(event)" title="Delete event" [disabled]="isEventOngoing(event.status)">
                             <img src="../../assets/sk-official-events-icons/delete.svg" alt="Delete" width="18" height="18">
                         </button>
                     </div>
@@ -176,6 +176,60 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Delete Event Confirmation Modal -->
+    <div class="modal-overlay" *ngIf="isDeleteConfirmationModalOpen" (click)="closeDeleteConfirmationModal()">
+        <div class="modal-content modal-small" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <div>
+                    <h2 class="modal-title">Confirm Delete</h2>
+                </div>
+                <button class="close-btn" (click)="closeDeleteConfirmationModal()">✕</button>
+            </div>
+
+            <div class="modal-body">
+                <p class="confirmation-text">
+                    Are you sure you want to permanently delete <strong>{{ pendingDeleteEvent?.title }}</strong>?
+                </p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" (click)="closeDeleteConfirmationModal()" [disabled]="isLoading">
+                    Cancel
+                </button>
+                <button type="button" class="btn-delete" (click)="confirmDeleteSubmission()" [disabled]="isLoading">
+                    {{ isLoading ? 'Deleting...' : 'Delete' }}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Event Confirmation Modal -->
+    <div class="modal-overlay" *ngIf="isEditConfirmationModalOpen" (click)="closeEditConfirmationModal()">
+        <div class="modal-content modal-small" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <div>
+                    <h2 class="modal-title">Confirm Update</h2>
+                </div>
+                <button class="close-btn" (click)="closeEditConfirmationModal()">✕</button>
+            </div>
+
+            <div class="modal-body">
+                <p class="confirmation-text">
+                    Are you sure you want to update <strong>{{ eventForm.get('eventTitle')?.value }}</strong>?
+                </p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" (click)="closeEditConfirmationModal()" [disabled]="isLoading">
+                    Cancel
+                </button>
+                <button type="button" class="btn-confirm-edit" (click)="confirmEditSubmission()" [disabled]="isLoading">
+                    {{ isLoading ? 'Updating...' : 'Update' }}
+                </button>
+            </div>
         </div>
     </div>
 </div>

@@ -30,6 +30,10 @@ export class EventsComponent implements OnInit {
   skOfficialInitials = 'SK';
   notifications: { id: number; message: string; type: 'success' | 'error' }[] = [];
   private notificationCounter = 0;
+  isDeleteConfirmationModalOpen = false;
+  pendingDeleteEvent: EventResponse | null = null;
+  isEditConfirmationModalOpen = false;
+  pendingEditPayload: any = null;
 
   constructor(
     private fb: FormBuilder,
@@ -184,7 +188,25 @@ export class EventsComponent implements OnInit {
 
   submitEvent() {
     if (this.editingEventId) {
-      this.saveEditedEvent();
+      // Show confirmation modal for edit
+      if (this.eventForm.invalid) {
+        this.errorMessage = 'Please fill in all required fields correctly';
+        return;
+      }
+
+      const formValue = this.eventForm.value;
+      const eventDate = new Date(formValue.dateTime).toISOString();
+
+      this.pendingEditPayload = {
+        title: formValue.eventTitle,
+        description: formValue.description,
+        eventDate: eventDate,
+        location: formValue.location,
+        createdByAdminId: this.currentAdminId,
+        status: 'Upcoming'
+      };
+
+      this.isEditConfirmationModalOpen = true;
     } else {
       this.createEvent();
     }
@@ -282,35 +304,86 @@ export class EventsComponent implements OnInit {
     });
   }
 
-  deleteEvent(eventId: number) {
-    if (confirm('Are you sure you want to delete this event?')) {
-      this.eventService.deleteEvent(eventId).subscribe({
-        next: () => {
-          this.successMessage = '';
-          this.showNotification('Event deleted successfully!');
-          this.loadEvents();
-        },
-        error: (error) => {
-          console.error('Error deleting event:', error);
-          this.errorMessage = 'Failed to delete event';
-        }
-      });
+  deleteEvent(event: EventResponse) {
+    this.pendingDeleteEvent = event;
+    this.isDeleteConfirmationModalOpen = true;
+  }
+
+  closeDeleteConfirmationModal(): void {
+    this.isDeleteConfirmationModalOpen = false;
+    this.pendingDeleteEvent = null;
+  }
+
+  confirmDeleteSubmission(): void {
+    if (!this.pendingDeleteEvent) {
+      return;
     }
+
+    this.isLoading = true;
+
+    this.eventService.deleteEvent(this.pendingDeleteEvent.eventId).subscribe({
+      next: () => {
+        this.showNotification('Event deleted successfully!');
+        this.isLoading = false;
+        this.closeDeleteConfirmationModal();
+        this.loadEvents();
+      },
+      error: (error) => {
+        console.error('Error deleting event:', error);
+        this.errorMessage = 'Failed to delete event';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  closeEditConfirmationModal(): void {
+    this.isEditConfirmationModalOpen = false;
+    this.pendingEditPayload = null;
+  }
+
+  confirmEditSubmission(): void {
+    if (!this.pendingEditPayload || !this.editingEventId) {
+      return;
+    }
+
+    this.isLoading = true;
+
+    this.eventService.editEvent(this.editingEventId, this.pendingEditPayload).subscribe({
+      next: () => {
+        this.showNotification('Event updated successfully!');
+        this.isLoading = false;
+        this.closeEditConfirmationModal();
+        this.eventForm.reset();
+        this.editingEventId = null;
+        this.loadEvents();
+        this.closeModal();
+      },
+      error: (error) => {
+        console.error('Error updating event:', error);
+        this.errorMessage = error.error?.message || 'Failed to update event. Please try again.';
+        this.isLoading = false;
+      }
+    });
   }
 
   isEventOngoing(status?: string): boolean {
     return (status || '').toLowerCase() === 'ongoing';
   }
 
+  isEditDisabled(status?: string): boolean {
+    const normalizedStatus = (status || '').toLowerCase();
+    return normalizedStatus === 'ongoing' || normalizedStatus === 'completed';
+  }
+
   getStatusActionLabel(status?: string): string {
     const normalizedStatus = (status || 'Upcoming').toLowerCase();
 
     if (normalizedStatus === 'upcoming') {
-      return 'Ongoing';
+      return 'Set as Ongoing';
     }
 
     if (normalizedStatus === 'ongoing') {
-      return 'Set as completed';
+      return 'Set as Completed';
     }
 
     return 'Completed';

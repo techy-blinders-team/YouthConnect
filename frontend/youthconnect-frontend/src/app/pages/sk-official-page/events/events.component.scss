@@ -438,6 +438,11 @@ html, body, :host, .events-container {
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   overflow: hidden;
   animation: slideIn 0.3s ease-out;
+
+  &.modal-small {
+    max-width: 400px;
+    max-height: auto;
+  }
 }
 
 @media (max-width: 600px) {
@@ -550,14 +555,16 @@ html, body, :host, .events-container {
 
 .modal-footer {
   padding: 14px 20px;
-  border-top: 1px solid #eee;
+  /* border-top: 1px solid #eee; */
   display: flex;
   gap: 12px;
   justify-content: flex-end;
 }
 
 .btn-cancel,
-.btn-create {
+.btn-create,
+.btn-delete,
+.btn-confirm-edit {
   padding: 10px 24px;
   border-radius: 4px;
   font-size: 14px;
@@ -591,7 +598,9 @@ html, body, :host, .events-container {
 }
 
 .btn-cancel:disabled,
-.btn-create:disabled {
+.btn-create:disabled,
+.btn-delete:disabled,
+.btn-confirm-edit:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
@@ -599,6 +608,57 @@ html, body, :host, .events-container {
 .btn-create:disabled:hover {
   background-color: #00a651;
   border-color: #00a651;
+}
+
+.btn-delete:disabled:hover {
+  background-color: #CE1127;
+  border-color: #CE1127;
+}
+
+.confirmation-text {
+  font-size: 16px;
+  color: #333;
+  margin: 0 0 12px 0;
+  line-height: 1.6;
+}
+
+.confirmation-warning {
+  font-size: 14px;
+  color: #d32f2f;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.btn-delete {
+  background-color: #CE1127;
+  color: white;
+  border-color: #CE1127;
+}
+
+.btn-delete:hover {
+  background-color: #a30d1f;
+  border-color: #a30d1f;
+}
+
+.btn-delete:hover {
+  background-color: #a30d1f;
+  border-color: #a30d1f;
+}
+
+.btn-confirm-edit {
+  background-color: #0052cc;
+  color: white;
+  border-color: #0052cc;
+}
+
+.btn-confirm-edit:hover {
+  background-color: #003fa0;
+  border-color: #003fa0;
+}
+
+.btn-confirm-edit:disabled:hover {
+  background-color: #0052cc;
+  border-color: #0052cc;
 }
 
 /* Alert Styles */
