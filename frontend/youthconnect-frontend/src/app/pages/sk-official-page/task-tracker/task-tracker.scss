@@ -653,7 +653,8 @@ select.form-input {
 
 .btn-cancel,
 .btn-create,
-.btn-confirm-edit {
+.btn-confirm-edit,
+.btn-delete {
   padding: 10px 24px;
   border-radius: 4px;
   font-size: 14px;
@@ -697,14 +698,38 @@ select.form-input {
   border-color: #003fa0;
 }
 
-.btn-confirm-edit:disabled {
+.btn-delete {
+  background-color: #CE1127;
+  color: white;
+  border-color: #CE1127;
+}
+
+.btn-delete:hover {
+  background-color: #a30d1f;
+  border-color: #a30d1f;
+}
+
+.btn-cancel:disabled,
+.btn-create:disabled,
+.btn-confirm-edit:disabled,
+.btn-delete:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.btn-create:disabled:hover {
+  background-color: #00a651;
+  border-color: #00a651;
 }
 
 .btn-confirm-edit:disabled:hover {
   background-color: #0052cc;
   border-color: #0052cc;
+}
+
+.btn-delete:disabled:hover {
+  background-color: #CE1127;
+  border-color: #CE1127;
 }
 
 .confirmation-text {
