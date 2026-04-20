@@ -819,7 +819,7 @@ html, body, :host, .youth-profiling-container {
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   z-index: 1000;
   padding: 20px;
@@ -856,7 +856,7 @@ html, body, :host, .youth-profiling-container {
 }
 
 .modal-header {
-  padding: 16px 20px;
+  padding: 10px 20px;
   border-bottom: 1px solid #eee;
   display: flex;
   justify-content: space-between;
@@ -914,7 +914,6 @@ html, body, :host, .youth-profiling-container {
 
 .modal-footer {
   padding: 14px 20px;
-  border-top: 1px solid #eee;
   display: flex;
   gap: 12px;
   justify-content: flex-end;
@@ -1119,7 +1118,6 @@ html, body, :host, .youth-profiling-container {
 .confirmation-text {
   font-size: 16px;
   color: #333;
-  margin: 0 0 12px 0;
   line-height: 1.5;
 }
 
@@ -1128,6 +1126,85 @@ html, body, :host, .youth-profiling-container {
   color: #d32f2f;
   margin: 0;
   line-height: 1.5;
+}
+
+.confirmation-message {
+  font-size: 16px;
+  color: #333;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.btn-confirm-success {
+  padding: 10px 24px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #00a651;
+  background-color: #00a651;
+  color: white;
+  transition: all 0.2s;
+  font-family: 'Poppins', Arial, Helvetica, sans-serif;
+
+  &:hover {
+    background-color: #008844;
+    border-color: #008844;
+  }
+
+  &:disabled {
+    background-color: #b3d9b3;
+    border-color: #b3d9b3;
+    cursor: not-allowed;
+  }
+}
+
+.btn-confirm-edit {
+  padding: 10px 24px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #0052cc;
+  background-color: #0052cc;
+  color: white;
+  transition: all 0.2s;
+  font-family: 'Poppins', Arial, Helvetica, sans-serif;
+
+  &:hover {
+    background-color: #0041a3;
+    border-color: #0041a3;
+  }
+
+  &:disabled {
+    background-color: #a8c5f0;
+    border-color: #a8c5f0;
+    cursor: not-allowed;
+  }
+}
+
+.btn-confirm-deactivate {
+  padding: 10px 24px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #CE1127;
+  background-color: #CE1127;
+  color: white;
+  transition: all 0.2s;
+  font-family: 'Poppins', Arial, Helvetica, sans-serif;
+
+  &:hover {
+    background-color: #a30d1f;
+    border-color: #a30d1f;
+  }
+
+  &:disabled {
+    background-color: #d9a8b3;
+    border-color: #d9a8b3;
+    cursor: not-allowed;
+  }
 }
 
 @media (max-width: 768px) {
@@ -1147,5 +1224,50 @@ html, body, :host, .youth-profiling-container {
 
   .close-btn {
     align-self: flex-end;
+  }
+}
+
+// Toast notifications
+.notification-stack {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 10px;
+  z-index: 1200;
+  width: min(360px, calc(100vw - 32px));
+  pointer-events: none;
+}
+
+.toast-notification {
+  padding: 12px 14px;
+  font-size: 14px;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  animation: toastSlideIn 0.25s ease-out;
+  pointer-events: auto;
+}
+
+.toast-success {
+  background-color: #e8f6ec;
+  color: #1f6f3a;
+  border: 1px solid #b8e2c4;
+}
+
+.toast-error {
+  background-color: #fdecee;
+  color: #8f1d2c;
+  border: 1px solid #f4c2c8;
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) translateX(0);
   }
 }

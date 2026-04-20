@@ -1,4 +1,13 @@
 <div class="profiling-root">
+  <div class="notification-stack">
+    <div
+        *ngFor="let notification of notifications"
+        class="toast-notification"
+        [ngClass]="notification.type === 'success' ? 'toast-success' : 'toast-error'">
+        {{ notification.message }}
+    </div>
+  </div>
+
   <div class="youth-profiling-container">
     <!-- Header Section -->
     <div class="header-section">
@@ -384,36 +393,54 @@
   </div>
 
   <!-- Deactivate Confirmation Modal -->
-  <div class="modal-overlay" *ngIf="isDeactivateModalOpen" (click)="closeDeactivateModal()">
+  <div class="modal-overlay" *ngIf="isDeactivateConfirmationModalOpen" (click)="closeDeactivateConfirmationModal()">
     <div class="modal-content modal-small" (click)="$event.stopPropagation()">
       <div class="modal-header">
         <div>
-          <h2 class="modal-title">Deactivate Profile</h2>
-          <p class="modal-subtitle">Confirm deactivation</p>
+          <h2 class="modal-title">Confirm Deactivation</h2>
         </div>
-        <button class="close-btn" (click)="closeDeactivateModal()">✕</button>
-      </div>
-
-      <!-- Modal Error Message -->
-      <div *ngIf="errorMessage" class="modal-alert alert-error">
-        {{ errorMessage }}
+        <button class="close-btn" (click)="closeDeactivateConfirmationModal()">✕</button>
       </div>
 
       <div class="modal-body">
         <p class="confirmation-text">
           Are you sure you want to deactivate the profile for <strong>{{ selectedProfile?.firstName }} {{ selectedProfile?.lastName }}</strong>?
         </p>
-        <p class="confirmation-warning">
-          This action will mark the profile as inactive but will not delete the data.
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" (click)="closeDeactivateConfirmationModal()" [disabled]="isSubmitting">
+          Cancel
+        </button>
+        <button type="button" class="btn-confirm-deactivate" (click)="confirmDeactivateSubmission()" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Deactivating...' : 'Confirm' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Confirmation Modal -->
+  <div class="modal-overlay" *ngIf="isEditConfirmationModalOpen" (click)="closeEditConfirmationModal()">
+    <div class="modal-content modal-small" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title">Confirm Changes</h2>
+        </div>
+        <button class="close-btn" (click)="closeEditConfirmationModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <p class="confirmation-text">
+          Are you sure you want to update the profile for <strong>{{ selectedProfile?.firstName }} {{ selectedProfile?.lastName }}</strong>?
         </p>
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn-cancel" (click)="closeDeactivateModal()" [disabled]="isSubmitting">
+        <button type="button" class="btn-cancel" (click)="closeEditConfirmationModal()" [disabled]="isSubmitting">
           Cancel
         </button>
-        <button type="button" class="btn-delete" (click)="confirmDeactivate()" [disabled]="isSubmitting">
-          {{ isSubmitting ? 'Deactivating...' : 'Deactivate' }}
+        <button type="button" class="btn-confirm-edit" (click)="confirmEditSubmission()" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Updating...' : 'Confirm' }}
         </button>
       </div>
     </div>
