@@ -17,6 +17,41 @@ html, body, :host, .tasks-container {
   max-height: 100dvh;
   overflow: hidden;
 
+  .notification-stack {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 1200;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 10px;
+    width: min(360px, calc(100vw - 32px));
+    pointer-events: none;
+  }
+
+  .toast-notification {
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+    border: 1px solid transparent;
+    animation: toastSlideIn 0.25s ease-out;
+    word-break: break-word;
+  }
+
+  .toast-success {
+    background-color: #e8f6ec;
+    color: #1f6f3a;
+    border-color: #b8e2c4;
+  }
+
+  .toast-error {
+    background-color: #fdecee;
+    color: #8f1d2c;
+    border-color: #f4c2c8;
+  }
+
   .tasks-container {
     padding: 30px;
     background-color: #f2f2f2;
@@ -484,6 +519,18 @@ html, body, :host, .tasks-container {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) translateX(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) translateX(0);
   }
 }
 

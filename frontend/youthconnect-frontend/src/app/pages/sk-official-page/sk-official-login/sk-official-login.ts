@@ -70,63 +70,65 @@ export class SkOfficialLogin {
       password: password
     };
 
+    const minDisplayTime = new Promise(resolve => setTimeout(resolve, 1000));
+
     this.skOfficialAuthService.login(skOfficialData).subscribe({
       next: (response: any) => {
-        this.isLoading = false;
+        minDisplayTime.then(() => {
+          this.isLoading = false;
 
-        if (response.success) {
-          console.log('SK Official login successful');
-          this.loginForm.reset();
+          if (response.success) {
+            console.log('SK Official login successful');
+            this.loginForm.reset();
 
-          // Store token and role for SK Official
-          if (response.token) {
-            localStorage.setItem('auth_token', response.token);
-          }
-          localStorage.setItem('auth_role', 'sk-official');
-          const adminId = response.adminId ?? response.skOfficialId;
-          if (adminId) {
-            localStorage.setItem('sk_official_id', adminId.toString());
-            localStorage.setItem('adminId', adminId.toString());
-          }
-          if (response.email) {
-            localStorage.setItem('sk_official_email', response.email);
-          }
-          if (response.firstName || response.lastName) {
-            const fullName = `${response.firstName ?? ''} ${response.lastName ?? ''}`.trim();
-            localStorage.setItem('sk_official_name', fullName || 'SK Official');
-          }
+            if (response.token) {
+              localStorage.setItem('auth_token', response.token);
+            }
+            localStorage.setItem('auth_role', 'sk-official');
+            const adminId = response.adminId ?? response.skOfficialId;
+            if (adminId) {
+              localStorage.setItem('sk_official_id', adminId.toString());
+              localStorage.setItem('adminId', adminId.toString());
+            }
+            if (response.email) {
+              localStorage.setItem('sk_official_email', response.email);
+            }
+            if (response.firstName || response.lastName) {
+              const fullName = `${response.firstName ?? ''} ${response.lastName ?? ''}`.trim();
+              localStorage.setItem('sk_official_name', fullName || 'SK Official');
+            }
 
-          // Redirect to SK Official dashboard
-          this.router.navigate(['/sk-official/dashboard']);
-        } else {
-          this.errorMessage = response.message ?? 'Login failed. Please try again.';
-        }
+            this.router.navigate(['/sk-official/dashboard']);
+          } else {
+            this.errorMessage = response.message ?? 'Login failed. Please try again.';
+          }
+        });
       },
       error: (err: HttpErrorResponse) => {
-        this.isLoading = false;
+        minDisplayTime.then(() => {
+          this.isLoading = false;
 
-        // Try to get the message from the backend response
-        if (err.error && err.error.message) {
-          this.errorMessage = err.error.message;
-        } else {
-          // Fallback to generic messages based on status code
-          switch (err.status) {
-            case 401:
-              this.errorMessage = 'Invalid email or password.';
-              break;
-            case 403:
-              this.errorMessage = "You don't have permission to access this.";
-              break;
-            case 404:
-              this.errorMessage = 'Account not found.';
-              break;
-            case 500:
-              this.errorMessage = 'Server error. Please try again later.';
-              break;
-            default:
-              this.errorMessage = 'Login failed. Please check your connection.';
+          if (err.error && err.error.message) {
+            this.errorMessage = err.error.message;
+          } else {
+            switch (err.status) {
+              case 401:
+                this.errorMessage = 'Invalid email or password.';
+                break;
+              case 403:
+                this.errorMessage = "You don't have permission to access this.";
+                break;
+              case 404:
+                this.errorMessage = 'Account not found.';
+                break;
+              case 500:
+                this.errorMessage = 'Server error. Please try again later.';
+                break;
+              default:
+                this.errorMessage = 'Login failed. Please check your connection.';
+            }
           }
-        }
+        });
       }
     });
   }

@@ -81,4 +81,13 @@
             </form>
         </div>
     </div>
+
+    @if (isLoading) {
+        <div class="modal-overlay">
+            <div class="modal-content">
+                <div class="spinner"></div>
+                <h3 class="modal-title">Logging in...</h3>
+            </div>
+        </div>
+    }
 </div>

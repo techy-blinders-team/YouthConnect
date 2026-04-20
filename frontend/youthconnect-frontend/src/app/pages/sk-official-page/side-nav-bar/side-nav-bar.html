@@ -11,6 +11,15 @@
 		<li><a routerLink="/sk-official/youth-profiling" routerLinkActive="active"><img src="../../assets/sk-official-side-bar-icons/youth-profiling.svg" alt="Youth Profiling Icon" class="sidebar-icon">Youth Profiling</a></li>
 	</ul>
 	<div class="logout-section">
-		<button (click)="logout()" class="logout-btn"><span class="logout-text">Logout</span></button>
+		<button (click)="logout()" [disabled]="isLoggingOut" class="logout-btn"><span class="logout-text">Logout</span></button>
 	</div>
 </div>
+
+@if (isLoggingOut) {
+	<div class="modal-overlay">
+		<div class="modal-content">
+			<div class="spinner"></div>
+			<h3 class="modal-title">Logging out...</h3>
+		</div>
+	</div>
+}

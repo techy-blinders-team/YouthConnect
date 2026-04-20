@@ -55,6 +55,10 @@ export class TaskTracker implements OnInit {
   taskingOptions = Object.values(Tasking);
   taskStatusOptions = Object.values(TaskStatus);
 
+  // Toast notifications
+  notifications: { id: number; message: string; type: 'success' | 'error' }[] = [];
+  private notificationCounter = 0;
+
   constructor() {
     const storedAdminId = localStorage.getItem('sk_official_id') || localStorage.getItem('adminId');
     this.currentAdminId = storedAdminId ? parseInt(storedAdminId, 10) : 0;
@@ -202,8 +206,8 @@ export class TaskTracker implements OnInit {
       next: (response) => {
         this.tasks.push(response);
         this.filteredTasks = this.tasks;
-        this.successMessage = 'Task created successfully';
-        setTimeout(() => this.successMessage = '', 3000);
+        this.successMessage = '';
+        this.showNotification('Task created successfully!');
         this.closeModal();
         this.loadTasks();
       },
@@ -241,8 +245,8 @@ export class TaskTracker implements OnInit {
           this.tasks[index] = response;
           this.filteredTasks = this.tasks;
         }
-        this.successMessage = 'Task updated successfully';
-        setTimeout(() => this.successMessage = '', 3000);
+        this.successMessage = '';
+        this.showNotification('Task updated successfully!');
         this.closeModal();
       },
       error: (error) => {
@@ -260,6 +264,15 @@ export class TaskTracker implements OnInit {
     }
   }
 
+  private showNotification(message: string, type: 'success' | 'error' = 'success'): void {
+    const id = ++this.notificationCounter;
+    this.notifications = [...this.notifications, { id, message, type }];
+
+    setTimeout(() => {
+      this.notifications = this.notifications.filter(notification => notification.id !== id);
+    }, 3000);
+  }
+
   deleteTask(taskId: number) {
     if (!confirm('Are you sure you want to delete this task?')) {
       return;
@@ -269,8 +282,8 @@ export class TaskTracker implements OnInit {
       next: () => {
         this.tasks = this.tasks.filter(t => t.taskId !== taskId);
         this.filteredTasks = this.tasks;
-        this.successMessage = 'Task deleted successfully';
-        setTimeout(() => this.successMessage = '', 3000);
+        this.successMessage = '';
+        this.showNotification('Task deleted successfully!');
       },
       error: (error) => {
         console.error('Error deleting task:', error);

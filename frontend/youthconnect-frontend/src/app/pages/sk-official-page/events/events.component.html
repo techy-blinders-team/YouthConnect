@@ -1,4 +1,13 @@
 <div class="events-root">
+    <div class="notification-stack">
+        <div
+            *ngFor="let notification of notifications"
+            class="toast-notification"
+            [ngClass]="notification.type === 'success' ? 'toast-success' : 'toast-error'">
+            {{ notification.message }}
+        </div>
+    </div>
+
     <div class="events-container">
         <!-- Header Section -->
         <div class="header-section">
@@ -19,9 +28,6 @@
         </div>
 
         <!-- Success/Error Messages -->
-        <div *ngIf="successMessage" class="alert alert-success">
-            {{ successMessage }}
-        </div>
         <div *ngIf="errorMessage && !isModalOpen" class="alert alert-error">
             {{ errorMessage }}
         </div>
@@ -104,11 +110,6 @@
             <!-- Modal Error Message -->
             <div *ngIf="errorMessage" class="modal-alert alert-error">
                 {{ errorMessage }}
-            </div>
-
-            <!-- Modal Success Message -->
-            <div *ngIf="successMessage" class="modal-alert alert-success">
-                {{ successMessage }}
             </div>
 
             <form [formGroup]="eventForm">
