@@ -216,6 +216,10 @@ export class Concerns implements OnInit {
       minute: '2-digit'
     });
   }
+
+  canSendResponse(status: string): boolean {
+    return status !== 'CLOSED';
+  }
 }
 
 

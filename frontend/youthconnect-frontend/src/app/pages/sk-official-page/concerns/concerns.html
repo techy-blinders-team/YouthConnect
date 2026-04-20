@@ -73,7 +73,11 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <button class="action-btn response-btn" (click)="openResponseModal(concern)">
+                    <button 
+                        class="action-btn response-btn" 
+                        (click)="openResponseModal(concern)"
+                        [disabled]="!canSendResponse(concern.status)"
+                        [title]="concern.status === 'CLOSED' ? 'This concern is closed and cannot be modified' : 'Send a response to this concern'">
                         Send Response
                     </button>
                 </div>
@@ -112,12 +116,19 @@
                     
                     <div class="form-group">
                         <label for="status" class="form-label">Update Status<span class="required">*</span></label>
-                        <select id="status" class="form-input" formControlName="status">
+                        <select 
+                            id="status" 
+                            class="form-input" 
+                            formControlName="status"
+                            [disabled]="selectedConcern?.status === 'CLOSED'">
                             <option value="OPEN">Open</option>
                             <option value="IN_PROGRESS">In Progress</option>
                             <option value="RESOLVED">Resolved</option>
                             <option value="CLOSED">Closed</option>
                         </select>
+                        <p *ngIf="selectedConcern?.status === 'CLOSED'" class="form-note closed-note">
+                            This concern is closed and cannot be modified.
+                        </p>
                     </div>
 
                     <div class="form-group">
@@ -139,7 +150,11 @@
                     <button type="button" class="btn-cancel" (click)="closeResponseModal()" [disabled]="isLoading">
                         Cancel
                     </button>
-                    <button type="button" class="btn-create" (click)="sendResponse()" [disabled]="responseForm.invalid || isLoading">
+                    <button 
+                        type="button" 
+                        class="btn-create" 
+                        (click)="sendResponse()" 
+                        [disabled]="responseForm.invalid || isLoading || selectedConcern?.status === 'CLOSED'">
                         {{ isLoading ? 'Sending...' : 'Send Response' }}
                     </button>
                 </div>

@@ -711,3 +711,53 @@ html, body, :host, .concerns-container {
     border-top: 1px solid #eee;
   }
 }
+
+/* ── Disabled State Styles ────────────────────────────────────────── */
+button:disabled,
+.form-input:disabled,
+select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: #f5f5f5 !important;
+  color: #999 !important;
+}
+
+.response-btn:disabled {
+  background-color: #ccc !important;
+  filter: none;
+
+  &:hover {
+    filter: none;
+  }
+}
+
+.btn-create:disabled {
+  background-color: #ccc !important;
+  border-color: #ccc !important;
+  filter: none;
+
+  &:hover {
+    filter: none;
+  }
+}
+
+.form-input:disabled,
+select:disabled {
+  border-color: #ddd;
+}
+
+/* ── Closed Concern Note ────────────────────────────────────────── */
+.form-note {
+  font-size: 12px;
+  margin-top: 6px;
+  display: block;
+}
+
+.closed-note {
+  color: #d32f2f;
+  font-weight: 500;
+  background-color: #ffebee;
+  padding: 8px 12px;
+  border-radius: 4px;
+  border-left: 3px solid #d32f2f;
+}
