@@ -16,9 +16,6 @@
     </div>
 
     <form [formGroup]="registrationForm" (ngSubmit)="register()" class="registration-form">
-      @if (errorMessage) {
-        <div class="error-message">{{ errorMessage }}</div>
-      }
 
       <!-- Step 1: Youth Profile -->
       @if (currentStep === 1) {
@@ -84,8 +81,8 @@
             <select formControlName="gender" class="form-input">
               <option value="">Select Gender</option>
               <option value="MALE">Male</option>
-            <option value="FEMALE">Female</option>
-          </select>
+              <option value="FEMALE">Female</option>
+            </select>
             @if (genderControl?.touched) {
               @if (genderControl?.errors?.['required']) {
                 <span class="error-text">Gender is required</span>
@@ -384,14 +381,10 @@
           }
         </div>
 
-        @if (successMessage) {
-          <div class="success-message">{{ successMessage }}</div>
-        }
-
         <div class="form-buttons">
           <button type="button" (click)="prevStep()" class="btn-secondary">Previous</button>
-          <button type="submit" [disabled]="isLoading" class="btn-primary">
-            {{ isLoading ? 'Registering...' : 'Register' }}
+          <button type="submit" [disabled]="isLoading()" class="btn-primary">
+            {{ isLoading() ? 'Registering...' : 'Register' }}
           </button>
         </div>
       }
@@ -401,4 +394,25 @@
       Already have an account? <a routerLink="/login">Login</a>
     </div>
   </div>
+
+  @if (successModalOpen()) {
+    <div class="modal-backdrop"></div>
+    <div class="success-modal">
+      <div class="modal-content">
+        <div class="spinner"></div>
+        <h2>Registering Account</h2>
+        <p>Please wait while we create your account</p>
+      </div>
+    </div>
+  }
+
+  @if (errorModalOpen() && errorMessage()) {
+    <div class="popup-overlay" (click)="closeErrorModal()">
+      <div class="popup warning" (click)="$event.stopPropagation()">
+        <h2>⚠️ Registration Failed</h2>
+        <p>{{ errorMessage() }}</p>
+        <button (click)="closeErrorModal()" class="error-close-btn">Try Again</button>
+      </div>
+    </div>
+  }
 </div>

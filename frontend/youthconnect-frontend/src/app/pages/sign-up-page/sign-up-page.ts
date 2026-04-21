@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AbstractControl, ValidationErrors } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -56,11 +56,14 @@ export class SignUpPage {
 
   registrationForm: FormGroup;
   currentStep = 1;
-  isLoading = false;
-  errorMessage = '';
-  successMessage = '';
   showPassword = false;
   showConfirmPassword = false;
+
+  // Signal-based state management
+  successModalOpen = signal(false);
+  errorModalOpen = signal(false);
+  errorMessage = signal('');
+  isLoading = signal(false);
 
   constructor() {
     this.registrationForm = this.formBuilder.group(
@@ -149,54 +152,70 @@ export class SignUpPage {
     );
   }
 
-nextStep(): void {
-  const fields = STEP_FIELDS[this.currentStep];
-  const hasInvalidField = fields.some(field => {
-    const control = this.registrationForm.get(field);
-    control?.markAsTouched();
-    control?.updateValueAndValidity(); 
-    return control?.invalid;
-  });
-
-  if (hasInvalidField) {
-    console.log('Step', this.currentStep, 'has invalid fields');
-    fields.forEach(field => {
+  /**
+   * Move to next step with validation
+   */
+  nextStep(): void {
+    const fields = STEP_FIELDS[this.currentStep];
+    const hasInvalidField = fields.some(field => {
       const control = this.registrationForm.get(field);
-      if (control?.invalid) {
-        console.log(`  - ${field} is invalid:`, control.errors);
-      }
+      control?.markAsTouched();
+      control?.updateValueAndValidity();
+      return control?.invalid;
     });
-    return;
-  }
 
-  if (this.currentStep < 3) {
-    this.currentStep++;
-    this.errorMessage = '';
-    this.successMessage = '';
-  }
-}
+    if (hasInvalidField) {
+      console.log('Step', this.currentStep, 'has invalid fields');
+      fields.forEach(field => {
+        const control = this.registrationForm.get(field);
+        if (control?.invalid) {
+          console.log(`  - ${field} is invalid:`, control.errors);
+        }
+      });
+      return;
+    }
 
-  prevStep(): void {
-    if (this.currentStep > 1) {
-      this.currentStep--;
-      this.errorMessage = '';
-      this.successMessage = '';
+    if (this.currentStep < 3) {
+      this.currentStep++;
+      this.errorMessage.set('');
     }
   }
 
+  /**
+   * Move to previous step
+   */
+  prevStep(): void {
+    if (this.currentStep > 1) {
+      this.currentStep--;
+      this.errorMessage.set('');
+    }
+  }
+
+  /**
+   * Toggle password visibility
+   */
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
   }
 
+  /**
+   * Toggle confirm password visibility
+   */
   toggleConfirmPasswordVisibility(): void {
     this.showConfirmPassword = !this.showConfirmPassword;
   }
 
+  /**
+   * Check if voting status is selected
+   */
   isVotingStatusSelected(status: string): boolean {
     const selectedStatuses = this.votingStatusControl?.value as string[] | null;
     return Array.isArray(selectedStatuses) && selectedStatuses.includes(status);
   }
 
+  /**
+   * Handle voting status change
+   */
   onVotingStatusChange(event: Event, status: string): void {
     const isChecked = (event.target as HTMLInputElement).checked;
     const selectedStatuses = [...((this.votingStatusControl?.value as string[] | null) ?? [])];
@@ -218,25 +237,30 @@ nextStep(): void {
     this.votingStatusControl?.updateValueAndValidity();
   }
 
+  /**
+   * Cancel registration and navigate to login
+   */
   cancel(): void {
     this.registrationForm.reset();
     this.currentStep = 1;
-    this.errorMessage = '';
-    this.successMessage = '';
+    this.errorMessage.set('');
     this.showPassword = false;
     this.showConfirmPassword = false;
     this.router.navigate(['/login']);
   }
 
+  /**
+   * Handle registration submission
+   */
   register(): void {
     if (this.registrationForm.invalid) {
       this.registrationForm.markAllAsTouched();
       return;
     }
 
-    this.isLoading = true;
-    this.errorMessage = '';
-    this.successMessage = '';
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+    this.successModalOpen.set(true);
 
     const formValue = this.registrationForm.value;
     const votingStatus = Array.isArray(formValue.votingStatus) ? formValue.votingStatus : [];
@@ -265,46 +289,82 @@ nextStep(): void {
 
     this.authService.register(registrationData).subscribe({
       next: (res) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
+        this.successModalOpen.set(false);
 
         if (res.success) {
-          this.successMessage = 'Registration successful! Redirecting to login...';
           console.log('Registration successful:', res);
           this.registrationForm.reset();
           this.showPassword = false;
           this.showConfirmPassword = false;
+          this.currentStep = 1;
 
+          // Redirect to login after delay
           setTimeout(() => {
             this.router.navigate(['/login']);
           }, 1500);
         } else {
-          this.errorMessage = res.message ?? 'Registration failed. Please try again.';
+          // Show error modal for unsuccessful registration
+          this.errorMessage.set(res.message ?? 'Registration failed. Please try again.');
+          this.errorModalOpen.set(true);
         }
       },
       error: (err: HttpErrorResponse) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
+        this.successModalOpen.set(false);
 
-        switch (err.status) {
-          case 400:
-            this.errorMessage = err.error?.message || 'Invalid registration data. Please check your inputs.';
-            break;
-          case 409:
-            this.errorMessage = 'Email already exists. Please use a different email.';
-            break;
-          case 422:
-            this.errorMessage = 'Validation error. Please check your form data.';
-            break;
-          case 500:
-            this.errorMessage = 'Server error. Please try again later.';
-            break;
-          default:
-            this.errorMessage = err.error?.message || 'Registration failed. Please check your connection.';
-        }
+        // Determine error message based on status code
+        const errorMsg = this.getErrorMessage(err);
+        this.errorMessage.set(errorMsg);
+        this.errorModalOpen.set(true);
 
         console.error('Registration error:', err);
       }
     });
   }
+
+  /**
+   * Determine error message based on HTTP error response
+   */
+  private getErrorMessage(err: HttpErrorResponse): string {
+    if (err.error && err.error.message) {
+      return err.error.message;
+    }
+
+    switch (err.status) {
+      case 400:
+        return err.error?.message || 'Invalid registration data. Please check your inputs.';
+      case 409:
+        return 'Email already exists. Please use a different email.';
+      case 422:
+        return 'Validation error. Please check your form data.';
+      case 500:
+      case 502:
+      case 503:
+        return 'Server error. Please try again later.';
+      case 0:
+        return 'Network error. Please check your internet connection.';
+      default:
+        return err.error?.message || 'Registration failed. Please check your connection.';
+    }
+  }
+
+  /**
+   * Close error modal
+   */
+  closeErrorModal(): void {
+    this.errorModalOpen.set(false);
+    this.errorMessage.set('');
+  }
+
+  /**
+   * Close success modal
+   */
+  closeSuccessModal(): void {
+    this.successModalOpen.set(false);
+  }
+
+  // ==================== Form Control Getters ====================
 
   // Step 1 — Youth Profile Getters
   get firstNameControl() {
@@ -380,6 +440,7 @@ nextStep(): void {
   get confirmPasswordControl() {
     return this.registrationForm.get('confirmPassword');
   }
+
 
   get passwordCriteria(): PasswordCriterion[] {
     const passwordValue = (this.passwordControl?.value ?? '') as string;
