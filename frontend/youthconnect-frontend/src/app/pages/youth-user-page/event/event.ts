@@ -186,12 +186,16 @@ export class EventPage implements OnInit {
         return event.status === 'Ongoing';
     }
 
+    isEventCompleted(event: EventResponse): boolean {
+        return event.status === 'Completed';
+    }
+
     canRsvp(event: EventResponse): boolean {
-        return !this.isEventOngoing(event) && !this.isRsvped(event.eventId);
+        return !this.isEventOngoing(event) && !this.isEventCompleted(event) && !this.isRsvped(event.eventId);
     }
 
     rsvpEvent(event: EventResponse): void {
-        if (this.isRsvped(event.eventId) || this.isEventOngoing(event)) {
+        if (this.isRsvped(event.eventId) || this.isEventOngoing(event) || this.isEventCompleted(event)) {
             return;
         }
 

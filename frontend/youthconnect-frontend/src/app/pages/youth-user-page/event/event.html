@@ -98,9 +98,10 @@
                     </div>
                 </div>
                 <button class="btn-rsvp" [class.confirmed]="isRsvped(event.eventId)" 
-                    [class.ongoing]="isEventOngoing(event)" (click)="rsvpEvent(event)"
+                    [class.ongoing]="isEventOngoing(event)" [class.completed]="isEventCompleted(event)" 
+                    (click)="rsvpEvent(event)"
                     [disabled]="isLoading || !canRsvp(event)">
-                    {{ isEventOngoing(event) ? 'Ongoing' : (isRsvped(event.eventId) ? 'Confirmed' : 'RSVP') }}
+                    {{ isEventCompleted(event) ? 'Completed' : (isEventOngoing(event) ? 'Ongoing' : (isRsvped(event.eventId) ? 'Confirmed' : 'RSVP')) }}
                 </button>
             </div>
 
