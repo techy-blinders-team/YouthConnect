@@ -23,7 +23,7 @@ export class YouthProfiling implements OnInit {
   errorMessage: string = '';
   successMessage: string = '';
   isApprovalPanelOpen = false;
-  approvalFilter: 'pending' | 'approved' | 'all' = 'pending';
+  approvalFilter: 'pending' | 'approved' | 'rejected' | 'all' = 'pending';
   approvalMessage: string = '';
   approvalError: string = '';
   updatingApprovalUserId: number | null = null;
@@ -45,6 +45,9 @@ export class YouthProfiling implements OnInit {
   editForm!: FormGroup;
   isSubmitting = false;
   pendingEditPayload: any = null;
+  
+  // Rejection tracking
+  private rejectedUserIds = new Set<number>();
 
   constructor(
     private youthMemberManagementService: YouthMemberManagementService,
@@ -210,7 +213,11 @@ export class YouthProfiling implements OnInit {
       }
 
       if (this.approvalFilter === 'pending') {
-        return profile.isApprove !== true;
+        return profile.isApprove === null;
+      }
+
+      if (this.approvalFilter === 'rejected') {
+        return this.rejectedUserIds.has(profile.userId);
       }
 
       return true;
@@ -233,7 +240,7 @@ export class YouthProfiling implements OnInit {
     this.approvalMessage = '';
   }
 
-  setApprovalFilter(filter: 'pending' | 'approved' | 'all'): void {
+  setApprovalFilter(filter: 'pending' | 'approved' | 'rejected' | 'all'): void {
     this.approvalFilter = filter;
   }
 
@@ -306,6 +313,72 @@ export class YouthProfiling implements OnInit {
         this.updatingApprovalUserId = null;
       }
     });
+  }
+
+  setRegistrationRejection(profile: YouthMemberListItem): void {
+    const accountData = this.userAccountByUserId.get(profile.userId);
+
+    if (!profile.userId || !accountData) {
+      this.approvalError = 'Unable to update rejection status for this account due to incomplete account data.';
+      this.approvalMessage = '';
+      return;
+    }
+
+    this.updatingApprovalUserId = profile.userId;
+    this.approvalError = '';
+    this.approvalMessage = '';
+
+    // Add user ID to rejected set
+    this.rejectedUserIds.add(profile.userId);
+
+    // Update user account with rejected status
+    this.youthMemberManagementService.updateUser(profile.userId, {
+      email: accountData.email,
+      roleId: accountData.roleId,
+      active: false,
+      isApprove: false
+    }).subscribe({
+      next: (updatedUser) => {
+        const updatedIsActive = updatedUser.isActive ?? updatedUser.active ?? false;
+
+        this.userAccountByUserId.set(updatedUser.userId, {
+          email: updatedUser.email,
+          roleId: updatedUser.roleId,
+          isActive: updatedIsActive,
+          isApprove: updatedUser.isApprove
+        });
+
+        this.youthProfiles = this.youthProfiles.map((item) =>
+          item.userId === updatedUser.userId
+            ? {
+                ...item,
+                isApprove: updatedUser.isApprove,
+                isActive: updatedIsActive,
+                email: updatedUser.email
+              }
+            : item
+        );
+
+        const fullName = `${profile.firstName} ${profile.lastName}`.trim();
+        this.approvalMessage = `${fullName} has been rejected and marked as inactive.`;
+        this.updatingApprovalUserId = null;
+      },
+      error: (error) => {
+        console.error('Error rejecting registration:', error);
+        this.approvalError = 'Failed to reject registration. Please try again.';
+        this.rejectedUserIds.delete(profile.userId);
+        this.updatingApprovalUserId = null;
+      }
+    });
+  }
+
+  setRegistrationApprovalFromRejected(profile: YouthMemberListItem): void {
+    this.rejectedUserIds.delete(profile.userId);
+    this.setRegistrationApproval(profile, true);
+  }
+
+  isUserRejected(userId: number): boolean {
+    return this.rejectedUserIds.has(userId);
   }
 
   exportToPDF(): void {
