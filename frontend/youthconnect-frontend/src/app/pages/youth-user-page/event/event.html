@@ -97,9 +97,11 @@
                         </span>
                     </div>
                 </div>
-                <button class="btn-rsvp" [class.confirmed]="isRsvped(event.eventId)" (click)="rsvpEvent(event)"
-                    [disabled]="isLoading || isRsvped(event.eventId)">
-                    {{ isRsvped(event.eventId) ? 'Confirmed' : 'RSVP' }}
+                <button class="btn-rsvp" [class.confirmed]="isRsvped(event.eventId)" 
+                    [class.ongoing]="isEventOngoing(event)" [class.completed]="isEventCompleted(event)" 
+                    (click)="rsvpEvent(event)"
+                    [disabled]="isLoading || !canRsvp(event)">
+                    {{ isEventCompleted(event) ? 'Completed' : (isEventOngoing(event) ? 'Ongoing' : (isRsvped(event.eventId) ? 'Confirmed' : 'RSVP')) }}
                 </button>
             </div>
 

@@ -12,6 +12,7 @@ public class EventResponse {
     private String status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private long rsvpCount;
 
     public int getEventId() {
         return eventId; 
@@ -66,5 +67,11 @@ public class EventResponse {
     }
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt; 
+    }
+    public long getRsvpCount() {
+        return rsvpCount;
+    }
+    public void setRsvpCount(long rsvpCount) {
+        this.rsvpCount = rsvpCount;
     }
 }

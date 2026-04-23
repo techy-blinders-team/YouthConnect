@@ -549,6 +549,16 @@
         &.confirmed {
             font-weight: 600;
         }
+
+        &.ongoing {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        &.completed {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
     }
 }
 

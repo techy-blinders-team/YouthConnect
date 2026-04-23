@@ -38,6 +38,7 @@ export class EventPage implements OnInit {
         { value: 'Upcoming', label: 'Upcoming' },
         { value: 'Open for Registration', label: 'Open' },
         { value: 'Registration Closed', label: 'Closed' },
+        { value: 'Ongoing', label: 'Ongoing' },
         { value: 'Completed', label: 'Completed' }
     ];
 
@@ -181,8 +182,20 @@ export class EventPage implements OnInit {
         return this.rsvpedEventIds.has(eventId);
     }
 
+    isEventOngoing(event: EventResponse): boolean {
+        return event.status === 'Ongoing';
+    }
+
+    isEventCompleted(event: EventResponse): boolean {
+        return event.status === 'Completed';
+    }
+
+    canRsvp(event: EventResponse): boolean {
+        return !this.isEventOngoing(event) && !this.isEventCompleted(event) && !this.isRsvped(event.eventId);
+    }
+
     rsvpEvent(event: EventResponse): void {
-        if (this.isRsvped(event.eventId)) {
+        if (this.isRsvped(event.eventId) || this.isEventOngoing(event) || this.isEventCompleted(event)) {
             return;
         }
 

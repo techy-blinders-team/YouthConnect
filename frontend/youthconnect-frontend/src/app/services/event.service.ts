@@ -17,6 +17,7 @@ export interface EventResponse {
     status: string;
     createdAt: string;
     updatedAt?: string;
+    rsvpCount: number;
 }
 
 export interface AttendanceResponse {
