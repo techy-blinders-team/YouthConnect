@@ -359,8 +359,6 @@ export class YouthProfiling implements OnInit {
 
         this.filteredProfiles = this.filteredProfiles.filter((item) => item.userId !== updatedUser.userId);
 
-        const fullName = `${profile.firstName} ${profile.lastName}`.trim();
-        this.approvalMessage = `${fullName} has been rejected and remains pending (is_approve = 0).`;
         this.updatingApprovalUserId = null;
       },
       error: (error) => {
