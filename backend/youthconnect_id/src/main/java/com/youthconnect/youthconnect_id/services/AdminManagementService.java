@@ -26,6 +26,7 @@ public interface AdminManagementService {
     User updateUser(int userId, AdminUserUpdateRequest request);
     void deleteUser(int userId);
     User approveUser(int userId);
+    User rejectUser(int userId);
     User deactivateUser(int userId);
 
     // Youth Profile

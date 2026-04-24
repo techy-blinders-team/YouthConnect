@@ -1,5 +1,7 @@
 package com.youthconnect.youthconnect_id.controllers;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,10 +57,10 @@ public class AdminUserManagementController {
     public ResponseEntity<?> deleteUser(@PathVariable int userId) {
         try {
             adminManagementService.deleteUser(userId);
-            return ResponseEntity.ok("User deleted successfully");
+            return ResponseEntity.ok(Map.of("message", "User deleted successfully"));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Failed: " + e.getMessage()));
         }
     }
 
@@ -68,7 +70,17 @@ public class AdminUserManagementController {
             return ResponseEntity.ok(adminManagementService.approveUser(userId));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "Failed: " + e.getMessage()));
+        }
+    }
+
+    @PutMapping("/{userId}/reject")
+    public ResponseEntity<?> rejectUser(@PathVariable int userId) {
+        try {
+            return ResponseEntity.ok(adminManagementService.rejectUser(userId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "Failed: " + e.getMessage()));
         }
     }
 

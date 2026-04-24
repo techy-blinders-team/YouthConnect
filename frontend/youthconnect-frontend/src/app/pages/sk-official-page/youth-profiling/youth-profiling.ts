@@ -23,7 +23,7 @@ export class YouthProfiling implements OnInit {
   errorMessage: string = '';
   successMessage: string = '';
   isApprovalPanelOpen = false;
-  approvalFilter: 'pending' | 'approved' | 'rejected' | 'all' = 'pending';
+  approvalFilter: 'pending' | 'approved' | 'all' = 'pending';
   approvalMessage: string = '';
   approvalError: string = '';
   updatingApprovalUserId: number | null = null;
@@ -45,9 +45,6 @@ export class YouthProfiling implements OnInit {
   editForm!: FormGroup;
   isSubmitting = false;
   pendingEditPayload: any = null;
-  
-  // Rejection tracking
-  private rejectedUserIds = new Set<number>();
 
   constructor(
     private youthMemberManagementService: YouthMemberManagementService,
@@ -178,7 +175,9 @@ export class YouthProfiling implements OnInit {
           } : undefined
           };
         });
-        this.filteredProfiles = [...this.youthProfiles];
+
+        // Only show approved profiles in the main table
+        this.filteredProfiles = this.youthProfiles.filter(profile => profile.isApprove === true);
         this.isLoading = false;
       },
       error: (error) => {
@@ -191,19 +190,23 @@ export class YouthProfiling implements OnInit {
 
   onSearch(): void {
     if (!this.searchQuery.trim()) {
-      this.filteredProfiles = [...this.youthProfiles];
+      // Only show approved profiles in the main table
+      this.filteredProfiles = this.youthProfiles.filter(profile => profile.isApprove === true);
       return;
     }
 
     const query = this.searchQuery.toLowerCase();
-    this.filteredProfiles = this.youthProfiles.filter(profile =>
-      profile.firstName.toLowerCase().includes(query) ||
-      profile.lastName.toLowerCase().includes(query) ||
-      (profile.middleName && profile.middleName.toLowerCase().includes(query)) ||
-      profile.contactNumber.toLowerCase().includes(query) ||
-      (profile.completeAddress && profile.completeAddress.toLowerCase().includes(query)) ||
-      profile.civilStatus.toLowerCase().includes(query)
-    );
+    // Filter to only search within approved profiles
+    this.filteredProfiles = this.youthProfiles
+      .filter(profile => profile.isApprove === true)
+      .filter(profile =>
+        profile.firstName.toLowerCase().includes(query) ||
+        profile.lastName.toLowerCase().includes(query) ||
+        (profile.middleName && profile.middleName.toLowerCase().includes(query)) ||
+        profile.contactNumber.toLowerCase().includes(query) ||
+        (profile.completeAddress && profile.completeAddress.toLowerCase().includes(query)) ||
+        profile.civilStatus.toLowerCase().includes(query)
+      );
   }
 
   get approvalProfiles(): YouthMemberListItem[] {
@@ -213,11 +216,7 @@ export class YouthProfiling implements OnInit {
       }
 
       if (this.approvalFilter === 'pending') {
-        return profile.isApprove === null;
-      }
-
-      if (this.approvalFilter === 'rejected') {
-        return this.rejectedUserIds.has(profile.userId);
+        return profile.isApprove !== true;
       }
 
       return true;
@@ -240,7 +239,7 @@ export class YouthProfiling implements OnInit {
     this.approvalMessage = '';
   }
 
-  setApprovalFilter(filter: 'pending' | 'approved' | 'rejected' | 'all'): void {
+  setApprovalFilter(filter: 'pending' | 'approved' | 'all'): void {
     this.approvalFilter = filter;
   }
 
@@ -288,18 +287,29 @@ export class YouthProfiling implements OnInit {
             : item
         );
 
-        this.filteredProfiles = this.searchQuery.trim()
-          ? this.filteredProfiles.map((item) =>
-              item.userId === updatedUser.userId
-                ? {
-                    ...item,
-                    isApprove: updatedUser.isApprove,
-                    isActive: updatedIsActive,
-                    email: updatedUser.email
-                  }
-                : item
-            )
-          : [...this.youthProfiles];
+        this.filteredProfiles = updatedUser.isApprove === true
+          ? [
+              ...this.filteredProfiles.filter((item) => item.userId !== updatedUser.userId),
+              {
+                userId: updatedUser.userId,
+                youthId: profile.youthId,
+                firstName: profile.firstName,
+                lastName: profile.lastName,
+                email: updatedUser.email,
+                gender: profile.gender,
+                birthday: profile.birthday,
+                contactNumber: profile.contactNumber,
+                civilStatus: profile.civilStatus,
+                isActive: updatedIsActive,
+                isApprove: updatedUser.isApprove,
+                createdAt: profile.createdAt,
+                middleName: profile.middleName,
+                suffix: profile.suffix,
+                completeAddress: profile.completeAddress,
+                youthClassification: profile.youthClassification
+              }
+            ]
+          : this.filteredProfiles.filter((item) => item.userId !== updatedUser.userId);
 
         const fullName = `${profile.firstName} ${profile.lastName}`.trim();
         this.approvalMessage = approve
@@ -315,11 +325,9 @@ export class YouthProfiling implements OnInit {
     });
   }
 
-  setRegistrationRejection(profile: YouthMemberListItem): void {
-    const accountData = this.userAccountByUserId.get(profile.userId);
-
-    if (!profile.userId || !accountData) {
-      this.approvalError = 'Unable to update rejection status for this account due to incomplete account data.';
+  rejectRegistration(profile: YouthMemberListItem): void {
+    if (!profile.userId) {
+      this.approvalError = 'Unable to reject registration for this account due to missing user ID.';
       this.approvalMessage = '';
       return;
     }
@@ -328,16 +336,7 @@ export class YouthProfiling implements OnInit {
     this.approvalError = '';
     this.approvalMessage = '';
 
-    // Add user ID to rejected set
-    this.rejectedUserIds.add(profile.userId);
-
-    // Update user account with rejected status
-    this.youthMemberManagementService.updateUser(profile.userId, {
-      email: accountData.email,
-      roleId: accountData.roleId,
-      active: false,
-      isApprove: false
-    }).subscribe({
+    this.youthMemberManagementService.rejectUser(profile.userId).subscribe({
       next: (updatedUser) => {
         const updatedIsActive = updatedUser.isActive ?? updatedUser.active ?? false;
 
@@ -359,26 +358,18 @@ export class YouthProfiling implements OnInit {
             : item
         );
 
+        this.filteredProfiles = this.filteredProfiles.filter((item) => item.userId !== updatedUser.userId);
+
         const fullName = `${profile.firstName} ${profile.lastName}`.trim();
-        this.approvalMessage = `${fullName} has been rejected and marked as inactive.`;
+        this.approvalMessage = `${fullName} has been rejected and remains pending (is_approve = 0).`;
         this.updatingApprovalUserId = null;
       },
       error: (error) => {
         console.error('Error rejecting registration:', error);
         this.approvalError = 'Failed to reject registration. Please try again.';
-        this.rejectedUserIds.delete(profile.userId);
         this.updatingApprovalUserId = null;
       }
     });
-  }
-
-  setRegistrationApprovalFromRejected(profile: YouthMemberListItem): void {
-    this.rejectedUserIds.delete(profile.userId);
-    this.setRegistrationApproval(profile, true);
-  }
-
-  isUserRejected(userId: number): boolean {
-    return this.rejectedUserIds.has(userId);
   }
 
   exportToPDF(): void {

@@ -165,13 +165,6 @@
       <button
         type="button"
         class="filter-chip"
-        [class.active]="approvalFilter === 'rejected'"
-        (click)="setApprovalFilter('rejected')">
-        Rejected
-      </button>
-      <button
-        type="button"
-        class="filter-chip"
         [class.active]="approvalFilter === 'all'"
         (click)="setApprovalFilter('all')">
         All
@@ -190,8 +183,8 @@
       <article class="approval-card" *ngFor="let profile of approvalProfiles">
         <div class="approval-card-head">
           <h3>{{ profile.firstName }} {{ profile.lastName }}</h3>
-          <span class="approval-status" [class.pending]="!isUserRejected(profile.userId) && profile.isApprove !== true" [class.approved]="profile.isApprove === true" [class.rejected]="isUserRejected(profile.userId)">
-            {{ isUserRejected(profile.userId) ? 'Rejected' : (profile.isApprove === true ? 'Approved' : 'Pending') }}
+          <span class="approval-status" [class.pending]="profile.isApprove !== true" [class.approved]="profile.isApprove === true">
+            {{ profile.isApprove === true ? 'Approved' : 'Pending' }}
           </span>
         </div>
 
@@ -200,7 +193,7 @@
 
         <div class="approval-actions">
           <button
-            *ngIf="isUserRejected(profile.userId)"
+            *ngIf="profile.isApprove !== true"
             type="button"
             class="btn-approve"
             [disabled]="updatingApprovalUserId === profile.userId"
@@ -208,11 +201,11 @@
             {{ updatingApprovalUserId === profile.userId ? 'Approving...' : 'Approve Login' }}
           </button>
           <button
-            *ngIf="!isUserRejected(profile.userId)"
+            *ngIf="profile.isApprove !== true"
             type="button"
             class="btn-reject"
             [disabled]="updatingApprovalUserId === profile.userId"
-            (click)="setRegistrationRejection(profile)">
+            (click)="rejectRegistration(profile)">
             {{ updatingApprovalUserId === profile.userId ? 'Rejecting...' : 'Reject' }}
           </button>
         </div>
