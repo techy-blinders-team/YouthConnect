@@ -193,18 +193,20 @@
 
         <div class="approval-actions">
           <button
+            *ngIf="profile.isApprove !== true"
             type="button"
             class="btn-approve"
-            [disabled]="profile.isApprove === true || updatingApprovalUserId === profile.userId"
+            [disabled]="updatingApprovalUserId === profile.userId"
             (click)="setRegistrationApproval(profile, true)">
-            {{ updatingApprovalUserId === profile.userId && profile.isApprove !== true ? 'Updating...' : 'Approve Login' }}
+            {{ updatingApprovalUserId === profile.userId ? 'Approving...' : 'Approve Login' }}
           </button>
           <button
+            *ngIf="profile.isApprove !== true"
             type="button"
-            class="btn-pending"
-            [disabled]="profile.isApprove !== true || updatingApprovalUserId === profile.userId"
-            (click)="setRegistrationApproval(profile, false)">
-            {{ updatingApprovalUserId === profile.userId && profile.isApprove === true ? 'Updating...' : 'Set Pending' }}
+            class="btn-reject"
+            [disabled]="updatingApprovalUserId === profile.userId"
+            (click)="rejectRegistration(profile)">
+            {{ updatingApprovalUserId === profile.userId ? 'Rejecting...' : 'Reject' }}
           </button>
         </div>
       </article>

@@ -175,7 +175,8 @@ export class YouthProfiling implements OnInit {
           } : undefined
           };
         });
-        this.filteredProfiles = [...this.youthProfiles];
+
+        this.filteredProfiles = this.youthProfiles.filter(profile => profile.isApprove === true && profile.isActive === true);
         this.isLoading = false;
       },
       error: (error) => {
@@ -188,19 +189,23 @@ export class YouthProfiling implements OnInit {
 
   onSearch(): void {
     if (!this.searchQuery.trim()) {
-      this.filteredProfiles = [...this.youthProfiles];
+      // Only show approved AND active profiles in the main table
+      this.filteredProfiles = this.youthProfiles.filter(profile => profile.isApprove === true && profile.isActive === true);
       return;
     }
 
     const query = this.searchQuery.toLowerCase();
-    this.filteredProfiles = this.youthProfiles.filter(profile =>
-      profile.firstName.toLowerCase().includes(query) ||
-      profile.lastName.toLowerCase().includes(query) ||
-      (profile.middleName && profile.middleName.toLowerCase().includes(query)) ||
-      profile.contactNumber.toLowerCase().includes(query) ||
-      (profile.completeAddress && profile.completeAddress.toLowerCase().includes(query)) ||
-      profile.civilStatus.toLowerCase().includes(query)
-    );
+    // Filter to only search within approved AND active profiles
+    this.filteredProfiles = this.youthProfiles
+      .filter(profile => profile.isApprove === true && profile.isActive === true)
+      .filter(profile =>
+        profile.firstName.toLowerCase().includes(query) ||
+        profile.lastName.toLowerCase().includes(query) ||
+        (profile.middleName && profile.middleName.toLowerCase().includes(query)) ||
+        profile.contactNumber.toLowerCase().includes(query) ||
+        (profile.completeAddress && profile.completeAddress.toLowerCase().includes(query)) ||
+        profile.civilStatus.toLowerCase().includes(query)
+      );
   }
 
   get approvalProfiles(): YouthMemberListItem[] {
@@ -281,18 +286,29 @@ export class YouthProfiling implements OnInit {
             : item
         );
 
-        this.filteredProfiles = this.searchQuery.trim()
-          ? this.filteredProfiles.map((item) =>
-              item.userId === updatedUser.userId
-                ? {
-                    ...item,
-                    isApprove: updatedUser.isApprove,
-                    isActive: updatedIsActive,
-                    email: updatedUser.email
-                  }
-                : item
-            )
-          : [...this.youthProfiles];
+        this.filteredProfiles = updatedUser.isApprove === true && updatedIsActive === true
+          ? [
+              ...this.filteredProfiles.filter((item) => item.userId !== updatedUser.userId),
+              {
+                userId: updatedUser.userId,
+                youthId: profile.youthId,
+                firstName: profile.firstName,
+                lastName: profile.lastName,
+                email: updatedUser.email,
+                gender: profile.gender,
+                birthday: profile.birthday,
+                contactNumber: profile.contactNumber,
+                civilStatus: profile.civilStatus,
+                isActive: updatedIsActive,
+                isApprove: updatedUser.isApprove,
+                createdAt: profile.createdAt,
+                middleName: profile.middleName,
+                suffix: profile.suffix,
+                completeAddress: profile.completeAddress,
+                youthClassification: profile.youthClassification
+              }
+            ]
+          : this.filteredProfiles.filter((item) => item.userId !== updatedUser.userId);
 
         const fullName = `${profile.firstName} ${profile.lastName}`.trim();
         this.approvalMessage = approve
@@ -303,6 +319,51 @@ export class YouthProfiling implements OnInit {
       error: (error) => {
         console.error('Error updating approval status:', error);
         this.approvalError = 'Failed to update registration approval status. Please try again.';
+        this.updatingApprovalUserId = null;
+      }
+    });
+  }
+
+  rejectRegistration(profile: YouthMemberListItem): void {
+    if (!profile.userId) {
+      this.approvalError = 'Unable to reject registration for this account due to missing user ID.';
+      this.approvalMessage = '';
+      return;
+    }
+
+    this.updatingApprovalUserId = profile.userId;
+    this.approvalError = '';
+    this.approvalMessage = '';
+
+    this.youthMemberManagementService.rejectUser(profile.userId).subscribe({
+      next: (updatedUser) => {
+        const updatedIsActive = updatedUser.isActive ?? updatedUser.active ?? false;
+
+        this.userAccountByUserId.set(updatedUser.userId, {
+          email: updatedUser.email,
+          roleId: updatedUser.roleId,
+          isActive: updatedIsActive,
+          isApprove: updatedUser.isApprove
+        });
+
+        this.youthProfiles = this.youthProfiles.map((item) =>
+          item.userId === updatedUser.userId
+            ? {
+                ...item,
+                isApprove: updatedUser.isApprove,
+                isActive: updatedIsActive,
+                email: updatedUser.email
+              }
+            : item
+        );
+
+        this.filteredProfiles = this.filteredProfiles.filter((item) => item.userId !== updatedUser.userId);
+
+        this.updatingApprovalUserId = null;
+      },
+      error: (error) => {
+        console.error('Error rejecting registration:', error);
+        this.approvalError = 'Failed to reject registration. Please try again.';
         this.updatingApprovalUserId = null;
       }
     });

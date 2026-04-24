@@ -393,6 +393,20 @@ html, body, :host, .youth-profiling-container {
   }
 }
 
+.btn-reject {
+  background: #dc2626;
+  color: #fff;
+
+  &:hover:not(:disabled) {
+    background: #b91c1c;
+  }
+
+  &:disabled {
+    background: #fca5a5;
+    cursor: not-allowed;
+  }
+}
+
 .approval-empty-state {
   flex: 1;
   display: flex;

@@ -112,7 +112,7 @@ public class UserServiceImpl implements UserService {
         user.setRoleId(1); // Default role for youth
         user.setEmail(request.getEmail());
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
-        user.setActive(true);
+        user.setActive(false); // Inactive until approved
         user.setCreatedAt(LocalDateTime.now());
         user.setIsApprove(false); // Pending approval
 
@@ -143,14 +143,14 @@ public class UserServiceImpl implements UserService {
             return new LoginResponse(false, "Invalid email or password");
         }
 
-        // Check if user is active
-        if (!user.isActive()) {
-            return new LoginResponse(false, "Account is inactive. Please contact administrator.");
-        }
-
         // Check if user is approved
         if (user.getIsApprove() == null || !user.getIsApprove()) {
             return new LoginResponse(false, "Account is pending approval. Please wait for administrator approval.");
+        }
+
+        // Check if user is active
+        if (!user.isActive()) {
+            return new LoginResponse(false, "Account is inactive. Please contact administrator.");
         }
 
         // Generate JWT token

@@ -120,6 +120,14 @@ export class YouthMemberManagementService {
     return this.http.put<YouthUserAccount>(`/api/administrator/users/${userId}/deactivate`, {});
   }
 
+  rejectUser(userId: number): Observable<YouthUserAccount> {
+    return this.http.put<YouthUserAccount>(`/api/administrator/users/${userId}/reject`, {});
+  }
+
+  deleteUser(userId: number): Observable<{ message: string } | string> {
+    return this.http.delete<{ message: string } | string>(`/api/administrator/users/${userId}`);
+  }
+
   updateYouthProfile(youthId: number, payload: UpdateYouthProfilePayload): Observable<YouthProfileAccount> {
     return this.http.put<YouthProfileAccount>(`/api/administrator/youth-profiles/${youthId}`, payload);
   }

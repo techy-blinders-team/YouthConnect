@@ -194,6 +194,8 @@ public class AdminManagementServiceImpl implements AdminManagementService {
 
         if (Boolean.TRUE.equals(user.getIsApprove())) {
             user.setActive(true);
+        } else if (Boolean.FALSE.equals(user.getIsApprove())) {
+            user.setActive(false);
         }
 
         return userRepo.save(user);
@@ -218,6 +220,16 @@ public class AdminManagementServiceImpl implements AdminManagementService {
 
     @Override
     @Transactional
+    public User rejectUser(int userId) {
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setIsApprove(false);
+        user.setActive(false);
+        return userRepo.save(user);
+    }
+
+    @Override
+    @Transactional
     public User deactivateUser(int userId) {
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -228,19 +240,19 @@ public class AdminManagementServiceImpl implements AdminManagementService {
     // ── Youth Profile ─────────────────────────────────────
     @Override
     public List<YouthProfile> getAllYouthProfiles() {
-        return youthProfileRepo.findAllActiveProfiles();
+        return youthProfileRepo.findAll();
     }
 
     @Override
     public YouthProfile getYouthProfileById(int youthId) {
-        return youthProfileRepo.findActiveByYouthId(youthId)
+        return youthProfileRepo.findById(youthId)
                 .orElseThrow(() -> new RuntimeException("Youth profile not found"));
     }
 
     @Override
     @Transactional
     public YouthProfile updateYouthProfile(int youthId, AdminYouthProfileUpdateRequest request) {
-        YouthProfile profile = youthProfileRepo.findActiveByYouthId(youthId)
+        YouthProfile profile = youthProfileRepo.findById(youthId)
                 .orElseThrow(() -> new RuntimeException("Youth profile not found"));
         profile.setFirstName(request.getFirstName());
         profile.setMiddleName(request.getMiddleName());
