@@ -176,8 +176,7 @@ export class YouthProfiling implements OnInit {
           };
         });
 
-        // Only show approved profiles in the main table
-        this.filteredProfiles = this.youthProfiles.filter(profile => profile.isApprove === true);
+        this.filteredProfiles = this.youthProfiles.filter(profile => profile.isApprove === true && profile.isActive === true);
         this.isLoading = false;
       },
       error: (error) => {
@@ -190,15 +189,15 @@ export class YouthProfiling implements OnInit {
 
   onSearch(): void {
     if (!this.searchQuery.trim()) {
-      // Only show approved profiles in the main table
-      this.filteredProfiles = this.youthProfiles.filter(profile => profile.isApprove === true);
+      // Only show approved AND active profiles in the main table
+      this.filteredProfiles = this.youthProfiles.filter(profile => profile.isApprove === true && profile.isActive === true);
       return;
     }
 
     const query = this.searchQuery.toLowerCase();
-    // Filter to only search within approved profiles
+    // Filter to only search within approved AND active profiles
     this.filteredProfiles = this.youthProfiles
-      .filter(profile => profile.isApprove === true)
+      .filter(profile => profile.isApprove === true && profile.isActive === true)
       .filter(profile =>
         profile.firstName.toLowerCase().includes(query) ||
         profile.lastName.toLowerCase().includes(query) ||
@@ -287,7 +286,7 @@ export class YouthProfiling implements OnInit {
             : item
         );
 
-        this.filteredProfiles = updatedUser.isApprove === true
+        this.filteredProfiles = updatedUser.isApprove === true && updatedIsActive === true
           ? [
               ...this.filteredProfiles.filter((item) => item.userId !== updatedUser.userId),
               {
