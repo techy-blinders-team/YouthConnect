@@ -415,4 +415,14 @@
       </div>
     </div>
   }
+
+  @if (accountReviewModalOpen()) {
+    <div class="modal-overlay"></div>
+    <div class="modal-content account-review-modal">
+      <h2 class="modal-title">Account Registration Successful!</h2>
+      <p class="modal-message">Your account has been created successfully. Your account will now be reviewed and approved by the administrator or SK officials.</p>
+      <p class="modal-subtitle">You will receive an email notification once your account is approved. Thank you for joining YouthConnect!</p>
+      <button (click)="closeAccountReviewModal()" class="modal-button">Okay</button>
+    </div>
+  }
 </div>

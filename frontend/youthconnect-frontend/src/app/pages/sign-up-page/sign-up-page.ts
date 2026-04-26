@@ -62,6 +62,7 @@ export class SignUpPage {
   // Signal-based state management
   successModalOpen = signal(false);
   errorModalOpen = signal(false);
+  accountReviewModalOpen = signal(false);
   errorMessage = signal('');
   isLoading = signal(false);
 
@@ -299,10 +300,8 @@ export class SignUpPage {
           this.showConfirmPassword = false;
           this.currentStep = 1;
 
-          // Redirect to login after delay
-          setTimeout(() => {
-            this.router.navigate(['/login']);
-          }, 1500);
+          // Show account review modal
+          this.accountReviewModalOpen.set(true);
         } else {
           // Show error modal for unsuccessful registration
           this.errorMessage.set(res.message ?? 'Registration failed. Please try again.');
@@ -362,6 +361,11 @@ export class SignUpPage {
    */
   closeSuccessModal(): void {
     this.successModalOpen.set(false);
+  }
+
+  closeAccountReviewModal(): void {
+    this.accountReviewModalOpen.set(false);
+    this.router.navigate(['/login']);
   }
 
   // ==================== Form Control Getters ====================
