@@ -360,6 +360,10 @@ export class TaskTracker implements OnInit {
     });
   }
 
+  setAsInProgress(taskId: number) {
+    this.updateTaskStatus(taskId, 'IN_PROGRESS');
+  }
+
   getTaskingDisplayName(tasking: string): string {
     return tasking.replace(/_/g, ' ');
   }

@@ -382,10 +382,9 @@ html, body, :host, .tasks-container {
   padding: 12px 10px 14px;
 }
 
-.btn-mark-done {
+.btn-task-action {
   flex: 1;
   padding: 10px 12px;
-  background-color: #0b6d38;
   color: white;
   border: none;
   border-radius: 8px;
@@ -396,15 +395,33 @@ html, body, :host, .tasks-container {
   font-family: 'Poppins', Arial, Helvetica, sans-serif;
   line-height: 1;
 
-  &:hover:not(:disabled) {
+  &:hover {
     filter: brightness(1.06);
   }
 
-  &:disabled {
-    background-color: #d2d2d2cc;
-    color: #585858;
-    cursor: not-allowed;
+  &.btn-in-progress {
+    background-color: #0d43aa;
   }
+
+  &.btn-mark-done {
+    background-color: #0b6d38;
+  }
+}
+
+.task-done-badge {
+  flex: 1;
+  padding: 10px 12px;
+  background-color: #d2d2d2cc;
+  color: #585858;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+  font-family: 'Poppins', Arial, Helvetica, sans-serif;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 // Header info column (tasking type and description label)

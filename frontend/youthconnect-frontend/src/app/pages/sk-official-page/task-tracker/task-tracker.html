@@ -81,10 +81,13 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <button class="btn-mark-done" (click)="updateTaskStatus(task.taskId, 'DONE'); $event.stopPropagation()" 
-                            [disabled]="task.status === 'DONE'">
-                        {{ task.status === 'DONE' ? 'Done' : 'Mark as Done' }}
+                    <button class="btn-task-action" 
+                            *ngIf="task.status !== 'DONE'"
+                            (click)="task.status === 'PRIO' || task.status === 'TODO' ? setAsInProgress(task.taskId) : updateTaskStatus(task.taskId, 'DONE'); $event.stopPropagation()"
+                            [ngClass]="task.status === 'PRIO' || task.status === 'TODO' ? 'btn-in-progress' : 'btn-mark-done'">
+                        {{ task.status === 'PRIO' || task.status === 'TODO' ? 'Set as In Progress' : 'Mark as Done' }}
                     </button>
+                    <span *ngIf="task.status === 'DONE'" class="task-done-badge">Done</span>
                 </div>
             </div>
         </div>
