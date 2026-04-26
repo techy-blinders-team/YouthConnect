@@ -155,6 +155,10 @@ html, body, :host, .dashboard-container {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  height: 350px;
 }
 
 .card-header {
@@ -163,6 +167,7 @@ html, body, :host, .dashboard-container {
   align-items: center;
   padding: 20px 30px;
   border-bottom: 1px solid #eee;
+  flex-shrink: 0;
 }
 
 .card-header h2 {
@@ -185,6 +190,31 @@ html, body, :host, .dashboard-container {
 
 .card-content {
   padding: 0;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+
+  /* Custom scrollbar for better UX */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+    background-clip: content-box;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.35);
+    }
+  }
 }
 
 .item {
@@ -225,23 +255,23 @@ html, body, :host, .dashboard-container {
 }
 
 .item-border-red {
-  border-left-color: #002674;
+  border-left-color: transparent;
 }
 
 .item-border-blue {
-  border-left-color: #002674;
+  border-left-color: transparent;
 }
 
 .item-border-yellow {
-  border-left-color: #FBD218;
+  border-left-color: transparent;
 }
 
 .item-border-gray {
-  border-left-color: #666666;
+  border-left-color: transparent;
 }
 
 .item-border-green {
-  border-left-color: #28a745;
+  border-left-color: transparent;
 }
 
 .item-header {
