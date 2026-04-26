@@ -913,14 +913,16 @@ select.form-input {
 .details-task-done-badge {
   width: 100%;
   padding: 12px 16px;
-  background-color: #d2d2d2cc;
-  color: #585858;
+  background-color: #e8e8e8;
+  color: #666;
   border-radius: 4px;
   font-size: 14px;
   font-weight: 600;
   text-align: center;
   font-family: 'Poppins', Arial, Helvetica, sans-serif;
   display: block;
+  line-height: 1.5;
+  box-sizing: border-box;
 }
 
 // Header info column (tasking type and description label)
