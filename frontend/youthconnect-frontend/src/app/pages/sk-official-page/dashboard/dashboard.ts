@@ -98,7 +98,8 @@ export class Dashboard implements OnInit {
   loadYouthMembers(): void {
     this.youthService.getUsers().subscribe({
       next: (users) => {
-        this.youthMembersCount = users.length;
+        // Only count approved youth members
+        this.youthMembersCount = users.filter(user => user.isApprove).length;
       },
       error: (err) => {
         console.error('Error loading youth members:', err);
