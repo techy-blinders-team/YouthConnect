@@ -285,10 +285,13 @@
             </div>
 
             <div class="details-modal-footer">
-                <button class="details-btn-mark-done" (click)="updateTaskStatus(selectedTask.taskId, 'DONE'); closeDetailsModal()" 
-                        [disabled]="selectedTask.status === 'DONE'">
-                    Mark as Done
+                <button class="details-btn-task-action" 
+                        *ngIf="selectedTask.status !== 'DONE'"
+                        (click)="selectedTask.status === 'PRIO' || selectedTask.status === 'TODO' ? setAsInProgress(selectedTask.taskId) : updateTaskStatus(selectedTask.taskId, 'DONE')" 
+                        [ngClass]="selectedTask.status === 'PRIO' || selectedTask.status === 'TODO' ? 'details-btn-in-progress' : 'details-btn-mark-done'">
+                        {{ selectedTask.status === 'PRIO' || selectedTask.status === 'TODO' ? 'Set as In Progress' : 'Mark as Done' }}
                 </button>
+                <span *ngIf="selectedTask.status === 'DONE'" class="details-task-done-badge">Done</span>
             </div>
         </div>
     </div>
