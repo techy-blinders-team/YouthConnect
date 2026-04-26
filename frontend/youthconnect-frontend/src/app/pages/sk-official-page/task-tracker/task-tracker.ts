@@ -210,53 +210,13 @@ export class TaskTracker implements OnInit {
     this.taskService.createTask(request).subscribe({
       next: (response) => {
         this.tasks.push(response);
-        this.filteredTasks = this.tasks;
-        this.successMessage = '';
+        this.filteredTasks = [...this.tasks];
         this.showNotification('Task created successfully!');
         this.closeModal();
-        this.loadTasks();
       },
       error: (error) => {
         console.error('Error creating task:', error);
         this.errorMessage = 'Failed to create task';
-      }
-    });
-  }
-
-  editTask() {
-    if (!this.currentEditingTaskId) {
-      this.errorMessage = 'Task ID not found';
-      return;
-    }
-
-    if (!this.formState.taskingType || !this.formState.taskDescription || !this.formState.skIncharge || !this.formState.status) {
-      this.errorMessage = 'Please fill in all required fields';
-      return;
-    }
-
-    const taskId = this.currentEditingTaskId;
-    const request: TaskEditRequest = {
-      tasking: this.formState.taskingType as Tasking,
-      taskDescription: this.formState.taskDescription,
-      skIncharge: this.formState.skIncharge,
-      hyperlink: this.formState.hyperlink || undefined,
-      dueDate: this.formState.dueDate || undefined,
-    };
-
-    this.taskService.editTask(taskId, request).subscribe({
-      next: (response) => {
-        const index = this.tasks.findIndex(t => t.taskId === taskId);
-        if (index !== -1) {
-          this.tasks[index] = response;
-          this.filteredTasks = this.tasks;
-        }
-        this.successMessage = '';
-        this.showNotification('Task updated successfully!');
-        this.closeModal();
-      },
-      error: (error) => {
-        console.error('Error updating task:', error);
-        this.errorMessage = 'Failed to update task';
       }
     });
   }
@@ -281,9 +241,13 @@ export class TaskTracker implements OnInit {
         const index = this.tasks.findIndex(t => t.taskId === taskId);
         if (index !== -1) {
           this.tasks[index] = response;
-          this.filteredTasks = this.tasks;
+          this.filteredTasks = [...this.tasks];
+          
+          // Update selected task if it's currently being viewed in details modal
+          if (this.selectedTask && this.selectedTask.taskId === taskId) {
+            this.selectedTask = response;
+          }
         }
-        this.successMessage = '';
         this.showNotification('Task updated successfully!');
         this.isLoading = false;
         this.closeEditConfirmationModal();
@@ -313,8 +277,7 @@ export class TaskTracker implements OnInit {
     this.taskService.deleteTask(this.pendingDeleteTaskId).subscribe({
       next: () => {
         this.tasks = this.tasks.filter(t => t.taskId !== this.pendingDeleteTaskId);
-        this.filteredTasks = this.tasks;
-        this.successMessage = '';
+        this.filteredTasks = [...this.tasks];
         this.showNotification('Task deleted successfully!');
         this.isLoading = false;
         this.closeDeleteConfirmationModal();
@@ -347,6 +310,7 @@ export class TaskTracker implements OnInit {
         skIncharge: this.formState.skIncharge,
         hyperlink: this.formState.hyperlink || undefined,
         dueDate: this.formState.dueDate || undefined,
+        status: this.formState.status as TaskStatus,
       };
 
       this.pendingEditPayload = request;
@@ -380,10 +344,14 @@ export class TaskTracker implements OnInit {
         const index = this.tasks.findIndex(t => t.taskId === taskId);
         if (index !== -1) {
           this.tasks[index] = response;
-          this.filteredTasks = this.tasks;
+          this.filteredTasks = [...this.tasks];
+          
+          // Update selected task if it's currently being viewed in details modal
+          if (this.selectedTask && this.selectedTask.taskId === taskId) {
+            this.selectedTask = response;
+          }
         }
-        this.successMessage = `Task status updated to ${newStatus}`;
-        setTimeout(() => this.successMessage = '', 3000);
+        this.showNotification(`Task status updated to ${newStatus}`);
       },
       error: (error) => {
         console.error('Error updating status:', error);

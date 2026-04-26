@@ -16,6 +16,7 @@ export interface TaskEditRequest {
   skIncharge?: string;
   hyperlink?: string;
   dueDate?: string;
+  status?: TaskStatus;
 }
 
 export interface TaskHyperlinkRequest {

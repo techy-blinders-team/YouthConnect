@@ -63,6 +63,9 @@ public class TaskServiceImpl implements TaskService {
         task.setSkIncharge(request.getSkIncharge());
         task.setHyperlink(request.getHyperlink());
         task.setDueDate(request.getDueDate());
+        if (request.getStatus() != null) {
+            task.setStatus(request.getStatus());
+        }
         return toResponse(taskRepo.save(task));
     }
 
