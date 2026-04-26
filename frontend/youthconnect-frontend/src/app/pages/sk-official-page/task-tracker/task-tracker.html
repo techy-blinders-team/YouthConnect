@@ -245,7 +245,7 @@
             <div class="details-modal-header">
                 <h2 class="details-modal-title">{{ getTaskingDisplayName(selectedTask.tasking) }}</h2>
                 <div class="details-modal-actions">
-                    <button class="details-edit-btn" (click)="openEditModal(selectedTask)" title="Edit task">
+                    <button class="details-edit-btn" (click)="openEditModal(selectedTask); closeDetailsModal()" title="Edit task">
                         <img src="assets/sk-official-events-icons/edit.svg" alt="Edit" width="20" height="20">
                     </button>
                     <button class="details-delete-btn" (click)="deleteTask(selectedTask.taskId); closeDetailsModal()" title="Delete task">
