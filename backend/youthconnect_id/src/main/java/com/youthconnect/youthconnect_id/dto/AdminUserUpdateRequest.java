@@ -3,7 +3,7 @@ package com.youthconnect.youthconnect_id.dto;
 public class AdminUserUpdateRequest {
     private String email;
     private Boolean active;
-    private Boolean isApprove;
+    private String status;
     private Integer roleId;
 
     public String getEmail() {
@@ -18,11 +18,11 @@ public class AdminUserUpdateRequest {
     public void setActive(Boolean active) {
         this.active = active; 
     }
-    public Boolean getIsApprove() {
-        return isApprove; 
+    public String getStatus() {
+        return status;
     }
-    public void setIsApprove(Boolean isApprove) {
-        this.isApprove = isApprove; 
+    public void setStatus(String status) {
+        this.status = status;
     }
     public Integer getRoleId() {
         return roleId; 

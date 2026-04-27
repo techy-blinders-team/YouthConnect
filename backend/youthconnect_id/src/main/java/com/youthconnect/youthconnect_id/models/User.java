@@ -12,6 +12,10 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "tbl_user")
 public class User {
+    public static final String STATUS_PENDING = "pending";
+    public static final String STATUS_APPROVED = "approved";
+    public static final String STATUS_REJECTED = "rejected";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -35,8 +39,8 @@ public class User {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "is_approve")
-    private Boolean isApprove;
+    @Column(name = "status", nullable = false, length = 20)
+    private String status = STATUS_PENDING;
 
     public User() {}
 
@@ -96,11 +100,15 @@ public class User {
         this.createdAt = createdAt;
     }
 
-    public Boolean getIsApprove() {
-        return isApprove;
+    public String getStatus() {
+        return status;
     }
 
-    public void setIsApprove(Boolean isApprove) {
-        this.isApprove = isApprove;
+    public void setStatus(String status) {
+        if (status == null || status.isBlank()) {
+            this.status = STATUS_PENDING;
+            return;
+        }
+        this.status = status.trim().toLowerCase();
     }
 }

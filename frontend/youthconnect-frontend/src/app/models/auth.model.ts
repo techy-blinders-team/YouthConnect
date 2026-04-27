@@ -56,6 +56,7 @@ export interface LoginResponse {
   youthId?: number;
   email?: string;
   roleId?: number;
+  status?: 'pending' | 'approved' | 'rejected';
   approved?: boolean;
 }
 

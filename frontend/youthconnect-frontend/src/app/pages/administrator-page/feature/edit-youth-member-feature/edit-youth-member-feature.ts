@@ -109,7 +109,7 @@ export class EditYouthMemberFeature implements OnChanges {
         email: this.editYouthMemberForm.email.trim(),
         roleId: 1,
         active: this.youthMember.isActive,
-        isApprove: this.youthMember.isApprove
+        status: this.youthMember.status
       },
       profile: {
         firstName: this.editYouthMemberForm.firstName.trim(),
