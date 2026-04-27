@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, Output, EventEmitter, HostListener } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../services/auth.service';
+import { NotificationService } from '../../../../services/notification.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -12,7 +13,9 @@ import { CommonModule } from '@angular/common';
 export class YouthSidebar implements OnInit {
     router = inject(Router);
     authService = inject(AuthService);
+    notificationService = inject(NotificationService);
     userEmail: string = '';
+    unreadNotificationCount: number = 0;
     @Output() collapsedChange = new EventEmitter<boolean>();
     isCollapsed = false;
     isMobileMenuOpen = false;
@@ -22,6 +25,11 @@ export class YouthSidebar implements OnInit {
         const user = this.authService.getCurrentUser();
         this.userEmail = user?.email || 'user@example.com';
         this.checkScreenSize();
+
+        // Subscribe to unread notification count
+        this.notificationService.unreadCount$.subscribe(count => {
+            this.unreadNotificationCount = count;
+        });
     }
 
     @HostListener('window:resize')

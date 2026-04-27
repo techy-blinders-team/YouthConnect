@@ -45,9 +45,12 @@
                 <span *ngIf="!isCollapsed || isMobile">Event</span>
             </li>
             <li routerLink="/youth/notifications" [class.active]="isRouteActive('/youth/notifications')"
-                [title]="isCollapsed ? 'Notification' : ''" (click)="closeMobileMenu()">
+                [title]="isCollapsed ? 'Notification' : ''" (click)="closeMobileMenu()" class="notification-menu-item">
                 <img src="assets/youth-sidebar/notification.png" alt="Notification" class="menu-icon" />
                 <span *ngIf="!isCollapsed || isMobile">Notification</span>
+                <span class="notification-badge" *ngIf="unreadNotificationCount > 0">
+                    {{ unreadNotificationCount > 99 ? '99+' : unreadNotificationCount }}
+                </span>
             </li>
         </ul>
     </div>
