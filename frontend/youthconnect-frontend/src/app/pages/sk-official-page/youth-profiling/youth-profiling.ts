@@ -316,14 +316,29 @@ export class YouthProfiling implements OnInit {
 
         const fullName = `${profile.firstName} ${profile.lastName}`.trim();
         this.approvalMessage = approve
-          ? `${fullName} has been approved for login.`
+          ? `${fullName} has been approved.`
           : `${fullName} has been moved back to pending registration.`;
         this.updatingApprovalUserId = null;
+        
+        this.showNotification(
+          approve
+            ? `${fullName} has been approved successfully!`
+            : `${fullName} has been moved back to pending.`,
+          'success'
+        );
+        
+        setTimeout(() => {
+          this.approvalMessage = '';
+        }, 3000);
       },
       error: (error) => {
         console.error('Error updating approval status:', error);
         this.approvalError = 'Failed to update registration approval status. Please try again.';
         this.updatingApprovalUserId = null;
+        
+        setTimeout(() => {
+          this.approvalError = '';
+        }, 3000);
       }
     });
   }
@@ -363,12 +378,24 @@ export class YouthProfiling implements OnInit {
 
         this.filteredProfiles = this.filteredProfiles.filter((item) => item.userId !== updatedUser.userId);
 
+        const fullName = `${profile.firstName} ${profile.lastName}`.trim();
+        this.approvalMessage = `${fullName} has been rejected.`;
         this.updatingApprovalUserId = null;
+        
+        this.showNotification(`${fullName} has been rejected successfully!`, 'success');
+        
+        setTimeout(() => {
+          this.approvalMessage = '';
+        }, 3000);
       },
       error: (error) => {
         console.error('Error rejecting registration:', error);
         this.approvalError = 'Failed to reject registration. Please try again.';
         this.updatingApprovalUserId = null;
+        
+        setTimeout(() => {
+          this.approvalError = '';
+        }, 3000);
       }
     });
   }
