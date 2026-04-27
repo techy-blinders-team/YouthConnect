@@ -31,7 +31,7 @@ export class YouthProfiling implements OnInit {
   skOfficialEmail = '';
   skOfficialPosition = 'SK Official';
   skOfficialInitials = 'SK';
-  
+
   // Notification system
   notifications: { id: number; message: string; type: 'success' | 'error' }[] = [];
   private notificationCounter = 0;
@@ -148,31 +148,31 @@ export class YouthProfiling implements OnInit {
           const matchingUser = userByYouthIdMap.get(profile.youthId);
 
           return {
-          userId: matchingUser?.userId || 0,
-          youthId: profile.youthId,
-          firstName: profile.firstName,
-          lastName: profile.lastName,
-          email: matchingUser?.email || profile.email || '',
-          gender: profile.gender as Gender,
-          birthday: profile.birthday,
-          contactNumber: profile.contactNumber,
-          civilStatus: profile.civilStatus as CivilStatus,
-          isActive: matchingUser?.isActive ?? matchingUser?.active ?? (profile.isActive !== undefined ? profile.isActive : true),
-          isApprove: matchingUser?.isApprove ?? (profile.isApprove ?? null),
-          createdAt: matchingUser?.createdAt || profile.createdAt,
-          middleName: profile.middleName || null,
-          suffix: profile.suffix || null,
-          completeAddress: profile.completeAddress,
-          youthClassification: profile.youthClassification ? {
-            youthClassification: profile.youthClassification.youthClassification || null,
-            educationBackground: profile.youthClassification.educationBackground || null,
-            workStatus: profile.youthClassification.workStatus || null,
-            skVoter: profile.youthClassification.skVoter || false,
-            nationalVoter: profile.youthClassification.nationalVoter || false,
-            pastVoter: profile.youthClassification.pastVoter || false,
-            numAttended: profile.youthClassification.numAttended || 0,
-            nonAttendedReason: profile.youthClassification.nonAttendedReason || null
-          } : undefined
+            userId: matchingUser?.userId || 0,
+            youthId: profile.youthId,
+            firstName: profile.firstName,
+            lastName: profile.lastName,
+            email: matchingUser?.email || profile.email || '',
+            gender: profile.gender as Gender,
+            birthday: profile.birthday,
+            contactNumber: profile.contactNumber,
+            civilStatus: profile.civilStatus as CivilStatus,
+            isActive: matchingUser?.isActive ?? matchingUser?.active ?? (profile.isActive !== undefined ? profile.isActive : true),
+            isApprove: matchingUser?.isApprove ?? (profile.isApprove ?? null),
+            createdAt: matchingUser?.createdAt || profile.createdAt,
+            middleName: profile.middleName || null,
+            suffix: profile.suffix || null,
+            completeAddress: profile.completeAddress,
+            youthClassification: profile.youthClassification ? {
+              youthClassification: profile.youthClassification.youthClassification || null,
+              educationBackground: profile.youthClassification.educationBackground || null,
+              workStatus: profile.youthClassification.workStatus || null,
+              skVoter: profile.youthClassification.skVoter || false,
+              nationalVoter: profile.youthClassification.nationalVoter || false,
+              pastVoter: profile.youthClassification.pastVoter || false,
+              numAttended: profile.youthClassification.numAttended || 0,
+              nonAttendedReason: profile.youthClassification.nonAttendedReason || null
+            } : undefined
           };
         });
 
@@ -258,11 +258,11 @@ export class YouthProfiling implements OnInit {
     const approvalRequest$: Observable<{ userId: number; email: string; roleId: number; active?: boolean; isActive?: boolean; isApprove: boolean | null; }> = approve
       ? this.youthMemberManagementService.approveUser(profile.userId)
       : this.youthMemberManagementService.updateUser(profile.userId, {
-          email: accountData.email,
-          roleId: accountData.roleId,
-          active: accountData.isActive,
-          isApprove: null
-        });
+        email: accountData.email,
+        roleId: accountData.roleId,
+        active: accountData.isActive,
+        isApprove: null
+      });
 
     approvalRequest$.subscribe({
       next: (updatedUser) => {
@@ -278,36 +278,36 @@ export class YouthProfiling implements OnInit {
         this.youthProfiles = this.youthProfiles.map((item) =>
           item.userId === updatedUser.userId
             ? {
-                ...item,
-                isApprove: updatedUser.isApprove,
-                isActive: updatedIsActive,
-                email: updatedUser.email
-              }
+              ...item,
+              isApprove: updatedUser.isApprove,
+              isActive: updatedIsActive,
+              email: updatedUser.email
+            }
             : item
         );
 
         this.filteredProfiles = updatedUser.isApprove === true && updatedIsActive === true
           ? [
-              ...this.filteredProfiles.filter((item) => item.userId !== updatedUser.userId),
-              {
-                userId: updatedUser.userId,
-                youthId: profile.youthId,
-                firstName: profile.firstName,
-                lastName: profile.lastName,
-                email: updatedUser.email,
-                gender: profile.gender,
-                birthday: profile.birthday,
-                contactNumber: profile.contactNumber,
-                civilStatus: profile.civilStatus,
-                isActive: updatedIsActive,
-                isApprove: updatedUser.isApprove,
-                createdAt: profile.createdAt,
-                middleName: profile.middleName,
-                suffix: profile.suffix,
-                completeAddress: profile.completeAddress,
-                youthClassification: profile.youthClassification
-              }
-            ]
+            ...this.filteredProfiles.filter((item) => item.userId !== updatedUser.userId),
+            {
+              userId: updatedUser.userId,
+              youthId: profile.youthId,
+              firstName: profile.firstName,
+              lastName: profile.lastName,
+              email: updatedUser.email,
+              gender: profile.gender,
+              birthday: profile.birthday,
+              contactNumber: profile.contactNumber,
+              civilStatus: profile.civilStatus,
+              isActive: updatedIsActive,
+              isApprove: updatedUser.isApprove,
+              createdAt: profile.createdAt,
+              middleName: profile.middleName,
+              suffix: profile.suffix,
+              completeAddress: profile.completeAddress,
+              youthClassification: profile.youthClassification
+            }
+          ]
           : this.filteredProfiles.filter((item) => item.userId !== updatedUser.userId);
 
         const fullName = `${profile.firstName} ${profile.lastName}`.trim();
@@ -349,11 +349,11 @@ export class YouthProfiling implements OnInit {
         this.youthProfiles = this.youthProfiles.map((item) =>
           item.userId === updatedUser.userId
             ? {
-                ...item,
-                isApprove: updatedUser.isApprove,
-                isActive: updatedIsActive,
-                email: updatedUser.email
-              }
+              ...item,
+              isApprove: updatedUser.isApprove,
+              isActive: updatedIsActive,
+              email: updatedUser.email
+            }
             : item
         );
 
@@ -566,9 +566,9 @@ export class YouthProfiling implements OnInit {
       });
     });
 
-    worksheet.eachRow((row) => {
+    worksheet.eachRow((row: ExcelJS.Row) => {
       row.alignment = { horizontal: 'left', vertical: 'middle' };
-      row.eachCell((cell) => {
+      row.eachCell((cell: ExcelJS.Cell) => {
         cell.border = {
           top: { style: 'thin' },
           left: { style: 'thin' },
@@ -578,7 +578,7 @@ export class YouthProfiling implements OnInit {
       });
     });
 
-    workbook.xlsx.writeBuffer().then((data) => {
+    workbook.xlsx.writeBuffer().then((data: ArrayBuffer) => {
       const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -601,19 +601,19 @@ export class YouthProfiling implements OnInit {
     const today = new Date();
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
-    
+
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
       age--;
     }
-    
+
     return age;
   }
 
   formatDate(dateString: string): string {
-    const options: Intl.DateTimeFormatOptions = { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     };
     return new Date(dateString).toLocaleDateString('en-US', options);
   }
