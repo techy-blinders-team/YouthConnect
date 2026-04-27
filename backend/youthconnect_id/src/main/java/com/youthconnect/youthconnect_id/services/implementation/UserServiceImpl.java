@@ -145,7 +145,11 @@ public class UserServiceImpl implements UserService {
 
         // Check if user is approved
         if (!User.STATUS_APPROVED.equalsIgnoreCase(user.getStatus())) {
-            return new LoginResponse(false, "Account is pending approval. Please wait for administrator approval.");
+            if (User.STATUS_REJECTED.equalsIgnoreCase(user.getStatus())) {
+                return new LoginResponse(false, "Your account has been rejected. Please contact administrator for more information.");
+            } else {
+                return new LoginResponse(false, "Your account is pending approval. Please wait for administrator approval.");
+            }
         }
 
         // Check if user is active
