@@ -1,11 +1,28 @@
-<div class="sidebar-container" [class.collapsed]="isCollapsed">
-    <button class="toggle-btn" (click)="toggleSidebar()" aria-label="Toggle Sidebar">
+<!-- Mobile Backdrop Overlay -->
+<div class="mobile-backdrop" *ngIf="isMobile && isMobileMenuOpen" (click)="closeMobileMenu()"></div>
+
+<!-- Mobile Hamburger Button -->
+<button class="mobile-menu-btn" *ngIf="isMobile" (click)="toggleSidebar()" aria-label="Toggle Menu">
+    <span class="hamburger-icon">
+        <span></span>
+        <span></span>
+        <span></span>
+    </span>
+</button>
+
+<div class="sidebar-container" [class.collapsed]="isCollapsed" [class.mobile-open]="isMobileMenuOpen">
+    <button class="toggle-btn" (click)="toggleSidebar()" aria-label="Toggle Sidebar" *ngIf="!isMobile">
         <span class="toggle-icon">{{ isCollapsed ? '→' : '←' }}</span>
+    </button>
+
+    <!-- Mobile Close Button -->
+    <button class="mobile-close-btn" *ngIf="isMobile" (click)="closeMobileMenu()" aria-label="Close Menu">
+        <span>×</span>
     </button>
 
     <div class="side-header">
         <img src="assets/sk-logo.png" alt="SK Logo" class="logo" />
-        <div class="system-title" *ngIf="!isCollapsed">
+        <div class="system-title" *ngIf="!isCollapsed || isMobile">
             <span>Youth</span><br />
             <span>Portal</span>
         </div>
@@ -13,33 +30,33 @@
     <div class="side-menu">
         <ul>
             <li routerLink="/youth/dashboard" [class.active]="isRouteActive('/youth/dashboard')"
-                [title]="isCollapsed ? 'Dashboard' : ''">
+                [title]="isCollapsed ? 'Dashboard' : ''" (click)="closeMobileMenu()">
                 <img src="assets/youth-sidebar/dashboard.png" alt="Dashboard" class="menu-icon" />
-                <span *ngIf="!isCollapsed">Dashboard</span>
+                <span *ngIf="!isCollapsed || isMobile">Dashboard</span>
             </li>
             <li routerLink="/youth/create-concern" [class.active]="isRouteActive('/youth/create-concern')"
-                [title]="isCollapsed ? 'Concern' : ''">
+                [title]="isCollapsed ? 'Concern' : ''" (click)="closeMobileMenu()">
                 <img src="assets/youth-sidebar/attention.png" alt="Concern" class="menu-icon" />
-                <span *ngIf="!isCollapsed">Concern</span>
+                <span *ngIf="!isCollapsed || isMobile">Concern</span>
             </li>
             <li routerLink="/youth/events" [class.active]="isRouteActive('/youth/events')"
-                [title]="isCollapsed ? 'Event' : ''">
+                [title]="isCollapsed ? 'Event' : ''" (click)="closeMobileMenu()">
                 <img src="assets/youth-sidebar/event.png" alt="Event" class="menu-icon" />
-                <span *ngIf="!isCollapsed">Event</span>
+                <span *ngIf="!isCollapsed || isMobile">Event</span>
             </li>
             <li routerLink="/youth/notifications" [class.active]="isRouteActive('/youth/notifications')"
-                [title]="isCollapsed ? 'Notification' : ''">
+                [title]="isCollapsed ? 'Notification' : ''" (click)="closeMobileMenu()">
                 <img src="assets/youth-sidebar/notification.png" alt="Notification" class="menu-icon" />
-                <span *ngIf="!isCollapsed">Notification</span>
+                <span *ngIf="!isCollapsed || isMobile">Notification</span>
             </li>
         </ul>
     </div>
     <div class="side-footer">
         <img src="assets/youth-sidebar/youth-member-icon.png" alt="User" class="footer-icon" />
-        <div class="user-email" *ngIf="!isCollapsed">
+        <div class="user-email" *ngIf="!isCollapsed || isMobile">
             <span class="email-text">{{ userEmail }}</span>
         </div>
-        <button type="button" class="logout-btn" aria-label="Logout" (click)="logout()"
+        <button type="button" class="logout-btn" aria-label="Logout" (click)="logout(); closeMobileMenu()"
             [title]="isCollapsed ? 'Logout' : ''">
             <img src="assets/administrator-sidebar/logout-icon.png" alt="Logout" class="footer-logout-icon" />
         </button>

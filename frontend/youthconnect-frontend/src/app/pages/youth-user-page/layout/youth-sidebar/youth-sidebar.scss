@@ -291,3 +291,257 @@
         background: rgba(255, 255, 255, 0.5);
     }
 }
+
+
+/* Mobile Backdrop Overlay */
+.mobile-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 998;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Mobile Hamburger Menu Button */
+.mobile-menu-btn {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #a4151a 0%, #8a1216 100%);
+    border: none;
+    border-radius: 12px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 997;
+    box-shadow: 0 4px 12px rgba(164, 21, 26, 0.4);
+    transition: all 0.3s ease;
+
+    &:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 16px rgba(164, 21, 26, 0.5);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
+.hamburger-icon {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 24px;
+
+    span {
+        display: block;
+        width: 100%;
+        height: 3px;
+        background: #fff;
+        border-radius: 2px;
+        transition: all 0.3s ease;
+    }
+}
+
+/* Mobile Close Button */
+.mobile-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s ease;
+    color: #fff;
+    font-size: 2rem;
+    font-weight: 300;
+    line-height: 1;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: rotate(90deg) scale(1.1);
+    }
+
+    &:active {
+        transform: rotate(90deg) scale(0.95);
+    }
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+    .mobile-menu-btn {
+        display: flex;
+    }
+
+    .mobile-close-btn {
+        display: flex;
+    }
+
+    .sidebar-container {
+        position: fixed;
+        top: 0;
+        left: -270px;
+        width: 270px;
+        height: 100vh;
+        z-index: 999;
+        transition: left 0.3s ease;
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+
+        &.mobile-open {
+            left: 0;
+        }
+
+        .toggle-btn {
+            display: none;
+        }
+
+        .side-header {
+            padding: 70px 0 20px 0;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+        }
+
+        .system-title {
+            font-size: 1.5rem;
+        }
+
+        .side-menu {
+            padding: 0 12px;
+            overflow-y: auto;
+            max-height: calc(100vh - 300px);
+        }
+
+        .side-menu li {
+            padding: 14px 20px;
+            font-size: 1.1rem;
+            margin-bottom: 6px;
+        }
+
+        .menu-icon {
+            width: 26px;
+            height: 26px;
+        }
+
+        .side-footer {
+            padding: 18px 16px;
+        }
+
+        .footer-icon {
+            width: 38px;
+            height: 38px;
+        }
+
+        .user-email {
+            font-size: 0.9rem;
+        }
+
+        .footer-logout-icon {
+            width: 60px;
+            height: 60px;
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .mobile-menu-btn {
+        top: 12px;
+        left: 12px;
+        width: 46px;
+        height: 46px;
+    }
+
+    .hamburger-icon {
+        width: 22px;
+        gap: 4px;
+
+        span {
+            height: 2.5px;
+        }
+    }
+
+    .sidebar-container {
+        width: 260px;
+        left: -260px;
+
+        .side-header {
+            padding: 65px 0 16px 0;
+        }
+
+        .logo {
+            width: 70px;
+            height: 70px;
+        }
+
+        .system-title {
+            font-size: 1.4rem;
+        }
+
+        .side-menu {
+            padding: 0 10px;
+        }
+
+        .side-menu li {
+            padding: 12px 18px;
+            font-size: 1.05rem;
+            gap: 14px;
+        }
+
+        .menu-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .side-footer {
+            padding: 16px 14px;
+        }
+
+        .footer-icon {
+            width: 36px;
+            height: 36px;
+        }
+
+        .user-email {
+            font-size: 0.85rem;
+        }
+
+        .footer-logout-icon {
+            width: 55px;
+            height: 55px;
+        }
+    }
+
+    .mobile-close-btn {
+        top: 12px;
+        right: 12px;
+        width: 40px;
+        height: 40px;
+        font-size: 1.8rem;
+    }
+}
