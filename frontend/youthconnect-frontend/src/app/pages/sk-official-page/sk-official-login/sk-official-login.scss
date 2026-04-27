@@ -1,3 +1,4 @@
+@use 'sass:color';
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
 $primary-blue: #0052cc;
@@ -15,7 +16,8 @@ $error-color: #d32f2f;
   overflow: hidden;
 }
 
-html, body {
+html,
+body {
   height: 100vh;
   width: 100vw;
   overflow: hidden;
@@ -117,6 +119,7 @@ html, body {
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -219,7 +222,7 @@ html, body {
     font-family: 'Poppins', sans-serif;
 
     &:hover {
-      color: darken($primary-blue, 10%);
+      color: color.adjust($primary-blue, $lightness: -10%);
       text-decoration: underline;
     }
   }
@@ -243,7 +246,7 @@ html, body {
   &:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    background-color: darken($primary-blue, 5%);
+    background-color: color.adjust($primary-blue, $lightness: -5%);
   }
 
   &:active:not(:disabled) {
@@ -344,6 +347,7 @@ html, body {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -369,6 +373,7 @@ html, body {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

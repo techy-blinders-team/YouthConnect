@@ -12,6 +12,8 @@ import com.youthconnect.youthconnect_id.dto.LoginRequest;
 import com.youthconnect.youthconnect_id.dto.LoginResponse;
 import com.youthconnect.youthconnect_id.dto.RegistrationRequest;
 import com.youthconnect.youthconnect_id.dto.RegistrationResponse;
+import com.youthconnect.youthconnect_id.ratelimit.RateLimit;
+import com.youthconnect.youthconnect_id.ratelimit.RateLimitType;
 import com.youthconnect.youthconnect_id.services.UserService;
 
 @RestController
@@ -22,6 +24,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/register")
+    @RateLimit(type = RateLimitType.REGISTRATION, useIpAddress = true)
     public ResponseEntity<RegistrationResponse> register(@RequestBody RegistrationRequest request) {
         try {
             RegistrationResponse response = userService.registerUser(request);
@@ -39,6 +42,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
+    @RateLimit(type = RateLimitType.LOGIN, useIpAddress = true)
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
         try {
             LoginResponse response = userService.loginUser(request);

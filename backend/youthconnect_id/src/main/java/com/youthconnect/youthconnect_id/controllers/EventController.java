@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.youthconnect.youthconnect_id.dto.AttendanceResponse;
 import com.youthconnect.youthconnect_id.dto.EventResponse;
 import com.youthconnect.youthconnect_id.dto.RsvpRequest;
+import com.youthconnect.youthconnect_id.ratelimit.RateLimit;
+import com.youthconnect.youthconnect_id.ratelimit.RateLimitType;
 import com.youthconnect.youthconnect_id.services.EventService;
 
 @RestController
@@ -26,6 +28,7 @@ public class EventController {
     private EventService eventService;
 
     @GetMapping
+    @RateLimit(type = RateLimitType.GENERAL_API, useIpAddress = false)
     public ResponseEntity<?> getAllEvents() {
         try {
             List<EventResponse> events = eventService.getAllEvents();
@@ -37,6 +40,7 @@ public class EventController {
     }
 
     @GetMapping("/{eventId}")
+    @RateLimit(type = RateLimitType.GENERAL_API, useIpAddress = false)
     public ResponseEntity<?> getEventById(@PathVariable int eventId) {
         try {
             return ResponseEntity.ok(eventService.getEventById(eventId));
@@ -47,6 +51,7 @@ public class EventController {
     }
 
     @PostMapping("/rsvp")
+    @RateLimit(type = RateLimitType.RSVP_EVENT, useIpAddress = false)
     public ResponseEntity<?> rsvpEvent(@RequestBody RsvpRequest request) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(eventService.rsvpEvent(request));
@@ -57,6 +62,7 @@ public class EventController {
     }
 
     @DeleteMapping("/{eventId}/rsvp/{userId}")
+    @RateLimit(type = RateLimitType.GENERAL_API, useIpAddress = false)
     public ResponseEntity<?> cancelRsvp(@PathVariable int eventId,
             @PathVariable int userId) {
         try {
@@ -69,6 +75,7 @@ public class EventController {
     }
 
     @GetMapping("/rsvp/user/{userId}")
+    @RateLimit(type = RateLimitType.GENERAL_API, useIpAddress = false)
     public ResponseEntity<?> getOwnRsvps(@PathVariable int userId) {
         try {
             List<AttendanceResponse> rsvps = eventService.getOwnRsvps(userId);

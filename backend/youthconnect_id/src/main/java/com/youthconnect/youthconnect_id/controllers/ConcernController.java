@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.youthconnect.youthconnect_id.dto.ConcernRequest;
 import com.youthconnect.youthconnect_id.dto.ConcernResponse;
 import com.youthconnect.youthconnect_id.dto.ConcernUpdateRequest;
+import com.youthconnect.youthconnect_id.ratelimit.RateLimit;
+import com.youthconnect.youthconnect_id.ratelimit.RateLimitType;
 import com.youthconnect.youthconnect_id.services.ConcernService;
 
 @RestController
@@ -28,6 +30,7 @@ public class ConcernController {
     private ConcernService concernService;
 
     @PostMapping
+    @RateLimit(type = RateLimitType.CREATE_CONCERN, useIpAddress = false)
     public ResponseEntity<?> submitConcern(@RequestBody ConcernRequest request) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(concernService.submitConcern(request));
@@ -37,6 +40,7 @@ public class ConcernController {
     }
 
     @GetMapping("/youth/{youthId}")
+    @RateLimit(type = RateLimitType.GENERAL_API, useIpAddress = false)
     public ResponseEntity<?> getOwnConcerns(@PathVariable int youthId) {
         try {
             List<ConcernResponse> concerns = concernService.getOwnConcerns(youthId);
@@ -47,6 +51,7 @@ public class ConcernController {
     }
 
     @GetMapping("/{concernId}")
+    @RateLimit(type = RateLimitType.GENERAL_API, useIpAddress = false)
     public ResponseEntity<?> getConcernById(@PathVariable int concernId) {
         try {
             return ResponseEntity.ok(concernService.getConcernById(concernId));
@@ -56,6 +61,7 @@ public class ConcernController {
     }
 
     @PutMapping("/{concernId}")
+    @RateLimit(type = RateLimitType.GENERAL_API, useIpAddress = false)
     public ResponseEntity<?> editConcern(@PathVariable int concernId,
             @RequestBody ConcernUpdateRequest request) {
         try {
@@ -66,6 +72,7 @@ public class ConcernController {
     }
 
     @PatchMapping("/{concernId}/cancel")
+    @RateLimit(type = RateLimitType.GENERAL_API, useIpAddress = false)
     public ResponseEntity<?> cancelConcern(@PathVariable int concernId) {
         try {
             concernService.cancelConcern(concernId);
@@ -76,6 +83,7 @@ public class ConcernController {
     }
 
     @DeleteMapping("/{concernId}")
+    @RateLimit(type = RateLimitType.GENERAL_API, useIpAddress = false)
     public ResponseEntity<?> deleteConcern(@PathVariable int concernId) {
         try {
             concernService.deleteConcern(concernId);

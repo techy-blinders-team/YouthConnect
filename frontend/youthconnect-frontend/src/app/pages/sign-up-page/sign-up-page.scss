@@ -1,3 +1,4 @@
+@use 'sass:color';
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
 $primary-blue: #0052cc;
@@ -17,7 +18,7 @@ $font-weight-regular: 400;
 $font-weight-medium: 500;
 $font-weight-semibold: 600;
 $font-weight-bold: 700;
- 
+
 $color-dark: #070707;
 $color-white: #ffffff;
 $color-gray-light: #f5f5f5;
@@ -30,18 +31,18 @@ $color-error-dark: #c62828;
 $color-warning: #ff9800;
 $color-overlay: rgba(0, 0, 0, 0.6);
 $color-overlay-light: rgba(0, 0, 0, 0.5);
- 
+
 $spacing-xs: 4px;
 $spacing-sm: 8px;
 $spacing-md: 12px;
 $spacing-lg: 16px;
 $spacing-xl: 24px;
 $spacing-2xl: 32px;
- 
+
 $transition-fast: 0.15s cubic-bezier(0.4, 0, 1, 1);
 $transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 $transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
- 
+
 $shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
 $shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
 $shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
@@ -54,7 +55,8 @@ $shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.18);
   overflow: hidden;
 }
 
-html, body {
+html,
+body {
   height: 100vh;
   width: 100vw;
   overflow: hidden;
@@ -243,6 +245,7 @@ html, body {
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -568,7 +571,7 @@ html, body {
   &:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    background-color: darken($primary-blue, 5%);
+    background-color: color.adjust($primary-blue, $lightness: -5%);
   }
 
   &:active:not(:disabled) {
@@ -608,7 +611,7 @@ html, body {
     font-family: 'Poppins', sans-serif;
 
     &:hover {
-      color: darken($primary-blue, 10%);
+      color: color.adjust($primary-blue, $lightness: -10%);
       text-decoration: underline;
     }
   }
@@ -720,518 +723,525 @@ html, body {
 }
 
 .error-message {
-    margin-top: $spacing-md;
-    margin-bottom: $spacing-sm;
-    padding: $spacing-md;
-    font-family: $font-primary;
-    border-radius: 8px;
+  margin-top: $spacing-md;
+  margin-bottom: $spacing-sm;
+  padding: $spacing-md;
+  font-family: $font-primary;
+  border-radius: 8px;
+  font-size: 12px;
+  text-align: center;
+  min-height: 20px;
+  position: static;
+  background-color: $color-error-light;
+  border-left: 4px solid $color-error;
+  animation: slideDown $transition-normal ease-out;
+
+  span {
     font-size: 12px;
-    text-align: center;
-    min-height: 20px;
-    position: static;
-    background-color: $color-error-light;
-    border-left: 4px solid $color-error;
-    animation: slideDown $transition-normal ease-out;
- 
-    span {
-        font-size: 12px;
-        margin: 0;
-        line-height: 1.5;
-        color: $color-error-dark;
-        font-weight: $font-weight-medium;
-        display: block;
-    }
+    margin: 0;
+    line-height: 1.5;
+    color: $color-error-dark;
+    font-weight: $font-weight-medium;
+    display: block;
+  }
 }
- 
+
 .success-message {
-    margin-top: $spacing-md;
-    margin-bottom: $spacing-sm;
-    padding: $spacing-md;
-    font-family: $font-primary;
-    border-radius: 8px;
+  margin-top: $spacing-md;
+  margin-bottom: $spacing-sm;
+  padding: $spacing-md;
+  font-family: $font-primary;
+  border-radius: 8px;
+  font-size: 12px;
+  text-align: center;
+  min-height: 20px;
+  position: static;
+  background-color: $color-success-light;
+  border-left: 4px solid $color-success;
+  animation: slideDown $transition-normal ease-out;
+
+  span {
     font-size: 12px;
-    text-align: center;
-    min-height: 20px;
-    position: static;
-    background-color: $color-success-light;
-    border-left: 4px solid $color-success;
-    animation: slideDown $transition-normal ease-out;
- 
-    span {
-        font-size: 12px;
-        margin: 0;
-        line-height: 1.5;
-        color: $color-success;
-        font-weight: $font-weight-medium;
-        display: block;
-    }
+    margin: 0;
+    line-height: 1.5;
+    color: $color-success;
+    font-weight: $font-weight-medium;
+    display: block;
+  }
 }
- 
+
 .loading-message {
-    margin-top: $spacing-md;
-    margin-bottom: $spacing-sm;
-    padding: $spacing-md;
-    font-family: $font-primary;
-    border-radius: 8px;
+  margin-top: $spacing-md;
+  margin-bottom: $spacing-sm;
+  padding: $spacing-md;
+  font-family: $font-primary;
+  border-radius: 8px;
+  font-size: 12px;
+  text-align: center;
+  min-height: 20px;
+  position: static;
+  background-color: $color-gray-light;
+  border-left: 4px solid #2196f3;
+  animation: slideDown $transition-normal ease-out;
+
+  span {
     font-size: 12px;
-    text-align: center;
-    min-height: 20px;
-    position: static;
-    background-color: $color-gray-light;
-    border-left: 4px solid #2196f3;
-    animation: slideDown $transition-normal ease-out;
- 
-    span {
-        font-size: 12px;
-        margin: 0;
-        line-height: 1.5;
-        color: $color-dark;
-        font-weight: $font-weight-medium;
-        display: block;
-    }
+    margin: 0;
+    line-height: 1.5;
+    color: $color-dark;
+    font-weight: $font-weight-medium;
+    display: block;
+  }
 }
- 
+
 // Modal Backdrop
 .modal-backdrop {
-    position: fixed;
-    inset: 0;
-    background: $color-overlay;
-    backdrop-filter: blur(4px);
-    z-index: 1000;
-    animation: fadeIn $transition-normal ease-out;
+  position: fixed;
+  inset: 0;
+  background: $color-overlay;
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  animation: fadeIn $transition-normal ease-out;
 }
- 
+
 // Success Modal
 .success-modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1001;
-    width: 90%;
-    max-width: 380px;
-    animation: slideUp $transition-normal cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1001;
+  width: 90%;
+  max-width: 380px;
+  animation: slideUp $transition-normal cubic-bezier(0.34, 1.56, 0.64, 1);
 }
- 
+
 .success-modal .modal-content {
-    background: $color-white;
-    padding: $spacing-2xl $spacing-xl;
-    border-radius: 16px;
-    text-align: center;
-    box-shadow: $shadow-xl;
-    border: 1px solid rgba(255, 255, 255, 0.5);
+  background: $color-white;
+  padding: $spacing-2xl $spacing-xl;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: $shadow-xl;
+  border: 1px solid rgba(255, 255, 255, 0.5);
 }
- 
+
 .success-modal h2 {
-    color: $color-dark;
-    margin: 0 0 $spacing-md 0;
+  color: $color-dark;
+  margin: 0 0 $spacing-md 0;
+  font-size: 20px;
+  font-weight: $font-weight-bold;
+  font-family: $font-primary;
+  letter-spacing: -0.5px;
+}
+
+.success-modal p {
+  color: $color-gray-medium;
+  margin: 0 0 $spacing-xl 0;
+  font-size: 14px;
+  font-weight: $font-weight-regular;
+  font-family: $font-primary;
+  line-height: 1.6;
+}
+
+// Spinner Animation
+.success-modal .spinner {
+  margin: 0 auto $spacing-xl auto;
+  width: 50px;
+  height: 50px;
+  border: 4px solid #e0e0e0;
+  border-top: 4px solid #2196f3;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.2);
+}
+
+// Modal Overlay (for error modal background)
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: $color-overlay-light;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn $transition-normal ease-out;
+  backdrop-filter: blur(3px);
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: $color-overlay;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn $transition-normal ease-out;
+  backdrop-filter: blur(4px);
+}
+
+.popup {
+  background: $color-white;
+  padding: $spacing-2xl;
+  width: 90%;
+  max-width: 340px;
+  border-radius: 16px;
+  text-align: center;
+  animation: popupIn $transition-normal cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: $shadow-xl;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+
+  h2 {
+    margin: 0 0 $spacing-lg 0;
     font-size: 20px;
     font-weight: $font-weight-bold;
     font-family: $font-primary;
     letter-spacing: -0.5px;
-}
- 
-.success-modal p {
-    color: $color-gray-medium;
+  }
+
+  p {
     margin: 0 0 $spacing-xl 0;
     font-size: 14px;
     font-weight: $font-weight-regular;
     font-family: $font-primary;
     line-height: 1.6;
-}
- 
-// Spinner Animation
-.success-modal .spinner {
-    margin: 0 auto $spacing-xl auto;
-    width: 50px;
-    height: 50px;
-    border: 4px solid #e0e0e0;
-    border-top: 4px solid #2196f3;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.2);
-}
- 
-// Modal Overlay (for error modal background)
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: $color-overlay-light;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    animation: fadeIn $transition-normal ease-out;
-    backdrop-filter: blur(3px);
-}
- 
-.popup-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: $color-overlay;
-    z-index: 1000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    animation: fadeIn $transition-normal ease-out;
-    backdrop-filter: blur(4px);
-}
- 
-.popup {
-    background: $color-white;
-    padding: $spacing-2xl;
-    width: 90%;
-    max-width: 340px;
-    border-radius: 16px;
-    text-align: center;
-    animation: popupIn $transition-normal cubic-bezier(0.34, 1.56, 0.64, 1);
-    box-shadow: $shadow-xl;
-    border: 1px solid rgba(255, 255, 255, 0.5);
- 
-    h2 {
-        margin: 0 0 $spacing-lg 0;
-        font-size: 20px;
-        font-weight: $font-weight-bold;
-        font-family: $font-primary;
-        letter-spacing: -0.5px;
-    }
- 
-    p {
-        margin: 0 0 $spacing-xl 0;
-        font-size: 14px;
-        font-weight: $font-weight-regular;
-        font-family: $font-primary;
-        line-height: 1.6;
-        color: $color-gray-medium;
-    }
- 
-    button {
-        background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
-        color: $color-white;
-        border: none;
-        padding: $spacing-md $spacing-xl;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: $font-weight-semibold;
-        font-family: $font-primary;
-        font-size: 14px;
-        transition: all $transition-fast;
-        box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
-        position: relative;
-        overflow: hidden;
- 
-        &:hover {
-            background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
-            box-shadow: 0 6px 16px rgba(33, 150, 243, 0.4);
-            transform: translateY(-2px);
-        }
- 
-        &:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
-        }
- 
-        &:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-    }
- 
-    &.warning {
-        h2 {
-            color: $color-error;
-        }
- 
-        p {
-            color: #757575;
-        }
- 
-        button {
-            background: linear-gradient(135deg, $color-error 0%, #d32f2f 100%);
-            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
- 
-            &:hover {
-                background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%);
-                box-shadow: 0 6px 16px rgba(244, 67, 54, 0.4);
-                transform: translateY(-2px);
-            }
- 
-            &:active {
-                transform: translateY(0);
-                box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
-            }
-        }
-    }
- 
-    &.success {
-        h2 {
-            color: $color-success;
-        }
- 
-        button {
-            background: linear-gradient(135deg, $color-success 0%, #388e3c 100%);
-            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
- 
-            &:hover {
-                background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
-                box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
-                transform: translateY(-2px);
-            }
- 
-            &:active {
-                transform: translateY(0);
-                box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
-            }
-        }
-    }
-}
- 
-.success-modal .close-btn {
-    padding: $spacing-md $spacing-lg;
+    color: $color-gray-medium;
+  }
+
+  button {
+    background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+    color: $color-white;
     border: none;
+    padding: $spacing-md $spacing-xl;
     border-radius: 8px;
-    background: linear-gradient(135deg, $color-gray-light 0%, #f0f0f0 100%);
-    color: $color-dark;
-    font-weight: $font-weight-semibold;
     cursor: pointer;
+    font-weight: $font-weight-semibold;
     font-family: $font-primary;
     font-size: 14px;
     transition: all $transition-fast;
-    box-shadow: $shadow-md;
- 
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+    position: relative;
+    overflow: hidden;
+
     &:hover {
-        background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
-        box-shadow: $shadow-lg;
-        transform: translateY(-2px);
+      background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+      box-shadow: 0 6px 16px rgba(33, 150, 243, 0.4);
+      transform: translateY(-2px);
     }
- 
+
     &:active {
-        transform: translateY(0);
-        box-shadow: $shadow-sm;
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
     }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+
+  &.warning {
+    h2 {
+      color: $color-error;
+    }
+
+    p {
+      color: #757575;
+    }
+
+    button {
+      background: linear-gradient(135deg, $color-error 0%, #d32f2f 100%);
+      box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+
+      &:hover {
+        background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%);
+        box-shadow: 0 6px 16px rgba(244, 67, 54, 0.4);
+        transform: translateY(-2px);
+      }
+
+      &:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
+      }
+    }
+  }
+
+  &.success {
+    h2 {
+      color: $color-success;
+    }
+
+    button {
+      background: linear-gradient(135deg, $color-success 0%, #388e3c 100%);
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+
+      &:hover {
+        background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
+        box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+        transform: translateY(-2px);
+      }
+
+      &:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+      }
+    }
+  }
 }
- 
+
+.success-modal .close-btn {
+  padding: $spacing-md $spacing-lg;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, $color-gray-light 0%, #f0f0f0 100%);
+  color: $color-dark;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  font-family: $font-primary;
+  font-size: 14px;
+  transition: all $transition-fast;
+  box-shadow: $shadow-md;
+
+  &:hover {
+    background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+    box-shadow: $shadow-lg;
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: $shadow-sm;
+  }
+}
+
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
- 
+
 @keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translate(-50%, -45%);
-    }
-    to {
-        opacity: 1;
-        transform: translate(-50%, -50%);
-    }
+  from {
+    opacity: 0;
+    transform: translate(-50%, -45%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
 }
- 
+
 @keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
- 
+
 @keyframes popupIn {
-    from {
-        opacity: 0;
-        transform: scale(0.9);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
- 
+
 @keyframes spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
- 
+
 @media (max-width: 480px) {
-    .success-modal {
-        width: 95%;
-        max-width: 100%;
+  .success-modal {
+    width: 95%;
+    max-width: 100%;
+  }
+
+  .success-modal .modal-content {
+    padding: $spacing-xl $spacing-lg;
+  }
+
+  .success-modal h2 {
+    font-size: 18px;
+  }
+
+  .popup {
+    width: 95%;
+    max-width: 100%;
+    padding: $spacing-xl;
+  }
+
+  .popup h2 {
+    font-size: 18px;
+  }
+
+  .popup button {
+    width: 100%;
+    padding: $spacing-md $spacing-lg;
+  }
+
+  .error-message,
+  .success-message,
+  .loading-message {
+    font-size: 11px;
+    padding: $spacing-sm;
+
+    span {
+      font-size: 11px;
     }
- 
-    .success-modal .modal-content {
-        padding: $spacing-xl $spacing-lg;
-    }
- 
-    .success-modal h2 {
-        font-size: 18px;
-    }
- 
-    .popup {
-        width: 95%;
-        max-width: 100%;
-        padding: $spacing-xl;
-    }
- 
-    .popup h2 {
-        font-size: 18px;
-    }
- 
-    .popup button {
-        width: 100%;
-        padding: $spacing-md $spacing-lg;
-    }
- 
-    .error-message,
-    .success-message,
-    .loading-message {
-        font-size: 11px;
-        padding: $spacing-sm;
- 
-        span {
-            font-size: 11px;
-        }
-    }
+  }
 }
- 
+
 @media (prefers-color-scheme: dark) {
-    .modal-backdrop,
-    .popup-overlay {
-        background: rgba(0, 0, 0, 0.8);
+
+  .modal-backdrop,
+  .popup-overlay {
+    background: rgba(0, 0, 0, 0.8);
+  }
+
+  .success-modal .modal-content,
+  .popup {
+    background: #1e1e1e;
+    color: #ffffff;
+
+    h2 {
+      color: #ffffff;
     }
- 
-    .success-modal .modal-content,
-    .popup {
-        background: #1e1e1e;
-        color: #ffffff;
- 
-        h2 {
-            color: #ffffff;
-        }
- 
-        p {
-            color: #b0b0b0;
-        }
+
+    p {
+      color: #b0b0b0;
     }
+  }
 }
 
 /* Account Review Modal Styles */
 .account-review-modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1001;
-    background: white;
-    border-radius: 12px;
-    padding: 40px 36px;
-    width: 90%;
-    max-width: 480px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-    animation: slideUp $transition-normal cubic-bezier(0.34, 1.56, 0.64, 1);
-    text-align: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1001;
+  background: white;
+  border-radius: 12px;
+  padding: 40px 36px;
+  width: 90%;
+  max-width: 480px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  animation: slideUp $transition-normal cubic-bezier(0.34, 1.56, 0.64, 1);
+  text-align: center;
+
+  .modal-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: $text-dark;
+    margin: 0 0 16px 0;
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.4;
+  }
+
+  .modal-message {
+    font-size: 14px;
+    font-weight: 600;
+    color: $text-dark;
+    margin: 0 0 12px 0;
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.6;
+  }
+
+  .modal-subtitle {
+    font-size: 13px;
+    font-weight: 500;
+    color: $text-light;
+    margin: 0 0 28px 0;
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.6;
+  }
+
+  .modal-button {
+    background: linear-gradient(135deg, $primary-blue 0%, color.adjust($primary-blue, $lightness: -5%) 100%);
+    color: white;
+    border: none;
+    padding: 12px 36px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 82, 204, 0.3);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 82, 204, 0.4);
+      background: linear-gradient(135deg, color.adjust($primary-blue, $lightness: -5%) 0%, color.adjust($primary-blue, $lightness: -10%) 100%);
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(0, 82, 204, 0.3);
+    }
+  }
+
+  @media (max-width: 480px) {
+    width: 95%;
+    max-width: 100%;
+    padding: 32px 24px;
 
     .modal-title {
-        font-size: 20px;
-        font-weight: 700;
-        color: $text-dark;
-        margin: 0 0 16px 0;
-        font-family: 'Poppins', sans-serif;
-        line-height: 1.4;
+      font-size: 18px;
+      margin-bottom: 12px;
     }
 
     .modal-message {
-        font-size: 14px;
-        font-weight: 600;
-        color: $text-dark;
-        margin: 0 0 12px 0;
-        font-family: 'Poppins', sans-serif;
-        line-height: 1.6;
+      font-size: 13px;
     }
 
     .modal-subtitle {
-        font-size: 13px;
-        font-weight: 500;
-        color: $text-light;
-        margin: 0 0 28px 0;
-        font-family: 'Poppins', sans-serif;
-        line-height: 1.6;
+      font-size: 12px;
+      margin-bottom: 24px;
     }
 
     .modal-button {
-        background: linear-gradient(135deg, $primary-blue 0%, darken($primary-blue, 5%) 100%);
-        color: white;
-        border: none;
-        padding: 12px 36px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        font-family: 'Poppins', sans-serif;
-        transition: all 0.2s ease;
-        box-shadow: 0 4px 12px rgba(0, 82, 204, 0.3);
-
-        &:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0, 82, 204, 0.4);
-            background: linear-gradient(135deg, darken($primary-blue, 5%) 0%, darken($primary-blue, 10%) 100%);
-        }
-
-        &:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 8px rgba(0, 82, 204, 0.3);
-        }
+      padding: 11px 28px;
+      font-size: 13px;
     }
-
-    @media (max-width: 480px) {
-        width: 95%;
-        max-width: 100%;
-        padding: 32px 24px;
-
-        .modal-title {
-            font-size: 18px;
-            margin-bottom: 12px;
-        }
-
-        .modal-message {
-            font-size: 13px;
-        }
-
-        .modal-subtitle {
-            font-size: 12px;
-            margin-bottom: 24px;
-        }
-
-        .modal-button {
-            padding: 11px 28px;
-            font-size: 13px;
-        }
-    }
+  }
 }
 
 @keyframes scaleIn {
-    from {
-        opacity: 0;
-        transform: scale(0.8);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
