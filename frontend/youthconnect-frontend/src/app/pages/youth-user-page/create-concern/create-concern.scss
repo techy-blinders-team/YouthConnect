@@ -992,6 +992,7 @@ form {
         .concerns-header {
             flex-direction: column;
             align-items: stretch;
+            gap: 16px;
 
             .header-text {
                 h1 {
@@ -1009,6 +1010,21 @@ form {
 
             .concerns-stats {
                 justify-content: flex-start;
+                flex-wrap: wrap;
+            }
+        }
+    }
+
+    .filters-section {
+        .filter-controls {
+            flex-direction: column;
+
+            .filter-select {
+                width: 100%;
+            }
+
+            .btn-clear-filters {
+                width: 100%;
             }
         }
     }
@@ -1067,58 +1083,573 @@ form {
 }
 
 @media (max-width: 768px) {
+    .concern-container {
+        padding: 12px;
+        border-radius: 16px;
+    }
+
+    .concern-header {
+        padding: 16px 0;
+        margin-bottom: 16px;
+    }
+
+    .btn-create-concern {
+        width: 100%;
+        padding: 12px 28px;
+        font-size: 1rem;
+        border-radius: 10px;
+    }
+
+    .error-banner {
+        margin: 0 12px 14px 12px;
+        padding: 12px 14px;
+        border-radius: 10px;
+        font-size: 0.9rem;
+    }
+
+    .concerns-content {
+        padding: 20px 16px;
+        border-radius: 14px;
+
+        .concerns-header {
+            margin-bottom: 20px;
+            gap: 14px;
+
+            .header-text {
+                h1 {
+                    font-size: 1.4rem;
+
+                    &::before {
+                        width: 5px;
+                        height: 22px;
+                    }
+                }
+
+                .subtitle {
+                    font-size: 0.85rem;
+                    margin-left: 15px;
+                }
+            }
+
+            .concerns-stats {
+                gap: 6px;
+
+                .stat-badge {
+                    padding: 5px 12px;
+                    font-size: 0.85rem;
+                    border-radius: 14px;
+                }
+            }
+        }
+    }
+
+    .filters-section {
+        padding: 16px 14px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+
+        .search-box {
+            margin-bottom: 14px;
+
+            .search-input {
+                padding: 10px 44px 10px 44px;
+                font-size: 0.95rem;
+                border-radius: 8px;
+            }
+
+            .search-icon {
+                left: 14px;
+            }
+
+            .clear-search {
+                right: 10px;
+                width: 22px;
+                height: 22px;
+                font-size: 1.3rem;
+            }
+        }
+
+        .filter-controls {
+            gap: 10px;
+
+            .filter-select {
+                padding: 9px 14px;
+                font-size: 0.9rem;
+                border-radius: 7px;
+            }
+
+            .btn-clear-filters {
+                padding: 9px 18px;
+                font-size: 0.9rem;
+                border-radius: 7px;
+            }
+        }
+    }
+
+    .concerns-list {
+        gap: 16px;
+        padding-right: 6px;
+
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
+    }
+
+    .concern-item {
+        border-radius: 14px;
+
+        .concern-content {
+            padding: 18px 20px;
+            gap: 16px;
+        }
+
+        .concern-left {
+            gap: 16px;
+        }
+
+        .concern-type-icon {
+            font-size: 2rem;
+        }
+
+        .concern-title {
+            font-size: 1.15rem;
+        }
+
+        .concern-meta {
+            gap: 14px;
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+        }
+
+        .concern-right {
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .concern-status {
+            padding: 7px 16px;
+            font-size: 0.85rem;
+            border-radius: 18px;
+        }
+
+        .concern-actions {
+            gap: 6px;
+
+            button {
+                padding: 7px;
+                border-radius: 5px;
+
+                svg {
+                    width: 20px;
+                    height: 20px;
+                }
+            }
+        }
+    }
+
+    .pagination {
+        gap: 6px;
+        padding: 20px 0 6px 0;
+
+        .pagination-btn,
+        .pagination-number {
+            min-width: 36px;
+            height: 36px;
+            font-size: 0.9rem;
+            border-radius: 7px;
+        }
+    }
+
     .modal-content {
         width: 95%;
         max-height: 95vh;
+        border-radius: 16px;
     }
 
     form {
-        padding: 24px;
+        padding: 20px;
     }
 
     .modal-header {
-        padding: 20px 24px;
+        padding: 18px 20px;
 
         h3 {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
+
+            &::before {
+                width: 5px;
+                height: 24px;
+            }
+        }
+
+        .btn-close {
+            width: 34px;
+            height: 34px;
+        }
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+
+        label {
+            font-size: 0.95rem;
+            margin-bottom: 7px;
+        }
+
+        input,
+        select,
+        textarea {
+            padding: 11px 14px;
+            font-size: 0.95rem;
+            border-radius: 7px;
+        }
+
+        textarea {
+            min-height: 110px;
+        }
+
+        .char-counter {
+            font-size: 0.8rem;
+        }
+
+        .error-message {
+            font-size: 0.82rem;
         }
     }
 
     .modal-actions {
         flex-direction: column;
+        padding: 18px 20px;
+        gap: 10px;
 
         button {
             width: 100%;
+            padding: 12px 28px;
+            font-size: 1rem;
+            border-radius: 10px;
         }
     }
 
     .delete-modal {
         .delete-modal-body {
-            padding: 24px;
+            padding: 20px;
+
+            .delete-icon svg {
+                width: 44px;
+                height: 44px;
+            }
+
+            .delete-message {
+                font-size: 1.1rem;
+            }
+
+            .delete-concern-title {
+                font-size: 1rem;
+                padding: 10px 16px;
+            }
+
+            .delete-warning {
+                font-size: 0.9rem;
+            }
         }
 
         .modal-actions {
-            padding: 20px 24px;
+            padding: 18px 20px;
         }
     }
 
+    .loading-state {
+        padding: 50px 16px;
+        font-size: 1.05rem;
+    }
+
+    .empty-state {
+        padding: 50px 16px;
+        font-size: 1.05rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .concern-container {
+        padding: 10px;
+        border-radius: 14px;
+    }
+
+    .concern-header {
+        padding: 14px 0;
+        margin-bottom: 14px;
+    }
+
+    .btn-create-concern {
+        padding: 11px 24px;
+        font-size: 0.95rem;
+        border-radius: 9px;
+    }
+
+    .error-banner {
+        margin: 0 10px 12px 10px;
+        padding: 10px 12px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+    }
+
     .concerns-content {
-        padding: 24px;
+        padding: 16px 14px;
+        border-radius: 12px;
 
         .concerns-header {
+            margin-bottom: 16px;
+            gap: 12px;
+
             .header-text {
                 h1 {
-                    font-size: 1.5rem;
+                    font-size: 1.25rem;
 
                     &::before {
-                        height: 24px;
+                        width: 4px;
+                        height: 20px;
                     }
                 }
 
                 .subtitle {
-                    font-size: 0.9rem;
+                    font-size: 0.8rem;
+                    margin-left: 13px;
+                }
+            }
+
+            .concerns-stats {
+                gap: 5px;
+
+                .stat-badge {
+                    padding: 4px 10px;
+                    font-size: 0.8rem;
+                    border-radius: 12px;
                 }
             }
         }
+    }
+
+    .filters-section {
+        padding: 14px 12px;
+        margin-bottom: 16px;
+        border-radius: 9px;
+
+        .search-box {
+            margin-bottom: 12px;
+
+            .search-input {
+                padding: 9px 40px 9px 40px;
+                font-size: 0.9rem;
+                border-radius: 7px;
+            }
+
+            .search-icon {
+                left: 12px;
+                width: 18px;
+                height: 18px;
+            }
+
+            .clear-search {
+                right: 9px;
+                width: 20px;
+                height: 20px;
+                font-size: 1.2rem;
+            }
+        }
+
+        .filter-controls {
+            gap: 8px;
+
+            .filter-select {
+                padding: 8px 12px;
+                font-size: 0.85rem;
+                border-radius: 6px;
+            }
+
+            .btn-clear-filters {
+                padding: 8px 16px;
+                font-size: 0.85rem;
+                border-radius: 6px;
+            }
+        }
+    }
+
+    .concerns-list {
+        gap: 14px;
+        padding-right: 4px;
+
+        &::-webkit-scrollbar {
+            width: 5px;
+        }
+    }
+
+    .concern-item {
+        border-radius: 12px;
+
+        .concern-content {
+            padding: 16px 18px;
+            gap: 14px;
+        }
+
+        .concern-left {
+            gap: 14px;
+        }
+
+        .concern-type-icon {
+            font-size: 1.8rem;
+        }
+
+        .concern-title {
+            font-size: 1.05rem;
+        }
+
+        .concern-meta {
+            gap: 12px;
+            font-size: 0.85rem;
+        }
+
+        .concern-right {
+            gap: 10px;
+        }
+
+        .concern-status {
+            padding: 6px 14px;
+            font-size: 0.8rem;
+            border-radius: 16px;
+        }
+
+        .concern-actions {
+            gap: 5px;
+
+            button {
+                padding: 6px;
+                border-radius: 4px;
+
+                svg {
+                    width: 18px;
+                    height: 18px;
+                }
+            }
+        }
+    }
+
+    .pagination {
+        gap: 5px;
+        padding: 16px 0 4px 0;
+        flex-wrap: wrap;
+
+        .pagination-btn,
+        .pagination-number {
+            min-width: 34px;
+            height: 34px;
+            font-size: 0.85rem;
+            border-radius: 6px;
+        }
+    }
+
+    .modal-content {
+        width: 96%;
+        max-height: 96vh;
+        border-radius: 14px;
+    }
+
+    form {
+        padding: 18px;
+    }
+
+    .modal-header {
+        padding: 16px 18px;
+
+        h3 {
+            font-size: 1.2rem;
+
+            &::before {
+                width: 4px;
+                height: 22px;
+            }
+        }
+
+        .btn-close {
+            width: 32px;
+            height: 32px;
+        }
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+
+        label {
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+        }
+
+        input,
+        select,
+        textarea {
+            padding: 10px 12px;
+            font-size: 0.9rem;
+            border-radius: 6px;
+        }
+
+        textarea {
+            min-height: 100px;
+        }
+
+        .char-counter {
+            font-size: 0.75rem;
+        }
+
+        .error-message {
+            font-size: 0.78rem;
+        }
+    }
+
+    .modal-actions {
+        padding: 16px 18px;
+        gap: 8px;
+
+        button {
+            padding: 11px 24px;
+            font-size: 0.95rem;
+            border-radius: 9px;
+        }
+    }
+
+    .delete-modal {
+        .delete-modal-body {
+            padding: 18px;
+
+            .delete-icon svg {
+                width: 40px;
+                height: 40px;
+            }
+
+            .delete-message {
+                font-size: 1.05rem;
+            }
+
+            .delete-concern-title {
+                font-size: 0.95rem;
+                padding: 9px 14px;
+            }
+
+            .delete-warning {
+                font-size: 0.85rem;
+            }
+        }
+
+        .modal-actions {
+            padding: 16px 18px;
+        }
+    }
+
+    .loading-state {
+        padding: 40px 14px;
+        font-size: 1rem;
+    }
+
+    .empty-state {
+        padding: 40px 14px;
+        font-size: 1rem;
     }
 }

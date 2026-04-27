@@ -56,6 +56,7 @@ export class NotificationPage implements OnInit {
       next: (data) => {
         this.notifications = data;
         this.isLoading = false;
+        this.updateUnreadCount();
       },
       error: (error) => {
         console.error('Error loading notifications:', error);
@@ -63,6 +64,11 @@ export class NotificationPage implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  updateUnreadCount(): void {
+    const unreadCount = this.notifications.filter(n => !this.isRead(n)).length;
+    this.notificationService.updateUnreadCount(unreadCount);
   }
 
   get filteredNotifications(): NotificationResponse[] {
@@ -84,6 +90,7 @@ export class NotificationPage implements OnInit {
     if (!this.isRead(notification)) {
       this.readNotifications.add(notification.updateId);
       this.saveReadNotificationsToStorage();
+      this.updateUnreadCount();
     }
   }
 

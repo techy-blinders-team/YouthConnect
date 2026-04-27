@@ -678,37 +678,63 @@
 @media (max-width: 1200px) {
     .stats-section {
         grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
     }
 
     .content-grid {
         grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .stat-card {
+        padding: 20px 16px;
+
+        .stat-value {
+            font-size: 2.4rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+        }
     }
 }
 
 @media (max-width: 768px) {
     .dashboard-container {
         padding: 12px;
+        border-radius: 16px;
     }
 
     .dashboard-header {
-        padding: 24px 20px;
+        padding: 20px 16px;
         margin-bottom: 16px;
+        border-radius: 16px;
 
         .header-content {
             flex-direction: column;
             align-items: flex-start;
+            gap: 16px;
         }
 
-        .welcome-section h1 {
-            font-size: 1.8rem;
+        .welcome-section {
+            h1 {
+                font-size: 1.6rem;
+            }
+
+            .user-email {
+                font-size: 0.85rem;
+            }
         }
 
         .header-actions {
             width: 100%;
             flex-direction: column;
+            gap: 10px;
 
             button {
                 width: 100%;
+                padding: 12px 20px;
+                font-size: 0.95rem;
             }
         }
     }
@@ -716,9 +742,344 @@
     .stats-section {
         grid-template-columns: 1fr;
         gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .stat-card {
+        padding: 18px 16px;
+        border-radius: 16px;
+
+        .stat-value {
+            font-size: 2.2rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+        }
     }
 
     .content-grid {
-        gap: 16px;
+        gap: 14px;
+        margin-bottom: 16px;
+    }
+
+    .content-card {
+        padding: 18px 16px;
+        border-radius: 16px;
+        height: 380px;
+
+        h2 {
+            font-size: 1.2rem;
+            margin-bottom: 14px;
+
+            &::before {
+                width: 5px;
+                height: 20px;
+            }
+        }
+    }
+
+    .events-card {
+        .event-list {
+            gap: 12px;
+            padding-right: 6px;
+        }
+
+        .event-item {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 16px 18px;
+            gap: 12px;
+
+            .event-info {
+                width: 100%;
+                gap: 6px;
+            }
+
+            .event-title {
+                font-size: 1rem;
+            }
+
+            .event-date {
+                font-size: 0.85rem;
+            }
+
+            .btn-view {
+                width: 100%;
+                padding: 10px 20px;
+                font-size: 0.95rem;
+            }
+        }
+    }
+
+    .notifications-card {
+        .notifications-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 14px;
+
+            h2 {
+                margin-bottom: 0;
+            }
+
+            .notification-filters {
+                width: 100%;
+                gap: 8px;
+
+                .filter-btn {
+                    flex: 1;
+                    padding: 10px 16px;
+                    font-size: 0.9rem;
+                }
+            }
+        }
+
+        .notification-list {
+            gap: 12px;
+            padding-right: 6px;
+        }
+
+        .notification-item {
+            padding: 14px 16px;
+            border-radius: 12px;
+
+            .notification-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+                margin-bottom: 8px;
+            }
+
+            .notification-title {
+                font-size: 1rem;
+            }
+
+            .notification-time {
+                font-size: 0.8rem;
+            }
+
+            .notification-message {
+                font-size: 0.9rem;
+                padding-right: 0;
+            }
+
+            .unread-indicator {
+                top: 14px;
+                right: 14px;
+                width: 10px;
+                height: 10px;
+            }
+        }
+    }
+
+    .error-banner {
+        padding: 12px 14px;
+        margin-bottom: 12px;
+        border-radius: 10px;
+        font-size: 0.9rem;
+    }
+
+    .loading-state {
+        padding: 40px 16px;
+        font-size: 1.1rem;
+    }
+
+    .empty-state {
+        padding: 30px 16px;
+
+        p {
+            font-size: 0.95rem;
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-container {
+        padding: 10px;
+        border-radius: 12px;
+    }
+
+    .dashboard-header {
+        padding: 16px 14px;
+        margin-bottom: 12px;
+        border-radius: 12px;
+
+        .welcome-section {
+            h1 {
+                font-size: 1.4rem;
+            }
+
+            .user-email {
+                font-size: 0.8rem;
+            }
+        }
+
+        .header-actions {
+            gap: 8px;
+
+            button {
+                padding: 10px 16px;
+                font-size: 0.9rem;
+                border-radius: 10px;
+            }
+        }
+    }
+
+    .stats-section {
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .stat-card {
+        padding: 16px 14px;
+        border-radius: 14px;
+        border-left-width: 5px;
+
+        .stat-value {
+            font-size: 2rem;
+            margin-bottom: 6px;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+        }
+    }
+
+    .content-grid {
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .content-card {
+        padding: 16px 14px;
+        border-radius: 14px;
+        height: 350px;
+
+        &::before {
+            height: 3px;
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+
+            &::before {
+                width: 4px;
+                height: 18px;
+            }
+        }
+    }
+
+    .events-card {
+        .event-list {
+            gap: 10px;
+            padding-right: 4px;
+
+            &::-webkit-scrollbar {
+                width: 6px;
+            }
+        }
+
+        .event-item {
+            padding: 14px 16px;
+            border-radius: 12px;
+            gap: 10px;
+
+            .event-title {
+                font-size: 0.95rem;
+            }
+
+            .event-date {
+                font-size: 0.8rem;
+
+                &::before {
+                    font-size: 0.9rem;
+                }
+            }
+
+            .btn-view {
+                padding: 9px 18px;
+                font-size: 0.9rem;
+                border-radius: 10px;
+            }
+        }
+    }
+
+    .notifications-card {
+        .notifications-header {
+            gap: 10px;
+            margin-bottom: 12px;
+
+            .notification-filters {
+                gap: 6px;
+
+                .filter-btn {
+                    padding: 9px 14px;
+                    font-size: 0.85rem;
+                    border-radius: 10px;
+                }
+            }
+        }
+
+        .notification-list {
+            gap: 10px;
+            padding-right: 4px;
+
+            &::-webkit-scrollbar {
+                width: 6px;
+            }
+        }
+
+        .notification-item {
+            padding: 12px 14px;
+            border-radius: 10px;
+            border-left-width: 4px;
+
+            .notification-content {
+                gap: 6px;
+                margin-bottom: 6px;
+            }
+
+            .notification-title {
+                font-size: 0.95rem;
+            }
+
+            .notification-time {
+                font-size: 0.75rem;
+            }
+
+            .notification-message {
+                font-size: 0.85rem;
+                line-height: 1.5;
+            }
+
+            .unread-indicator {
+                top: 12px;
+                right: 12px;
+                width: 9px;
+                height: 9px;
+            }
+        }
+    }
+
+    .error-banner {
+        padding: 10px 12px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+    }
+
+    .loading-state {
+        padding: 30px 12px;
+        font-size: 1rem;
+    }
+
+    .empty-state {
+        padding: 24px 12px;
+
+        p {
+            font-size: 0.9rem;
+        }
     }
 }
