@@ -199,7 +199,7 @@ export class ManageYouthMember implements OnInit {
       updatedProfile: this.youthMemberManagementService.updateYouthProfile(editingItem.youthId, payload.profile)
     }).subscribe({
       next: ({ updatedUser, updatedProfile }) => {
-        const updatedIsActive = updatedUser.isActive ?? updatedUser.active ?? true;
+        const updatedIsActive = updatedUser.isActive ?? true;
 
         const updatedMember: YouthMemberListItem = {
           userId: updatedUser.userId,
@@ -397,7 +397,7 @@ export class ManageYouthMember implements OnInit {
           birthday: profile.birthday,
           contactNumber: profile.contactNumber,
           civilStatus: profile.civilStatus,
-          isActive: user.isActive ?? user.active ?? true,
+          isActive: user.isActive ?? true,
           status: user.status ?? 'pending',
           createdAt: user.createdAt,
           middleName: profile.middleName,

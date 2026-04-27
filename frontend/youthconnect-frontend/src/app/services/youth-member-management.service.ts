@@ -11,8 +11,7 @@ export interface YouthUserAccount {
   youthId: number;
   roleId: number;
   email: string;
-  active?: boolean;
-  isActive?: boolean;
+  isActive: boolean;
   status: UserApprovalStatus;
   createdAt: string;
 }

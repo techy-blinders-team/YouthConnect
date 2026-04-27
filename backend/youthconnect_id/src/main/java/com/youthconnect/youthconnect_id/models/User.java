@@ -2,6 +2,7 @@ package com.youthconnect.youthconnect_id.models;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,12 +34,14 @@ public class User {
     @Column(name = "password_hash", nullable = false, length = 255)
     private String passwordHash;
 
+    @JsonProperty("isActive")
     @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
+    @JsonProperty("status")
     @Column(name = "status", nullable = false, length = 20)
     private String status = STATUS_PENDING;
 

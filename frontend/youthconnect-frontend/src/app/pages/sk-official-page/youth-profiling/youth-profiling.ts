@@ -138,7 +138,7 @@ export class YouthProfiling implements OnInit {
             {
               email: user.email,
               roleId: user.roleId,
-              isActive: user.isActive ?? user.active ?? true,
+              isActive: user.isActive ?? true,
               status: user.status ?? 'pending'
             }
           ])
@@ -157,7 +157,7 @@ export class YouthProfiling implements OnInit {
             birthday: profile.birthday,
             contactNumber: profile.contactNumber,
             civilStatus: profile.civilStatus as CivilStatus,
-            isActive: matchingUser?.isActive ?? matchingUser?.active ?? (profile.isActive !== undefined ? profile.isActive : true),
+            isActive: matchingUser?.isActive ?? (profile.isActive !== undefined ? profile.isActive : true),
             status: matchingUser?.status ?? (profile.status ?? 'pending'),
             createdAt: matchingUser?.createdAt || profile.createdAt,
             middleName: profile.middleName || null,
@@ -337,7 +337,7 @@ export class YouthProfiling implements OnInit {
 
     this.youthMemberManagementService.rejectUser(profile.userId).subscribe({
       next: (updatedUser) => {
-        const updatedIsActive = updatedUser.isActive ?? updatedUser.active ?? false;
+        const updatedIsActive = updatedUser.isActive ?? false;
 
         this.userAccountByUserId.set(updatedUser.userId, {
           email: updatedUser.email,
