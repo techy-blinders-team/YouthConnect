@@ -340,6 +340,11 @@ html, body, :host, .youth-profiling-container {
     background: #e8f5e9;
     color: #1b5e20;
   }
+
+  &.rejected {
+    background: #ffebee;
+    color: #c62828;
+  }
 }
 
 .approval-meta {

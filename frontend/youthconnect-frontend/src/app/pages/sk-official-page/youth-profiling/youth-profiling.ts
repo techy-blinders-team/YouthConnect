@@ -23,7 +23,7 @@ export class YouthProfiling implements OnInit {
   errorMessage: string = '';
   successMessage: string = '';
   isApprovalPanelOpen = false;
-  approvalFilter: 'pending' | 'approved' | 'all' = 'pending';
+  approvalFilter: 'pending' | 'approved' | 'rejected' | 'all' = 'pending';
   approvalMessage: string = '';
   approvalError: string = '';
   updatingApprovalUserId: number | null = null;
@@ -218,6 +218,10 @@ export class YouthProfiling implements OnInit {
         return profile.status === 'pending';
       }
 
+      if (this.approvalFilter === 'rejected') {
+        return profile.status === 'rejected';
+      }
+
       return true;
     });
   }
@@ -238,7 +242,7 @@ export class YouthProfiling implements OnInit {
     this.approvalMessage = '';
   }
 
-  setApprovalFilter(filter: 'pending' | 'approved' | 'all'): void {
+  setApprovalFilter(filter: 'pending' | 'approved' | 'rejected' | 'all'): void {
     this.approvalFilter = filter;
   }
 
