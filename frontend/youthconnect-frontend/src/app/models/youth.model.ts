@@ -46,6 +46,6 @@ export interface User {
   roleId: number;
   email: string;
   isActive: boolean;
-  isApprove: boolean;
+  status: 'pending' | 'approved' | 'rejected';
   createdAt: string;
 }

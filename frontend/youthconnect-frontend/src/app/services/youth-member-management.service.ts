@@ -4,14 +4,15 @@ import { Observable } from 'rxjs';
 
 import { CivilStatus, Gender, Suffix } from '../models/enums';
 
+export type UserApprovalStatus = 'pending' | 'approved' | 'rejected';
+
 export interface YouthUserAccount {
   userId: number;
   youthId: number;
   roleId: number;
   email: string;
-  active?: boolean;
-  isActive?: boolean;
-  isApprove: boolean | null;
+  isActive: boolean;
+  status: UserApprovalStatus;
   createdAt: string;
 }
 
@@ -43,7 +44,7 @@ export interface YouthMemberListItem {
   contactNumber: string;
   civilStatus: CivilStatus;
   isActive: boolean;
-  isApprove: boolean | null;
+  status: UserApprovalStatus;
   createdAt: string;
   middleName?: string | null;
   suffix?: Suffix | null;
@@ -64,7 +65,7 @@ export interface UpdateYouthUserPayload {
   email: string;
   roleId: number;
   active: boolean;
-  isApprove: boolean | null;
+  status: UserApprovalStatus;
 }
 
 export interface UpdateYouthProfilePayload {
@@ -108,7 +109,7 @@ export class YouthMemberManagementService {
       email: payload.email,
       roleId: payload.roleId,
       active: payload.active,
-      isApprove: payload.isApprove
+      status: payload.status
     });
   }
 

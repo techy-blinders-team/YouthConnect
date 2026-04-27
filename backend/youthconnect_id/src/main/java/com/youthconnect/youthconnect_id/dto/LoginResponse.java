@@ -8,6 +8,7 @@ public class LoginResponse {
     private int youthId;
     private String email;
     private int roleId;
+    private String status;
     private boolean isApproved;
 
     public LoginResponse() {}
@@ -71,6 +72,14 @@ public class LoginResponse {
 
     public void setRoleId(int roleId) {
         this.roleId = roleId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public boolean isApproved() {

@@ -165,6 +165,13 @@
       <button
         type="button"
         class="filter-chip"
+        [class.active]="approvalFilter === 'rejected'"
+        (click)="setApprovalFilter('rejected')">
+        Rejected
+      </button>
+      <button
+        type="button"
+        class="filter-chip"
         [class.active]="approvalFilter === 'all'"
         (click)="setApprovalFilter('all')">
         All
@@ -183,8 +190,8 @@
       <article class="approval-card" *ngFor="let profile of approvalProfiles">
         <div class="approval-card-head">
           <h3>{{ profile.firstName }} {{ profile.lastName }}</h3>
-          <span class="approval-status" [class.pending]="profile.isApprove !== true" [class.approved]="profile.isApprove === true">
-            {{ profile.isApprove === true ? 'Approved' : 'Pending' }}
+          <span class="approval-status" [class.pending]="profile.status === 'pending'" [class.approved]="profile.status === 'approved'" [class.rejected]="profile.status === 'rejected'">
+            {{ profile.status === 'approved' ? 'Approved' : (profile.status === 'rejected' ? 'Rejected' : 'Pending') }}
           </span>
         </div>
 
@@ -193,7 +200,7 @@
 
         <div class="approval-actions">
           <button
-            *ngIf="profile.isApprove !== true"
+            *ngIf="profile.status !== 'approved' && profile.status !== 'rejected'"
             type="button"
             class="btn-approve"
             [disabled]="updatingApprovalUserId === profile.userId"
@@ -201,7 +208,7 @@
             {{ updatingApprovalUserId === profile.userId ? 'Approving...' : 'Approve Login' }}
           </button>
           <button
-            *ngIf="profile.isApprove !== true"
+            *ngIf="profile.status !== 'approved' && profile.status !== 'rejected'"
             type="button"
             class="btn-reject"
             [disabled]="updatingApprovalUserId === profile.userId"

@@ -184,17 +184,17 @@ public class AdminManagementServiceImpl implements AdminManagementService {
             user.setActive(request.getActive());
         }
 
-        if (request.getIsApprove() != null) {
-            user.setIsApprove(request.getIsApprove());
+        if (request.getStatus() != null) {
+            user.setStatus(request.getStatus());
         }
 
         if (request.getRoleId() != null) {
             user.setRoleId(request.getRoleId());
         }
 
-        if (Boolean.TRUE.equals(user.getIsApprove())) {
+        if (User.STATUS_APPROVED.equalsIgnoreCase(user.getStatus())) {
             user.setActive(true);
-        } else if (Boolean.FALSE.equals(user.getIsApprove())) {
+        } else if (User.STATUS_REJECTED.equalsIgnoreCase(user.getStatus())) {
             user.setActive(false);
         }
 
@@ -213,7 +213,7 @@ public class AdminManagementServiceImpl implements AdminManagementService {
     public User approveUser(int userId) {
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        user.setIsApprove(true);
+        user.setStatus(User.STATUS_APPROVED);
         user.setActive(true);
         return userRepo.save(user);
     }
@@ -223,7 +223,7 @@ public class AdminManagementServiceImpl implements AdminManagementService {
     public User rejectUser(int userId) {
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        user.setIsApprove(false);
+        user.setStatus(User.STATUS_REJECTED);
         user.setActive(false);
         return userRepo.save(user);
     }

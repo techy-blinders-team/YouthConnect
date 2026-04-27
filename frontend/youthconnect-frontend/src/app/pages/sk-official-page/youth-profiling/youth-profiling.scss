@@ -319,6 +319,7 @@ html, body, :host, .youth-profiling-container {
   h3 {
     margin: 0;
     font-size: 15px;
+    font-weight: 600 !important;
     color: #1f2937;
   }
 }
@@ -339,6 +340,11 @@ html, body, :host, .youth-profiling-container {
   &.approved {
     background: #e8f5e9;
     color: #1b5e20;
+  }
+
+  &.rejected {
+    background: #ffebee;
+    color: #c62828;
   }
 }
 

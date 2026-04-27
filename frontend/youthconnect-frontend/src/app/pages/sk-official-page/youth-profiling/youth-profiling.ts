@@ -17,13 +17,13 @@ import ExcelJS from 'exceljs';
 export class YouthProfiling implements OnInit {
   youthProfiles: YouthMemberListItem[] = [];
   filteredProfiles: YouthMemberListItem[] = [];
-  userAccountByUserId = new Map<number, { email: string; roleId: number; isActive: boolean; isApprove: boolean | null }>();
+  userAccountByUserId = new Map<number, { email: string; roleId: number; isActive: boolean; status: 'pending' | 'approved' | 'rejected' }>();
   searchQuery: string = '';
   isLoading: boolean = false;
   errorMessage: string = '';
   successMessage: string = '';
   isApprovalPanelOpen = false;
-  approvalFilter: 'pending' | 'approved' | 'all' = 'pending';
+  approvalFilter: 'pending' | 'approved' | 'rejected' | 'all' = 'pending';
   approvalMessage: string = '';
   approvalError: string = '';
   updatingApprovalUserId: number | null = null;
@@ -138,8 +138,8 @@ export class YouthProfiling implements OnInit {
             {
               email: user.email,
               roleId: user.roleId,
-              isActive: user.isActive ?? user.active ?? true,
-              isApprove: user.isApprove
+              isActive: user.isActive ?? true,
+              status: user.status ?? 'pending'
             }
           ])
         );
@@ -157,8 +157,8 @@ export class YouthProfiling implements OnInit {
             birthday: profile.birthday,
             contactNumber: profile.contactNumber,
             civilStatus: profile.civilStatus as CivilStatus,
-            isActive: matchingUser?.isActive ?? matchingUser?.active ?? (profile.isActive !== undefined ? profile.isActive : true),
-            isApprove: matchingUser?.isApprove ?? (profile.isApprove ?? null),
+            isActive: matchingUser?.isActive ?? (profile.isActive !== undefined ? profile.isActive : true),
+            status: matchingUser?.status ?? (profile.status ?? 'pending'),
             createdAt: matchingUser?.createdAt || profile.createdAt,
             middleName: profile.middleName || null,
             suffix: profile.suffix || null,
@@ -176,7 +176,7 @@ export class YouthProfiling implements OnInit {
           };
         });
 
-        this.filteredProfiles = this.youthProfiles.filter(profile => profile.isApprove === true && profile.isActive === true);
+        this.filteredProfiles = this.youthProfiles.filter(profile => profile.status === 'approved' && profile.isActive === true);
         this.isLoading = false;
       },
       error: (error) => {
@@ -190,14 +190,14 @@ export class YouthProfiling implements OnInit {
   onSearch(): void {
     if (!this.searchQuery.trim()) {
       // Only show approved AND active profiles in the main table
-      this.filteredProfiles = this.youthProfiles.filter(profile => profile.isApprove === true && profile.isActive === true);
+      this.filteredProfiles = this.youthProfiles.filter(profile => profile.status === 'approved' && profile.isActive === true);
       return;
     }
 
     const query = this.searchQuery.toLowerCase();
     // Filter to only search within approved AND active profiles
     this.filteredProfiles = this.youthProfiles
-      .filter(profile => profile.isApprove === true && profile.isActive === true)
+      .filter(profile => profile.status === 'approved' && profile.isActive === true)
       .filter(profile =>
         profile.firstName.toLowerCase().includes(query) ||
         profile.lastName.toLowerCase().includes(query) ||
@@ -211,11 +211,15 @@ export class YouthProfiling implements OnInit {
   get approvalProfiles(): YouthMemberListItem[] {
     return this.youthProfiles.filter((profile) => {
       if (this.approvalFilter === 'approved') {
-        return profile.isApprove === true;
+        return profile.status === 'approved';
       }
 
       if (this.approvalFilter === 'pending') {
-        return profile.isApprove !== true;
+        return profile.status === 'pending';
+      }
+
+      if (this.approvalFilter === 'rejected') {
+        return profile.status === 'rejected';
       }
 
       return true;
@@ -238,7 +242,7 @@ export class YouthProfiling implements OnInit {
     this.approvalMessage = '';
   }
 
-  setApprovalFilter(filter: 'pending' | 'approved' | 'all'): void {
+  setApprovalFilter(filter: 'pending' | 'approved' | 'rejected' | 'all'): void {
     this.approvalFilter = filter;
   }
 
@@ -255,13 +259,13 @@ export class YouthProfiling implements OnInit {
     this.approvalError = '';
     this.approvalMessage = '';
 
-    const approvalRequest$: Observable<{ userId: number; email: string; roleId: number; active?: boolean; isActive?: boolean; isApprove: boolean | null; }> = approve
+    const approvalRequest$: Observable<{ userId: number; email: string; roleId: number; active?: boolean; isActive?: boolean; status: 'pending' | 'approved' | 'rejected'; }> = approve
       ? this.youthMemberManagementService.approveUser(profile.userId)
       : this.youthMemberManagementService.updateUser(profile.userId, {
         email: accountData.email,
         roleId: accountData.roleId,
         active: accountData.isActive,
-        isApprove: null
+        status: 'pending'
       });
 
     approvalRequest$.subscribe({
@@ -272,21 +276,21 @@ export class YouthProfiling implements OnInit {
           email: updatedUser.email,
           roleId: updatedUser.roleId,
           isActive: updatedIsActive,
-          isApprove: updatedUser.isApprove
+          status: updatedUser.status ?? 'pending'
         });
 
         this.youthProfiles = this.youthProfiles.map((item) =>
           item.userId === updatedUser.userId
             ? {
               ...item,
-              isApprove: updatedUser.isApprove,
+              status: updatedUser.status ?? 'pending',
               isActive: updatedIsActive,
               email: updatedUser.email
             }
             : item
         );
 
-        this.filteredProfiles = updatedUser.isApprove === true && updatedIsActive === true
+        this.filteredProfiles = (updatedUser.status ?? 'pending') === 'approved' && updatedIsActive === true
           ? [
             ...this.filteredProfiles.filter((item) => item.userId !== updatedUser.userId),
             {
@@ -300,7 +304,7 @@ export class YouthProfiling implements OnInit {
               contactNumber: profile.contactNumber,
               civilStatus: profile.civilStatus,
               isActive: updatedIsActive,
-              isApprove: updatedUser.isApprove,
+              status: updatedUser.status ?? 'pending',
               createdAt: profile.createdAt,
               middleName: profile.middleName,
               suffix: profile.suffix,
@@ -312,14 +316,29 @@ export class YouthProfiling implements OnInit {
 
         const fullName = `${profile.firstName} ${profile.lastName}`.trim();
         this.approvalMessage = approve
-          ? `${fullName} has been approved for login.`
+          ? `${fullName} has been approved.`
           : `${fullName} has been moved back to pending registration.`;
         this.updatingApprovalUserId = null;
+        
+        this.showNotification(
+          approve
+            ? `${fullName} has been approved successfully!`
+            : `${fullName} has been moved back to pending.`,
+          'success'
+        );
+        
+        setTimeout(() => {
+          this.approvalMessage = '';
+        }, 3000);
       },
       error: (error) => {
         console.error('Error updating approval status:', error);
         this.approvalError = 'Failed to update registration approval status. Please try again.';
         this.updatingApprovalUserId = null;
+        
+        setTimeout(() => {
+          this.approvalError = '';
+        }, 3000);
       }
     });
   }
@@ -337,20 +356,20 @@ export class YouthProfiling implements OnInit {
 
     this.youthMemberManagementService.rejectUser(profile.userId).subscribe({
       next: (updatedUser) => {
-        const updatedIsActive = updatedUser.isActive ?? updatedUser.active ?? false;
+        const updatedIsActive = updatedUser.isActive ?? false;
 
         this.userAccountByUserId.set(updatedUser.userId, {
           email: updatedUser.email,
           roleId: updatedUser.roleId,
           isActive: updatedIsActive,
-          isApprove: updatedUser.isApprove
+          status: updatedUser.status ?? 'pending'
         });
 
         this.youthProfiles = this.youthProfiles.map((item) =>
           item.userId === updatedUser.userId
             ? {
               ...item,
-              isApprove: updatedUser.isApprove,
+              status: updatedUser.status ?? 'pending',
               isActive: updatedIsActive,
               email: updatedUser.email
             }
@@ -359,12 +378,24 @@ export class YouthProfiling implements OnInit {
 
         this.filteredProfiles = this.filteredProfiles.filter((item) => item.userId !== updatedUser.userId);
 
+        const fullName = `${profile.firstName} ${profile.lastName}`.trim();
+        this.approvalMessage = `${fullName} has been rejected.`;
         this.updatingApprovalUserId = null;
+        
+        this.showNotification(`${fullName} has been rejected successfully!`, 'success');
+        
+        setTimeout(() => {
+          this.approvalMessage = '';
+        }, 3000);
       },
       error: (error) => {
         console.error('Error rejecting registration:', error);
         this.approvalError = 'Failed to reject registration. Please try again.';
         this.updatingApprovalUserId = null;
+        
+        setTimeout(() => {
+          this.approvalError = '';
+        }, 3000);
       }
     });
   }
