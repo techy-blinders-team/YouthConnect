@@ -52,4 +52,13 @@ public class AdminConcernController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed: " + e.getMessage());
         }
     }
+
+    @GetMapping("/{concernId}/updates")
+    public ResponseEntity<?> getUpdates(@PathVariable int concernId) {
+        try {
+            return ResponseEntity.ok(concernService.getConcernUpdates(concernId));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed: " + e.getMessage());
+        }
+    }
 }

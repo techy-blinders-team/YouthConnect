@@ -78,7 +78,7 @@
                         (click)="openResponseModal(concern)"
                         [disabled]="!canSendResponse(concern.status)"
                         [title]="concern.status === 'CLOSED' ? 'This concern is closed and cannot be modified' : 'Send a response to this concern'">
-                        Send Response
+                        Update Status
                     </button>
                 </div>
             </div>
@@ -113,6 +113,30 @@
                         <p><strong>Status:</strong> {{ selectedConcern?.status }}</p>
                         <p class="concern-description"><strong>Description:</strong> {{ selectedConcern?.description }}</p>
                     </div>
+
+                    <div class="updates-panel">
+                        <div class="updates-header">
+                            <h3>Updates</h3>
+                        </div>
+                        <div class="updates-list">
+                            <div *ngIf="isLoadingUpdates" class="updates-loading">Loading updates...</div>
+                            <div *ngIf="!isLoadingUpdates && updateLoadError" class="updates-error">
+                                {{ updateLoadError }}
+                            </div>
+                            <div *ngIf="!isLoadingUpdates && !updateLoadError && concernUpdates.length === 0" class="updates-empty">
+                                No updates yet.
+                            </div>
+                            <div *ngFor="let update of concernUpdates" class="update-item">
+                                <div class="update-meta">
+                                    <span class="status-badge" [ngClass]="'status-' + getStatusClass(update.status)">
+                                        {{ getStatusLabel(update.status) }}
+                                    </span>
+                                    <span class="update-time">{{ formatDate(update.createdAt) }}</span>
+                                </div>
+                                <p class="update-text">{{ update.updateText }}</p>
+                            </div>
+                        </div>
+                    </div>
                     
                     <div class="form-group">
                         <label for="status" class="form-label">Update Status<span class="required">*</span></label>
@@ -121,10 +145,9 @@
                             class="form-input" 
                             formControlName="status"
                             [disabled]="selectedConcern?.status === 'CLOSED'">
-                            <option value="OPEN">Open</option>
-                            <option value="IN_PROGRESS">In Progress</option>
-                            <option value="RESOLVED">Resolved</option>
-                            <option value="CLOSED">Closed</option>
+                            <option *ngFor="let option of statusOptions" [value]="option.value">
+                                {{ option.label }}
+                            </option>
                         </select>
                         <p *ngIf="selectedConcern?.status === 'CLOSED'" class="form-note closed-note">
                             This concern is closed and cannot be modified.
@@ -155,7 +178,7 @@
                         class="btn-create" 
                         (click)="sendResponse()" 
                         [disabled]="responseForm.invalid || isLoading || selectedConcern?.status === 'CLOSED'">
-                        {{ isLoading ? 'Sending...' : 'Send Response' }}
+                        {{ isLoading ? 'Updating...' : 'Update Status' }}
                     </button>
                 </div>
             </form>

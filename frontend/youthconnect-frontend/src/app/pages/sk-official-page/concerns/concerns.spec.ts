@@ -123,6 +123,10 @@ describe('Concerns', () => {
   it('should open response modal with concern', () => {
     component.openResponseModal(mockConcerns[0]);
 
+    const updatesReq = httpMock.expectOne('http://localhost:8080/api/admin/concerns/1/updates');
+    expect(updatesReq.request.method).toBe('GET');
+    updatesReq.flush([]);
+
     expect(component.isResponseModalOpen).toBeTrue();
     expect(component.selectedConcern).toEqual(mockConcerns[0]);
   });
@@ -149,6 +153,10 @@ describe('Concerns', () => {
     expect(req.request.body.updateText).toBe('This is a detailed admin response to the concern.');
     
     req.flush('Success', { status: 201, statusText: 'Created' });
+
+    const updatesReq = httpMock.expectOne('http://localhost:8080/api/admin/concerns/1/updates');
+    expect(updatesReq.request.method).toBe('GET');
+    updatesReq.flush([]);
   });
 
   it('should display concern type correctly', () => {

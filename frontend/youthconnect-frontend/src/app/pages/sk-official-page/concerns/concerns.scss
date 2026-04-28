@@ -439,6 +439,79 @@ html, body, :host, .concerns-container {
   padding: 16px 20px;
 }
 
+.updates-panel {
+  margin: 16px 0 20px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #e0e4ea;
+  background: #f8f9fb;
+}
+
+.updates-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+
+  h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+  }
+}
+
+.updates-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.updates-loading,
+.updates-error,
+.updates-empty {
+  font-size: 12px;
+  color: #666;
+  padding: 6px 2px;
+}
+
+.updates-error {
+  color: #c62828;
+}
+
+.update-item {
+  background: #fff;
+  border: 1px solid #ececec;
+  border-radius: 8px;
+  padding: 10px 12px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.update-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.update-time {
+  font-size: 11px;
+  color: #666;
+  font-weight: 500;
+}
+
+.update-text {
+  margin: 0;
+  font-size: 13px;
+  color: #222;
+  line-height: 1.4;
+}
+
 .concern-description {
   font-size: 14px;
   color: #666;

@@ -15,6 +15,15 @@ export interface Concern {
   updatedAt?: string;
 }
 
+export interface ConcernUpdate {
+  updateId: number;
+  concernId: number;
+  updatedByAdminId?: number;
+  updateText: string;
+  status: 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED';
+  createdAt: string;
+}
+
 export interface AdminConcernUpdateRequest {
   adminId: number;
   updateText: string;
@@ -39,5 +48,9 @@ export class AdminConcernService {
 
   addConcernUpdate(concernId: number, request: AdminConcernUpdateRequest): Observable<any> {
     return this.http.post(`${this.apiUrl}/${concernId}/updates`, request, { responseType: 'text' });
+  }
+
+  getConcernUpdates(concernId: number): Observable<ConcernUpdate[]> {
+    return this.http.get<ConcernUpdate[]>(`${this.apiUrl}/${concernId}/updates`);
   }
 }

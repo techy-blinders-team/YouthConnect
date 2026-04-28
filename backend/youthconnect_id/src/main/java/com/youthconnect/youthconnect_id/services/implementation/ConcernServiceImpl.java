@@ -1,6 +1,7 @@
 package com.youthconnect.youthconnect_id.services.implementation;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,6 +13,7 @@ import com.youthconnect.youthconnect_id.dto.AdminConcernUpdateRequest;
 import com.youthconnect.youthconnect_id.dto.ConcernRequest;
 import com.youthconnect.youthconnect_id.dto.ConcernResponse;
 import com.youthconnect.youthconnect_id.dto.ConcernUpdateRequest;
+import com.youthconnect.youthconnect_id.dto.ConcernUpdateResponse;
 import com.youthconnect.youthconnect_id.enums.ConcernStatus;
 import com.youthconnect.youthconnect_id.models.Concern;
 import com.youthconnect.youthconnect_id.models.ConcernUpdate;
@@ -59,6 +61,26 @@ public class ConcernServiceImpl implements ConcernService {
         response.setCreatedAt(concern.getCreatedAt());
         response.setUpdatedAt(concern.getUpdatedAt());
         return response;
+    }
+
+    private void validateUpdateText(String updateText) {
+        if (updateText == null || updateText.trim().isEmpty()) {
+            throw new RuntimeException("Update message is required");
+        }
+    }
+
+    private void validateStatusTransition(ConcernStatus currentStatus, ConcernStatus nextStatus) {
+        if (nextStatus == null) {
+            return;
+        }
+
+        if (currentStatus == ConcernStatus.CLOSED) {
+            throw new RuntimeException("Closed concerns cannot be updated");
+        }
+
+        if (currentStatus == ConcernStatus.OPEN && nextStatus != ConcernStatus.IN_PROGRESS) {
+            throw new RuntimeException("OPEN concerns can only move to IN_PROGRESS");
+        }
     }
 
     // ── Youth ─────────────────────────────────────────────
@@ -143,6 +165,7 @@ public class ConcernServiceImpl implements ConcernService {
     public ConcernResponse updateConcernStatus(int concernId, ConcernStatus status) {
         Concern concern = concernRepo.findById(concernId)
                 .orElseThrow(() -> new RuntimeException("Concern not found"));
+        validateStatusTransition(concern.getStatus(), status);
         concern.setStatus(status);
         concern.setUpdatedAt(LocalDateTime.now());
         return toResponse(concernRepo.save(concern));
@@ -154,10 +177,18 @@ public class ConcernServiceImpl implements ConcernService {
         Concern concern = concernRepo.findById(concernId)
                 .orElseThrow(() -> new RuntimeException("Concern not found"));
 
+        validateUpdateText(request.getUpdateText());
+        validateStatusTransition(concern.getStatus(), request.getStatus());
+
+        ConcernStatus updateStatus = request.getStatus() != null
+            ? request.getStatus()
+            : concern.getStatus();
+
         ConcernUpdate update = new ConcernUpdate();
         update.setConcernId(concernId);
         update.setUpdatedByAdminId(request.getAdminId());
         update.setUpdateText(request.getUpdateText());
+        update.setStatus(updateStatus);
         update.setCreatedAt(LocalDateTime.now());
         concernUpdateRepo.save(update);
 
@@ -167,5 +198,24 @@ public class ConcernServiceImpl implements ConcernService {
             concern.setUpdatedAt(LocalDateTime.now());
             concernRepo.save(concern);
         }
+    }
+
+    @Override
+    public List<ConcernUpdateResponse> getConcernUpdates(int concernId) {
+        List<ConcernUpdate> updates = concernUpdateRepo.findByConcernIdOrderByCreatedAtDesc(concernId);
+        Collections.reverse(updates);
+
+        return updates.stream()
+                .map(update -> {
+                    ConcernUpdateResponse response = new ConcernUpdateResponse();
+                    response.setUpdateId(update.getUpdateId());
+                    response.setConcernId(update.getConcernId());
+                    response.setUpdatedByAdminId(update.getUpdatedByAdminId());
+                    response.setUpdateText(update.getUpdateText());
+                    response.setStatus(update.getStatus());
+                    response.setCreatedAt(update.getCreatedAt());
+                    return response;
+                })
+                .collect(Collectors.toList());
     }
 }

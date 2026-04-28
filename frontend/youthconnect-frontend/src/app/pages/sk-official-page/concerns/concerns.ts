@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
-import { AdminConcernService, Concern, AdminConcernUpdateRequest } from '../../../services/admin-concern.service';
+import { AdminConcernService, Concern, ConcernUpdate, AdminConcernUpdateRequest } from '../../../services/admin-concern.service';
 import { SkOfficialManagementService } from '../../../services/sk-official-management.service';
 
 @Component({
@@ -17,12 +17,16 @@ export class Concerns implements OnInit {
   responseForm!: FormGroup;
   concerns: Concern[] = [];
   filteredConcerns: Concern[] = [];
+  concernUpdates: ConcernUpdate[] = [];
   isLoading = false;
+  isLoadingUpdates = false;
   errorMessage: string = '';
   successMessage: string = '';
+  updateLoadError: string = '';
   searchTerm: string = '';
   currentAdminId: number = 0;
   selectedConcern: Concern | null = null;
+  statusOptions: { value: Concern['status']; label: string }[] = [];
   skOfficialName = 'SK Official';
   skOfficialEmail = '';
   skOfficialPosition = 'SK Official';
@@ -142,7 +146,12 @@ export class Concerns implements OnInit {
   openResponseModal(concern: Concern) {
     this.selectedConcern = concern;
     this.isResponseModalOpen = true;
-    this.responseForm.reset({ status: concern.status || 'IN_PROGRESS' });
+    this.statusOptions = this.buildStatusOptions(concern.status);
+    this.responseForm.reset({
+      response: '',
+      status: this.getDefaultStatus(concern.status)
+    });
+    this.loadConcernUpdates(concern.concernId);
     this.errorMessage = '';
     this.successMessage = '';
   }
@@ -153,9 +162,13 @@ export class Concerns implements OnInit {
     this.responseForm.reset();
     this.errorMessage = '';
     this.successMessage = '';
+    this.concernUpdates = [];
+    this.updateLoadError = '';
   }
 
   sendResponse() {
+    this.responseForm.markAllAsTouched();
+
     if (this.responseForm.invalid || !this.selectedConcern) {
       this.errorMessage = 'Please fill in all required fields';
       return;
@@ -180,6 +193,7 @@ export class Concerns implements OnInit {
       next: () => {
         this.successMessage = 'Response sent and status updated successfully!';
         this.responseForm.reset();
+        this.loadConcernUpdates(this.selectedConcern!.concernId);
         setTimeout(() => {
           this.closeResponseModal();
           this.loadConcerns();
@@ -204,6 +218,62 @@ export class Concerns implements OnInit {
 
   getStatusClass(status: string): string {
     return status.toLowerCase().replace('_', '-');
+  }
+
+  getStatusLabel(status: Concern['status']): string {
+    const labelMap: Record<Concern['status'], string> = {
+      OPEN: 'Open',
+      IN_PROGRESS: 'In Progress',
+      RESOLVED: 'Resolved',
+      CLOSED: 'Closed'
+    };
+    return labelMap[status] || status;
+  }
+
+  private getDefaultStatus(status?: Concern['status']): Concern['status'] {
+    if (status === 'OPEN') {
+      return 'IN_PROGRESS';
+    }
+    return status || 'IN_PROGRESS';
+  }
+
+  private buildStatusOptions(status?: Concern['status']): { value: Concern['status']; label: string }[] {
+    switch (status) {
+      case 'OPEN':
+        return [{ value: 'IN_PROGRESS', label: 'In Progress' }];
+      case 'IN_PROGRESS':
+        return [
+          { value: 'IN_PROGRESS', label: 'In Progress' },
+          { value: 'RESOLVED', label: 'Resolved' },
+          { value: 'CLOSED', label: 'Closed' }
+        ];
+      case 'RESOLVED':
+        return [
+          { value: 'RESOLVED', label: 'Resolved' },
+          { value: 'CLOSED', label: 'Closed' }
+        ];
+      case 'CLOSED':
+        return [{ value: 'CLOSED', label: 'Closed' }];
+      default:
+        return [{ value: 'IN_PROGRESS', label: 'In Progress' }];
+    }
+  }
+
+  loadConcernUpdates(concernId: number) {
+    this.isLoadingUpdates = true;
+    this.updateLoadError = '';
+
+    this.adminConcernService.getConcernUpdates(concernId).subscribe({
+      next: (updates) => {
+        this.concernUpdates = updates;
+        this.isLoadingUpdates = false;
+      },
+      error: (error) => {
+        console.error('Error loading concern updates:', error);
+        this.updateLoadError = 'Failed to load updates. Please try again.';
+        this.isLoadingUpdates = false;
+      }
+    });
   }
 
   formatDate(dateString: string): string {

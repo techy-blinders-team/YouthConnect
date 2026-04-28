@@ -1,43 +1,16 @@
-package com.youthconnect.youthconnect_id.models;
+package com.youthconnect.youthconnect_id.dto;
 
 import java.time.LocalDateTime;
 
 import com.youthconnect.youthconnect_id.enums.ConcernStatus;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-
-@Entity
-@Table(name = "tbl_concern_update")
-public class ConcernUpdate {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "update_id")
+public class ConcernUpdateResponse {
     private int updateId;
-
-    @Column(name = "concern_id", nullable = false)
     private int concernId;
-
-    @Column(name = "updated_by_admin_id")
     private Integer updatedByAdminId;
-
-    @Column(name = "update_text", nullable = false, columnDefinition = "TEXT")
     private String updateText;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
     private ConcernStatus status;
-
-    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
-
-    public ConcernUpdate() {}
 
     public int getUpdateId() {
         return updateId;
