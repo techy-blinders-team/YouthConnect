@@ -5,6 +5,7 @@ import java.util.List;
 import com.youthconnect.youthconnect_id.dto.AdminConcernUpdateRequest;
 import com.youthconnect.youthconnect_id.dto.ConcernRequest;
 import com.youthconnect.youthconnect_id.dto.ConcernResponse;
+import com.youthconnect.youthconnect_id.dto.ConcernUpdateResponse;
 import com.youthconnect.youthconnect_id.dto.ConcernUpdateRequest;
 import com.youthconnect.youthconnect_id.enums.ConcernStatus;
 
@@ -21,4 +22,5 @@ public interface ConcernService {
     List<ConcernResponse> getAllConcerns();
     ConcernResponse updateConcernStatus(int concernId, ConcernStatus status);
     void addConcernUpdate(int concernId, AdminConcernUpdateRequest request);
+    List<ConcernUpdateResponse> getConcernUpdates(int concernId);
 }
