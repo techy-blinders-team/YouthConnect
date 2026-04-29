@@ -179,8 +179,10 @@
             </div>
 
             <div class="modal-footer">
-                <button class="btn-cancel" (click)="closeModal()">Cancel</button>
-                <button class="btn-create" (click)="saveTask()">{{ isEditing ? 'Update Task' : 'Create Task' }}</button>
+                <button class="btn-cancel" (click)="closeModal()" [disabled]="isLoading">Cancel</button>
+                <button class="btn-create" (click)="saveTask()" [disabled]="!isFormValid() || isLoading">
+                    {{ isLoading ? (isEditing ? 'Updating...' : 'Creating...') : (isEditing ? 'Update Task' : 'Create Task') }}
+                </button>
             </div>
         </div>
     </div>

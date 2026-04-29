@@ -31,10 +31,7 @@ html, body, :host, .concerns-container {
       justify-content: space-between;
       align-items: center;
       margin-bottom: 30px;
-      // background: white;
       padding: 20px 30px;
-      // border-radius: 8px;
-      // box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 
       .header-content {
         h1 {
@@ -187,7 +184,6 @@ html, body, :host, .concerns-container {
   border-bottom: 2px solid #cfcfcf;
 }
 
-
 .header-content {
   display: flex;
   flex-direction: column;
@@ -212,16 +208,6 @@ html, body, :host, .concerns-container {
   flex-wrap: wrap;
 }
 
-.card-header h3 {
-  font-size: 1.3rem;
-  font-weight: 700;
-  margin-bottom: 10px;
-  color: #111;
-  line-height: 1.2;
-  word-break: break-word;
-  text-align: left;
-}
-
 .concern-type {
   display: inline-flex;
   align-items: center;
@@ -233,27 +219,6 @@ html, body, :host, .concerns-container {
   background: #e3f2fd;
   color: #0f2f67;
   line-height: 1;
-}
-
-.card-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.edit-btn, .delete-btn {
-  background: none;
-  border: none;
-  color: #0052cc;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 4px;
-  transition: background 0.2s;
-
-  &:hover {
-    background: #f0f4ff;
-  }
 }
 
 .card-body {
@@ -299,12 +264,6 @@ html, body, :host, .concerns-container {
     font-weight: 500;
     font-size: 0.85rem;
   }
-
-  .icon {
-    display: inline-flex;
-    width: 18px;
-    height: 18px;
-  }
 }
 
 .card-footer {
@@ -312,7 +271,6 @@ html, body, :host, .concerns-container {
   display: flex;
   gap: 0;
 }
-
 
 .action-btn {
   flex: 1;
@@ -336,15 +294,6 @@ html, body, :host, .concerns-container {
   filter: brightness(0.9);
 }
 
-.resolve-btn {
-  background-color: #0052cc;
-  color: white;
-}
-
-.resolve-btn:hover {
-  filter: brightness(0.9);
-}
-
 /* Modal Styles */
 .modal-overlay {
   position: fixed;
@@ -365,15 +314,23 @@ html, body, :host, .concerns-container {
   border-radius: 8px;
   width: 100%;
   max-width: 600px;
-  height: auto;
-  max-height: 700px;
+  max-height: 90vh;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   overflow: hidden;
   animation: slideIn 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
 
   &.modal-small {
     max-width: 400px;
-    max-height: auto;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
   }
 }
 
@@ -401,6 +358,7 @@ html, body, :host, .concerns-container {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  flex-shrink: 0;
 }
 
 .modal-title {
@@ -437,6 +395,17 @@ html, body, :host, .concerns-container {
 
 .modal-body {
   padding: 16px 20px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.modal-alert {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border-radius: 4px;
+  font-size: 13px;
+  animation: slideDown 0.3s ease-out;
 }
 
 .updates-panel {
@@ -564,6 +533,7 @@ html, body, :host, .concerns-container {
   display: flex;
   gap: 12px;
   justify-content: flex-end;
+  flex-shrink: 0;
 }
 
 .btn-cancel,
@@ -600,7 +570,7 @@ html, body, :host, .concerns-container {
   border-color: #008844;
 }
 
-/* ── Alerts ────────────────────────────────────────── */
+/* Alerts */
 .alert {
   padding: 12px 16px;
   border-radius: 4px;
@@ -633,15 +603,7 @@ html, body, :host, .concerns-container {
   border-left: 4px solid #f44336;
 }
 
-.modal-alert {
-  margin-bottom: 16px;
-  padding: 12px 16px;
-  border-radius: 4px;
-  font-size: 13px;
-  animation: slideDown 0.3s ease-out;
-}
-
-/* ── Concern Card Updates ────────────────────────────────────────── */
+/* Status Badges */
 .status-badge {
   display: inline-flex;
   align-items: center;
@@ -675,7 +637,7 @@ html, body, :host, .concerns-container {
   color: #7f1d1d;
 }
 
-/* ── Form Input Styles ────────────────────────────────────────── */
+/* Form Input Styles */
 .form-input {
   width: 100%;
   padding: 10px 12px;
@@ -716,43 +678,7 @@ html, body, :host, .concerns-container {
   font-size: 16px;
 }
 
-/* ── Concern Card Enhancements ────────────────────────────────────────── */
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
-  margin-bottom: 12px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #cfcfcf;
-}
-
-.header-info {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-
-  h3 {
-    font-size: 16px;
-    color: #333;
-    font-weight: 600;
-  }
-
-  .concern-type {
-    display: inline-block;
-    padding: 3px 8px;
-    background-color: #f0f0f0;
-    color: #555;
-    border-radius: 12px;
-    font-size: 8px;
-    font-weight: 500;
-    white-space: nowrap;
-    border: 1px solid #e0e0e0;
-  }
-}
-
-/* ── Concern Info Box ────────────────────────────────────────── */
+/* Concern Info Box */
 .concern-info {
   background-color: #f9f9f9;
   padding: 12px 16px;
@@ -785,14 +711,14 @@ html, body, :host, .concerns-container {
   }
 }
 
-/* ── Disabled State Styles ────────────────────────────────────────── */
+/* Disabled State Styles */
 button:disabled,
 .form-input:disabled,
 select:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   background-color: #f5f5f5 !important;
-  color: #999 !important;
+  color: #ffffff !important;
 }
 
 .response-btn:disabled {
@@ -805,8 +731,8 @@ select:disabled {
 }
 
 .btn-create:disabled {
-  background-color: #ccc !important;
-  border-color: #ccc !important;
+  background-color: #00a651 !important;
+  border-color: #00a651 !important;
   filter: none;
 
   &:hover {
@@ -819,7 +745,7 @@ select:disabled {
   border-color: #ddd;
 }
 
-/* ── Closed Concern Note ────────────────────────────────────────── */
+/* Closed Concern Note */
 .form-note {
   font-size: 12px;
   margin-top: 6px;
