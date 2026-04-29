@@ -100,6 +100,7 @@ public class ConcernServiceImpl implements ConcernService {
     public List<ConcernResponse> getOwnConcerns(int youthId) {
         return concernRepo.findByYouthId(youthId)
                 .stream()
+                .sorted((c1, c2) -> c2.getCreatedAt().compareTo(c1.getCreatedAt())) // Latest first
                 .map(this::toResponse)
                 .collect(Collectors.toList());
     }

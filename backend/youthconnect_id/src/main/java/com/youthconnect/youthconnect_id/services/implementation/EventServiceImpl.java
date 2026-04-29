@@ -121,6 +121,7 @@ public class EventServiceImpl implements EventService {
 
         return events
                 .stream()
+                .sorted((e1, e2) -> e2.getCreatedAt().compareTo(e1.getCreatedAt())) // Latest first
             .map(event -> toEventResponse(event, rsvpCounts.getOrDefault(event.getEventId(), 0L)))
                 .collect(Collectors.toList());
     }
