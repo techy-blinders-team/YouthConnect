@@ -60,8 +60,17 @@
             <span class="email-text">{{ userEmail }}</span>
         </div>
         <button type="button" class="logout-btn" aria-label="Logout" (click)="logout(); closeMobileMenu()"
-            [title]="isCollapsed ? 'Logout' : ''">
+            [title]="isCollapsed ? 'Logout' : ''" [disabled]="isLoggingOut">
             <img src="assets/administrator-sidebar/logout-icon.png" alt="Logout" class="footer-logout-icon" />
         </button>
     </div>
 </div>
+
+@if (isLoggingOut) {
+<div class="modal-overlay">
+    <div class="modal-content">
+        <div class="spinner"></div>
+        <h3 class="modal-title">Logging out...</h3>
+    </div>
+</div>
+}
