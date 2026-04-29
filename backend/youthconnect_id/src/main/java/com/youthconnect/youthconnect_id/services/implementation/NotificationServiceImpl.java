@@ -29,7 +29,9 @@ public class NotificationServiceImpl implements NotificationService {
     public List<NotificationResponse> getNotificationsByYouthId(int youthId) {
         List<ConcernUpdate> updates = concernUpdateRepo.findByYouthId(youthId);
         
-        return updates.stream().map(update -> {
+        return updates.stream()
+                .sorted((u1, u2) -> u2.getCreatedAt().compareTo(u1.getCreatedAt())) // Latest first
+                .map(update -> {
             NotificationResponse response = new NotificationResponse();
             response.setUpdateId(update.getUpdateId());
             response.setConcernId(update.getConcernId());

@@ -20,6 +20,7 @@ export class YouthSidebar implements OnInit {
     isCollapsed = false;
     isMobileMenuOpen = false;
     isMobile = false;
+    isLoggingOut = false;
 
     ngOnInit(): void {
         const user = this.authService.getCurrentUser();
@@ -64,6 +65,10 @@ export class YouthSidebar implements OnInit {
     }
 
     logout(): void {
-        this.authService.logout();
+        this.isLoggingOut = true;
+
+        setTimeout(() => {
+            this.authService.logout();
+        }, 1000);
     }
 }
