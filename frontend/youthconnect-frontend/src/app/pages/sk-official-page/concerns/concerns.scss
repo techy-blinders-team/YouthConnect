@@ -718,7 +718,7 @@ select:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   background-color: #f5f5f5 !important;
-  color: #999 !important;
+  color: #ffffff !important;
 }
 
 .response-btn:disabled {
@@ -731,8 +731,8 @@ select:disabled {
 }
 
 .btn-create:disabled {
-  background-color: #ccc !important;
-  border-color: #ccc !important;
+  background-color: #00a651 !important;
+  border-color: #00a651 !important;
   filter: none;
 
   &:hover {

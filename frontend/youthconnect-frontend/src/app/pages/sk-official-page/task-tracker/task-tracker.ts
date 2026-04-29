@@ -402,4 +402,13 @@ export class TaskTracker implements OnInit {
     const minutes = String(date.getMinutes()).padStart(2, '0');
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
+
+  isFormValid(): boolean {
+    return !!(
+      this.formState.taskingType &&
+      this.formState.taskDescription &&
+      this.formState.skIncharge &&
+      this.formState.status
+    );
+  }
 }
