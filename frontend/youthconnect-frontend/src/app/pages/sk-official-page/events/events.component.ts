@@ -424,7 +424,6 @@ export class EventsComponent implements OnInit {
       status: nextStatus
     };
 
-    this.isLoading = true;
     this.errorMessage = '';
 
     this.eventService.editEvent(event.eventId, request).subscribe({
@@ -437,12 +436,10 @@ export class EventsComponent implements OnInit {
         }
         
         this.showNotification(`Event status updated to ${nextStatus}`);
-        this.isLoading = false;
       },
       error: (error) => {
         console.error('Error updating event status:', error);
         this.showNotification(error.error?.message || 'Failed to update event status', 'error');
-        this.isLoading = false;
       }
     });
   }
