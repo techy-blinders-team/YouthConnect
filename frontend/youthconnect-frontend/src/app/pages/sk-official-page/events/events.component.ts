@@ -424,19 +424,22 @@ export class EventsComponent implements OnInit {
       status: nextStatus
     };
 
-    this.isLoading = true;
     this.errorMessage = '';
 
     this.eventService.editEvent(event.eventId, request).subscribe({
       next: () => {
-        event.status = nextStatus;
-        this.successMessage = `Event marked as ${nextStatus}.`;
-        this.isLoading = false;
+        // Update the event in the local arrays
+        const index = this.events.findIndex(e => e.eventId === event.eventId);
+        if (index !== -1) {
+          this.events[index].status = nextStatus;
+          this.filteredEvents = [...this.events];
+        }
+        
+        this.showNotification(`Event status updated to ${nextStatus}`);
       },
       error: (error) => {
         console.error('Error updating event status:', error);
-        this.errorMessage = error.error?.message || 'Failed to update event status.';
-        this.isLoading = false;
+        this.showNotification(error.error?.message || 'Failed to update event status', 'error');
       }
     });
   }
