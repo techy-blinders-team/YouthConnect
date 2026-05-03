@@ -4,6 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { PasswordResetService } from '../../../services/password-reset.service';
 
+type PasswordCriterion = {
+    label: string;
+    met: boolean;
+};
+
 @Component({
     selector: 'app-sk-reset-password',
     standalone: true,
@@ -111,10 +116,55 @@ export class SkResetPasswordPage implements OnInit {
         this.showConfirmPassword = !this.showConfirmPassword;
     }
 
-    getPasswordStrength(): string {
-        if (!this.newPassword) return '';
-        if (this.newPassword.length < 8) return 'weak';
-        if (this.newPassword.length < 12) return 'medium';
+    get passwordCriteria(): PasswordCriterion[] {
+        const passwordValue = this.newPassword || '';
+
+        return [
+            { label: 'At least 8 characters', met: passwordValue.length >= 8 },
+            { label: 'One uppercase letter', met: this.hasUppercase(passwordValue) },
+            { label: 'One lowercase letter', met: this.hasLowercase(passwordValue) },
+            { label: 'One number', met: this.hasNumber(passwordValue) },
+            { label: 'One special character', met: this.hasSpecialChar(passwordValue) },
+        ];
+    }
+
+    get passwordStrengthScore(): number {
+        return this.passwordCriteria.filter((criterion) => criterion.met).length;
+    }
+
+    get passwordStrengthPercent(): number {
+        return (this.passwordStrengthScore / this.passwordCriteria.length) * 100;
+    }
+
+    get passwordStrengthLabel(): string {
+        if (this.passwordStrengthScore <= 1) {
+            return 'Weak';
+        }
+
+        if (this.passwordStrengthScore <= 3) {
+            return 'Fair';
+        }
+
+        if (this.passwordStrengthScore === 4) {
+            return 'Good';
+        }
+
+        return 'Strong';
+    }
+
+    get passwordStrengthClass(): string {
+        if (this.passwordStrengthScore <= 1) {
+            return 'weak';
+        }
+
+        if (this.passwordStrengthScore <= 3) {
+            return 'fair';
+        }
+
+        if (this.passwordStrengthScore === 4) {
+            return 'good';
+        }
+
         return 'strong';
     }
 
