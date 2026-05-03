@@ -27,6 +27,9 @@ export class YouthProfiling implements OnInit {
   approvalMessage: string = '';
   approvalError: string = '';
   updatingApprovalUserId: number | null = null;
+  rejectingUserId: number | null = null;
+  rejectionReason: string = '';
+  isRejectModalOpen: boolean = false;
   skOfficialName = 'SK Official';
   skOfficialEmail = '';
   skOfficialPosition = 'SK Official';
@@ -259,8 +262,11 @@ export class YouthProfiling implements OnInit {
     this.approvalError = '';
     this.approvalMessage = '';
 
+    // Get the current SK official's admin ID
+    const adminId = Number(localStorage.getItem('sk_official_id') || localStorage.getItem('adminId'));
+
     const approvalRequest$: Observable<{ userId: number; email: string; roleId: number; active?: boolean; isActive?: boolean; status: 'pending' | 'approved' | 'rejected'; }> = approve
-      ? this.youthMemberManagementService.approveUser(profile.userId)
+      ? this.youthMemberManagementService.approveUser(profile.userId, adminId)
       : this.youthMemberManagementService.updateUser(profile.userId, {
         email: accountData.email,
         roleId: accountData.roleId,
@@ -319,14 +325,14 @@ export class YouthProfiling implements OnInit {
           ? `${fullName} has been approved.`
           : `${fullName} has been moved back to pending registration.`;
         this.updatingApprovalUserId = null;
-        
+
         this.showNotification(
           approve
             ? `${fullName} has been approved successfully!`
             : `${fullName} has been moved back to pending.`,
           'success'
         );
-        
+
         setTimeout(() => {
           this.approvalMessage = '';
         }, 3000);
@@ -335,7 +341,7 @@ export class YouthProfiling implements OnInit {
         console.error('Error updating approval status:', error);
         this.approvalError = 'Failed to update registration approval status. Please try again.';
         this.updatingApprovalUserId = null;
-        
+
         setTimeout(() => {
           this.approvalError = '';
         }, 3000);
@@ -350,11 +356,35 @@ export class YouthProfiling implements OnInit {
       return;
     }
 
-    this.updatingApprovalUserId = profile.userId;
+    // Open rejection modal
+    this.rejectingUserId = profile.userId;
+    this.selectedProfile = profile;
+    this.rejectionReason = '';
+    this.isRejectModalOpen = true;
+  }
+
+  closeRejectModal(): void {
+    this.isRejectModalOpen = false;
+    this.rejectingUserId = null;
+    this.selectedProfile = null;
+    this.rejectionReason = '';
+  }
+
+  confirmRejectRegistration(): void {
+    if (!this.rejectingUserId || !this.selectedProfile) {
+      return;
+    }
+
+    if (!this.rejectionReason.trim()) {
+      this.approvalError = 'Please provide a rejection reason.';
+      return;
+    }
+
+    this.updatingApprovalUserId = this.rejectingUserId;
     this.approvalError = '';
     this.approvalMessage = '';
 
-    this.youthMemberManagementService.rejectUser(profile.userId).subscribe({
+    this.youthMemberManagementService.rejectUser(this.rejectingUserId, this.rejectionReason).subscribe({
       next: (updatedUser) => {
         const updatedIsActive = updatedUser.isActive ?? false;
 
@@ -378,12 +408,14 @@ export class YouthProfiling implements OnInit {
 
         this.filteredProfiles = this.filteredProfiles.filter((item) => item.userId !== updatedUser.userId);
 
-        const fullName = `${profile.firstName} ${profile.lastName}`.trim();
+        const fullName = `${this.selectedProfile?.firstName} ${this.selectedProfile?.lastName}`.trim();
         this.approvalMessage = `${fullName} has been rejected.`;
         this.updatingApprovalUserId = null;
-        
+
         this.showNotification(`${fullName} has been rejected successfully!`, 'success');
-        
+
+        this.closeRejectModal();
+
         setTimeout(() => {
           this.approvalMessage = '';
         }, 3000);
@@ -392,7 +424,7 @@ export class YouthProfiling implements OnInit {
         console.error('Error rejecting registration:', error);
         this.approvalError = 'Failed to reject registration. Please try again.';
         this.updatingApprovalUserId = null;
-        
+
         setTimeout(() => {
           this.approvalError = '';
         }, 3000);

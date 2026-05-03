@@ -71,11 +71,36 @@ export const routes: Routes = [
         canActivate: [guestGuard]
     },
 
+    // Forgot Password Routes
     {
         path: 'forgot-password',
         loadComponent: () =>
-            import('./pages/forgot-password-page/forgot-password-page').then(move => move.ForgotPasswordPage),
+            import('./pages/forgot-password/forgot-password').then(move => move.ForgotPasswordPage),
         title: 'Forgot Password - YouthConnect',
+        canActivate: [guestGuard]
+    },
+
+    {
+        path: 'reset-password',
+        loadComponent: () =>
+            import('./pages/reset-password/reset-password').then(move => move.ResetPasswordPage),
+        title: 'Reset Password - YouthConnect',
+        canActivate: [guestGuard]
+    },
+
+    {
+        path: 'sk-official/forgot-password',
+        loadComponent: () =>
+            import('./pages/sk-official-page/sk-forgot-password/sk-forgot-password').then(move => move.SkForgotPasswordPage),
+        title: 'SK Official Forgot Password - YouthConnect',
+        canActivate: [guestGuard]
+    },
+
+    {
+        path: 'sk-official/reset-password',
+        loadComponent: () =>
+            import('./pages/sk-official-page/sk-reset-password/sk-reset-password').then(move => move.SkResetPasswordPage),
+        title: 'SK Official Reset Password - YouthConnect',
         canActivate: [guestGuard]
     },
 

@@ -3,24 +3,14 @@
 
 	<div class="controls-row">
 		<label class="search-wrapper" for="youth-member-search">
-			<img
-				class="search-icon"
-				src="assets/administrator/search-icon.png"
-				alt="Search"
-			/>
-			<input
-				id="youth-member-search"
-				name="youth-member-search"
-				type="text"
-				[(ngModel)]="searchTerm"
-				(ngModelChange)="onSearchTermChange()"
-				placeholder="Search by name or email..."
-			/>
+			<img class="search-icon" src="assets/administrator/search-icon.png" alt="Search" />
+			<input id="youth-member-search" name="youth-member-search" type="text" [(ngModel)]="searchTerm"
+				(ngModelChange)="onSearchTermChange()" placeholder="Search by name or email..." />
 		</label>
 	</div>
 
 	@if (errorMessage) {
-		<p class="error-message">{{ errorMessage }}</p>
+	<p class="error-message">{{ errorMessage }}</p>
 	}
 
 	<div class="table-section">
@@ -39,103 +29,206 @@
 
 				<tbody>
 					@for (youthMember of paginatedYouthMembers; track youthMember.youthId) {
-						<tr>
-							<td>{{ youthMember.youthId }}</td>
-							<td>{{ getFullName(youthMember) }}</td>
-							<td>
-								<span class="email-text" [attr.title]="youthMember.email || null">
-									{{ youthMember.email }}
-								</span>
-							</td>
-							<td class="status-cell">{{ getStatusLabel(youthMember.isActive) }}</td>
-							<td class="created-at-cell">{{ youthMember.createdAt | date: 'M/d/yy, h:mm a' }}</td>
-							<td>
-								<div class="action-buttons">
-									<button class="action-button edit" type="button" (click)="editYouthMember(youthMember)">Edit</button>
-									<button class="action-button delete" type="button" (click)="openDeleteYouthMemberModal(youthMember)">Delete</button>
-								</div>
-							</td>
-						</tr>
+					<tr>
+						<td>{{ youthMember.youthId }}</td>
+						<td>{{ getFullName(youthMember) }}</td>
+						<td>
+							<span class="email-text" [attr.title]="youthMember.email || null">
+								{{ youthMember.email }}
+							</span>
+						</td>
+						<td class="status-cell">
+							<span class="status-badge" [class.status-pending]="youthMember.status === 'pending'"
+								[class.status-approved]="youthMember.status === 'approved'"
+								[class.status-rejected]="youthMember.status === 'rejected'">
+								{{ youthMember.status === 'pending' ? 'Pending' : youthMember.status === 'approved' ?
+								'Approved' : 'Rejected' }}
+							</span>
+						</td>
+						<td class="created-at-cell">{{ youthMember.createdAt | date: 'M/d/yy, h:mm a' }}</td>
+						<td>
+							<div class="action-buttons">
+								@if (youthMember.status === 'pending') {
+								<button class="action-button approve" type="button"
+									(click)="openApproveYouthMemberModal(youthMember)">Approve</button>
+								<button class="action-button reject" type="button"
+									(click)="openRejectYouthMemberModal(youthMember)">Reject</button>
+								}
+								<button class="action-button edit" type="button"
+									(click)="editYouthMember(youthMember)">Edit</button>
+								<button class="action-button delete" type="button"
+									(click)="openDeleteYouthMemberModal(youthMember)">Delete</button>
+							</div>
+						</td>
+					</tr>
 					} @empty {
-						<tr>
-							<td class="empty-state" colspan="6">
-								{{ isLoading ? 'Loading youth member accounts...' : 'No youth members found.' }}
-							</td>
-						</tr>
+					<tr>
+						<td class="empty-state" colspan="6">
+							{{ isLoading ? 'Loading youth member accounts...' : 'No youth members found.' }}
+						</td>
+					</tr>
 					}
 				</tbody>
 			</table>
 		</div>
 
 		@if (totalPages > 0) {
-			<div class="pagination-bar" aria-label="Youth members pagination">
-				<button type="button" class="pagination-button" (click)="goToFirstPage()" [disabled]="currentPage === 1">&lt;&lt;</button>
-				<button type="button" class="pagination-button" (click)="goToPreviousPage()" [disabled]="currentPage === 1">&lt;</button>
+		<div class="pagination-bar" aria-label="Youth members pagination">
+			<button type="button" class="pagination-button" (click)="goToFirstPage()"
+				[disabled]="currentPage === 1">&lt;&lt;</button>
+			<button type="button" class="pagination-button" (click)="goToPreviousPage()"
+				[disabled]="currentPage === 1">&lt;</button>
 
-				@for (item of paginationItems; track $index) {
-					@if (isPaginationNumber(item)) {
-						<button
-							type="button"
-							class="pagination-button page-number"
-							[class.active]="item === currentPage"
-							(click)="goToPage(item)"
-							[disabled]="item === currentPage">
-							{{ item }}
-						</button>
-					} @else {
-						<span class="pagination-ellipsis">...</span>
-					}
-				}
+			@for (item of paginationItems; track $index) {
+			@if (isPaginationNumber(item)) {
+			<button type="button" class="pagination-button page-number" [class.active]="item === currentPage"
+				(click)="goToPage(item)" [disabled]="item === currentPage">
+				{{ item }}
+			</button>
+			} @else {
+			<span class="pagination-ellipsis">...</span>
+			}
+			}
 
-				<button type="button" class="pagination-button" (click)="goToNextPage()" [disabled]="currentPage === totalPages">&gt;</button>
-				<button type="button" class="pagination-button" (click)="goToLastPage()" [disabled]="currentPage === totalPages">&gt;&gt;</button>
-			</div>
+			<button type="button" class="pagination-button" (click)="goToNextPage()"
+				[disabled]="currentPage === totalPages">&gt;</button>
+			<button type="button" class="pagination-button" (click)="goToLastPage()"
+				[disabled]="currentPage === totalPages">&gt;&gt;</button>
+		</div>
 		}
 	</div>
 
-	<app-edit-youth-member-feature
-		[isOpen]="showEditModal"
-		[youthMember]="editingYouthMember"
-		[isSubmitting]="isEditingYouthMember"
-		[errorMessage]="editYouthMemberErrorMessage"
-		(closeRequested)="closeEditYouthMemberModal()"
-		(submitRequested)="updateYouthMember($event)">
+	<app-edit-youth-member-feature [isOpen]="showEditModal" [youthMember]="editingYouthMember"
+		[isSubmitting]="isEditingYouthMember" [errorMessage]="editYouthMemberErrorMessage"
+		(closeRequested)="closeEditYouthMemberModal()" (submitRequested)="updateYouthMember($event)">
 	</app-edit-youth-member-feature>
 
-	<app-delete-youth-member-feature
-		[isOpen]="showDeleteModal"
-		[youthMember]="deletingYouthMember"
-		[isSubmitting]="isDeletingYouthMember"
-		[errorMessage]="deleteYouthMemberErrorMessage"
-		(closeRequested)="closeDeleteYouthMemberModal()"
-		(deleteRequested)="confirmDeleteYouthMember()">
+	<app-delete-youth-member-feature [isOpen]="showDeleteModal" [youthMember]="deletingYouthMember"
+		[isSubmitting]="isDeletingYouthMember" [errorMessage]="deleteYouthMemberErrorMessage"
+		(closeRequested)="closeDeleteYouthMemberModal()" (deleteRequested)="confirmDeleteYouthMember()">
 	</app-delete-youth-member-feature>
 
 	@if (showEditSuccessModal) {
-		<div class="modal-backdrop success-backdrop" (click)="closeEditSuccessModal()">
-			<div class="modal success-modal" (click)="$event.stopPropagation()">
-				<div class="modal-body success-body">
-					<p>{{ editSuccessMessage }}</p>
-				</div>
+	<div class="modal-backdrop success-backdrop" (click)="closeEditSuccessModal()">
+		<div class="modal success-modal" (click)="$event.stopPropagation()">
+			<div class="modal-body success-body">
+				<p>{{ editSuccessMessage }}</p>
+			</div>
 
-				<div class="modal-footer success-footer">
-					<button type="button" class="btn-ok" (click)="closeEditSuccessModal()">OK</button>
-				</div>
+			<div class="modal-footer success-footer">
+				<button type="button" class="btn-ok" (click)="closeEditSuccessModal()">OK</button>
 			</div>
 		</div>
+	</div>
 	}
 
 	@if (showDeleteSuccessModal) {
-		<div class="modal-backdrop success-backdrop" (click)="closeDeleteSuccessModal()">
-			<div class="modal success-modal" (click)="$event.stopPropagation()">
-				<div class="modal-body success-body">
-					<p>{{ deleteSuccessMessage }}</p>
-				</div>
+	<div class="modal-backdrop success-backdrop" (click)="closeDeleteSuccessModal()">
+		<div class="modal success-modal" (click)="$event.stopPropagation()">
+			<div class="modal-body success-body">
+				<p>{{ deleteSuccessMessage }}</p>
+			</div>
 
-				<div class="modal-footer success-footer">
-					<button type="button" class="btn-ok" (click)="closeDeleteSuccessModal()">OK</button>
-				</div>
+			<div class="modal-footer success-footer">
+				<button type="button" class="btn-ok" (click)="closeDeleteSuccessModal()">OK</button>
 			</div>
 		</div>
+	</div>
 	}
 </section>
+
+
+<!-- Approve Modal -->
+@if (showApproveModal) {
+<div class="modal-backdrop" (click)="closeApproveYouthMemberModal()">
+	<div class="modal" (click)="$event.stopPropagation()">
+		<div class="modal-header">
+			<h3>Approve User</h3>
+		</div>
+
+		<div class="modal-body">
+			@if (approvingYouthMember) {
+			<p>Are you sure you want to approve <strong>{{ getFullName(approvingYouthMember) }}</strong>?</p>
+			<p class="info-text">The user will receive an email notification and will be able to login.</p>
+			}
+
+			@if (approveYouthMemberErrorMessage) {
+			<p class="error-message">{{ approveYouthMemberErrorMessage }}</p>
+			}
+		</div>
+
+		<div class="modal-footer">
+			<button type="button" class="btn-cancel" (click)="closeApproveYouthMemberModal()"
+				[disabled]="isApprovingYouthMember">Cancel</button>
+			<button type="button" class="btn-approve" (click)="confirmApproveYouthMember()"
+				[disabled]="isApprovingYouthMember">
+				{{ isApprovingYouthMember ? 'Approving...' : 'Approve' }}
+			</button>
+		</div>
+	</div>
+</div>
+}
+
+@if (showApproveSuccessModal) {
+<div class="modal-backdrop success-backdrop" (click)="closeApproveSuccessModal()">
+	<div class="modal success-modal" (click)="$event.stopPropagation()">
+		<div class="modal-body success-body">
+			<p>{{ approveSuccessMessage }}</p>
+		</div>
+
+		<div class="modal-footer success-footer">
+			<button type="button" class="btn-ok" (click)="closeApproveSuccessModal()">OK</button>
+		</div>
+	</div>
+</div>
+}
+
+<!-- Reject Modal -->
+@if (showRejectModal) {
+<div class="modal-backdrop" (click)="closeRejectYouthMemberModal()">
+	<div class="modal reject-modal" (click)="$event.stopPropagation()">
+		<div class="modal-header">
+			<h3>Reject User Application</h3>
+		</div>
+
+		<div class="modal-body">
+			@if (rejectingYouthMember) {
+			<p>You are about to reject <strong>{{ getFullName(rejectingYouthMember) }}</strong>'s application.</p>
+			<p class="info-text">Please provide a reason (will be sent to the user via email):</p>
+
+			<textarea class="rejection-reason-input" [(ngModel)]="rejectionReason"
+				placeholder="e.g., Invalid documents, Not a resident of Barangay 183, etc." rows="4"
+				[disabled]="isRejectingYouthMember">
+					</textarea>
+			}
+
+			@if (rejectYouthMemberErrorMessage) {
+			<p class="error-message">{{ rejectYouthMemberErrorMessage }}</p>
+			}
+		</div>
+
+		<div class="modal-footer">
+			<button type="button" class="btn-cancel" (click)="closeRejectYouthMemberModal()"
+				[disabled]="isRejectingYouthMember">Cancel</button>
+			<button type="button" class="btn-reject" (click)="confirmRejectYouthMember()"
+				[disabled]="isRejectingYouthMember">
+				{{ isRejectingYouthMember ? 'Rejecting...' : 'Reject' }}
+			</button>
+		</div>
+	</div>
+</div>
+}
+
+@if (showRejectSuccessModal) {
+<div class="modal-backdrop success-backdrop" (click)="closeRejectSuccessModal()">
+	<div class="modal success-modal" (click)="$event.stopPropagation()">
+		<div class="modal-body success-body">
+			<p>{{ rejectSuccessMessage }}</p>
+		</div>
+
+		<div class="modal-footer success-footer">
+			<button type="button" class="btn-ok" (click)="closeRejectSuccessModal()">OK</button>
+		</div>
+	</div>
+</div>
+}

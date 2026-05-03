@@ -3,6 +3,7 @@ import { of } from 'rxjs';
 
 import { ManageYouthMember } from './manage-youth-member';
 import { YouthMemberManagementService } from '../../../services/youth-member-management.service';
+import { UserApprovalService } from '../../../services/user-approval.service';
 
 describe('ManageYouthMember', () => {
   let component: ManageYouthMember;
@@ -17,16 +18,28 @@ describe('ManageYouthMember', () => {
       deleteYouthProfile: () => of()
     };
 
+    const userApprovalServiceStub = {
+      getPendingUsers: () => of([]),
+      getApprovedUsers: () => of([]),
+      getRejectedUsers: () => of([]),
+      approveUser: () => of({}),
+      rejectUser: () => of({})
+    };
+
     await TestBed.configureTestingModule({
       imports: [ManageYouthMember],
       providers: [
         {
           provide: YouthMemberManagementService,
           useValue: youthMemberManagementServiceStub
+        },
+        {
+          provide: UserApprovalService,
+          useValue: userApprovalServiceStub
         }
       ]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(ManageYouthMember);
     component = fixture.componentInstance;
