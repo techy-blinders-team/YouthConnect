@@ -39,13 +39,15 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/login").permitAll()
                 .requestMatchers("/api/auth/register").permitAll()
                 .requestMatchers("/api/admin/auth/**").permitAll()
+                .requestMatchers("/api/password-reset/**").permitAll()
                 
                 // Admin endpoints - Require ADMIN or SK_OFFICIAL role
                 .requestMatchers("/api/admin/users/**").hasAnyRole("ADMIN", "SK_OFFICIAL")
                 .requestMatchers("/api/admin/concerns/**").hasAnyRole("ADMIN", "SK_OFFICIAL")
-                .requestMatchers("/api/administrator/**").hasRole("ADMIN")
+                .requestMatchers("/api/administrator/**").hasAnyRole("ADMIN", "SK_OFFICIAL")
                 
                 // SK Official endpoints
+                .requestMatchers("/api/sk/events").authenticated() // Allow all authenticated users to view events
                 .requestMatchers("/api/sk/**").hasAnyRole("SK_OFFICIAL", "ADMIN")
                 
                 // Protected endpoints - Require authentication
@@ -55,6 +57,8 @@ public class SecurityConfig {
                 
                 // Test endpoints - REMOVE IN PRODUCTION
                 .requestMatchers("/api/test/**").permitAll()
+                .requestMatchers("/api/email-test/**").permitAll()
+                .requestMatchers("/api/debug/**").permitAll()
                 
                 // All other requests require authentication
                 .anyRequest().authenticated()

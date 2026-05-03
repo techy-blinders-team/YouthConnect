@@ -38,17 +38,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     // Create authorities based on roleId
                     var authorities = new ArrayList<SimpleGrantedAuthority>();
                     
-                    // Role mapping: 1=USER, 2=ADMIN, 3=SK_OFFICIAL
+                    // Role mapping: 1=USER, 2=SK_OFFICIAL, 3=ADMIN
                     if (roleId != null) {
                         switch (roleId) {
                             case 1:
                                 authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
                                 break;
                             case 2:
-                                authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+                                authorities.add(new SimpleGrantedAuthority("ROLE_SK_OFFICIAL"));
                                 break;
                             case 3:
-                                authorities.add(new SimpleGrantedAuthority("ROLE_SK_OFFICIAL"));
+                                authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
                                 break;
                         }
                     }

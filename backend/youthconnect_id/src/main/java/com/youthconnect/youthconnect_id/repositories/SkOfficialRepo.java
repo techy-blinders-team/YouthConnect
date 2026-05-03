@@ -12,6 +12,7 @@ import com.youthconnect.youthconnect_id.models.SkOfficialsUser;
 @Repository
 public interface SkOfficialRepo extends JpaRepository<SkOfficialsUser, Integer> {
     Optional<SkOfficialsUser> findByEmail(String email);
+    Optional<SkOfficialsUser> findByResetToken(String resetToken);
     
     @Query("SELECT s.email FROM SkOfficialsUser s WHERE s.isActive = true")
     List<String> findAllActiveEmails();

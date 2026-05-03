@@ -7,4 +7,5 @@ public interface EmailService {
     void sendRejectionEmail(String to, String firstName, String reason);
     void notifySkOfficialsNewUser(User user, String youthName);
     void sendRegistrationConfirmationEmail(String to, String firstName);
+    void sendPasswordResetEmail(String toEmail, String firstName, String resetToken, boolean isSkOfficial);
 }

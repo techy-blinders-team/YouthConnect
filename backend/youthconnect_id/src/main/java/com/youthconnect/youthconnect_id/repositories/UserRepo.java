@@ -15,4 +15,5 @@ public interface UserRepo extends JpaRepository<User, Integer> {
     Optional<User> findByYouthId(int youthId);
     List<User> findByStatus(String status);
     List<User> findByStatusOrderByCreatedAtDesc(String status);
+    Optional<User> findByResetToken(String resetToken);
 }
