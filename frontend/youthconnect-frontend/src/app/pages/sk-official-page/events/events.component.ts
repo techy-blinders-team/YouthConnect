@@ -15,6 +15,7 @@ import { SkOfficialManagementService } from '../../../services/sk-official-manag
 })
 export class EventsComponent implements OnInit {
   isModalOpen = false;
+  isDetailsModalOpen = false;
   eventForm!: FormGroup;
   events: EventResponse[] = [];
   filteredEvents: EventResponse[] = [];
@@ -34,6 +35,7 @@ export class EventsComponent implements OnInit {
   pendingDeleteEvent: EventResponse | null = null;
   isEditConfirmationModalOpen = false;
   pendingEditPayload: any = null;
+  selectedEvent: EventResponse | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -56,7 +58,7 @@ export class EventsComponent implements OnInit {
 
   setupScrollIndicators() {
     setTimeout(() => {
-      const modalBodyWrappers = document.querySelectorAll('.modal-body-wrapper');
+      const modalBodyWrappers = document.querySelectorAll('.modal-body-wrapper, .details-modal-body-wrapper');
       
       modalBodyWrappers.forEach((wrapper) => {
         const element = wrapper as HTMLElement;
@@ -85,6 +87,17 @@ export class EventsComponent implements OnInit {
         resizeObserver.observe(element);
       });
     }, 100);
+  }
+
+  openDetailsModal(event: EventResponse) {
+    this.selectedEvent = event;
+    this.isDetailsModalOpen = true;
+    setTimeout(() => this.setupScrollIndicators(), 100);
+  }
+
+  closeDetailsModal() {
+    this.isDetailsModalOpen = false;
+    this.selectedEvent = null;
   }
 
   initForm() {
@@ -366,6 +379,7 @@ export class EventsComponent implements OnInit {
         this.showNotification('Event deleted successfully!');
         this.isLoading = false;
         this.closeDeleteConfirmationModal();
+        this.closeDetailsModal();
         this.loadEvents();
       },
       error: (error) => {
@@ -473,6 +487,11 @@ export class EventsComponent implements OnInit {
         if (index !== -1) {
           this.events[index].status = nextStatus;
           this.filteredEvents = [...this.events];
+        }
+        
+        // Update selected event if it's currently being viewed in details modal
+        if (this.selectedEvent && this.selectedEvent.eventId === event.eventId) {
+          this.selectedEvent.status = nextStatus;
         }
         
         this.showNotification(`Event status updated to ${nextStatus}`);
