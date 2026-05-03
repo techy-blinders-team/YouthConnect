@@ -107,86 +107,106 @@
             <div class="modal-body-wrapper">
                 <div class="scroll-indicator scroll-indicator-top"></div>
                 
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="taskingType" class="form-label">Tasking/Committee<span class="required">*</span></label>
-                        <select id="taskingType" class="form-input" [(ngModel)]="formState.taskingType">
-                            <option value="">Select a tasking/committee</option>
-                            <option *ngFor="let tasking of taskingOptions" [value]="tasking">
-                                {{ getTaskingDisplayName(tasking) }}
-                            </option>
-                        </select>
-                    </div>
+                <form [formGroup]="taskForm">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="taskingType" class="form-label">Tasking/Committee<span class="required">*</span></label>
+                            <select id="taskingType" class="form-input" formControlName="taskingType">
+                                <option value="" disabled selected>Select a tasking/committee</option>
+                                <option *ngFor="let tasking of taskingOptions" [value]="tasking">
+                                    {{ getTaskingDisplayName(tasking) }}
+                                </option>
+                            </select>
+                            <div *ngIf="taskForm.get('taskingType')?.invalid && taskForm.get('taskingType')?.touched" class="form-error">
+                                <span *ngIf="taskForm.get('taskingType')?.hasError('required')">Tasking/Committee is required</span>
+                            </div>
+                        </div>
 
-                    <div class="form-group">
-                        <label for="description" class="form-label">Description of Tasks<span class="required">*</span></label>
-                        <textarea 
-                            id="description" 
-                            class="form-textarea" 
-                            placeholder="Enter task description" 
-                            rows="5"
-                            [(ngModel)]="formState.taskDescription"></textarea>
-                    </div>
+                        <div class="form-group">
+                            <label for="description" class="form-label">Description of Tasks<span class="required">*</span></label>
+                            <textarea 
+                                id="description" 
+                                class="form-textarea" 
+                                placeholder="Enter task description" 
+                                rows="5"
+                                formControlName="taskDescription"></textarea>
+                            <div *ngIf="taskForm.get('taskDescription')?.invalid && taskForm.get('taskDescription')?.touched" class="form-error">
+                                <span *ngIf="taskForm.get('taskDescription')?.hasError('required')">Description is required</span>
+                            </div>
+                        </div>
 
-                    <div class="form-group">
-                        <label for="skIncharge" class="form-label">SK Incharge<span class="required">*</span></label>
-                        <input 
-                            type="text" 
-                            id="skIncharge" 
-                            class="form-input" 
-                            placeholder="Enter SK incharge"
-                            [(ngModel)]="formState.skIncharge">
-                    </div>
+                        <div class="form-group">
+                            <label for="skIncharge" class="form-label">SK Incharge<span class="required">*</span></label>
+                            <input 
+                                type="text" 
+                                id="skIncharge" 
+                                class="form-input" 
+                                placeholder="Enter SK incharge"
+                                formControlName="skIncharge">
+                            <div *ngIf="taskForm.get('skIncharge')?.invalid && taskForm.get('skIncharge')?.touched" class="form-error">
+                                <span *ngIf="taskForm.get('skIncharge')?.hasError('required')">SK Incharge is required</span>
+                            </div>
+                        </div>
 
-                    <div class="form-group">
-                        <label for="hyperlink" class="form-label">Notes/Hyperlink</label>
-                        <input 
-                            type="text" 
-                            id="hyperlink" 
-                            class="form-input" 
-                            placeholder="Enter notes/hyperlink"
-                            [(ngModel)]="formState.hyperlink">
-                    </div>
+                        <div class="form-group">
+                            <label for="hyperlink" class="form-label">Notes/Hyperlink</label>
+                            <input 
+                                type="text" 
+                                id="hyperlink" 
+                                class="form-input" 
+                                placeholder="Enter notes/hyperlink (Optional)"
+                                formControlName="hyperlink">
+                        </div>
 
-                    <div class="form-group">
-                        <label for="status" class="form-label">Status<span class="required">*</span></label>
-                        <select id="status" class="form-input" [(ngModel)]="formState.status">
-                            <option value="">Select status</option>
-                            <option value="PRIO">PRIO</option>
-                            <option value="TODO">TO DO</option>
-                            <option value="IN_PROGRESS">IN PROGRESS</option>
-                            <option value="DONE">DONE</option>
-                            <option value="CUSTOM">CUSTOM</option>
-                        </select>
-                    </div>
+                        <div class="form-group">
+                            <label for="status" class="form-label">Status<span class="required">*</span></label>
+                            <select id="status" class="form-input" formControlName="status">
+                                <option value="" disabled selected>Select status</option>
+                                <option value="PRIO">PRIO</option>
+                                <option value="TODO">TO DO</option>
+                                <option value="IN_PROGRESS">IN PROGRESS</option>
+                                <option value="DONE">DONE</option>
+                                <option value="CUSTOM">CUSTOM</option>
+                            </select>
+                            <div *ngIf="taskForm.get('status')?.invalid && taskForm.get('status')?.touched" class="form-error">
+                                <span *ngIf="taskForm.get('status')?.hasError('required')">Status is required</span>
+                            </div>
+                        </div>
 
-                    <div class="form-group" *ngIf="formState.status === 'CUSTOM'">
-                        <label for="customStatus" class="form-label">Custom Status</label>
-                        <input 
-                            type="text" 
-                            id="customStatus" 
-                            class="form-input" 
-                            placeholder="Enter custom status"
-                            [(ngModel)]="formState.customStatus">
-                    </div>
+                        <div class="form-group" *ngIf="taskForm.get('status')?.value === 'CUSTOM'">
+                            <label for="customStatus" class="form-label">Custom Status<span class="required">*</span></label>
+                            <input 
+                                type="text" 
+                                id="customStatus" 
+                                class="form-input" 
+                                placeholder="Enter custom status"
+                                formControlName="customStatus">
+                            <div *ngIf="taskForm.get('customStatus')?.invalid && taskForm.get('customStatus')?.touched" class="form-error">
+                                <span *ngIf="taskForm.get('customStatus')?.hasError('required')">Custom status is required</span>
+                            </div>
+                        </div>
 
-                    <div class="form-group">
-                        <label for="dueDate" class="form-label">Due Date</label>
-                        <input 
-                            type="datetime-local" 
-                            id="dueDate" 
-                            class="form-input" 
-                            placeholder="mm/dd/yyyy --:-- --"
-                            [(ngModel)]="formState.dueDate">
+                        <div class="form-group">
+                            <label for="dueDate" class="form-label">Due Date<span class="required">*</span></label>
+                            <input 
+                                type="datetime-local" 
+                                id="dueDate" 
+                                class="form-input" 
+                                placeholder="mm/dd/yyyy --:-- --"
+                                formControlName="dueDate">
+                            <div *ngIf="taskForm.get('dueDate')?.invalid && taskForm.get('dueDate')?.touched" class="form-error">
+                                <span *ngIf="taskForm.get('dueDate')?.hasError('required')">Due date is required</span>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                </form>
 
                 <div class="scroll-indicator scroll-indicator-bottom"></div>
             </div>
 
             <div class="modal-footer">
                 <button class="btn-cancel" (click)="closeModal()" [disabled]="isLoading">Cancel</button>
-                <button class="btn-create" (click)="saveTask()" [disabled]="!isFormValid() || isLoading">
+                <button class="btn-create" (click)="saveTask()" [disabled]="taskForm.invalid || isLoading">
                     {{ isLoading ? (isEditing ? 'Updating...' : 'Creating...') : (isEditing ? 'Update Task' : 'Create Task') }}
                 </button>
             </div>

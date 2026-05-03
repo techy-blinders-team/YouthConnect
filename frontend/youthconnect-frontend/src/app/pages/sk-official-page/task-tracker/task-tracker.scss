@@ -738,6 +738,19 @@ select.form-input {
   background-repeat: no-repeat;
   background-position: right 12px center;
   padding-right: 36px;
+  
+  &:invalid,
+  &[value=""] {
+    color: #aaa;
+  }
+  
+  option {
+    color: #333;
+  }
+  
+  option[value=""] {
+    color: #aaa;
+  }
 }
 
 .modal-footer {
@@ -841,6 +854,24 @@ select.form-input {
   color: #333;
   margin: 0 0 12px 0;
   line-height: 1.6;
+}
+
+/* Form Error Styles */
+.form-error {
+  color: #d32f2f;
+  font-size: 12px;
+  margin-top: 4px;
+  font-weight: 500;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.form-input.ng-invalid.ng-touched,
+.form-textarea.ng-invalid.ng-touched,
+select.form-input.ng-invalid.ng-touched {
+  border-color: #d32f2f;
+  box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.1);
 }
 
 /* Details Modal Styles */
