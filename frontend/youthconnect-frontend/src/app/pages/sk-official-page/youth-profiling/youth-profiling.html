@@ -208,39 +208,42 @@
   </aside>
 
   <!-- Edit Modal -->
-  <div class="modal-overlay" *ngIf="isEditModalOpen" (click)="closeEditModal()">
+  <div class="modal-overlay" *ngIf="isEditModalOpen">
     <div class="modal-content" (click)="$event.stopPropagation()">
       <div class="modal-header">
         <div>
           <h2 class="modal-title">Edit Youth Profile</h2>
-          <p class="modal-subtitle">Update the profile information for {{ selectedProfile?.firstName }} {{
+          <p class="modal-subtitle">Update the profile information for {{ selectedProfile?.firstName}} {{
             selectedProfile?.lastName }}</p>
         </div>
         <button class="close-btn" (click)="closeEditModal()">✕</button>
       </div>
 
-      <!-- Modal Error Message -->
-      <div *ngIf="errorMessage" class="modal-alert alert-error">
-        {{ errorMessage }}
-      </div>
-
-      <!-- Modal Success Message -->
-      <div *ngIf="successMessage" class="modal-alert alert-success">
-        {{ successMessage }}
-      </div>
-
       <form [formGroup]="editForm" (ngSubmit)="submitEditForm()">
-        <div class="modal-body">
-          <div class="form-row">
-            <div class="form-group">
-              <label for="firstName" class="form-label">First Name<span class="required">*</span></label>
-              <input type="text" id="firstName" class="form-input" formControlName="firstName" />
-            </div>
-            <div class="form-group">
-              <label for="middleName" class="form-label">Middle Name</label>
-              <input type="text" id="middleName" class="form-input" formControlName="middleName" />
-            </div>
+        <div class="modal-body-wrapper">
+          <div class="scroll-indicator scroll-indicator-top"></div>
+
+          <!-- Modal Error Message -->
+          <div *ngIf="errorMessage" class="modal-alert alert-error">
+            {{ errorMessage }}
           </div>
+
+          <!-- Modal Success Message -->
+          <div *ngIf="successMessage" class="modal-alert alert-success">
+            {{ successMessage }}
+          </div>
+
+          <div class="modal-body">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="firstName" class="form-label">First Name<span class="required">*</span></label>
+                <input type="text" id="firstName" class="form-input" formControlName="firstName" />
+              </div>
+              <div class="form-group">
+                <label for="middleName" class="form-label">Middle Name</label>
+                <input type="text" id="middleName" class="form-input" formControlName="middleName" />
+              </div>
+            </div>
 
           <div class="form-row">
             <div class="form-group">
@@ -372,20 +375,23 @@
           </div>
         </div>
 
-        <div class="modal-footer">
-          <button type="button" class="btn-cancel" (click)="closeEditModal()" [disabled]="isSubmitting">
-            Cancel
-          </button>
-          <button type="submit" class="btn-create" [disabled]="editForm.invalid || isSubmitting">
-            {{ isSubmitting ? 'Saving...' : 'Save Changes' }}
-          </button>
-        </div>
-      </form>
+        <div class="scroll-indicator scroll-indicator-bottom"></div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" (click)="closeEditModal()" [disabled]="isSubmitting">
+          Cancel
+        </button>
+        <button type="submit" class="btn-create" [disabled]="editForm.invalid || isSubmitting">
+          {{ isSubmitting ? 'Saving...' : 'Save Changes' }}
+        </button>
+      </div>
+    </form>
     </div>
   </div>
 
   <!-- Deactivate Confirmation Modal -->
-  <div class="modal-overlay" *ngIf="isDeactivateConfirmationModalOpen" (click)="closeDeactivateConfirmationModal()">
+  <div class="modal-overlay" *ngIf="isDeactivateConfirmationModalOpen">
     <div class="modal-content modal-small" (click)="$event.stopPropagation()">
       <div class="modal-header">
         <div>
@@ -394,11 +400,13 @@
         <button class="close-btn" (click)="closeDeactivateConfirmationModal()">✕</button>
       </div>
 
-      <div class="modal-body">
-        <p class="confirmation-text">
-          Are you sure you want to deactivate the profile for <strong>{{ selectedProfile?.firstName }} {{
-            selectedProfile?.lastName }}</strong>?
-        </p>
+      <div class="modal-body-wrapper">
+        <div class="modal-body">
+          <p class="confirmation-text">
+            Are you sure you want to deactivate the profile for <strong>{{ selectedProfile?.firstName }} {{
+              selectedProfile?.lastName }}</strong>?
+          </p>
+        </div>
       </div>
 
       <div class="modal-footer">
@@ -414,7 +422,7 @@
   </div>
 
   <!-- Edit Confirmation Modal -->
-  <div class="modal-overlay" *ngIf="isEditConfirmationModalOpen" (click)="closeEditConfirmationModal()">
+  <div class="modal-overlay" *ngIf="isEditConfirmationModalOpen">
     <div class="modal-content modal-small" (click)="$event.stopPropagation()">
       <div class="modal-header">
         <div>
@@ -423,11 +431,13 @@
         <button class="close-btn" (click)="closeEditConfirmationModal()">✕</button>
       </div>
 
-      <div class="modal-body">
-        <p class="confirmation-text">
-          Are you sure you want to update the profile for <strong>{{ selectedProfile?.firstName }} {{
-            selectedProfile?.lastName }}</strong>?
-        </p>
+      <div class="modal-body-wrapper">
+        <div class="modal-body">
+          <p class="confirmation-text">
+            Are you sure you want to update the profile for <strong>{{ selectedProfile?.firstName }} {{
+              selectedProfile?.lastName }}</strong>?
+          </p>
+        </div>
       </div>
 
       <div class="modal-footer">
@@ -442,7 +452,7 @@
   </div>
 
   <!-- Rejection Modal -->
-  <div class="modal-overlay" *ngIf="isRejectModalOpen" (click)="closeRejectModal()">
+  <div class="modal-overlay" *ngIf="isRejectModalOpen">
     <div class="modal-content modal-small" (click)="$event.stopPropagation()">
       <div class="modal-header">
         <div>
@@ -453,16 +463,18 @@
         <button class="close-btn" (click)="closeRejectModal()">✕</button>
       </div>
 
-      <div *ngIf="approvalError" class="modal-alert alert-error">
-        {{ approvalError }}
-      </div>
+      <div class="modal-body-wrapper">
+        <div *ngIf="approvalError" class="modal-alert alert-error">
+          {{ approvalError }}
+        </div>
 
-      <div class="modal-body">
-        <div class="form-group">
-          <label for="rejectionReason">Rejection Reason <span class="required">*</span></label>
-          <textarea id="rejectionReason" [(ngModel)]="rejectionReason" rows="5"
-            placeholder="Please provide a clear and specific reason for rejection..." class="form-control"
-            [disabled]="updatingApprovalUserId !== null"></textarea>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="rejectionReason">Rejection Reason <span class="required">*</span></label>
+            <textarea id="rejectionReason" [(ngModel)]="rejectionReason" rows="5"
+              placeholder="Please provide a clear and specific reason for rejection..." class="form-control"
+              [disabled]="updatingApprovalUserId !== null"></textarea>
+          </div>
         </div>
       </div>
 

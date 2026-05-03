@@ -62,6 +62,43 @@ export class YouthProfiling implements OnInit {
     this.loadYouthProfiles();
   }
 
+  ngAfterViewInit() {
+    this.setupScrollIndicators();
+  }
+
+  setupScrollIndicators() {
+    setTimeout(() => {
+      const modalBodyWrappers = document.querySelectorAll('.modal-body-wrapper');
+      
+      modalBodyWrappers.forEach((wrapper) => {
+        const element = wrapper as HTMLElement;
+        
+        const updateScrollIndicators = () => {
+          const canScrollUp = element.scrollTop > 10;
+          const canScrollDown = element.scrollTop < element.scrollHeight - element.clientHeight - 10;
+          
+          if (canScrollUp) {
+            element.classList.add('can-scroll-up');
+          } else {
+            element.classList.remove('can-scroll-up');
+          }
+          
+          if (canScrollDown) {
+            element.classList.add('can-scroll-down');
+          } else {
+            element.classList.remove('can-scroll-down');
+          }
+        };
+        
+        element.addEventListener('scroll', updateScrollIndicators);
+        updateScrollIndicators();
+        
+        const resizeObserver = new ResizeObserver(updateScrollIndicators);
+        resizeObserver.observe(element);
+      });
+    }, 100);
+  }
+
   loadSkOfficialProfile(): void {
     const fallbackName = localStorage.getItem('sk_official_name') || 'SK Official';
     const fallbackEmail = localStorage.getItem('sk_official_email') || '';
@@ -723,6 +760,7 @@ export class YouthProfiling implements OnInit {
     this.isEditModalOpen = true;
     this.errorMessage = '';
     this.successMessage = '';
+    setTimeout(() => this.setupScrollIndicators(), 100);
   }
 
   closeEditModal(): void {
