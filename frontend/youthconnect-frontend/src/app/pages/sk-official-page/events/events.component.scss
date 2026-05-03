@@ -350,6 +350,9 @@ html, body, :host, .events-container {
   color: #1d1d1d;
   margin: 0 0 16px;
   line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .event-meta {
@@ -992,6 +995,7 @@ html, body, :host, .events-container {
   color: #666;
   margin: 0 0 20px 0;
   line-height: 1.6;
+  word-break: break-word;
 }
 
 .detail-info-row {
