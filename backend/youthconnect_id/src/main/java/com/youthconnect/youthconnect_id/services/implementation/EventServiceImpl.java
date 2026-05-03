@@ -39,6 +39,7 @@ public class EventServiceImpl implements EventService {
 
     //Helpers
     private EventResponse toEventResponse(Event event, long rsvpCount) {
+        long expectedCount = userRepo.countByIsActiveTrue();
         EventResponse response = new EventResponse();
         response.setEventId(event.getEventId());
         response.setTitle(event.getTitle());
@@ -50,6 +51,7 @@ public class EventServiceImpl implements EventService {
         response.setCreatedAt(event.getCreatedAt());
         response.setUpdatedAt(event.getUpdatedAt());
         response.setRsvpCount(rsvpCount);
+        response.setExpectedCount(expectedCount);
         return response;
     }
 

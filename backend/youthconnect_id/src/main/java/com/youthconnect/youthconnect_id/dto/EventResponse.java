@@ -13,6 +13,7 @@ public class EventResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private long rsvpCount;
+    private long expectedCount;
 
     public int getEventId() {
         return eventId; 
@@ -73,5 +74,11 @@ public class EventResponse {
     }
     public void setRsvpCount(long rsvpCount) {
         this.rsvpCount = rsvpCount;
+    }
+    public long getExpectedCount() {
+        return expectedCount;
+    }
+    public void setExpectedCount(long expectedCount) {
+        this.expectedCount = expectedCount;
     }
 }
