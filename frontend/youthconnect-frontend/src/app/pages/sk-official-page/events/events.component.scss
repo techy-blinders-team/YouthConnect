@@ -1085,6 +1085,7 @@ html, body, :host, .events-container {
 .chart-container {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 24px;
   flex-wrap: wrap;
 }
@@ -1094,6 +1095,7 @@ html, body, :host, .events-container {
   width: 160px;
   height: 160px;
   flex-shrink: 0;
+  margin-left: 20%;
 }
 
 .donut-svg {
