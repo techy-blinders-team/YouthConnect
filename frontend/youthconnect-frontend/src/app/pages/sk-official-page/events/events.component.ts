@@ -15,6 +15,7 @@ import { SkOfficialManagementService } from '../../../services/sk-official-manag
 })
 export class EventsComponent implements OnInit {
   isModalOpen = false;
+  isDetailsModalOpen = false;
   eventForm!: FormGroup;
   events: EventResponse[] = [];
   filteredEvents: EventResponse[] = [];
@@ -34,6 +35,7 @@ export class EventsComponent implements OnInit {
   pendingDeleteEvent: EventResponse | null = null;
   isEditConfirmationModalOpen = false;
   pendingEditPayload: any = null;
+  selectedEvent: EventResponse | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -56,7 +58,7 @@ export class EventsComponent implements OnInit {
 
   setupScrollIndicators() {
     setTimeout(() => {
-      const modalBodyWrappers = document.querySelectorAll('.modal-body-wrapper');
+      const modalBodyWrappers = document.querySelectorAll('.modal-body-wrapper, .details-modal-body-wrapper');
       
       modalBodyWrappers.forEach((wrapper) => {
         const element = wrapper as HTMLElement;
@@ -87,12 +89,23 @@ export class EventsComponent implements OnInit {
     }, 100);
   }
 
+  openDetailsModal(event: EventResponse) {
+    this.selectedEvent = event;
+    this.isDetailsModalOpen = true;
+    setTimeout(() => this.setupScrollIndicators(), 100);
+  }
+
+  closeDetailsModal() {
+    this.isDetailsModalOpen = false;
+    this.selectedEvent = null;
+  }
+
   initForm() {
     this.eventForm = this.fb.group({
-      eventTitle: ['', [Validators.required, Validators.minLength(3)]],
-      description: ['', [Validators.required, Validators.minLength(10)]],
+      eventTitle: ['', [Validators.required]],
+      description: ['', [Validators.required]],
       dateTime: ['', Validators.required],
-      location: ['', [Validators.required, Validators.minLength(3)]]
+      location: ['', [Validators.required]]
     });
   }
 
@@ -155,8 +168,12 @@ export class EventsComponent implements OnInit {
     this.isLoading = true;
     this.eventService.getAllEvents().subscribe({
       next: (data) => {
-        this.events = data;
-        this.filteredEvents = data;
+        // Ensure all events have expectedCount with a default value
+        this.events = data.map(event => ({
+          ...event,
+          expectedCount: event.expectedCount ?? (event.rsvpCount || 0)
+        }));
+        this.filteredEvents = this.events;
         this.searchTerm = '';
         this.isLoading = false;
       },
@@ -366,6 +383,7 @@ export class EventsComponent implements OnInit {
         this.showNotification('Event deleted successfully!');
         this.isLoading = false;
         this.closeDeleteConfirmationModal();
+        this.closeDetailsModal();
         this.loadEvents();
       },
       error: (error) => {
@@ -475,6 +493,11 @@ export class EventsComponent implements OnInit {
           this.filteredEvents = [...this.events];
         }
         
+        // Update selected event if it's currently being viewed in details modal
+        if (this.selectedEvent && this.selectedEvent.eventId === event.eventId) {
+          this.selectedEvent.status = nextStatus;
+        }
+        
         this.showNotification(`Event status updated to ${nextStatus}`);
       },
       error: (error) => {
@@ -493,5 +516,32 @@ export class EventsComponent implements OnInit {
       hour: '2-digit',
       minute: '2-digit'
     });
+  }
+
+  getRsvpPercentage(event: EventResponse): number {
+    const expectedCount = event.expectedCount || 0;
+    const rsvpCount = event.rsvpCount || 0;
+    
+    if (expectedCount === 0) {
+      return 0;
+    }
+    
+    return Math.round((rsvpCount / expectedCount) * 100);
+  }
+
+  getRemainingCount(event: EventResponse): number {
+    const expectedCount = event.expectedCount || 0;
+    const rsvpCount = event.rsvpCount || 0;
+    
+    return Math.max(0, expectedCount - rsvpCount);
+  }
+
+  getRsvpStrokeDasharray(event: EventResponse): string {
+    const percentage = this.getRsvpPercentage(event);
+    const circumference = 2 * Math.PI * 80; // 2πr where r=80
+    const filledLength = (percentage / 100) * circumference;
+    const emptyLength = circumference - filledLength;
+    
+    return `${filledLength} ${emptyLength}`;
   }
 }

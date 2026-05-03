@@ -18,6 +18,7 @@ export interface EventResponse {
     createdAt: string;
     updatedAt?: string;
     rsvpCount: number;
+    expectedCount: number;
 }
 
 export interface AttendanceResponse {

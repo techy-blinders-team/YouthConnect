@@ -53,7 +53,7 @@
                 {{ searchTerm ? 'No events match your search.' : 'No events found. Create your first event!' }}
             </div>
             
-            <div *ngFor="let event of filteredEvents" class="event-card">
+            <div *ngFor="let event of filteredEvents" class="event-card" (click)="openDetailsModal(event)">
                 <div class="card-header">
                     <div class="title-status-group">
                         <h3>{{ event.title }}</h3>
@@ -62,10 +62,10 @@
                         </span>
                     </div>
                     <div class="card-actions">
-                        <button class="edit-btn" (click)="editEvent(event)" title="Edit event" [disabled]="isEditDisabled(event.status)">
+                        <button class="edit-btn" (click)="editEvent(event); $event.stopPropagation()" title="Edit event" [disabled]="isEditDisabled(event.status)">
                             <img src="../../assets/sk-official-events-icons/edit.svg" alt="Edit" width="18" height="18">
                         </button>
-                        <button class="delete-btn" (click)="deleteEvent(event)" title="Delete event" [disabled]="isEventOngoing(event.status)">
+                        <button class="delete-btn" (click)="deleteEvent(event); $event.stopPropagation()" title="Delete event" [disabled]="isEventOngoing(event.status)">
                             <img src="../../assets/sk-official-events-icons/delete.svg" alt="Delete" width="18" height="18">
                         </button>
                     </div>
@@ -92,10 +92,129 @@
                         class="status-btn"
                         [ngClass]="getStatusActionClass(event.status)"
                         [disabled]="isStatusActionDisabled(event.status)"
-                        (click)="updateEventStatus(event)">
+                        (click)="updateEventStatus(event); $event.stopPropagation()">
                         {{ getStatusActionLabel(event.status) }}
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Event Details Modal -->
+    <div class="modal-overlay details-modal-overlay" *ngIf="isDetailsModalOpen && selectedEvent">
+        <div class="details-modal-content" (click)="$event.stopPropagation()">
+            <div class="details-modal-header">
+                <h2 class="details-modal-title">{{ selectedEvent.title }}</h2>
+                <div class="details-modal-actions">
+                    <button class="details-edit-btn" (click)="editEvent(selectedEvent); closeDetailsModal()" title="Edit event" [disabled]="isEditDisabled(selectedEvent.status)">
+                        <img src="../../assets/sk-official-events-icons/edit.svg" alt="Edit" width="20" height="20">
+                    </button>
+                    <button class="details-delete-btn" (click)="deleteEvent(selectedEvent); closeDetailsModal()" title="Delete event" [disabled]="isEventOngoing(selectedEvent.status)">
+                        <img src="../../assets/sk-official-events-icons/delete.svg" alt="Delete" width="20" height="20">
+                    </button>
+                    <button class="details-close-btn" (click)="closeDetailsModal()" title="Close">✕</button>
+                </div>
+            </div>
+
+            <div class="details-modal-body-wrapper">
+                <div class="scroll-indicator scroll-indicator-top"></div>
+                
+                <div class="details-modal-body">
+                    <p class="detail-text">{{ selectedEvent.description }}</p>
+
+                    <div class="detail-info-row">
+                        <img src="../../assets/sk-official-events-icons/location.svg" alt="Location" width="16" height="16" style="vertical-align: middle; margin-right: 1px;">
+                        <span class="detail-info-label">LOCATION:</span>
+                        <span class="detail-info-value">
+                            {{ selectedEvent.location }}
+                        </span>
+                    </div>
+
+                    <div class="detail-info-row">
+                        <img src="../../assets/sk-official-events-icons/time.svg" alt="Time" width="16" height="16" style="vertical-align: middle; margin-right: 1px;">
+                        <span class="detail-info-label">DATE & TIME:</span>
+                        <span class="detail-info-value">
+                            {{ formatDate(selectedEvent.eventDate) }}
+                        </span>
+                    </div>
+
+                    <div class="detail-info-row">
+                        <img src="../../assets/sk-official-events-icons/calendar.svg" alt="RSVPs" width="16" height="16" style="vertical-align: middle; margin-right: 1px;">
+                        <span class="detail-info-label">RSVPs:</span>
+                        <span class="detail-info-value">
+                            {{ selectedEvent.rsvpCount || 0 }} RSVP{{ (selectedEvent.rsvpCount || 0) === 1 ? '' : 's' }}
+                        </span>
+                    </div>
+
+                    <div class="detail-info-row">
+                        <span class="detail-info-label">STATUS:</span>
+                        <span class="status-pill" [ngClass]="(selectedEvent.status || 'upcoming').toLowerCase()">
+                            {{ selectedEvent.status || 'Upcoming' }}
+                        </span>
+                    </div>
+
+                    <!-- RSVP Donut Chart -->
+                    <div class="rsvp-chart-section">
+                        <h4 class="chart-title">RSVP Overview</h4>
+                        <div class="chart-container">
+                            <div class="donut-chart">
+                                <svg viewBox="0 0 200 200" class="donut-svg">
+                                    <!-- Background circle -->
+                                    <circle
+                                        cx="100"
+                                        cy="100"
+                                        r="80"
+                                        fill="none"
+                                        stroke="#e8e8e8"
+                                        stroke-width="30"
+                                    />
+                                    <!-- RSVP segment -->
+                                    <circle
+                                        cx="100"
+                                        cy="100"
+                                        r="80"
+                                        fill="none"
+                                        stroke="#0052cc"
+                                        stroke-width="30"
+                                        [attr.stroke-dasharray]="getRsvpStrokeDasharray(selectedEvent)"
+                                        stroke-dashoffset="125.6"
+                                        transform="rotate(-90 100 100)"
+                                        class="rsvp-segment"
+                                    />
+                                </svg>
+                                <div class="chart-center-text">
+                                    <div class="percentage">{{ getRsvpPercentage(selectedEvent) }}%</div>
+                                    <div class="label">RSVP'd</div>
+                                </div>
+                            </div>
+                            <div class="chart-legend">
+                                <div class="legend-item">
+                                    <span class="legend-color rsvp-color"></span>
+                                    <span class="legend-label">RSVP: {{ selectedEvent.rsvpCount || 0 }}</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color remaining-color"></span>
+                                    <span class="legend-label">Remaining: {{ getRemainingCount(selectedEvent) }}</span>
+                                </div>
+                                <div class="legend-item total">
+                                    <span class="legend-label">Expected Total: {{ selectedEvent.expectedCount || 0 }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scroll-indicator scroll-indicator-bottom"></div>
+            </div>
+
+            <div class="details-modal-footer">
+                <button
+                    class="details-status-btn"
+                    [ngClass]="getStatusActionClass(selectedEvent.status)"
+                    [disabled]="isStatusActionDisabled(selectedEvent.status)"
+                    (click)="updateEventStatus(selectedEvent)">
+                    {{ getStatusActionLabel(selectedEvent.status) }}
+                </button>
             </div>
         </div>
     </div>
@@ -131,7 +250,6 @@
                                 formControlName="eventTitle">
                             <div *ngIf="eventForm.get('eventTitle')?.invalid && eventForm.get('eventTitle')?.touched" class="form-error">
                                 <span *ngIf="eventForm.get('eventTitle')?.hasError('required')">Event title is required</span>
-                                <span *ngIf="eventForm.get('eventTitle')?.hasError('minlength')">Title must be at least 3 characters</span>
                             </div>
                         </div>
 
@@ -145,7 +263,6 @@
                                 formControlName="description"></textarea>
                             <div *ngIf="eventForm.get('description')?.invalid && eventForm.get('description')?.touched" class="form-error">
                                 <span *ngIf="eventForm.get('description')?.hasError('required')">Description is required</span>
-                                <span *ngIf="eventForm.get('description')?.hasError('minlength')">Description must be at least 10 characters</span>
                             </div>
                         </div>
 
@@ -171,7 +288,6 @@
                                 formControlName="location">
                             <div *ngIf="eventForm.get('location')?.invalid && eventForm.get('location')?.touched" class="form-error">
                                 <span *ngIf="eventForm.get('location')?.hasError('required')">Location is required</span>
-                                <span *ngIf="eventForm.get('location')?.hasError('minlength')">Location must be at least 3 characters</span>
                             </div>
                         </div>
                     </div>
