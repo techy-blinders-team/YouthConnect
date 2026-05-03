@@ -1067,3 +1067,120 @@ html, body, :host, .events-container {
     cursor: not-allowed;
   }
 }
+
+/* RSVP Donut Chart Styles */
+.rsvp-chart-section {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e8e8e8;
+}
+
+.chart-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 16px 0;
+}
+
+.chart-container {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.donut-chart {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  flex-shrink: 0;
+}
+
+.donut-svg {
+  width: 100%;
+  height: 100%;
+  transform: scale(1);
+}
+
+.rsvp-segment {
+  transition: stroke-dasharray 0.6s ease-in-out;
+}
+
+.chart-center-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+.chart-center-text .percentage {
+  font-size: 28px;
+  font-weight: 700;
+  color: #0052cc;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.chart-center-text .label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.chart-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  min-width: 150px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  
+  &.total {
+    margin-top: 4px;
+    padding-top: 12px;
+    border-top: 1px solid #e8e8e8;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.legend-color.rsvp-color {
+  background-color: #0052cc;
+}
+
+.legend-color.remaining-color {
+  background-color: #e8e8e8;
+}
+
+.legend-label {
+  color: #666;
+  font-weight: 500;
+}
+
+@media (max-width: 480px) {
+  .chart-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .chart-legend {
+    width: 100%;
+  }
+}

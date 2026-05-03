@@ -152,6 +152,56 @@
                             {{ selectedEvent.status || 'Upcoming' }}
                         </span>
                     </div>
+
+                    <!-- RSVP Donut Chart -->
+                    <div class="rsvp-chart-section">
+                        <h4 class="chart-title">RSVP Overview</h4>
+                        <div class="chart-container">
+                            <div class="donut-chart">
+                                <svg viewBox="0 0 200 200" class="donut-svg">
+                                    <!-- Background circle -->
+                                    <circle
+                                        cx="100"
+                                        cy="100"
+                                        r="80"
+                                        fill="none"
+                                        stroke="#e8e8e8"
+                                        stroke-width="30"
+                                    />
+                                    <!-- RSVP segment -->
+                                    <circle
+                                        cx="100"
+                                        cy="100"
+                                        r="80"
+                                        fill="none"
+                                        stroke="#0052cc"
+                                        stroke-width="30"
+                                        [attr.stroke-dasharray]="getRsvpStrokeDasharray(selectedEvent)"
+                                        stroke-dashoffset="125.6"
+                                        transform="rotate(-90 100 100)"
+                                        class="rsvp-segment"
+                                    />
+                                </svg>
+                                <div class="chart-center-text">
+                                    <div class="percentage">{{ getRsvpPercentage(selectedEvent) }}%</div>
+                                    <div class="label">RSVP'd</div>
+                                </div>
+                            </div>
+                            <div class="chart-legend">
+                                <div class="legend-item">
+                                    <span class="legend-color rsvp-color"></span>
+                                    <span class="legend-label">RSVP: {{ selectedEvent.rsvpCount || 0 }}</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color remaining-color"></span>
+                                    <span class="legend-label">Remaining: {{ getRemainingCount(selectedEvent) }}</span>
+                                </div>
+                                <div class="legend-item total">
+                                    <span class="legend-label">Expected Total: {{ selectedEvent.expectedCount || 0 }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="scroll-indicator scroll-indicator-bottom"></div>

@@ -168,8 +168,12 @@ export class EventsComponent implements OnInit {
     this.isLoading = true;
     this.eventService.getAllEvents().subscribe({
       next: (data) => {
-        this.events = data;
-        this.filteredEvents = data;
+        // Ensure all events have expectedCount with a default value
+        this.events = data.map(event => ({
+          ...event,
+          expectedCount: event.expectedCount ?? (event.rsvpCount || 0)
+        }));
+        this.filteredEvents = this.events;
         this.searchTerm = '';
         this.isLoading = false;
       },
@@ -512,5 +516,32 @@ export class EventsComponent implements OnInit {
       hour: '2-digit',
       minute: '2-digit'
     });
+  }
+
+  getRsvpPercentage(event: EventResponse): number {
+    const expectedCount = event.expectedCount || 0;
+    const rsvpCount = event.rsvpCount || 0;
+    
+    if (expectedCount === 0) {
+      return 0;
+    }
+    
+    return Math.round((rsvpCount / expectedCount) * 100);
+  }
+
+  getRemainingCount(event: EventResponse): number {
+    const expectedCount = event.expectedCount || 0;
+    const rsvpCount = event.rsvpCount || 0;
+    
+    return Math.max(0, expectedCount - rsvpCount);
+  }
+
+  getRsvpStrokeDasharray(event: EventResponse): string {
+    const percentage = this.getRsvpPercentage(event);
+    const circumference = 2 * Math.PI * 80; // 2πr where r=80
+    const filledLength = (percentage / 100) * circumference;
+    const emptyLength = circumference - filledLength;
+    
+    return `${filledLength} ${emptyLength}`;
   }
 }
