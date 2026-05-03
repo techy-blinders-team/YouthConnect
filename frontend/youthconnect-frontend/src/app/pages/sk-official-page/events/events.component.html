@@ -200,7 +200,6 @@
                                 formControlName="eventTitle">
                             <div *ngIf="eventForm.get('eventTitle')?.invalid && eventForm.get('eventTitle')?.touched" class="form-error">
                                 <span *ngIf="eventForm.get('eventTitle')?.hasError('required')">Event title is required</span>
-                                <span *ngIf="eventForm.get('eventTitle')?.hasError('minlength')">Title must be at least 3 characters</span>
                             </div>
                         </div>
 
@@ -214,7 +213,6 @@
                                 formControlName="description"></textarea>
                             <div *ngIf="eventForm.get('description')?.invalid && eventForm.get('description')?.touched" class="form-error">
                                 <span *ngIf="eventForm.get('description')?.hasError('required')">Description is required</span>
-                                <span *ngIf="eventForm.get('description')?.hasError('minlength')">Description must be at least 10 characters</span>
                             </div>
                         </div>
 
@@ -240,7 +238,6 @@
                                 formControlName="location">
                             <div *ngIf="eventForm.get('location')?.invalid && eventForm.get('location')?.touched" class="form-error">
                                 <span *ngIf="eventForm.get('location')?.hasError('required')">Location is required</span>
-                                <span *ngIf="eventForm.get('location')?.hasError('minlength')">Location must be at least 3 characters</span>
                             </div>
                         </div>
                     </div>

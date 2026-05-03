@@ -102,10 +102,10 @@ export class EventsComponent implements OnInit {
 
   initForm() {
     this.eventForm = this.fb.group({
-      eventTitle: ['', [Validators.required, Validators.minLength(3)]],
-      description: ['', [Validators.required, Validators.minLength(10)]],
+      eventTitle: ['', [Validators.required]],
+      description: ['', [Validators.required]],
       dateTime: ['', Validators.required],
-      location: ['', [Validators.required, Validators.minLength(3)]]
+      location: ['', [Validators.required]]
     });
   }
 
