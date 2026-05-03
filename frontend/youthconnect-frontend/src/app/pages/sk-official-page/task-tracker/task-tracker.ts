@@ -1,5 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { TaskTrackerService } from '../../../services/task-tracker.service';
 import { TaskResponse, TaskRequest, TaskEditRequest } from '../../../models/task.model';
@@ -8,13 +9,14 @@ import { SkOfficialManagementService } from '../../../services/sk-official-manag
 
 @Component({
   selector: 'app-task-tracker',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './task-tracker.html',
   styleUrl: './task-tracker.scss',
 })
 export class TaskTracker implements OnInit {
   private taskService = inject(TaskTrackerService);
   private skOfficialService = inject(SkOfficialManagementService);
+  private fb = inject(FormBuilder);
 
   // State
   isModalOpen = false;
@@ -31,16 +33,8 @@ export class TaskTracker implements OnInit {
   tasks: TaskResponse[] = [];
   filteredTasks: TaskResponse[] = [];
 
-  // Form data
-  formState = {
-    taskingType: '',
-    taskDescription: '',
-    skIncharge: '',
-    hyperlink: '',
-    status: '',
-    dueDate: '',
-    customStatus: '',
-  };
+  // Form
+  taskForm!: FormGroup;
 
   // Admin info - get from localStorage or use default
   currentAdminId: number;
@@ -67,11 +61,72 @@ export class TaskTracker implements OnInit {
   constructor() {
     const storedAdminId = localStorage.getItem('sk_official_id') || localStorage.getItem('adminId');
     this.currentAdminId = storedAdminId ? parseInt(storedAdminId, 10) : 0;
+    this.initForm();
+  }
+
+  initForm() {
+    this.taskForm = this.fb.group({
+      taskingType: ['', Validators.required],
+      taskDescription: ['', [Validators.required]],
+      skIncharge: ['', [Validators.required]],
+      hyperlink: [''],
+      status: ['', Validators.required],
+      dueDate: ['', Validators.required],
+      customStatus: ['']
+    });
+
+    // Add conditional validation for customStatus
+    this.taskForm.get('status')?.valueChanges.subscribe(status => {
+      const customStatusControl = this.taskForm.get('customStatus');
+      if (status === 'CUSTOM') {
+        customStatusControl?.setValidators([Validators.required]);
+      } else {
+        customStatusControl?.clearValidators();
+      }
+      customStatusControl?.updateValueAndValidity();
+    });
   }
 
   ngOnInit() {
     this.loadSkOfficialProfile();
     this.loadTasks();
+  }
+
+  ngAfterViewInit() {
+    this.setupScrollIndicators();
+  }
+
+  setupScrollIndicators() {
+    setTimeout(() => {
+      const modalBodyWrappers = document.querySelectorAll('.modal-body-wrapper, .details-modal-body-wrapper');
+      
+      modalBodyWrappers.forEach((wrapper) => {
+        const element = wrapper as HTMLElement;
+        
+        const updateScrollIndicators = () => {
+          const canScrollUp = element.scrollTop > 10;
+          const canScrollDown = element.scrollTop < element.scrollHeight - element.clientHeight - 10;
+          
+          if (canScrollUp) {
+            element.classList.add('can-scroll-up');
+          } else {
+            element.classList.remove('can-scroll-up');
+          }
+          
+          if (canScrollDown) {
+            element.classList.add('can-scroll-down');
+          } else {
+            element.classList.remove('can-scroll-down');
+          }
+        };
+        
+        element.addEventListener('scroll', updateScrollIndicators);
+        updateScrollIndicators();
+        
+        const resizeObserver = new ResizeObserver(updateScrollIndicators);
+        resizeObserver.observe(element);
+      });
+    }, 100);
   }
 
   loadSkOfficialProfile() {
@@ -143,28 +198,30 @@ export class TaskTracker implements OnInit {
   openModal() {
     this.isEditing = false;
     this.currentEditingTaskId = null;
-    this.resetForm();
+    this.taskForm.reset();
     this.isModalOpen = true;
+    setTimeout(() => this.setupScrollIndicators(), 100);
   }
 
   openEditModal(task: TaskResponse) {
     this.isEditing = true;
     this.currentEditingTaskId = task.taskId;
-    this.formState = {
+    this.taskForm.patchValue({
       taskingType: task.tasking,
       taskDescription: task.taskDescription || '',
       skIncharge: task.skIncharge || '',
       hyperlink: task.hyperlink || '',
       status: task.status,
       dueDate: task.dueDate ? this.formatDateForInput(task.dueDate) : '',
-      customStatus: task.status === 'CUSTOM' ? task.status : '',
-    };
+      customStatus: task.status === 'CUSTOM' ? task.status : ''
+    });
     this.isModalOpen = true;
+    setTimeout(() => this.setupScrollIndicators(), 100);
   }
 
   closeModal() {
     this.isModalOpen = false;
-    this.resetForm();
+    this.taskForm.reset();
     this.isEditing = false;
     this.currentEditingTaskId = null;
   }
@@ -172,6 +229,7 @@ export class TaskTracker implements OnInit {
   openDetailsModal(task: TaskResponse) {
     this.selectedTask = task;
     this.isDetailsModalOpen = true;
+    setTimeout(() => this.setupScrollIndicators(), 100);
   }
 
   closeDetailsModal() {
@@ -179,44 +237,40 @@ export class TaskTracker implements OnInit {
     this.selectedTask = null;
   }
 
-  resetForm() {
-    this.formState = {
-      taskingType: '',
-      taskDescription: '',
-      skIncharge: '',
-      hyperlink: '',
-      status: '',
-      dueDate: '',
-      customStatus: '',
-    };
-  }
-
   createTask() {
-    if (!this.formState.taskingType || !this.formState.taskDescription || !this.formState.skIncharge || !this.formState.status) {
-      this.errorMessage = 'Please fill in all required fields';
+    if (this.taskForm.invalid) {
+      this.errorMessage = 'Please fill in all required fields correctly';
+      Object.keys(this.taskForm.controls).forEach(key => {
+        this.taskForm.get(key)?.markAsTouched();
+      });
       return;
     }
 
+    const formValue = this.taskForm.value;
+
     const request: TaskRequest = {
       adminId: this.currentAdminId,
-      tasking: this.formState.taskingType as Tasking,
-      taskDescription: this.formState.taskDescription,
-      skIncharge: this.formState.skIncharge,
-      hyperlink: this.formState.hyperlink || undefined,
-      dueDate: this.formState.dueDate || undefined,
-      status: this.formState.status as TaskStatus,
+      tasking: formValue.taskingType as Tasking,
+      taskDescription: formValue.taskDescription,
+      skIncharge: formValue.skIncharge,
+      hyperlink: formValue.hyperlink || undefined,
+      dueDate: formValue.dueDate || undefined,
+      status: formValue.status as TaskStatus,
     };
 
+    this.isLoading = true;
     this.taskService.createTask(request).subscribe({
       next: (response) => {
         this.tasks.push(response);
         this.filteredTasks = [...this.tasks];
         this.showNotification('Task created successfully!');
         this.closeModal();
+        this.isLoading = false;
       },
       error: (error) => {
         console.error('Error creating task:', error);
         this.errorMessage = 'Failed to create task';
+        this.isLoading = false;
       }
     });
   }
@@ -299,18 +353,23 @@ export class TaskTracker implements OnInit {
         return;
       }
 
-      if (!this.formState.taskingType || !this.formState.taskDescription || !this.formState.skIncharge || !this.formState.status) {
-        this.errorMessage = 'Please fill in all required fields';
+      if (this.taskForm.invalid) {
+        this.errorMessage = 'Please fill in all required fields correctly';
+        Object.keys(this.taskForm.controls).forEach(key => {
+          this.taskForm.get(key)?.markAsTouched();
+        });
         return;
       }
 
+      const formValue = this.taskForm.value;
+
       const request: TaskEditRequest = {
-        tasking: this.formState.taskingType as Tasking,
-        taskDescription: this.formState.taskDescription,
-        skIncharge: this.formState.skIncharge,
-        hyperlink: this.formState.hyperlink || undefined,
-        dueDate: this.formState.dueDate || undefined,
-        status: this.formState.status as TaskStatus,
+        tasking: formValue.taskingType as Tasking,
+        taskDescription: formValue.taskDescription,
+        skIncharge: formValue.skIncharge,
+        hyperlink: formValue.hyperlink || undefined,
+        dueDate: formValue.dueDate || undefined,
+        status: formValue.status as TaskStatus,
       };
 
       this.pendingEditPayload = request;
@@ -401,14 +460,5 @@ export class TaskTracker implements OnInit {
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
     return `${year}-${month}-${day}T${hours}:${minutes}`;
-  }
-
-  isFormValid(): boolean {
-    return !!(
-      this.formState.taskingType &&
-      this.formState.taskDescription &&
-      this.formState.skIncharge &&
-      this.formState.status
-    );
   }
 }
