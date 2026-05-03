@@ -74,6 +74,43 @@ export class TaskTracker implements OnInit {
     this.loadTasks();
   }
 
+  ngAfterViewInit() {
+    this.setupScrollIndicators();
+  }
+
+  setupScrollIndicators() {
+    setTimeout(() => {
+      const modalBodyWrappers = document.querySelectorAll('.modal-body-wrapper, .details-modal-body-wrapper');
+      
+      modalBodyWrappers.forEach((wrapper) => {
+        const element = wrapper as HTMLElement;
+        
+        const updateScrollIndicators = () => {
+          const canScrollUp = element.scrollTop > 10;
+          const canScrollDown = element.scrollTop < element.scrollHeight - element.clientHeight - 10;
+          
+          if (canScrollUp) {
+            element.classList.add('can-scroll-up');
+          } else {
+            element.classList.remove('can-scroll-up');
+          }
+          
+          if (canScrollDown) {
+            element.classList.add('can-scroll-down');
+          } else {
+            element.classList.remove('can-scroll-down');
+          }
+        };
+        
+        element.addEventListener('scroll', updateScrollIndicators);
+        updateScrollIndicators();
+        
+        const resizeObserver = new ResizeObserver(updateScrollIndicators);
+        resizeObserver.observe(element);
+      });
+    }, 100);
+  }
+
   loadSkOfficialProfile() {
     const fallbackName = localStorage.getItem('sk_official_name') || 'SK Official';
     const fallbackEmail = localStorage.getItem('sk_official_email') || '';
@@ -145,6 +182,7 @@ export class TaskTracker implements OnInit {
     this.currentEditingTaskId = null;
     this.resetForm();
     this.isModalOpen = true;
+    setTimeout(() => this.setupScrollIndicators(), 100);
   }
 
   openEditModal(task: TaskResponse) {
@@ -160,6 +198,7 @@ export class TaskTracker implements OnInit {
       customStatus: task.status === 'CUSTOM' ? task.status : '',
     };
     this.isModalOpen = true;
+    setTimeout(() => this.setupScrollIndicators(), 100);
   }
 
   closeModal() {
@@ -172,6 +211,7 @@ export class TaskTracker implements OnInit {
   openDetailsModal(task: TaskResponse) {
     this.selectedTask = task;
     this.isDetailsModalOpen = true;
+    setTimeout(() => this.setupScrollIndicators(), 100);
   }
 
   closeDetailsModal() {

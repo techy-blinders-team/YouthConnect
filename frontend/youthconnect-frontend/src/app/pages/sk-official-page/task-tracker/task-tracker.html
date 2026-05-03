@@ -94,7 +94,7 @@
     </div>
 
     <!-- Create/Edit Task Modal -->
-    <div class="modal-overlay" *ngIf="isModalOpen" (click)="closeModal()">
+    <div class="modal-overlay" *ngIf="isModalOpen">
         <div class="modal-content" (click)="$event.stopPropagation()">
             <div class="modal-header">
                 <div>
@@ -104,78 +104,84 @@
                 <button class="close-btn" (click)="closeModal()">✕</button>
             </div>
 
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="taskingType" class="form-label">Tasking/Committee<span class="required">*</span></label>
-                    <select id="taskingType" class="form-input" [(ngModel)]="formState.taskingType">
-                        <option value="">Select a tasking/committee</option>
-                        <option *ngFor="let tasking of taskingOptions" [value]="tasking">
-                            {{ getTaskingDisplayName(tasking) }}
-                        </option>
-                    </select>
+            <div class="modal-body-wrapper">
+                <div class="scroll-indicator scroll-indicator-top"></div>
+                
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="taskingType" class="form-label">Tasking/Committee<span class="required">*</span></label>
+                        <select id="taskingType" class="form-input" [(ngModel)]="formState.taskingType">
+                            <option value="">Select a tasking/committee</option>
+                            <option *ngFor="let tasking of taskingOptions" [value]="tasking">
+                                {{ getTaskingDisplayName(tasking) }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description" class="form-label">Description of Tasks<span class="required">*</span></label>
+                        <textarea 
+                            id="description" 
+                            class="form-textarea" 
+                            placeholder="Enter task description" 
+                            rows="5"
+                            [(ngModel)]="formState.taskDescription"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="skIncharge" class="form-label">SK Incharge<span class="required">*</span></label>
+                        <input 
+                            type="text" 
+                            id="skIncharge" 
+                            class="form-input" 
+                            placeholder="Enter SK incharge"
+                            [(ngModel)]="formState.skIncharge">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="hyperlink" class="form-label">Notes/Hyperlink</label>
+                        <input 
+                            type="text" 
+                            id="hyperlink" 
+                            class="form-input" 
+                            placeholder="Enter notes/hyperlink"
+                            [(ngModel)]="formState.hyperlink">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="status" class="form-label">Status<span class="required">*</span></label>
+                        <select id="status" class="form-input" [(ngModel)]="formState.status">
+                            <option value="">Select status</option>
+                            <option value="PRIO">PRIO</option>
+                            <option value="TODO">TO DO</option>
+                            <option value="IN_PROGRESS">IN PROGRESS</option>
+                            <option value="DONE">DONE</option>
+                            <option value="CUSTOM">CUSTOM</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" *ngIf="formState.status === 'CUSTOM'">
+                        <label for="customStatus" class="form-label">Custom Status</label>
+                        <input 
+                            type="text" 
+                            id="customStatus" 
+                            class="form-input" 
+                            placeholder="Enter custom status"
+                            [(ngModel)]="formState.customStatus">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dueDate" class="form-label">Due Date</label>
+                        <input 
+                            type="datetime-local" 
+                            id="dueDate" 
+                            class="form-input" 
+                            placeholder="mm/dd/yyyy --:-- --"
+                            [(ngModel)]="formState.dueDate">
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="description" class="form-label">Description of Tasks<span class="required">*</span></label>
-                    <textarea 
-                        id="description" 
-                        class="form-textarea" 
-                        placeholder="Enter task description" 
-                        rows="5"
-                        [(ngModel)]="formState.taskDescription"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="skIncharge" class="form-label">SK Incharge<span class="required">*</span></label>
-                    <input 
-                        type="text" 
-                        id="skIncharge" 
-                        class="form-input" 
-                        placeholder="Enter SK incharge"
-                        [(ngModel)]="formState.skIncharge">
-                </div>
-
-                <div class="form-group">
-                    <label for="hyperlink" class="form-label">Notes/Hyperlink</label>
-                    <input 
-                        type="text" 
-                        id="hyperlink" 
-                        class="form-input" 
-                        placeholder="Enter notes/hyperlink"
-                        [(ngModel)]="formState.hyperlink">
-                </div>
-
-                <div class="form-group">
-                    <label for="status" class="form-label">Status<span class="required">*</span></label>
-                    <select id="status" class="form-input" [(ngModel)]="formState.status">
-                        <option value="">Select status</option>
-                        <option value="PRIO">PRIO</option>
-                        <option value="TODO">TO DO</option>
-                        <option value="IN_PROGRESS">IN PROGRESS</option>
-                        <option value="DONE">DONE</option>
-                        <option value="CUSTOM">CUSTOM</option>
-                    </select>
-                </div>
-
-                <div class="form-group" *ngIf="formState.status === 'CUSTOM'">
-                    <label for="customStatus" class="form-label">Custom Status</label>
-                    <input 
-                        type="text" 
-                        id="customStatus" 
-                        class="form-input" 
-                        placeholder="Enter custom status"
-                        [(ngModel)]="formState.customStatus">
-                </div>
-
-                <div class="form-group">
-                    <label for="dueDate" class="form-label">Due Date</label>
-                    <input 
-                        type="datetime-local" 
-                        id="dueDate" 
-                        class="form-input" 
-                        placeholder="mm/dd/yyyy --:-- --"
-                        [(ngModel)]="formState.dueDate">
-                </div>
+                <div class="scroll-indicator scroll-indicator-bottom"></div>
             </div>
 
             <div class="modal-footer">
@@ -188,7 +194,7 @@
     </div>
 
     <!-- Edit Task Confirmation Modal -->
-    <div class="modal-overlay" *ngIf="isEditConfirmationModalOpen" (click)="closeEditConfirmationModal()">
+    <div class="modal-overlay" *ngIf="isEditConfirmationModalOpen">
         <div class="modal-content modal-small" (click)="$event.stopPropagation()">
             <div class="modal-header">
                 <div>
@@ -197,10 +203,12 @@
                 <button class="close-btn" (click)="closeEditConfirmationModal()">✕</button>
             </div>
 
-            <div class="modal-body">
-                <p class="confirmation-text">
-                    Are you sure you want to update this task?
-                </p>
+            <div class="modal-body-wrapper">
+                <div class="modal-body">
+                    <p class="confirmation-text">
+                        Are you sure you want to update this task?
+                    </p>
+                </div>
             </div>
 
             <div class="modal-footer">
@@ -215,7 +223,7 @@
     </div>
 
     <!-- Delete Task Confirmation Modal -->
-    <div class="modal-overlay" *ngIf="isDeleteConfirmationModalOpen" (click)="closeDeleteConfirmationModal()">
+    <div class="modal-overlay" *ngIf="isDeleteConfirmationModalOpen">
         <div class="modal-content modal-small" (click)="$event.stopPropagation()">
             <div class="modal-header">
                 <div>
@@ -224,10 +232,12 @@
                 <button class="close-btn" (click)="closeDeleteConfirmationModal()">✕</button>
             </div>
 
-            <div class="modal-body">
-                <p class="confirmation-text">
-                    Are you sure you want to permanently delete <strong>{{ pendingDeleteTaskTitle }}</strong>?
-                </p>
+            <div class="modal-body-wrapper">
+                <div class="modal-body">
+                    <p class="confirmation-text">
+                        Are you sure you want to permanently delete <strong>{{ pendingDeleteTaskTitle }}</strong>?
+                    </p>
+                </div>
             </div>
 
             <div class="modal-footer">
@@ -242,7 +252,7 @@
     </div>
 
     <!-- Task Details Modal -->
-    <div class="modal-overlay details-modal-overlay" *ngIf="isDetailsModalOpen && selectedTask" (click)="closeDetailsModal()">
+    <div class="modal-overlay details-modal-overlay" *ngIf="isDetailsModalOpen && selectedTask">
         <div class="details-modal-content" (click)="$event.stopPropagation()">
             <div class="details-modal-header">
                 <h2 class="details-modal-title">{{ getTaskingDisplayName(selectedTask.tasking) }}</h2>
@@ -257,33 +267,39 @@
                 </div>
             </div>
 
-            <div class="details-modal-body">
-                <p class="detail-text">{{ selectedTask.taskDescription }}</p>
+            <div class="details-modal-body-wrapper">
+                <div class="scroll-indicator scroll-indicator-top"></div>
+                
+                <div class="details-modal-body">
+                    <p class="detail-text">{{ selectedTask.taskDescription }}</p>
 
-                <div class="detail-info-row">
-                    <span class="detail-info-label">SK INCHARGE:</span>
-                    <span class="detail-info-value">{{ selectedTask.skIncharge || getSkOfficialName(selectedTask.adminId) }}</span>
+                    <div class="detail-info-row">
+                        <span class="detail-info-label">SK INCHARGE:</span>
+                        <span class="detail-info-value">{{ selectedTask.skIncharge || getSkOfficialName(selectedTask.adminId) }}</span>
+                    </div>
+
+                    <div class="detail-info-row">
+                        <span class="detail-info-label">NOTE/HYPERLINK:</span>
+                        <span class="detail-info-value">
+                            <a *ngIf="selectedTask.hyperlink" [href]="selectedTask.hyperlink" target="_blank" rel="noopener noreferrer">{{ selectedTask.hyperlink }}</a>
+                            <span *ngIf="!selectedTask.hyperlink">-</span>
+                        </span>
+                    </div>
+
+                    <div class="detail-info-row">
+                        <span class="detail-info-label">STATUS:</span>
+                        <span class="status-badge" [ngClass]="'status-' + selectedTask.status.toLowerCase()">
+                            {{ selectedTask.status }}
+                        </span>
+                    </div>
+
+                    <div class="detail-info-row">
+                        <span class="detail-info-label">DUE DATE:</span>
+                        <span class="detail-info-value">{{ selectedTask.dueDate ? formatDate(selectedTask.dueDate) : 'No due date set' }}</span>
+                    </div>
                 </div>
 
-                <div class="detail-info-row">
-                    <span class="detail-info-label">NOTE/HYPERLINK:</span>
-                    <span class="detail-info-value">
-                        <a *ngIf="selectedTask.hyperlink" [href]="selectedTask.hyperlink" target="_blank" rel="noopener noreferrer">{{ selectedTask.hyperlink }}</a>
-                        <span *ngIf="!selectedTask.hyperlink">-</span>
-                    </span>
-                </div>
-
-                <div class="detail-info-row">
-                    <span class="detail-info-label">STATUS:</span>
-                    <span class="status-badge" [ngClass]="'status-' + selectedTask.status.toLowerCase()">
-                        {{ selectedTask.status }}
-                    </span>
-                </div>
-
-                <div class="detail-info-row">
-                    <span class="detail-info-label">DUE DATE:</span>
-                    <span class="detail-info-value">{{ selectedTask.dueDate ? formatDate(selectedTask.dueDate) : 'No due date set' }}</span>
-                </div>
+                <div class="scroll-indicator scroll-indicator-bottom"></div>
             </div>
 
             <div class="details-modal-footer">
