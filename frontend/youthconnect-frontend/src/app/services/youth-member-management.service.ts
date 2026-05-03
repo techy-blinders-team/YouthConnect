@@ -94,7 +94,7 @@ export interface UpdateYouthProfilePayload {
   providedIn: 'root'
 })
 export class YouthMemberManagementService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getUsers(): Observable<YouthUserAccount[]> {
     return this.http.get<YouthUserAccount[]>('/api/administrator/users');
@@ -113,16 +113,17 @@ export class YouthMemberManagementService {
     });
   }
 
-  approveUser(userId: number): Observable<YouthUserAccount> {
-    return this.http.put<YouthUserAccount>(`/api/administrator/users/${userId}/approve`, {});
+  approveUser(userId: number, adminId?: number): Observable<YouthUserAccount> {
+    const body = adminId ? { adminId } : {};
+    return this.http.post<YouthUserAccount>(`/api/admin/users/${userId}/approve`, body);
   }
 
   deactivateUser(userId: number): Observable<YouthUserAccount> {
     return this.http.put<YouthUserAccount>(`/api/administrator/users/${userId}/deactivate`, {});
   }
 
-  rejectUser(userId: number): Observable<YouthUserAccount> {
-    return this.http.put<YouthUserAccount>(`/api/administrator/users/${userId}/reject`, {});
+  rejectUser(userId: number, reason: string): Observable<YouthUserAccount> {
+    return this.http.post<YouthUserAccount>(`/api/admin/users/${userId}/reject`, { reason });
   }
 
   deleteUser(userId: number): Observable<{ message: string } | string> {

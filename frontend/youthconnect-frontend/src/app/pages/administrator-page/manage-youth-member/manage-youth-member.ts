@@ -15,6 +15,7 @@ import {
   YouthProfileAccount,
   YouthUserAccount
 } from '../../../services/youth-member-management.service';
+import { UserApprovalService } from '../../../services/user-approval.service';
 
 @Component({
   selector: 'app-manage-youth-member',
@@ -25,6 +26,7 @@ import {
 })
 export class ManageYouthMember implements OnInit {
   private youthMemberManagementService = inject(YouthMemberManagementService);
+  private userApprovalService = inject(UserApprovalService);
   readonly itemsPerPage = 11;
 
   youthMembers: YouthMemberListItem[] = [];
@@ -46,6 +48,21 @@ export class ManageYouthMember implements OnInit {
   deleteYouthMemberErrorMessage: string | null = null;
   showDeleteSuccessModal = false;
   deleteSuccessMessage = '';
+
+  showApproveModal = false;
+  approvingYouthMember: YouthMemberListItem | null = null;
+  isApprovingYouthMember = false;
+  approveYouthMemberErrorMessage: string | null = null;
+  showApproveSuccessModal = false;
+  approveSuccessMessage = '';
+
+  showRejectModal = false;
+  rejectingYouthMember: YouthMemberListItem | null = null;
+  rejectionReason = '';
+  isRejectingYouthMember = false;
+  rejectYouthMemberErrorMessage: string | null = null;
+  showRejectSuccessModal = false;
+  rejectSuccessMessage = '';
 
   ngOnInit(): void {
     this.loadYouthMembers();
@@ -289,6 +306,132 @@ export class ManageYouthMember implements OnInit {
   closeDeleteSuccessModal(): void {
     this.showDeleteSuccessModal = false;
     this.deleteSuccessMessage = '';
+  }
+
+  openApproveYouthMemberModal(youthMember: YouthMemberListItem): void {
+    this.approvingYouthMember = youthMember;
+    this.showApproveModal = true;
+    this.approveYouthMemberErrorMessage = null;
+  }
+
+  closeApproveYouthMemberModal(): void {
+    if (this.isApprovingYouthMember) {
+      return;
+    }
+
+    this.showApproveModal = false;
+    this.approvingYouthMember = null;
+    this.approveYouthMemberErrorMessage = null;
+  }
+
+  confirmApproveYouthMember(): void {
+    if (!this.approvingYouthMember) {
+      return;
+    }
+
+    this.isApprovingYouthMember = true;
+    this.approveYouthMemberErrorMessage = null;
+
+    const userId = this.approvingYouthMember.userId;
+    const youthName = this.getFullName(this.approvingYouthMember) || 'Youth member';
+
+    this.userApprovalService.approveUser(userId).subscribe({
+      next: () => {
+        // Update the youth member status in the list
+        this.youthMembers = this.youthMembers.map((item) =>
+          item.userId === userId ? { ...item, status: 'approved', isActive: true } : item
+        );
+
+        this.showApproveModal = false;
+        this.approvingYouthMember = null;
+        this.isApprovingYouthMember = false;
+        this.approveSuccessMessage = `${youthName} has been approved successfully. An email notification has been sent.`;
+        this.showApproveSuccessModal = true;
+      },
+      error: (error: HttpErrorResponse) => {
+        this.approveYouthMemberErrorMessage = this.extractApprovalErrorMessage(error);
+        this.isApprovingYouthMember = false;
+      }
+    });
+  }
+
+  closeApproveSuccessModal(): void {
+    this.showApproveSuccessModal = false;
+    this.approveSuccessMessage = '';
+  }
+
+  openRejectYouthMemberModal(youthMember: YouthMemberListItem): void {
+    this.rejectingYouthMember = youthMember;
+    this.rejectionReason = '';
+    this.showRejectModal = true;
+    this.rejectYouthMemberErrorMessage = null;
+  }
+
+  closeRejectYouthMemberModal(): void {
+    if (this.isRejectingYouthMember) {
+      return;
+    }
+
+    this.showRejectModal = false;
+    this.rejectingYouthMember = null;
+    this.rejectionReason = '';
+    this.rejectYouthMemberErrorMessage = null;
+  }
+
+  confirmRejectYouthMember(): void {
+    if (!this.rejectingYouthMember) {
+      return;
+    }
+
+    if (!this.rejectionReason.trim()) {
+      this.rejectYouthMemberErrorMessage = 'Please provide a reason for rejection.';
+      return;
+    }
+
+    this.isRejectingYouthMember = true;
+    this.rejectYouthMemberErrorMessage = null;
+
+    const userId = this.rejectingYouthMember.userId;
+    const youthName = this.getFullName(this.rejectingYouthMember) || 'Youth member';
+
+    this.userApprovalService.rejectUser(userId, this.rejectionReason).subscribe({
+      next: () => {
+        // Update the youth member status in the list
+        this.youthMembers = this.youthMembers.map((item) =>
+          item.userId === userId ? { ...item, status: 'rejected', isActive: false } : item
+        );
+
+        this.showRejectModal = false;
+        this.rejectingYouthMember = null;
+        this.rejectionReason = '';
+        this.isRejectingYouthMember = false;
+        this.rejectSuccessMessage = `${youthName} has been rejected. An email notification has been sent.`;
+        this.showRejectSuccessModal = true;
+      },
+      error: (error: HttpErrorResponse) => {
+        this.rejectYouthMemberErrorMessage = this.extractApprovalErrorMessage(error);
+        this.isRejectingYouthMember = false;
+      }
+    });
+  }
+
+  closeRejectSuccessModal(): void {
+    this.showRejectSuccessModal = false;
+    this.rejectSuccessMessage = '';
+  }
+
+  private extractApprovalErrorMessage(error: HttpErrorResponse): string {
+    const responseBody = error?.error;
+
+    if (typeof responseBody === 'string' && responseBody.trim() !== '') {
+      return responseBody;
+    }
+
+    if (responseBody && typeof responseBody === 'object' && typeof responseBody.error === 'string') {
+      return responseBody.error;
+    }
+
+    return 'Unable to process request right now.';
   }
 
   private extractUpdateYouthMemberErrorMessage(error: HttpErrorResponse): string {

@@ -51,12 +51,14 @@ public class JwtUtil {
         return extractClaims(token).getSubject();
     }
 
-    public int extractUserId(String token) {
-        return (int) extractClaims(token).get("userId");
+    public Integer extractUserId(String token) {
+        Object userId = extractClaims(token).get("userId");
+        return userId != null ? ((Number) userId).intValue() : null;
     }
 
-    public int extractRoleId(String token) {
-        return (int) extractClaims(token).get("roleId");
+    public Integer extractRoleId(String token) {
+        Object roleId = extractClaims(token).get("roleId");
+        return roleId != null ? ((Number) roleId).intValue() : null;
     }
 
     public boolean isTokenExpired(String token) {
@@ -65,5 +67,13 @@ public class JwtUtil {
 
     public boolean validateToken(String token, String email) {
         return (extractEmail(token).equals(email) && !isTokenExpired(token));
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            return !isTokenExpired(token);
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

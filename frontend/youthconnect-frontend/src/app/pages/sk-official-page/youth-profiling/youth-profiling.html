@@ -1,10 +1,8 @@
 <div class="profiling-root">
   <div class="notification-stack">
-    <div
-        *ngFor="let notification of notifications"
-        class="toast-notification"
-        [ngClass]="notification.type === 'success' ? 'toast-success' : 'toast-error'">
-        {{ notification.message }}
+    <div *ngFor="let notification of notifications" class="toast-notification"
+      [ngClass]="notification.type === 'success' ? 'toast-success' : 'toast-error'">
+      {{ notification.message }}
     </div>
   </div>
 
@@ -30,13 +28,8 @@
     <!-- Search Bar Section -->
     <div class="search-section">
       <div class="search-group">
-        <input 
-          type="text" 
-          class="search-input" 
-          placeholder="Search by name, contact, address, classification"
-          [(ngModel)]="searchQuery"
-          (keyup)="onSearch()"
-        />
+        <input type="text" class="search-input" placeholder="Search by name, contact, address, classification"
+          [(ngModel)]="searchQuery" (keyup)="onSearch()" />
         <button class="search-btn" (click)="onSearch()">Search</button>
       </div>
       <div class="export-buttons">
@@ -87,13 +80,15 @@
             <td class="actions-cell">
               <button class="btn-icon btn-edit" title="Edit" (click)="onEdit(profile)" aria-label="Edit profile">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
-                  <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/>
-                  <path d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                  <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
+                  <path
+                    d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
                 </svg>
               </button>
-              <button class="btn-icon btn-deactivate" title="Deactivate" (click)="onDeactivate(profile)" aria-label="Deactivate profile">
+              <button class="btn-icon btn-deactivate" title="Deactivate" (click)="onDeactivate(profile)"
+                aria-label="Deactivate profile">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
-                  <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-9l-1 1H5v2h14V4z"/>
+                  <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-9l-1 1H5v2h14V4z" />
                 </svg>
               </button>
             </td>
@@ -131,8 +126,10 @@
     </div>
 
     <!-- Results Count -->
-    <div *ngIf="!isLoading && filteredProfiles.length > 0" class="results-footer" style="background: transparent; box-shadow: none; border: none; padding: 0; margin: 0;">
-      <p style="margin: 0; background: transparent;">Showing {{ filteredProfiles.length }} of {{ youthProfiles.length }} youth profiles</p>
+    <div *ngIf="!isLoading && filteredProfiles.length > 0" class="results-footer"
+      style="background: transparent; box-shadow: none; border: none; padding: 0; margin: 0;">
+      <p style="margin: 0; background: transparent;">Showing {{ filteredProfiles.length }} of {{ youthProfiles.length }}
+        youth profiles</p>
     </div>
   </div>
 
@@ -144,35 +141,24 @@
         <h2>Registration Approval</h2>
         <p>Review pending registrations and allow login access</p>
       </div>
-      <button class="close-btn" type="button" (click)="closeApprovalPanel()" aria-label="Close approval panel">&times;</button>
+      <button class="close-btn" type="button" (click)="closeApprovalPanel()"
+        aria-label="Close approval panel">&times;</button>
     </div>
 
     <div class="approval-filter-group">
-      <button
-        type="button"
-        class="filter-chip"
-        [class.active]="approvalFilter === 'pending'"
+      <button type="button" class="filter-chip" [class.active]="approvalFilter === 'pending'"
         (click)="setApprovalFilter('pending')">
         Pending
       </button>
-      <button
-        type="button"
-        class="filter-chip"
-        [class.active]="approvalFilter === 'approved'"
+      <button type="button" class="filter-chip" [class.active]="approvalFilter === 'approved'"
         (click)="setApprovalFilter('approved')">
         Approved
       </button>
-      <button
-        type="button"
-        class="filter-chip"
-        [class.active]="approvalFilter === 'rejected'"
+      <button type="button" class="filter-chip" [class.active]="approvalFilter === 'rejected'"
         (click)="setApprovalFilter('rejected')">
         Rejected
       </button>
-      <button
-        type="button"
-        class="filter-chip"
-        [class.active]="approvalFilter === 'all'"
+      <button type="button" class="filter-chip" [class.active]="approvalFilter === 'all'"
         (click)="setApprovalFilter('all')">
         All
       </button>
@@ -190,7 +176,8 @@
       <article class="approval-card" *ngFor="let profile of approvalProfiles">
         <div class="approval-card-head">
           <h3>{{ profile.firstName }} {{ profile.lastName }}</h3>
-          <span class="approval-status" [class.pending]="profile.status === 'pending'" [class.approved]="profile.status === 'approved'" [class.rejected]="profile.status === 'rejected'">
+          <span class="approval-status" [class.pending]="profile.status === 'pending'"
+            [class.approved]="profile.status === 'approved'" [class.rejected]="profile.status === 'rejected'">
             {{ profile.status === 'approved' ? 'Approved' : (profile.status === 'rejected' ? 'Rejected' : 'Pending') }}
           </span>
         </div>
@@ -199,19 +186,13 @@
         <p class="approval-meta">Contact: {{ profile.contactNumber }}</p>
 
         <div class="approval-actions">
-          <button
-            *ngIf="profile.status !== 'approved' && profile.status !== 'rejected'"
-            type="button"
-            class="btn-approve"
-            [disabled]="updatingApprovalUserId === profile.userId"
+          <button *ngIf="profile.status !== 'approved' && profile.status !== 'rejected'" type="button"
+            class="btn-approve" [disabled]="updatingApprovalUserId === profile.userId"
             (click)="setRegistrationApproval(profile, true)">
             {{ updatingApprovalUserId === profile.userId ? 'Approving...' : 'Approve Login' }}
           </button>
-          <button
-            *ngIf="profile.status !== 'approved' && profile.status !== 'rejected'"
-            type="button"
-            class="btn-reject"
-            [disabled]="updatingApprovalUserId === profile.userId"
+          <button *ngIf="profile.status !== 'approved' && profile.status !== 'rejected'" type="button"
+            class="btn-reject" [disabled]="updatingApprovalUserId === profile.userId"
             (click)="rejectRegistration(profile)">
             {{ updatingApprovalUserId === profile.userId ? 'Rejecting...' : 'Reject' }}
           </button>
@@ -232,7 +213,8 @@
       <div class="modal-header">
         <div>
           <h2 class="modal-title">Edit Youth Profile</h2>
-          <p class="modal-subtitle">Update the profile information for {{ selectedProfile?.firstName }} {{ selectedProfile?.lastName }}</p>
+          <p class="modal-subtitle">Update the profile information for {{ selectedProfile?.firstName }} {{
+            selectedProfile?.lastName }}</p>
         </div>
         <button class="close-btn" (click)="closeEditModal()">✕</button>
       </div>
@@ -380,7 +362,8 @@
 
           <div class="form-group">
             <label for="numberOfAttendedAssemblies" class="form-label">Number of Attended Assemblies</label>
-            <input type="number" id="numberOfAttendedAssemblies" class="form-input" formControlName="numberOfAttendedAssemblies" min="0" />
+            <input type="number" id="numberOfAttendedAssemblies" class="form-input"
+              formControlName="numberOfAttendedAssemblies" min="0" />
           </div>
 
           <div class="form-group">
@@ -413,7 +396,8 @@
 
       <div class="modal-body">
         <p class="confirmation-text">
-          Are you sure you want to deactivate the profile for <strong>{{ selectedProfile?.firstName }} {{ selectedProfile?.lastName }}</strong>?
+          Are you sure you want to deactivate the profile for <strong>{{ selectedProfile?.firstName }} {{
+            selectedProfile?.lastName }}</strong>?
         </p>
       </div>
 
@@ -421,7 +405,8 @@
         <button type="button" class="btn-cancel" (click)="closeDeactivateConfirmationModal()" [disabled]="isSubmitting">
           Cancel
         </button>
-        <button type="button" class="btn-confirm-deactivate" (click)="confirmDeactivateSubmission()" [disabled]="isSubmitting">
+        <button type="button" class="btn-confirm-deactivate" (click)="confirmDeactivateSubmission()"
+          [disabled]="isSubmitting">
           {{ isSubmitting ? 'Deactivating...' : 'Confirm' }}
         </button>
       </div>
@@ -440,7 +425,8 @@
 
       <div class="modal-body">
         <p class="confirmation-text">
-          Are you sure you want to update the profile for <strong>{{ selectedProfile?.firstName }} {{ selectedProfile?.lastName }}</strong>?
+          Are you sure you want to update the profile for <strong>{{ selectedProfile?.firstName }} {{
+            selectedProfile?.lastName }}</strong>?
         </p>
       </div>
 
@@ -450,6 +436,44 @@
         </button>
         <button type="button" class="btn-confirm-edit" (click)="confirmEditSubmission()" [disabled]="isSubmitting">
           {{ isSubmitting ? 'Updating...' : 'Confirm' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rejection Modal -->
+  <div class="modal-overlay" *ngIf="isRejectModalOpen" (click)="closeRejectModal()">
+    <div class="modal-content modal-small" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title">Reject Registration</h2>
+          <p class="modal-subtitle">Provide a reason for rejecting {{ selectedProfile?.firstName }} {{
+            selectedProfile?.lastName }}'s application</p>
+        </div>
+        <button class="close-btn" (click)="closeRejectModal()">✕</button>
+      </div>
+
+      <div *ngIf="approvalError" class="modal-alert alert-error">
+        {{ approvalError }}
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="rejectionReason">Rejection Reason <span class="required">*</span></label>
+          <textarea id="rejectionReason" [(ngModel)]="rejectionReason" rows="5"
+            placeholder="Please provide a clear and specific reason for rejection..." class="form-control"
+            [disabled]="updatingApprovalUserId !== null"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" (click)="closeRejectModal()"
+          [disabled]="updatingApprovalUserId !== null">
+          Cancel
+        </button>
+        <button type="button" class="btn-reject" (click)="confirmRejectRegistration()"
+          [disabled]="updatingApprovalUserId !== null || !rejectionReason.trim()">
+          {{ updatingApprovalUserId !== null ? 'Rejecting...' : 'Confirm Rejection' }}
         </button>
       </div>
     </div>

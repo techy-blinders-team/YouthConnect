@@ -23,6 +23,7 @@ import com.youthconnect.youthconnect_id.repositories.YouthClassificationRepo;
 // import com.youthconnect.youthconnect_id.repositories.YouthDocumentsRepo;
 import com.youthconnect.youthconnect_id.repositories.YouthProfileRepo;
 import com.youthconnect.youthconnect_id.security.JwtUtil;
+import com.youthconnect.youthconnect_id.services.EmailService;
 import com.youthconnect.youthconnect_id.services.UserService;
 
 @Service
@@ -46,10 +47,24 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private EmailService emailService;
+
     @Override
     @Transactional
     public RegistrationResponse registerUser(RegistrationRequest request) {
-        if (userRepo.existsByEmail(request.getEmail())) {
+        // Check if user exists
+        Optional<User> existingUserOpt = userRepo.findByEmail(request.getEmail());
+        
+        if (existingUserOpt.isPresent()) {
+            User existingUser = existingUserOpt.get();
+            
+            // If user is rejected, allow them to re-register by updating their info
+            if (User.STATUS_REJECTED.equalsIgnoreCase(existingUser.getStatus())) {
+                return updateRejectedUserRegistration(existingUser, request);
+            }
+            
+            // If user is pending or approved, don't allow re-registration
             return new RegistrationResponse(false, "Email already exists");
         }
 
@@ -118,6 +133,35 @@ public class UserServiceImpl implements UserService {
 
         User savedUser = userRepo.save(user);
 
+        // Send registration confirmation email to the youth user
+        try {
+            System.out.println("=== Attempting to send registration confirmation email ===");
+            System.out.println("To: " + savedUser.getEmail());
+            System.out.println("Name: " + savedProfile.getFirstName());
+            
+            emailService.sendRegistrationConfirmationEmail(
+                savedUser.getEmail(), 
+                savedProfile.getFirstName()
+            );
+            
+            System.out.println("✅ Registration confirmation email sent successfully");
+        } catch (Exception e) {
+            System.err.println("❌ Failed to send registration confirmation email: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        // Notify SK officials about new registration
+        String youthName = savedProfile.getFirstName() + " " + savedProfile.getLastName();
+        try {
+            System.out.println("=== Attempting to notify SK officials ===");
+            emailService.notifySkOfficialsNewUser(savedUser, youthName);
+            System.out.println("✅ SK officials notified successfully");
+        } catch (Exception e) {
+            // Log but don't fail registration if email fails
+            System.err.println("❌ Failed to send notification email to SK officials: " + e.getMessage());
+            e.printStackTrace();
+        }
+
         // Build response
         RegistrationResponse response = new RegistrationResponse(true, "Registration successful. Awaiting approval.");
         response.setUserId(savedUser.getUserId());
@@ -171,5 +215,108 @@ public class UserServiceImpl implements UserService {
         response.setApproved(User.STATUS_APPROVED.equalsIgnoreCase(user.getStatus()));
 
         return response;
+    }
+
+    @Transactional
+    private RegistrationResponse updateRejectedUserRegistration(User existingUser, RegistrationRequest request) {
+        try {
+            // Get existing youth profile
+            Optional<YouthProfile> profileOpt = youthProfileRepo.findById(existingUser.getYouthId());
+            if (profileOpt.isEmpty()) {
+                return new RegistrationResponse(false, "Profile not found");
+            }
+
+            YouthProfile youthProfile = profileOpt.get();
+            
+            // Update youth profile with new information
+            youthProfile.setFirstName(request.getFirstName());
+            youthProfile.setMiddleName(request.getMiddleName());
+            youthProfile.setLastName(request.getLastName());
+            youthProfile.setSuffix(request.getSuffix());
+            youthProfile.setGender(request.getGender());
+            youthProfile.setBirthday(request.getBirthday());
+            youthProfile.setContactNumber(request.getContactNumber());
+            youthProfile.setCompleteAddress(request.getCompleteAddress());
+            youthProfile.setCivilStatus(request.getCivilStatus());
+            youthProfile.setUpdatedAt(LocalDateTime.now());
+            
+            if (request.getBirthday() != null) {
+                youthProfile.setAge(Period.between(request.getBirthday(), LocalDateTime.now().toLocalDate()).getYears());
+            }
+
+            youthProfileRepo.save(youthProfile);
+
+            // Update youth classification
+            Optional<YouthClassification> classificationOpt = youthClassificationRepo.findById(existingUser.getYouthId());
+            YouthClassification classification;
+            
+            if (classificationOpt.isPresent()) {
+                classification = classificationOpt.get();
+            } else {
+                classification = new YouthClassification();
+                classification.setYouthId(existingUser.getYouthId());
+            }
+            
+            classification.setYouthClassification(request.getYouthClassification());
+            classification.setEducationBackground(request.getEducationBackground());
+            classification.setWorkStatus(request.getWorkStatus());
+            classification.setSkVoter(request.isSkVoter());
+            classification.setNationalVoter(request.isNationalVoter());
+            classification.setPastVoter(request.isPastVoter());
+            classification.setNumAttended(request.getNumAttended());
+            classification.setNonAttendedReason(request.getNonAttendedReason());
+            
+            youthClassificationRepo.save(classification);
+
+            // Update user - reset to pending status and update password
+            existingUser.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+            existingUser.setStatus(User.STATUS_PENDING);
+            existingUser.setActive(false);
+            existingUser.setRejectionReason(null);
+            existingUser.setApprovedBy(null);
+            existingUser.setApprovedAt(null);
+            
+            User savedUser = userRepo.save(existingUser);
+
+            // Send registration confirmation email
+            try {
+                System.out.println("=== Attempting to send re-registration confirmation email ===");
+                System.out.println("To: " + savedUser.getEmail());
+                System.out.println("Name: " + youthProfile.getFirstName());
+                
+                emailService.sendRegistrationConfirmationEmail(
+                    savedUser.getEmail(), 
+                    youthProfile.getFirstName()
+                );
+                
+                System.out.println("✅ Re-registration confirmation email sent successfully");
+            } catch (Exception e) {
+                System.err.println("❌ Failed to send re-registration confirmation email: " + e.getMessage());
+                e.printStackTrace();
+            }
+
+            // Notify SK officials about re-registration
+            String youthName = youthProfile.getFirstName() + " " + youthProfile.getLastName();
+            try {
+                System.out.println("=== Attempting to notify SK officials about re-registration ===");
+                emailService.notifySkOfficialsNewUser(savedUser, youthName);
+                System.out.println("✅ SK officials notified successfully");
+            } catch (Exception e) {
+                System.err.println("❌ Failed to send notification email to SK officials: " + e.getMessage());
+                e.printStackTrace();
+            }
+
+            // Build response
+            RegistrationResponse response = new RegistrationResponse(true, "Re-registration successful. Your application has been resubmitted for approval.");
+            response.setUserId(savedUser.getUserId());
+            response.setYouthId(savedUser.getYouthId());
+            response.setEmail(savedUser.getEmail());
+
+            return response;
+        } catch (Exception e) {
+            System.err.println("❌ Failed to update rejected user registration: " + e.getMessage());
+            e.printStackTrace();
+            return new RegistrationResponse(false, "Failed to update registration. Please try again.");
+        }
     }
 }
