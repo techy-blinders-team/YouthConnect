@@ -67,32 +67,48 @@
 	text-decoration: none;
 	font-size: 18px;
 	border-radius: 0 24px 24px 0;
-	transition: background 0.2s, color 0.2s;
+	transition: all 0.3s ease;
 	font-weight: 400;
 	gap: 20px;
+	position: relative;
+}
+
+.side-nav-bar a::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	width: 4px;
+	background: transparent;
+	transition: all 0.3s ease;
 }
 
 .side-nav-bar a:hover {
-	background: #003585;
+	background: rgba(255, 255, 255, 0.1);
 	color: #fff;
+	transform: translateX(4px);
+}
+
+.side-nav-bar a:hover::before {
+	background: rgba(255, 255, 255, 0.5);
 }
 
 .side-nav-bar a.active {
 	background: #fff;
 	color: #0038A7;
 	font-weight: 700;
-	box-shadow: 2px 2px 8px rgba(0,0,0,0.06);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	transform: translateX(0);
+}
+
+.side-nav-bar a.active::before {
+	background: #0038A7;
+	width: 5px;
 }
 
 .side-nav-bar a.active .sidebar-icon {
 	filter: brightness(0) saturate(100%) invert(17%) sepia(98%) saturate(1800%) hue-rotate(220deg) brightness(0.8);
-}
-
-.side-nav-bar a.active {
-	background: #fff;
-	color: #0038A7;
-	font-weight: 700;
-	box-shadow: 2px 2px 8px rgba(0,0,0,0.06);
 }
 
 .logout-section {
