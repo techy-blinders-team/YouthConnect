@@ -191,6 +191,7 @@ html, body, :host, .dashboard-container {
 .card-content {
   padding: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   flex: 1;
   min-height: 0;
 
