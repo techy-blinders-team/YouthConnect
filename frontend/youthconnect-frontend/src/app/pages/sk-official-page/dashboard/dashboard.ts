@@ -39,6 +39,12 @@ export class Dashboard implements OnInit {
   tasks: TaskResponse[] = [];
   concerns: ConcernResponse[] = [];
 
+  // Modal state
+  isEventModalOpen = false;
+  isTaskModalOpen = false;
+  selectedEvent: EventResponse | null = null;
+  selectedTask: TaskResponse | null = null;
+
   ngOnInit(): void {
     this.loadDashboardData();
   }
@@ -98,14 +104,11 @@ export class Dashboard implements OnInit {
   loadYouthMembers(): void {
     this.youthService.getUsers().subscribe({
       next: (users) => {
-        console.log('All users from API:', users);
         // Only count approved and active youth members
         const filtered = users.filter(user => {
-          console.log(`User ${user.userId}: status=${user.status}, isActive=${user.isActive}`);
           return user.status === 'approved' && user.isActive === true;
         });
         this.youthMembersCount = filtered.length;
-        console.log('Youth members count:', this.youthMembersCount, 'Filtered:', filtered);
       },
       error: (err) => {
         console.error('Error loading youth members:', err);
@@ -179,5 +182,53 @@ export class Dashboard implements OnInit {
 
   navigateToTasks(): void {
     this.router.navigate(['/sk-official/task-tracker']);
+  }
+
+  openEventDetailsModal(event: EventResponse): void {
+    this.selectedEvent = event;
+    this.isEventModalOpen = true;
+  }
+
+  closeEventModal(): void {
+    this.isEventModalOpen = false;
+    this.selectedEvent = null;
+  }
+
+  openTaskDetailsModal(task: TaskResponse): void {
+    this.selectedTask = task;
+    this.isTaskModalOpen = true;
+  }
+
+  closeTaskModal(): void {
+    this.isTaskModalOpen = false;
+    this.selectedTask = null;
+  }
+
+  formatEventDateTime(dateString: string): string {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  formatTaskDateTime(dateString: string): string {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  getTaskingDisplayName(tasking: string): string {
+    return tasking.replace(/_/g, ' ');
   }
 }
