@@ -300,6 +300,9 @@ html, body, :host, .dashboard-container {
   font-size: 13px;
   color: #666;
   line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .item-location {
