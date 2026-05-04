@@ -42,9 +42,11 @@
 
         <!-- Concerns List -->
         <div class="concerns-list">
-            <div *ngIf="isLoading" class="loading-message">Loading concerns...</div>
-            <div *ngIf="!isLoading && filteredConcerns.length === 0" class="no-concerns-message">
-                {{ searchTerm ? 'No concerns match your search.' : 'No concerns found.' }}
+            <div *ngIf="isLoading" class="loading-indicator">
+                <p>Loading concerns...</p>
+            </div>
+            <div *ngIf="!isLoading && filteredConcerns.length === 0" class="empty-state">
+                <p>{{ searchTerm ? 'No concerns match your search.' : 'No concerns found.' }}</p>
             </div>
 
             <div *ngFor="let concern of filteredConcerns" class="concern-card">

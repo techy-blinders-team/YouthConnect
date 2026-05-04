@@ -48,9 +48,11 @@
 
         <!-- Events List -->
         <div class="events-list">
-            <div *ngIf="isLoading" class="loading-message">Loading events...</div>
-            <div *ngIf="!isLoading && filteredEvents.length === 0" class="no-events-message">
-                {{ searchTerm ? 'No events match your search.' : 'No events found. Create your first event!' }}
+            <div *ngIf="isLoading" class="loading-indicator">
+                <p>Loading events...</p>
+            </div>
+            <div *ngIf="!isLoading && filteredEvents.length === 0" class="empty-state">
+                <p>{{ searchTerm ? 'No events match your search.' : 'No events found.' }}</p>
             </div>
             
             <div *ngFor="let event of filteredEvents" class="event-card" (click)="openDetailsModal(event)">

@@ -115,14 +115,14 @@
       </table>
     </div>
 
-    <!-- No Results Message -->
-    <div *ngIf="!isLoading && filteredProfiles.length === 0 && searchQuery" class="no-results">
-      <p>No youth profiles found matching "{{ searchQuery }}"</p>
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && filteredProfiles.length === 0 && !searchQuery" class="empty-state">
+      <p>No youth profiles found.</p>
     </div>
 
-    <!-- Empty State -->
-    <div *ngIf="!isLoading && youthProfiles.length === 0 && !searchQuery" class="empty-state">
-      <p>No youth profiles available yet</p>
+    <!-- No Search Results -->
+    <div *ngIf="!isLoading && filteredProfiles.length === 0 && searchQuery" class="empty-state">
+      <p>No youth profiles match your search.</p>
     </div>
 
     <!-- Results Count -->
