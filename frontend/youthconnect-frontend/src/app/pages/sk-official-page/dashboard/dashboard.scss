@@ -243,7 +243,8 @@ html, body, :host, .dashboard-container {
   border-left: 5px solid;
   background: white;
   border-bottom: 1px solid #f0f0f0;
-  transition: box-shadow 0.2s ease;
+  transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .item-card:last-child {
@@ -251,7 +252,9 @@ html, body, :host, .dashboard-container {
 }
 
 .item-card:hover {
-  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.05);
+  background: #f9f9f9;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transform: translateX(4px);
 }
 
 .item-border-red {
