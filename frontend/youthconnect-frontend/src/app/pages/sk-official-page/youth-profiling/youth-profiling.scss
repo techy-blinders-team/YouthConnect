@@ -385,23 +385,31 @@ body,
 
 .approval-actions {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   margin-top: 12px;
+  align-items: center;
+  justify-content: space-between;
 
   button {
-    border: 1px solid transparent;
-    border-radius: 8px;
-    padding: 8px 10px;
-    font-size: 12px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    flex: 1;
+    transition: all 0.2s ease;
   }
+}
+
+.action-buttons-right {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
 }
 
 .btn-approve {
   background: #00a651;
   color: #fff;
+  padding: 12px 24px;
 
   &:hover:not(:disabled) {
     background: #008a44;
@@ -416,7 +424,8 @@ body,
 .btn-pending {
   background: #f3f4f6;
   color: #374151;
-  border-color: #d1d5db;
+  border: 1px solid #d1d5db;
+  padding: 12px 24px;
 
   &:hover:not(:disabled) {
     background: #e5e7eb;
@@ -431,6 +440,7 @@ body,
 .btn-reject {
   background: #dc2626;
   color: #fff;
+  padding: 12px 24px;
 
   &:hover:not(:disabled) {
     background: #b91c1c;
@@ -445,6 +455,10 @@ body,
 .btn-see-details {
   background: #0052cc;
   color: #fff;
+  padding: 12px 20px;
+  font-size: 14px;
+  border-radius: 10px;
+  white-space: nowrap;
 
   &:hover:not(:disabled) {
     background: #0041a3;
@@ -1046,6 +1060,56 @@ body,
   border-top: 1px solid #e8e8e8;
   background: #fafafa;
   border-radius: 0 0 12px 12px;
+
+  .btn-approve,
+  .btn-reject {
+    padding: 11px 28px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: 'Poppins', Arial, Helvetica, sans-serif;
+    white-space: nowrap;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn-approve {
+    background-color: #00a651;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background-color: #008a44;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 166, 81, 0.3);
+    }
+
+    &:disabled {
+      background-color: #b6e3cb;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .btn-reject {
+    background-color: #dc2626;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background-color: #b91c1c;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(220, 38, 38, 0.3);
+    }
+
+    &:disabled {
+      background-color: #fca5a5;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+  }
 }
 
 .modal-alert {

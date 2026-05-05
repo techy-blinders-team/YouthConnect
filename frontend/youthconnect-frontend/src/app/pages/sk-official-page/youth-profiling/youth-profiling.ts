@@ -904,6 +904,110 @@ export class YouthProfiling implements OnInit {
     this.selectedProfile = null;
   }
 
+  approveFromDetailsModal(): void {
+    if (this.selectedProfile) {
+      const accountData = this.userAccountByUserId.get(this.selectedProfile.userId);
+
+      if (!this.selectedProfile.userId || !accountData) {
+        this.approvalError = 'Unable to update approval status for this account due to incomplete account data.';
+        this.approvalMessage = '';
+        return;
+      }
+
+      this.updatingApprovalUserId = this.selectedProfile.userId;
+      this.updatingApprovalAction = 'approve';
+      this.approvalError = '';
+      this.approvalMessage = '';
+
+      const adminId = Number(localStorage.getItem('sk_official_id') || localStorage.getItem('adminId'));
+
+      this.youthMemberManagementService.approveUser(this.selectedProfile.userId, adminId).subscribe({
+        next: (updatedUser) => {
+          const updatedIsActive = updatedUser.isActive ?? true;
+
+          this.userAccountByUserId.set(updatedUser.userId, {
+            email: updatedUser.email,
+            roleId: updatedUser.roleId,
+            isActive: updatedIsActive,
+            status: updatedUser.status ?? 'pending'
+          });
+
+          this.youthProfiles = this.youthProfiles.map((item) =>
+            item.userId === updatedUser.userId
+              ? {
+                ...item,
+                status: updatedUser.status ?? 'pending',
+                isActive: updatedIsActive,
+                email: updatedUser.email
+              }
+              : item
+          );
+
+          this.filteredProfiles = (updatedUser.status ?? 'pending') === 'approved' && updatedIsActive === true
+            ? [
+              ...this.filteredProfiles.filter((item) => item.userId !== updatedUser.userId),
+              {
+                userId: updatedUser.userId,
+                youthId: this.selectedProfile!.youthId,
+                firstName: this.selectedProfile!.firstName,
+                lastName: this.selectedProfile!.lastName,
+                email: updatedUser.email,
+                gender: this.selectedProfile!.gender,
+                birthday: this.selectedProfile!.birthday,
+                contactNumber: this.selectedProfile!.contactNumber,
+                civilStatus: this.selectedProfile!.civilStatus,
+                isActive: updatedIsActive,
+                status: updatedUser.status ?? 'pending',
+                createdAt: this.selectedProfile!.createdAt,
+                middleName: this.selectedProfile!.middleName,
+                suffix: this.selectedProfile!.suffix,
+                completeAddress: this.selectedProfile!.completeAddress,
+                youthClassification: this.selectedProfile!.youthClassification
+              }
+            ]
+            : this.filteredProfiles.filter((item) => item.userId !== updatedUser.userId);
+
+          const fullName = `${this.selectedProfile?.firstName} ${this.selectedProfile?.lastName}`.trim();
+          this.approvalMessage = `${fullName} has been approved.`;
+          this.updatingApprovalUserId = null;
+          this.updatingApprovalAction = null;
+
+          this.showNotification(`${fullName} has been approved successfully!`, 'success');
+
+          // Close the details modal after successful approval
+          this.closeDetailsModal();
+
+          setTimeout(() => {
+            this.approvalMessage = '';
+          }, 3000);
+        },
+        error: (error) => {
+          console.error('Error updating approval status:', error);
+          this.approvalError = 'Failed to update registration approval status. Please try again.';
+          this.updatingApprovalUserId = null;
+          this.updatingApprovalAction = null;
+
+          setTimeout(() => {
+            this.approvalError = '';
+          }, 3000);
+        }
+      });
+    }
+  }
+
+  rejectFromDetailsModal(): void {
+    if (this.selectedProfile) {
+      // Store the profile temporarily
+      const profileToReject = this.selectedProfile;
+      // Close the details modal first
+      this.closeDetailsModal();
+      // Small delay to ensure smooth transition between modals
+      setTimeout(() => {
+        this.rejectRegistration(profileToReject);
+      }, 100);
+    }
+  }
+
   private showNotification(message: string, type: 'success' | 'error' = 'success'): void {
     const id = ++this.notificationCounter;
     this.notifications = [...this.notifications, { id, message, type }];

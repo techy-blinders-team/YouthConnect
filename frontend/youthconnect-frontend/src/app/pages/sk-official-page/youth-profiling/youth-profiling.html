@@ -189,19 +189,21 @@
         <p class="approval-meta">Contact: {{ profile.contactNumber }}</p>
 
         <div class="approval-actions">
-          <button *ngIf="profile.status !== 'approved' && profile.status !== 'rejected'" type="button"
-            class="btn-approve" [disabled]="updatingApprovalUserId !== null"
-            (click)="setRegistrationApproval(profile, true)">
-            {{ updatingApprovalUserId === profile.userId && updatingApprovalAction === 'approve' ? 'Approving...' : 'Approve' }}
-          </button>
-          <button *ngIf="profile.status !== 'approved' && profile.status !== 'rejected'" type="button"
-            class="btn-reject" [disabled]="updatingApprovalUserId !== null"
-            (click)="rejectRegistration(profile)">
-            {{ updatingApprovalUserId === profile.userId && updatingApprovalAction === 'reject' ? 'Rejecting...' : 'Reject' }}
-          </button>
           <button type="button" class="btn-see-details" (click)="openDetailsModal(profile)">
             See Details
           </button>
+          <div class="action-buttons-right">
+            <button *ngIf="profile.status !== 'approved' && profile.status !== 'rejected'" type="button"
+              class="btn-approve" [disabled]="updatingApprovalUserId !== null"
+              (click)="setRegistrationApproval(profile, true)">
+              {{ updatingApprovalUserId === profile.userId && updatingApprovalAction === 'approve' ? 'Approving...' : 'Approve' }}
+            </button>
+            <button *ngIf="profile.status !== 'approved' && profile.status !== 'rejected'" type="button"
+              class="btn-reject" [disabled]="updatingApprovalUserId !== null"
+              (click)="rejectRegistration(profile)">
+              {{ updatingApprovalUserId === profile.userId && updatingApprovalAction === 'reject' ? 'Rejecting...' : 'Reject' }}
+            </button>
+          </div>
         </div>
       </article>
     </div>
@@ -611,8 +613,17 @@
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn-cancel" (click)="closeDetailsModal()">
-          Close
+        <button *ngIf="selectedProfile?.status !== 'approved' && selectedProfile?.status !== 'rejected'" 
+          type="button" class="btn-approve" 
+          [disabled]="updatingApprovalUserId !== null"
+          (click)="approveFromDetailsModal()">
+          {{ updatingApprovalUserId === selectedProfile?.userId && updatingApprovalAction === 'approve' ? 'Approving...' : 'Approve' }}
+        </button>
+        <button *ngIf="selectedProfile?.status !== 'approved' && selectedProfile?.status !== 'rejected'" 
+          type="button" class="btn-reject" 
+          [disabled]="updatingApprovalUserId !== null"
+          (click)="rejectFromDetailsModal()">
+          {{ updatingApprovalUserId === selectedProfile?.userId && updatingApprovalAction === 'reject' ? 'Rejecting...' : 'Reject' }}
         </button>
       </div>
     </div>
