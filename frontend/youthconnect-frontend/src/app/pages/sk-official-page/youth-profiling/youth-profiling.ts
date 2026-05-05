@@ -267,6 +267,22 @@ export class YouthProfiling implements OnInit {
     });
   }
 
+  get pendingCount(): number {
+    return this.youthProfiles.filter(profile => profile.status === 'pending').length;
+  }
+
+  get approvedCount(): number {
+    return this.youthProfiles.filter(profile => profile.status === 'approved').length;
+  }
+
+  get rejectedCount(): number {
+    return this.youthProfiles.filter(profile => profile.status === 'rejected').length;
+  }
+
+  get allCount(): number {
+    return this.youthProfiles.length;
+  }
+
   openApprovalPanel(): void {
     this.isApprovalPanelOpen = true;
     this.approvalError = '';

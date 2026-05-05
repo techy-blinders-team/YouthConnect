@@ -33,7 +33,10 @@
         <button class="search-btn" (click)="onSearch()">Search</button>
       </div>
       <div class="export-buttons">
-        <button class="btn btn-approval-panel" (click)="openApprovalPanel()">Approval Panel</button>
+        <button class="btn btn-approval-panel" (click)="openApprovalPanel()">
+          Approval Panel
+          <span class="notification-badge" *ngIf="pendingCount > 0">{{ pendingCount }}</span>
+        </button>
         <button class="btn btn-pdf" (click)="exportToPDF()">Export PDF</button>
         <button class="btn btn-excel" (click)="exportToExcel()">Export Excel</button>
       </div>
