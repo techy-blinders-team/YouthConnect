@@ -1225,6 +1225,7 @@ textarea.form-control {
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
+  border: none;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: 'Poppins', Arial, Helvetica, sans-serif;
   white-space: nowrap;
@@ -1407,5 +1408,24 @@ textarea.form-control {
   to {
     opacity: 1;
     transform: translateY(0) translateX(0);
+  }
+}
+
+// Loading spinner animation for buttons
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.btn-approve,
+.btn-reject {
+  position: relative;
+
+  &:disabled {
+    pointer-events: none;
   }
 }
