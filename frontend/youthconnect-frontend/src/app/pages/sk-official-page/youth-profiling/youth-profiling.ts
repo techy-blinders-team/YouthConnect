@@ -31,6 +31,7 @@ export class YouthProfiling implements OnInit {
   rejectingUserId: number | null = null;
   rejectionReason: string = '';
   isRejectModalOpen: boolean = false;
+  isDetailsModalOpen: boolean = false;
   skOfficialName = 'SK Official';
   skOfficialEmail = '';
   skOfficialPosition = 'SK Official';
@@ -890,6 +891,17 @@ export class YouthProfiling implements OnInit {
         this.isSubmitting = false;
       }
     });
+  }
+
+  openDetailsModal(profile: YouthMemberListItem): void {
+    this.selectedProfile = profile;
+    this.isDetailsModalOpen = true;
+    setTimeout(() => this.setupScrollIndicators(), 100);
+  }
+
+  closeDetailsModal(): void {
+    this.isDetailsModalOpen = false;
+    this.selectedProfile = null;
   }
 
   private showNotification(message: string, type: 'success' | 'error' = 'success'): void {
