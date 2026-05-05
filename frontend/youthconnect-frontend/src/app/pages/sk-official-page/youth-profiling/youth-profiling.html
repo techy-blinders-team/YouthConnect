@@ -33,7 +33,10 @@
         <button class="search-btn" (click)="onSearch()">Search</button>
       </div>
       <div class="export-buttons">
-        <button class="btn btn-approval-panel" (click)="openApprovalPanel()">Approval Panel</button>
+        <button class="btn btn-approval-panel" (click)="openApprovalPanel()">
+          Approval Panel
+          <span class="notification-badge" *ngIf="pendingCount > 0">{{ pendingCount }}</span>
+        </button>
         <button class="btn btn-pdf" (click)="exportToPDF()">Export PDF</button>
         <button class="btn btn-excel" (click)="exportToExcel()">Export Excel</button>
       </div>
@@ -186,16 +189,21 @@
         <p class="approval-meta">Contact: {{ profile.contactNumber }}</p>
 
         <div class="approval-actions">
-          <button *ngIf="profile.status !== 'approved' && profile.status !== 'rejected'" type="button"
-            class="btn-approve" [disabled]="updatingApprovalUserId === profile.userId"
-            (click)="setRegistrationApproval(profile, true)">
-            {{ updatingApprovalUserId === profile.userId ? 'Approving...' : 'Approve Login' }}
+          <button type="button" class="btn-see-details" (click)="openDetailsModal(profile)">
+            See Details
           </button>
-          <button *ngIf="profile.status !== 'approved' && profile.status !== 'rejected'" type="button"
-            class="btn-reject" [disabled]="updatingApprovalUserId === profile.userId"
-            (click)="rejectRegistration(profile)">
-            {{ updatingApprovalUserId === profile.userId ? 'Rejecting...' : 'Reject' }}
-          </button>
+          <div class="action-buttons-right">
+            <button *ngIf="profile.status !== 'approved' && profile.status !== 'rejected'" type="button"
+              class="btn-approve" [disabled]="updatingApprovalUserId !== null"
+              (click)="setRegistrationApproval(profile, true)">
+              {{ updatingApprovalUserId === profile.userId && updatingApprovalAction === 'approve' ? 'Approving...' : 'Approve' }}
+            </button>
+            <button *ngIf="profile.status !== 'approved' && profile.status !== 'rejected'" type="button"
+              class="btn-reject" [disabled]="updatingApprovalUserId !== null"
+              (click)="rejectRegistration(profile)">
+              {{ updatingApprovalUserId === profile.userId && updatingApprovalAction === 'reject' ? 'Rejecting...' : 'Reject' }}
+            </button>
+          </div>
         </div>
       </article>
     </div>
@@ -486,6 +494,144 @@
         <button type="button" class="btn-reject" (click)="confirmRejectRegistration()"
           [disabled]="updatingApprovalUserId !== null || !rejectionReason.trim()">
           {{ updatingApprovalUserId !== null ? 'Rejecting...' : 'Confirm Rejection' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Details Modal -->
+  <div class="modal-overlay" *ngIf="isDetailsModalOpen">
+    <div class="modal-content modal-details" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title">Account Details</h2>
+          <p class="modal-subtitle">Complete information for {{ selectedProfile?.firstName }} {{ selectedProfile?.lastName }}</p>
+        </div>
+        <div class="modal-header-actions">
+          <span class="approval-status modal-status-badge" 
+            [class.pending]="selectedProfile?.status === 'pending'"
+            [class.approved]="selectedProfile?.status === 'approved'" 
+            [class.rejected]="selectedProfile?.status === 'rejected'">
+            {{ selectedProfile?.status === 'approved' ? 'APPROVED' : (selectedProfile?.status === 'rejected' ? 'REJECTED' : 'PENDING') }}
+          </span>
+          <button class="close-btn" (click)="closeDetailsModal()">✕</button>
+        </div>
+      </div>
+
+      <div class="modal-body-wrapper">
+        <div class="scroll-indicator scroll-indicator-top"></div>
+
+        <div class="modal-body">
+          <div class="details-section">
+            <h3 class="section-title">Personal Information</h3>
+            <div class="details-grid">
+              <div class="detail-item">
+                <span class="detail-label">Full Name:</span>
+                <span class="detail-value">{{ selectedProfile?.firstName }} {{ selectedProfile?.middleName || '' }} {{ selectedProfile?.lastName }} {{ selectedProfile?.suffix || '' }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Gender:</span>
+                <span class="detail-value">{{ selectedProfile?.gender }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Birthday:</span>
+                <span class="detail-value">{{ formatDate(selectedProfile?.birthday || '') }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Age:</span>
+                <span class="detail-value">{{ getAge(selectedProfile?.birthday || '') }} years old</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Civil Status:</span>
+                <span class="detail-value">{{ selectedProfile?.civilStatus }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="details-section">
+            <h3 class="section-title">Contact Information</h3>
+            <div class="details-grid">
+              <div class="detail-item">
+                <span class="detail-label">Email:</span>
+                <span class="detail-value">{{ selectedProfile?.email || 'N/A' }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Contact Number:</span>
+                <span class="detail-value">{{ selectedProfile?.contactNumber }}</span>
+              </div>
+              <div class="detail-item full-width">
+                <span class="detail-label">Complete Address:</span>
+                <span class="detail-value">{{ selectedProfile?.completeAddress || 'N/A' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="details-section">
+            <h3 class="section-title">Youth Classification</h3>
+            <div class="details-grid">
+              <div class="detail-item">
+                <span class="detail-label">Classification:</span>
+                <span class="detail-value">{{ selectedProfile?.youthClassification?.youthClassification || 'N/A' }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Education Background:</span>
+                <span class="detail-value">{{ selectedProfile?.youthClassification?.educationBackground || 'N/A' }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Work Status:</span>
+                <span class="detail-value">{{ selectedProfile?.youthClassification?.workStatus || 'N/A' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="details-section">
+            <h3 class="section-title">Voter Information</h3>
+            <div class="details-grid">
+              <div class="detail-item">
+                <span class="detail-label">SK Voter:</span>
+                <span class="detail-value">{{ selectedProfile?.youthClassification?.skVoter ? 'Yes' : 'No' }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">National Voter:</span>
+                <span class="detail-value">{{ selectedProfile?.youthClassification?.nationalVoter ? 'Yes' : 'No' }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Past Voter:</span>
+                <span class="detail-value">{{ selectedProfile?.youthClassification?.pastVoter ? 'Yes' : 'No' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="details-section">
+            <h3 class="section-title">Assembly Participation</h3>
+            <div class="details-grid">
+              <div class="detail-item">
+                <span class="detail-label">Assemblies Attended:</span>
+                <span class="detail-value">{{ selectedProfile?.youthClassification?.numAttended || 0 }}</span>
+              </div>
+              <div class="detail-item full-width">
+                <span class="detail-label">Non-Attendance Reason:</span>
+                <span class="detail-value">{{ selectedProfile?.youthClassification?.nonAttendedReason || 'N/A' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="scroll-indicator scroll-indicator-bottom"></div>
+      </div>
+
+      <div class="modal-footer">
+        <button *ngIf="selectedProfile?.status !== 'approved' && selectedProfile?.status !== 'rejected'" 
+          type="button" class="btn-approve" 
+          [disabled]="updatingApprovalUserId !== null"
+          (click)="approveFromDetailsModal()">
+          {{ updatingApprovalUserId === selectedProfile?.userId && updatingApprovalAction === 'approve' ? 'Approving...' : 'Approve' }}
+        </button>
+        <button *ngIf="selectedProfile?.status !== 'approved' && selectedProfile?.status !== 'rejected'" 
+          type="button" class="btn-reject" 
+          [disabled]="updatingApprovalUserId !== null"
+          (click)="rejectFromDetailsModal()">
+          {{ updatingApprovalUserId === selectedProfile?.userId && updatingApprovalAction === 'reject' ? 'Rejecting...' : 'Reject' }}
         </button>
       </div>
     </div>
