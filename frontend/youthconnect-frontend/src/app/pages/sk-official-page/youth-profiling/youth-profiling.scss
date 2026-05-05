@@ -944,6 +944,36 @@ body,
   border-radius: 12px 12px 0 0;
 }
 
+.modal-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.modal-status-badge {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  
+  &.pending {
+    background: #fff3cd;
+    color: #8a5a00;
+  }
+  
+  &.approved {
+    background: #e8f5e9;
+    color: #1b5e20;
+  }
+  
+  &.rejected {
+    background: #ffebee;
+    color: #c62828;
+  }
+}
+
 .modal-title {
   font-size: 24px;
   font-weight: 700;

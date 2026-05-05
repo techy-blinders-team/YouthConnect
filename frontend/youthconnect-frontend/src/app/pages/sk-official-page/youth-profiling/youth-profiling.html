@@ -507,7 +507,15 @@
           <h2 class="modal-title">Account Details</h2>
           <p class="modal-subtitle">Complete information for {{ selectedProfile?.firstName }} {{ selectedProfile?.lastName }}</p>
         </div>
-        <button class="close-btn" (click)="closeDetailsModal()">✕</button>
+        <div class="modal-header-actions">
+          <span class="approval-status modal-status-badge" 
+            [class.pending]="selectedProfile?.status === 'pending'"
+            [class.approved]="selectedProfile?.status === 'approved'" 
+            [class.rejected]="selectedProfile?.status === 'rejected'">
+            {{ selectedProfile?.status === 'approved' ? 'APPROVED' : (selectedProfile?.status === 'rejected' ? 'REJECTED' : 'PENDING') }}
+          </span>
+          <button class="close-btn" (click)="closeDetailsModal()">✕</button>
+        </div>
       </div>
 
       <div class="modal-body-wrapper">
