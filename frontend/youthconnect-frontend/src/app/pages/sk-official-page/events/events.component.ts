@@ -602,6 +602,9 @@ export class EventsComponent implements OnInit {
 
     this.errorMessage = '';
 
+    // Check if we're in the details modal
+    const isInModal = (window.event?.target as HTMLElement)?.closest('.details-modal-content') !== null;
+
     this.eventService.editEvent(event.eventId, request).subscribe({
       next: () => {
         // Update the event in the local arrays
@@ -614,6 +617,18 @@ export class EventsComponent implements OnInit {
         // Update selected event if it's currently being viewed in details modal
         if (this.selectedEvent && this.selectedEvent.eventId === event.eventId) {
           this.selectedEvent.status = nextStatus;
+        }
+
+        // Only apply animations if action was triggered from modal
+        if (isInModal) {
+          // Trigger status pill animation in modal
+          setTimeout(() => {
+            const modalStatusPills = document.querySelectorAll('.details-modal-content .status-pill');
+            modalStatusPills.forEach(pill => {
+              pill.classList.add('status-changed');
+              setTimeout(() => pill.classList.remove('status-changed'), 600);
+            });
+          }, 100);
         }
         
         this.showNotification(`Event status updated to ${nextStatus}`);
