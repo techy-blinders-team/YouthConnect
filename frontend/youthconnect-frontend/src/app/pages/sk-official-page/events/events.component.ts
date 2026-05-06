@@ -38,8 +38,10 @@ export class EventsComponent implements OnInit {
   isEditConfirmationModalOpen = false;
   pendingEditPayload: any = null;
   selectedEvent: EventResponse | null = null;
-  eventAttendees: Array<{ name: string; email: string }> = [];
+  eventAttendees: Array<{ name: string; email: string; userId: number; youthId: number }> = [];
   isLoadingAttendees = false;
+  isAttendeeDetailsModalOpen = false;
+  selectedAttendeeProfile: any = null;
 
   constructor(
     private fb: FormBuilder,
@@ -141,7 +143,12 @@ export class EventsComponent implements OnInit {
           const name = profile ? `${profile.firstName || ''} ${profile.lastName || ''}`.trim() : 'Unknown User';
           const email = user?.email || 'No email';
           
-          return { name, email };
+          return { 
+            name, 
+            email, 
+            userId: rsvp.userId,
+            youthId: youthId || 0
+          };
         });
 
         console.log('Final attendees (before filter):', this.eventAttendees);
@@ -152,6 +159,73 @@ export class EventsComponent implements OnInit {
         console.error('Error loading event attendees:', error);
         this.isLoadingAttendees = false;
       }
+    });
+  }
+
+  openAttendeeDetailsModal(attendee: any) {
+    if (attendee.youthId === 0) {
+      return;
+    }
+
+    // Fetch full profile details
+    forkJoin({
+      profiles: this.youthMemberService.getYouthProfiles(),
+      users: this.youthMemberService.getUsers()
+    }).subscribe({
+      next: ({ profiles, users }) => {
+        const profile = profiles.find(p => p.youthId === attendee.youthId);
+        const user = users.find(u => u.youthId === attendee.youthId);
+        
+        if (profile) {
+          this.selectedAttendeeProfile = {
+            ...profile,
+            email: user?.email || attendee.email || 'No email'
+          };
+          this.isAttendeeDetailsModalOpen = true;
+          setTimeout(() => this.setupScrollIndicators(), 100);
+        }
+      },
+      error: (error) => {
+        console.error('Error loading attendee profile:', error);
+      }
+    });
+  }
+
+  closeAttendeeDetailsModal() {
+    this.isAttendeeDetailsModalOpen = false;
+    this.selectedAttendeeProfile = null;
+  }
+
+  getAge(birthday: string): number {
+    const birthDate = new Date(birthday);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+
+    return age;
+  }
+
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  formatBirthday(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     });
   }
 
@@ -559,17 +633,6 @@ export class EventsComponent implements OnInit {
         console.error('Error updating event status:', error);
         this.showNotification(error.error?.message || 'Failed to update event status', 'error');
       }
-    });
-  }
-
-  formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
     });
   }
 
