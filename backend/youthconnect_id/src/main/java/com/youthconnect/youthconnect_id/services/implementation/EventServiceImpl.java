@@ -194,4 +194,12 @@ public class EventServiceImpl implements EventService {
                 .map(this::toAttendanceResponse)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<AttendanceResponse> getEventRsvps(int eventId) {
+        return eventAttendanceRepo.findByEventId(eventId)
+                .stream()
+                .map(this::toAttendanceResponse)
+                .collect(Collectors.toList());
+    }
 }

@@ -80,4 +80,8 @@ export class EventService {
     getOwnRsvps(userId: number): Observable<AttendanceResponse[]> {
         return this.http.get<AttendanceResponse[]>(`${this.apiUrl}/rsvp/user/${userId}`);
     }
+
+    getEventRsvps(eventId: number): Observable<AttendanceResponse[]> {
+        return this.http.get<AttendanceResponse[]>(`${this.skApiUrl}/${eventId}/rsvp`);
+    }
 }
