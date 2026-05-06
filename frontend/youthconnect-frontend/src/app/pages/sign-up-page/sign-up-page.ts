@@ -251,6 +251,21 @@ export class SignUpPage {
   }
 
   /**
+   * Capitalize the first letter of each word in a name
+   */
+  private capitalizeName(name: string): string {
+    if (!name) return name;
+    return name
+      .trim()
+      .split(' ')
+      .map(word => {
+        if (!word) return word;
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+      })
+      .join(' ');
+  }
+
+  /**
    * Handle registration submission
    */
   register(): void {
@@ -267,9 +282,9 @@ export class SignUpPage {
     const votingStatus = Array.isArray(formValue.votingStatus) ? formValue.votingStatus : [];
 
     const registrationData: RegistrationRequest = {
-      firstName: formValue.firstName,
-      middleName: formValue.middleName,
-      lastName: formValue.lastName,
+      firstName: this.capitalizeName(formValue.firstName),
+      middleName: this.capitalizeName(formValue.middleName),
+      lastName: this.capitalizeName(formValue.lastName),
       suffix: formValue.suffix || undefined,
       gender: formValue.gender,
       birthday: formValue.birthday,

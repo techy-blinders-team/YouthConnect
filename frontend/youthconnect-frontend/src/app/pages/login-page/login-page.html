@@ -9,8 +9,8 @@
 
         <!-- Header with Logos -->
         <div class="login-header">
-            <img src="assets/login page/youthconnect-logo.svg" alt="YouthConnect Logo" class="logo youthconnect-logo">
             <img src="assets/login page/sk-logo.svg" alt="SK Logo" class="logo sk-logo">
+            <img src="assets/login page/youthconnect-logo.svg" alt="YouthConnect Logo" class="logo youthconnect-logo">
         </div>
 
         <!-- Title -->
@@ -95,12 +95,10 @@
     </div>
 
     @if (successModalOpen()) {
-        <div class="modal-backdrop"></div>
-        <div class="success-modal">
+        <div class="modal-overlay">
             <div class="modal-content">
                 <div class="spinner"></div>
-                <h2>Logging In</h2>
-                <p>Please wait while we verify your credentials</p>
+                <h3 class="modal-title">Logging in...</h3>
             </div>
         </div>
     }
