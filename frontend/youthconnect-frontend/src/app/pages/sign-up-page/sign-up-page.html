@@ -396,12 +396,10 @@
   </div>
 
   @if (successModalOpen()) {
-    <div class="modal-backdrop"></div>
-    <div class="success-modal">
+    <div class="modal-overlay">
       <div class="modal-content">
         <div class="spinner"></div>
-        <h2>Registering Account</h2>
-        <p>Please wait while we create your account</p>
+        <h3 class="modal-title">Registering account...</h3>
       </div>
     </div>
   }
@@ -417,12 +415,13 @@
   }
 
   @if (accountReviewModalOpen()) {
-    <div class="modal-overlay"></div>
-    <div class="modal-content account-review-modal">
-      <h2 class="modal-title">Account Registration Successful!</h2>
-      <p class="modal-message">Your account has been created successfully. Your account will now be reviewed and approved by the administrator or SK officials.</p>
-      <p class="modal-subtitle">You will receive an email notification once your account is approved. Thank you for joining YouthConnect!</p>
-      <button (click)="closeAccountReviewModal()" class="modal-button">Okay</button>
+    <div class="popup-overlay">
+      <div class="modal-content account-review-modal">
+        <h2 class="modal-title">Account Registration Successful!</h2>
+        <p class="modal-message">Your account has been created successfully. Your account will now be reviewed and approved by the administrator or SK officials.</p>
+        <p class="modal-subtitle">You will receive an email notification once your account is approved. Thank you for joining YouthConnect!</p>
+        <button (click)="closeAccountReviewModal()" class="modal-button">Okay</button>
+      </div>
     </div>
   }
 </div>
