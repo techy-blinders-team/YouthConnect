@@ -19,4 +19,5 @@ public interface EventService {
     AttendanceResponse rsvpEvent(RsvpRequest request);
     void cancelRsvp(int eventId, int userId);
     List<AttendanceResponse> getOwnRsvps(int userId);
+    List<AttendanceResponse> getEventRsvps(int eventId);
 }

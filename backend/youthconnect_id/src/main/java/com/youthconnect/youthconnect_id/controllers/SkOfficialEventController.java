@@ -82,4 +82,15 @@ public class SkOfficialEventController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed: " + e.getMessage());
         }
     }
+
+    @GetMapping("/{eventId}/rsvp")
+    public ResponseEntity<?> getEventRsvps(@PathVariable int eventId) {
+        try {
+            List<AttendanceResponse> rsvps = eventService.getEventRsvps(eventId);
+            return ResponseEntity.ok(rsvps);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed: " + e.getMessage());
+        }
+    }
 }
