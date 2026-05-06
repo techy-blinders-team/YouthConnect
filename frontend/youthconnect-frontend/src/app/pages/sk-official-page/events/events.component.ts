@@ -604,13 +604,6 @@ export class EventsComponent implements OnInit {
 
     // Check if we're in the details modal
     const isInModal = (window.event?.target as HTMLElement)?.closest('.details-modal-content') !== null;
-    
-    // Add animation class to button only if in modal
-    const buttonElement = (window.event?.target as HTMLElement)?.closest('.status-btn, .details-status-btn');
-    
-    if (buttonElement && isInModal) {
-      buttonElement.classList.add('status-updating');
-    }
 
     this.eventService.editEvent(event.eventId, request).subscribe({
       next: () => {
@@ -636,34 +629,12 @@ export class EventsComponent implements OnInit {
               setTimeout(() => pill.classList.remove('status-changed'), 600);
             });
           }, 100);
-
-          // Add sparkle effect if status changed to completed
-          if (nextStatus === 'Completed') {
-            const modalContent = document.querySelector('.details-modal-content');
-            if (modalContent) {
-              modalContent.classList.add('completed-sparkle');
-              setTimeout(() => modalContent.classList.remove('completed-sparkle'), 1200);
-            }
-          }
-
-          // Remove button animation class
-          if (buttonElement) {
-            setTimeout(() => {
-              buttonElement.classList.remove('status-updating');
-            }, 600);
-          }
         }
         
         this.showNotification(`Event status updated to ${nextStatus}`);
       },
       error: (error) => {
         console.error('Error updating event status:', error);
-        
-        // Remove button animation class on error
-        if (buttonElement && isInModal) {
-          buttonElement.classList.remove('status-updating');
-        }
-        
         this.showNotification(error.error?.message || 'Failed to update event status', 'error');
       }
     });
