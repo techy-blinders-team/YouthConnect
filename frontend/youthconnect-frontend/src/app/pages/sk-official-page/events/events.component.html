@@ -57,12 +57,7 @@
             
             <div *ngFor="let event of filteredEvents" class="event-card" (click)="openDetailsModal(event)">
                 <div class="card-header">
-                    <div class="title-status-group">
-                        <h3>{{ event.title }}</h3>
-                        <span class="status-pill" [ngClass]="(event.status || 'upcoming').toLowerCase()">
-                            {{ event.status || 'Upcoming' }}
-                        </span>
-                    </div>
+                    <h3>{{ event.title }}</h3>
                     <div class="card-actions">
                         <button class="edit-btn" (click)="editEvent(event); $event.stopPropagation()" title="Edit event" [disabled]="isEditDisabled(event.status)">
                             <img src="../../assets/sk-official-events-icons/edit.svg" alt="Edit" width="18" height="18">
@@ -86,6 +81,12 @@
                         <div class="meta-item">
                             <span class="icon"><img src="../../assets/sk-official-events-icons/calendar.svg" alt="RSVPs" width="16" height="16"></span>
                             <span>{{ event.rsvpCount || 0 }} RSVP{{ (event.rsvpCount || 0) === 1 ? '' : 's' }}</span>
+                        </div>
+                        <div class="meta-item status-meta">
+                            <span class="status-label">STATUS:</span>
+                            <span class="status-pill" [ngClass]="(event.status || 'upcoming').toLowerCase()">
+                                {{ event.status || 'Upcoming' }}
+                            </span>
                         </div>
                     </div>
                 </div>
