@@ -204,6 +204,29 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- RSVP Attendees List -->
+                    <div class="attendees-section">
+                        <h4 class="attendees-title">RSVP'd Attendees ({{ eventAttendees.length }})</h4>
+                        
+                        <div *ngIf="isLoadingAttendees" class="attendees-loading">
+                            <p>Loading attendees...</p>
+                        </div>
+
+                        <div *ngIf="!isLoadingAttendees && eventAttendees.length > 0" class="attendees-list">
+                            <div *ngFor="let attendee of eventAttendees; let i = index" class="attendee-item">
+                                <div class="attendee-number">{{ i + 1 }}</div>
+                                <div class="attendee-info">
+                                    <div class="attendee-name">{{ attendee.name }}</div>
+                                    <div class="attendee-email">{{ attendee.email }}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div *ngIf="!isLoadingAttendees && eventAttendees.length === 0" class="attendees-empty">
+                            <p>No one has RSVP'd yet.</p>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="scroll-indicator scroll-indicator-bottom"></div>
