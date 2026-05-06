@@ -46,7 +46,9 @@ export class YouthProfiling implements OnInit {
   isDeactivateModalOpen = false;
   isEditConfirmationModalOpen = false;
   isDeactivateConfirmationModalOpen = false;
+  isYouthDetailsModalOpen = false;
   selectedProfile: YouthMemberListItem | null = null;
+  selectedYouthProfile: YouthMemberListItem | null = null;
   editForm!: FormGroup;
   isSubmitting = false;
   pendingEditPayload: any = null;
@@ -1006,6 +1008,17 @@ export class YouthProfiling implements OnInit {
         this.rejectRegistration(profileToReject);
       }, 100);
     }
+  }
+
+  openYouthDetailsModal(profile: YouthMemberListItem): void {
+    this.selectedYouthProfile = profile;
+    this.isYouthDetailsModalOpen = true;
+    setTimeout(() => this.setupScrollIndicators(), 100);
+  }
+
+  closeYouthDetailsModal(): void {
+    this.isYouthDetailsModalOpen = false;
+    this.selectedYouthProfile = null;
   }
 
   private showNotification(message: string, type: 'success' | 'error' = 'success'): void {
