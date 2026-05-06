@@ -112,7 +112,6 @@ export class EventsComponent implements OnInit {
   loadEventAttendees(eventId: number) {
     this.isLoadingAttendees = true;
     this.eventAttendees = [];
-    console.log('Loading attendees for event:', eventId);
 
     forkJoin({
       rsvps: this.eventService.getEventRsvps(eventId),
@@ -120,25 +119,17 @@ export class EventsComponent implements OnInit {
       users: this.youthMemberService.getUsers()
     }).subscribe({
       next: ({ rsvps, profiles, users }) => {
-        console.log('RSVPs received:', rsvps);
-        console.log('Profiles received:', profiles);
-        console.log('Users received:', users);
-        
         // Create a map of userId to youthId
         const userToYouthMap = new Map(users.map(user => [user.userId, user.youthId]));
-        console.log('User to Youth map:', userToYouthMap);
         
         // Create a map of youthId to profile
         const profileMap = new Map(profiles.map(profile => [profile.youthId, profile]));
-        console.log('Profile map:', profileMap);
 
         // Map RSVPs to attendee details
         this.eventAttendees = rsvps.map(rsvp => {
           const youthId = userToYouthMap.get(rsvp.userId);
           const profile = youthId ? profileMap.get(youthId) : null;
           const user = users.find(u => u.userId === rsvp.userId);
-          
-          console.log(`Processing RSVP - userId: ${rsvp.userId}, youthId: ${youthId}, profile:`, profile, 'user:', user);
           
           const name = profile ? `${profile.firstName || ''} ${profile.lastName || ''}`.trim() : 'Unknown User';
           const email = user?.email || 'No email';
@@ -151,8 +142,6 @@ export class EventsComponent implements OnInit {
           };
         });
 
-        console.log('Final attendees (before filter):', this.eventAttendees);
-        console.log('Final attendees count:', this.eventAttendees.length);
         this.isLoadingAttendees = false;
       },
       error: (error) => {
