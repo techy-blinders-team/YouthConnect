@@ -13,6 +13,37 @@
 	gap: 15px;
 	width: 100%;
 	padding: 15px 30px 30px 25px;
+	position: relative;
+}
+
+.sidebar-close-btn {
+	display: none;
+	position: absolute;
+	left: 20px;
+	top: 20px;
+	background: transparent;
+	border: none;
+	color: #fff;
+	font-size: 32px;
+	font-weight: 300;
+	cursor: pointer;
+	padding: 0;
+	width: 32px;
+	height: 32px;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.2s ease;
+	line-height: 1;
+	z-index: 10;
+
+	&:hover {
+		transform: rotate(90deg);
+		opacity: 0.8;
+	}
+
+	&:active {
+		transform: rotate(90deg) scale(0.9);
+	}
 }
 
 .logo-img {
@@ -112,21 +143,21 @@
 }
 
 .logout-section {
-	margin-top: 275px;
+	margin-top: auto;
 	width: 100%;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	padding: 0;
+	padding: 0 0 20px 0;
 	position: relative;
 }
 
 .logout-section::before {
 	content: "";
 	display: block;
-	margin-bottom: 10px;
+	margin-bottom: 16px;
 	width: 80%;
-	height: 2px;
+	height: 1px;
 	background: rgba(255,255,255,0.3);
 }
 
@@ -149,6 +180,7 @@
 
 .logout-btn:hover:not(:disabled) {
 	background: none !important;
+	opacity: 0.8;
 }
 
 .logout-btn:disabled {
@@ -160,12 +192,8 @@
 	display: block;
 	width: 100%;
 	text-align: center;
-    margin-bottom: 10px;
+	margin: 0;
 	transition: opacity 0.2s;
-}
-
-.logout-text:hover {
-	opacity: 0.8;
 }
 
 .side-nav-bar, .side-nav-bar * {
@@ -250,4 +278,140 @@
 	color: #666666;
 	margin: 0;
 	font-family: 'Poppins', sans-serif;
+}
+
+/* Tablet Responsive - 768px and below */
+@media (max-width: 768px) {
+	.side-nav-bar {
+		min-width: 280px;
+		width: 280px;
+		height: 100vh;
+	}
+
+	.sidebar-header {
+		padding: 20px 25px 25px 25px;
+	}
+
+	.sidebar-close-btn {
+		display: flex;
+		left: 16px;
+		top: 16px;
+	}
+
+	.logo-img {
+		margin-left: 40px;
+	}
+
+	.logout-section {
+		padding: 0 0 20px 0;
+	}
+}
+
+/* Mobile Responsive - 480px and below */
+@media (max-width: 480px) {
+	.side-nav-bar {
+		min-width: 260px;
+		width: 260px;
+	}
+
+	.sidebar-header {
+		padding: 18px 20px 22px 20px;
+		gap: 12px;
+	}
+
+	.logo-img {
+		width: 48px;
+		height: 48px;
+	}
+
+	.logo-text {
+		font-size: 20px;
+	}
+
+	.sidebar-icon {
+		width: 20px;
+		height: 20px;
+	}
+
+	.side-nav-bar a {
+		padding: 12px 30px;
+		font-size: 16px;
+		gap: 16px;
+	}
+
+	.logout-btn {
+		font-size: 18px;
+		padding: 0 30px;
+	}
+
+	.logout-section {
+		padding: 0 0 18px 0;
+	}
+
+	.logout-section::before {
+		margin-bottom: 14px;
+	}
+}
+
+/* Mobile S - 320px */
+@media (max-width: 320px) {
+	.side-nav-bar {
+		min-width: 240px;
+		width: 240px;
+	}
+
+	.sidebar-header {
+		padding: 16px 18px 20px 18px;
+		gap: 10px;
+	}
+
+	.logo-img {
+		width: 42px;
+		height: 42px;
+	}
+
+	.logo-text {
+		font-size: 18px;
+	}
+
+	.sidebar-icon {
+		width: 18px;
+		height: 18px;
+	}
+
+	.side-nav-bar a {
+		padding: 11px 25px;
+		font-size: 15px;
+		gap: 14px;
+		border-radius: 0 20px 20px 0;
+	}
+
+	.logout-btn {
+		font-size: 16px;
+		padding: 0 25px;
+	}
+
+	.logout-section {
+		padding: 0 0 16px 0;
+	}
+
+	.logout-section::before {
+		width: 75%;
+		margin-bottom: 12px;
+	}
+
+	.modal-content {
+		width: 280px;
+		padding: 20px 16px;
+	}
+
+	.modal-title {
+		font-size: 18px;
+	}
+
+	.spinner {
+		width: 42px;
+		height: 42px;
+		margin-bottom: 20px;
+	}
 }
