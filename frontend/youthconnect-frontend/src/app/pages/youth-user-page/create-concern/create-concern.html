@@ -79,7 +79,7 @@
         </div>
 
         <div class="concerns-list" *ngIf="!isLoading || concerns.length > 0">
-            <div class="concern-item" *ngFor="let concern of paginatedConcerns">
+            <div class="concern-item" *ngFor="let concern of paginatedConcerns" (click)="openConcernDetails(concern)">
                 <div class="concern-content">
                     <div class="concern-left">
                         <span class="concern-type-icon">{{ getConcernTypeIcon(concern.typeOfConcern) }}</span>
@@ -96,7 +96,7 @@
                             {{ getStatusLabel(concern.status) }}
                         </span>
                         <div class="concern-actions">
-                            <button class="btn-edit" (click)="editConcern(concern)"
+                            <button class="btn-edit" (click)="$event.stopPropagation(); editConcern(concern)"
                                 [disabled]="isLoading || concern.status === 'CLOSED'" aria-label="Edit concern"
                                 title="Edit concern">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
@@ -105,7 +105,7 @@
                                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                 </svg>
                             </button>
-                            <button class="btn-delete" (click)="deleteConcern(concern)" [disabled]="isLoading"
+                            <button class="btn-delete" (click)="$event.stopPropagation(); deleteConcern(concern)" [disabled]="isLoading"
                                 aria-label="Delete concern" title="Delete concern">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2">
@@ -147,6 +147,63 @@
                     <polyline points="9 18 15 12 9 6"></polyline>
                 </svg>
             </button>
+        </div>
+    </div>
+</div>
+
+<!-- Concern Details Modal -->
+<div class="modal-overlay" *ngIf="showDetailsModal" (click)="closeConcernDetails()">
+    <div class="modal-content details-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>{{ selectedConcern?.title }}</h3>
+            <button class="btn-close" (click)="closeConcernDetails()" aria-label="Close modal">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
+        <div class="details-body">
+            <div class="concern-info">
+                <p><strong>Type:</strong> {{ getConcernTypeLabel(selectedConcern?.typeOfConcern || '') }}</p>
+                <p><strong>Status:</strong>
+                    <span class="status-badge" [ngClass]="getStatusBadgeClass(selectedConcern?.status || 'OPEN')">
+                        {{ getStatusLabel(selectedConcern?.status || 'OPEN') }}
+                    </span>
+                </p>
+                <p class="concern-description"><strong>Description:</strong> {{ selectedConcern?.description }}</p>
+            </div>
+
+            <div class="updates-panel">
+                <div class="updates-header">
+                    <h3>Updates</h3>
+                </div>
+                <div class="updates-list">
+                    <div *ngIf="isLoadingUpdates" class="updates-loading">Loading updates...</div>
+                    <div *ngIf="!isLoadingUpdates && updateLoadError" class="updates-error">
+                        {{ updateLoadError }}
+                    </div>
+                    <div *ngIf="!isLoadingUpdates && !updateLoadError && concernUpdates.length === 0"
+                        class="updates-empty">
+                        No updates yet.
+                    </div>
+                    <div *ngFor="let update of concernUpdates" class="update-item">
+                        <div class="update-meta">
+                            <span class="status-badge" [ngClass]="getStatusBadgeClass(update.status)">
+                                {{ getStatusLabel(update.status) }}
+                            </span>
+                            <span class="update-time">{{ formatDate(update.createdAt) }}</span>
+                        </div>
+                        <p class="update-text">{{ update.updateText }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" class="btn-cancel" (click)="closeConcernDetails()">Close</button>
         </div>
     </div>
 </div>
