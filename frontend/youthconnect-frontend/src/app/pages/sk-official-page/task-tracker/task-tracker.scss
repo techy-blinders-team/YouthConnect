@@ -1174,3 +1174,509 @@ select.form-input.ng-invalid.ng-touched {
   gap: 8px;
   width: 100%;
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .tasks-root .tasks-container {
+    padding: 15px;
+  }
+
+  .tasks-root .tasks-container .header-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+
+  .tasks-root .tasks-container .header-section .header-content h1 {
+    font-size: 24px;
+  }
+
+  .tasks-root .tasks-container .header-section .header-content p {
+    font-size: 12px;
+  }
+
+  .tasks-root .tasks-container .header-section .user-profile {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .action-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .search-group {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    flex: 1 1 auto;
+  }
+
+  .search-input {
+    min-width: 0;
+    max-width: none;
+  }
+
+  .search-btn,
+  .add-task-btn {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .tasks-list {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .task-card {
+    flex: 1 1 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .card-header {
+    padding: 14px 16px;
+  }
+
+  .card-body {
+    padding: 16px 16px 10px;
+  }
+
+  .card-footer {
+    padding: 10px 10px 12px;
+  }
+
+  .modal-content {
+    max-width: 98%;
+    max-height: 80vh;
+    border-radius: 12px;
+  }
+
+  .modal-content.modal-small {
+    max-width: 95%;
+    max-height: auto;
+  }
+
+  .details-modal-content {
+    max-width: 98%;
+    max-height: 80vh;
+    border-radius: 12px;
+  }
+
+  .details-modal-header {
+    padding: 16px 18px;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .details-modal-title {
+    font-size: 16px;
+  }
+
+  .details-modal-body {
+    padding: 0 18px;
+  }
+
+  .details-modal-footer {
+    padding: 14px 18px;
+    border-radius: 0 0 12px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tasks-root .tasks-container {
+    padding: 10px;
+  }
+
+  .tasks-root .tasks-container .header-section {
+    padding: 12px;
+    margin-bottom: 18px;
+  }
+
+  .tasks-root .tasks-container .header-section .header-content h1 {
+    font-size: 20px;
+  }
+
+  .tasks-root .tasks-container .header-section .header-content p {
+    font-size: 11px;
+  }
+
+  .tasks-root .tasks-container .header-section .user-profile {
+    display: none;
+  }
+
+  .search-input {
+    padding: 10px 14px;
+    font-size: 13px;
+    border-radius: 999px;
+  }
+
+  .search-btn {
+    display: none;
+  }
+
+  .add-task-btn {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .task-card {
+    border-radius: 12px;
+  }
+
+  .card-header h3 {
+    font-size: 1.05rem;
+  }
+
+  .status-badge {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+
+  .edit-btn,
+  .delete-btn {
+    width: 22px;
+    height: 22px;
+  }
+
+  .description {
+    font-size: 0.85rem;
+  }
+
+  .info-row {
+    font-size: 0.8rem;
+  }
+
+  .btn-task-action {
+    font-size: 0.85rem;
+    padding: 9px 10px;
+  }
+
+  .task-done-badge {
+    font-size: 0.85rem;
+    padding: 9px 10px;
+  }
+
+  .modal-header {
+    padding: 16px 18px;
+  }
+
+  .modal-title {
+    font-size: 20px;
+  }
+
+  .modal-subtitle {
+    font-size: 12px;
+  }
+
+  .close-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+  }
+
+  .modal-body {
+    padding: 0 18px;
+  }
+
+  .modal-footer {
+    padding: 14px 18px;
+  }
+
+  .form-group {
+    margin-bottom: 18px;
+  }
+
+  .form-label {
+    font-size: 13px;
+  }
+
+  .form-input,
+  .form-textarea,
+  select.form-input {
+    padding: 11px 13px;
+    font-size: 13px;
+  }
+
+  .btn-cancel,
+  .btn-create,
+  .btn-delete,
+  .btn-confirm-edit {
+    padding: 10px 24px;
+    font-size: 13px;
+  }
+
+  .confirmation-text {
+    font-size: 15px;
+  }
+
+  .modal-content {
+    max-width: 98%;
+    max-height: 75vh;
+    border-radius: 12px;
+  }
+
+  .modal-content.modal-small {
+    max-width: 95%;
+    max-height: auto;
+  }
+
+  .details-modal-content {
+    max-width: 98%;
+    max-height: 75vh;
+    border-radius: 12px;
+  }
+
+  .details-modal-header {
+    padding: 14px 16px;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .details-modal-title {
+    font-size: 15px;
+  }
+
+  .details-edit-btn,
+  .details-delete-btn {
+    padding: 5px;
+
+    img {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .details-close-btn {
+    font-size: 18px;
+    padding: 5px 7px;
+  }
+
+  .details-modal-body {
+    padding: 0 16px;
+  }
+
+  .detail-text {
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+
+  .detail-info-row {
+    font-size: 13px;
+    margin-bottom: 14px;
+  }
+
+  .details-modal-footer {
+    padding: 12px 16px;
+    border-radius: 0 0 12px 12px;
+  }
+
+  .details-btn-task-action {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
+  .details-task-done-badge {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 320px) {
+  .tasks-root .tasks-container {
+    padding: 8px;
+  }
+
+  .tasks-root .tasks-container .header-section {
+    padding: 10px;
+    margin-bottom: 16px;
+  }
+
+  .tasks-root .tasks-container .header-section .header-content h1 {
+    font-size: 18px;
+  }
+
+  .tasks-root .tasks-container .header-section .header-content p {
+    font-size: 10px;
+  }
+
+  .action-bar {
+    gap: 10px;
+  }
+
+  .search-input {
+    padding: 9px 12px;
+    font-size: 12px;
+  }
+
+  .add-task-btn {
+    padding: 9px 14px;
+    font-size: 12px;
+  }
+
+  .card-header {
+    padding: 12px 14px;
+  }
+
+  .card-header h3 {
+    font-size: 1rem;
+  }
+
+  .status-badge {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+
+  .edit-btn,
+  .delete-btn {
+    width: 20px;
+    height: 20px;
+  }
+
+  .description {
+    font-size: 0.8rem;
+    margin-bottom: 12px;
+  }
+
+  .info-row {
+    font-size: 0.75rem;
+  }
+
+  .btn-task-action {
+    font-size: 0.8rem;
+    padding: 8px 10px;
+  }
+
+  .task-done-badge {
+    font-size: 0.8rem;
+    padding: 8px 10px;
+  }
+
+  .modal-header {
+    padding: 14px 16px;
+  }
+
+  .modal-title {
+    font-size: 18px;
+  }
+
+  .modal-subtitle {
+    font-size: 11px;
+  }
+
+  .close-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+  }
+
+  .modal-body {
+    padding: 0 16px;
+  }
+
+  .modal-footer {
+    padding: 12px 16px;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-label {
+    font-size: 12px;
+  }
+
+  .form-input,
+  .form-textarea,
+  select.form-input {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+
+  .form-textarea {
+    min-height: 100px;
+  }
+
+  .btn-cancel,
+  .btn-create,
+  .btn-delete,
+  .btn-confirm-edit {
+    padding: 9px 20px;
+    font-size: 12px;
+  }
+
+  .confirmation-text {
+    font-size: 14px;
+  }
+
+  .modal-content {
+    max-width: 98%;
+    max-height: 70vh;
+    border-radius: 12px;
+  }
+
+  .modal-content.modal-small {
+    max-width: 95%;
+    max-height: auto;
+  }
+
+  .details-modal-content {
+    max-width: 98%;
+    max-height: 70vh;
+    border-radius: 12px;
+  }
+
+  .details-modal-header {
+    padding: 12px 14px;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .details-modal-title {
+    font-size: 14px;
+  }
+
+  .details-edit-btn,
+  .details-delete-btn {
+    padding: 4px;
+
+    img {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .details-close-btn {
+    font-size: 16px;
+    padding: 4px 6px;
+  }
+
+  .details-modal-body {
+    padding: 0 14px;
+  }
+
+  .detail-text {
+    font-size: 12px;
+    margin-bottom: 14px;
+  }
+
+  .detail-info-row {
+    font-size: 12px;
+    margin-bottom: 12px;
+  }
+
+  .details-modal-footer {
+    padding: 10px 14px;
+    border-radius: 0 0 12px 12px;
+  }
+
+  .details-btn-task-action {
+    padding: 9px 12px;
+    font-size: 12px;
+  }
+
+  .details-task-done-badge {
+    padding: 9px 12px;
+    font-size: 12px;
+  }
+}
