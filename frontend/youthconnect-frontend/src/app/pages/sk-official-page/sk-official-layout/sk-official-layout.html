@@ -1,5 +1,25 @@
 <div class="sk-official-layout-root">
-  <app-side-nav-bar></app-side-nav-bar>
+  <!-- Mobile Header with Hamburger -->
+  <div class="mobile-header">
+    <button class="hamburger-btn" (click)="toggleSidebar()" [class.active]="isSidebarOpen">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class="mobile-logo">
+      <h1 class="mobile-logo-text">YouthConnect</h1>
+    </div>
+  </div>
+
+  <!-- Sidebar Backdrop for Mobile -->
+  <div class="sidebar-backdrop" *ngIf="isSidebarOpen" (click)="closeSidebar()"></div>
+
+  <!-- Sidebar -->
+  <div class="sidebar-wrapper" [class.open]="isSidebarOpen">
+    <app-side-nav-bar (closeSidebar)="closeSidebar()"></app-side-nav-bar>
+  </div>
+
+  <!-- Main Content -->
   <div class="sk-official-layout-content">
     <router-outlet></router-outlet>
   </div>

@@ -1,14 +1,15 @@
 <div class="side-nav-bar">
 	<div class="sidebar-header">
+		<button class="sidebar-close-btn" (click)="onCloseClick()">✕</button>
 		<img src="../../assets/youthconnect-logo.png" alt="YouthConnect Logo" class="logo-img">
 		<h1 class="logo-text">YouthConnect</h1>
 	</div>
 	<ul>
-		<li><a routerLink="/sk-official/dashboard" routerLinkActive="active"><img src="../../assets/sk-official-side-bar-icons/dashboard.svg" alt="Dashboard Icon" class="sidebar-icon">Dashboard</a></li>
-		<li><a routerLink="/sk-official/events" routerLinkActive="active"><img src="../../assets/sk-official-side-bar-icons/events.svg" alt="Events Icon" class="sidebar-icon">Events</a></li>
-		<li><a routerLink="/sk-official/concerns" routerLinkActive="active"><img src="../../assets/sk-official-side-bar-icons/concerns.svg" alt="Concerns Icon" class="sidebar-icon">Concerns</a></li>
-		<li><a routerLink="/sk-official/task-tracker" routerLinkActive="active"><img src="../../assets/sk-official-side-bar-icons/task-tracker.svg" alt="Tasks Tracker Icon" class="sidebar-icon">Task Tracker</a></li>
-		<li><a routerLink="/sk-official/youth-profiling" routerLinkActive="active"><img src="../../assets/sk-official-side-bar-icons/youth-profiling.svg" alt="Youth Profiling Icon" class="sidebar-icon">Youth Profiling</a></li>
+		<li><a routerLink="/sk-official/dashboard" routerLinkActive="active" (click)="onLinkClick()"><img src="../../assets/sk-official-side-bar-icons/dashboard.svg" alt="Dashboard Icon" class="sidebar-icon">Dashboard</a></li>
+		<li><a routerLink="/sk-official/events" routerLinkActive="active" (click)="onLinkClick()"><img src="../../assets/sk-official-side-bar-icons/events.svg" alt="Events Icon" class="sidebar-icon">Events</a></li>
+		<li><a routerLink="/sk-official/concerns" routerLinkActive="active" (click)="onLinkClick()"><img src="../../assets/sk-official-side-bar-icons/concerns.svg" alt="Concerns Icon" class="sidebar-icon">Concerns</a></li>
+		<li><a routerLink="/sk-official/task-tracker" routerLinkActive="active" (click)="onLinkClick()"><img src="../../assets/sk-official-side-bar-icons/task-tracker.svg" alt="Tasks Tracker Icon" class="sidebar-icon">Task Tracker</a></li>
+		<li><a routerLink="/sk-official/youth-profiling" routerLinkActive="active" (click)="onLinkClick()"><img src="../../assets/sk-official-side-bar-icons/youth-profiling.svg" alt="Youth Profiling Icon" class="sidebar-icon">Youth Profiling</a></li>
 	</ul>
 	<div class="logout-section">
 		<button (click)="logout()" [disabled]="isLoggingOut" class="logout-btn"><span class="logout-text">Logout</span></button>
