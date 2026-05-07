@@ -11,3 +11,32 @@
   padding: 0;
   overflow: hidden;
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .sk-official-layout-root {
+    flex-direction: column;
+  }
+
+  .sk-official-layout-content {
+    width: 100%;
+    height: 100vh;
+    overflow: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .sk-official-layout-content {
+    padding: 0;
+  }
+}
+
+@media (max-width: 320px) {
+  .sk-official-layout-root {
+    height: 100vh;
+  }
+
+  .sk-official-layout-content {
+    height: 100vh;
+  }
+}
