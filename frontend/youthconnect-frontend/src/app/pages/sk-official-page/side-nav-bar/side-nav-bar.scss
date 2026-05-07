@@ -10,10 +10,12 @@
 .sidebar-header {
 	display: flex;
 	align-items: center;
-	gap: 15px;
+	gap: 12px;
 	width: 100%;
-	padding: 15px 30px 30px 25px;
+	padding: 15px 25px 30px 20px;
 	position: relative;
+	box-sizing: border-box;
+	overflow: hidden;
 }
 
 .sidebar-close-btn {
@@ -47,16 +49,20 @@
 }
 
 .logo-img {
-	width: 54px;
-	height: 54px;
+	width: 42px;
+	height: 42px;
+	flex-shrink: 0;
 }
 
 .logo-text {
-	font-size: 24px;
+	font-size: 14px !important;
 	font-weight: 600;
 	color: #fff;
 	margin: 0;
 	padding: 0;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .side-nav-bar {
@@ -72,6 +78,7 @@
 	color: #fff;
 	font-weight: 400;
 	overflow: hidden;
+	box-sizing: border-box;
 }
 
 .side-nav-bar ul {
@@ -286,10 +293,12 @@
 		min-width: 280px;
 		width: 280px;
 		height: 100vh;
+		box-sizing: border-box;
 	}
 
 	.sidebar-header {
 		padding: 20px 25px 25px 25px;
+		box-sizing: border-box;
 	}
 
 	.sidebar-close-btn {
@@ -300,6 +309,12 @@
 
 	.logo-img {
 		margin-left: 40px;
+		flex-shrink: 0;
+	}
+
+	.logo-text {
+		flex: 1;
+		min-width: 0;
 	}
 
 	.logout-section {
@@ -312,20 +327,25 @@
 	.side-nav-bar {
 		min-width: 260px;
 		width: 260px;
+		box-sizing: border-box;
 	}
 
 	.sidebar-header {
 		padding: 18px 20px 22px 20px;
 		gap: 12px;
+		box-sizing: border-box;
 	}
 
 	.logo-img {
 		width: 48px;
 		height: 48px;
+		flex-shrink: 0;
 	}
 
 	.logo-text {
 		font-size: 20px;
+		flex: 1;
+		min-width: 0;
 	}
 
 	.sidebar-icon {
@@ -358,20 +378,25 @@
 	.side-nav-bar {
 		min-width: 240px;
 		width: 240px;
+		box-sizing: border-box;
 	}
 
 	.sidebar-header {
 		padding: 16px 18px 20px 18px;
 		gap: 10px;
+		box-sizing: border-box;
 	}
 
 	.logo-img {
 		width: 42px;
 		height: 42px;
+		flex-shrink: 0;
 	}
 
 	.logo-text {
 		font-size: 18px;
+		flex: 1;
+		min-width: 0;
 	}
 
 	.sidebar-icon {
