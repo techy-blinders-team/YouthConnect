@@ -1996,6 +1996,31 @@ html, body, :host, .events-container {
   .attendee-email {
     font-size: 11px;
   }
+
+  .details-section {
+    margin-bottom: 22px;
+  }
+
+  .section-title {
+    font-size: 15px;
+    padding-bottom: 7px;
+  }
+
+  .details-grid {
+    gap: 15px;
+  }
+
+  .detail-label {
+    font-size: 11px;
+  }
+
+  .detail-value {
+    font-size: 13px;
+  }
+
+  .detail-value-bold {
+    font-size: 14px !important;
+  }
 }
 
 @media (max-width: 320px) {
@@ -2153,6 +2178,19 @@ html, body, :host, .events-container {
 
   .detail-value {
     font-size: 13px;
+  }
+
+  .details-section {
+    margin-bottom: 20px;
+  }
+
+  .section-title {
+    font-size: 14px;
+    padding-bottom: 6px;
+  }
+
+  .detail-value-bold {
+    font-size: 14px !important;
   }
 
   /* Details Modal Mobile Styles */
