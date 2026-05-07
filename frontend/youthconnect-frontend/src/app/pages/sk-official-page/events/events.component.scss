@@ -583,9 +583,19 @@ html, body, :host, .events-container {
 
 @media (max-width: 600px) {
   .modal-content {
+    max-width: 98vw;
+    max-height: 80vh;
+    border-radius: 12px;
+  }
+
+  .modal-content.modal-small {
     max-width: 95vw;
-    max-height: 90vh;
-    border-radius: 10px;
+    max-height: auto;
+  }
+
+  .modal-content.modal-attendee-details {
+    max-width: 98vw;
+    max-height: 80vh;
   }
 }
 
@@ -1641,5 +1651,683 @@ html, body, :host, .events-container {
   
   .detail-item.full-width {
     grid-column: 1;
+  }
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .events-root .events-container {
+    padding: 15px;
+  }
+
+  .events-root .events-container .header-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+
+  .events-root .events-container .header-section .header-content h1 {
+    font-size: 24px;
+  }
+
+  .events-root .events-container .header-section .header-content p {
+    font-size: 12px;
+  }
+
+  .events-root .events-container .header-section .user-profile {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .action-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .search-group {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    flex: 1 1 auto;
+  }
+
+  .search-input {
+    min-width: 0;
+    max-width: none;
+  }
+
+  .search-btn,
+  .add-event-btn {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .events-list {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .event-card {
+    flex: 1 1 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .card-header {
+    padding: 14px 16px;
+  }
+
+  .card-body {
+    padding: 16px 16px 10px;
+  }
+
+  .card-footer {
+    padding: 10px 10px 12px;
+  }
+
+  /* Details Modal Mobile Styles */
+  .details-modal-content {
+    max-width: 98%;
+    max-height: 80vh;
+    border-radius: 12px;
+  }
+
+  .details-modal-header {
+    padding: 16px 18px;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .details-modal-title {
+    font-size: 16px;
+  }
+
+  .details-modal-body {
+    padding: 0 18px;
+  }
+
+  .details-modal-footer {
+    padding: 14px 18px;
+    border-radius: 0 0 12px 12px;
+  }
+
+  .donut-chart {
+    margin-left: 0;
+  }
+
+  .chart-container {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .events-root .events-container {
+    padding: 10px;
+  }
+
+  .events-root .events-container .header-section {
+    padding: 12px;
+    margin-bottom: 18px;
+  }
+
+  .events-root .events-container .header-section .header-content h1 {
+    font-size: 20px;
+  }
+
+  .events-root .events-container .header-section .header-content p {
+    font-size: 11px;
+  }
+
+  .events-root .events-container .header-section .user-profile {
+    display: none;
+  }
+
+  .search-input {
+    padding: 10px 14px;
+    font-size: 13px;
+    border-radius: 999px;
+  }
+
+  .search-btn {
+    display: none;
+  }
+
+  .add-event-btn {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .event-card {
+    border-radius: 12px;
+  }
+
+  .card-header h3 {
+    font-size: 1.05rem;
+  }
+
+  .status-pill {
+    padding: 6px 12px;
+    font-size: 0.7rem;
+  }
+
+  .edit-btn,
+  .delete-btn {
+    width: 28px;
+    height: 28px;
+  }
+
+  .description {
+    font-size: 0.85rem;
+  }
+
+  .meta-item {
+    font-size: 0.8rem;
+  }
+
+  .status-btn {
+    font-size: 0.85rem;
+    padding: 9px 10px;
+  }
+
+  .modal-header {
+    padding: 16px 18px;
+  }
+
+  .modal-title {
+    font-size: 20px;
+  }
+
+  .modal-subtitle {
+    font-size: 12px;
+  }
+
+  .close-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+  }
+
+  .modal-body {
+    padding: 0 18px;
+  }
+
+  .modal-footer {
+    padding: 14px 18px;
+  }
+
+  .form-group {
+    margin-bottom: 18px;
+  }
+
+  .form-label {
+    font-size: 13px;
+  }
+
+  .form-input,
+  .form-textarea {
+    padding: 11px 13px;
+    font-size: 13px;
+  }
+
+  .btn-cancel,
+  .btn-create,
+  .btn-delete,
+  .btn-confirm-edit {
+    padding: 10px 24px;
+    font-size: 13px;
+  }
+
+  .confirmation-text {
+    font-size: 15px;
+  }
+
+  .modal-content {
+    max-width: 98%;
+    max-height: 75vh;
+    border-radius: 12px;
+  }
+
+  .modal-content.modal-small {
+    max-width: 95%;
+    max-height: auto;
+  }
+
+  .modal-content.modal-attendee-details {
+    max-width: 98%;
+    max-height: 75vh;
+  }
+
+  /* Details Modal Mobile Styles */
+  .details-modal-content {
+    max-width: 98%;
+    max-height: 75vh;
+    border-radius: 12px;
+  }
+
+  .details-modal-header {
+    padding: 14px 16px;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .details-modal-title {
+    font-size: 15px;
+  }
+
+  .details-edit-btn,
+  .details-delete-btn {
+    padding: 5px;
+
+    img {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .details-close-btn {
+    font-size: 18px;
+    padding: 5px 7px;
+  }
+
+  .details-modal-body {
+    padding: 0 16px;
+  }
+
+  .detail-text {
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+
+  .detail-info-row {
+    font-size: 13px;
+    margin-bottom: 14px;
+  }
+
+  .details-modal-footer {
+    padding: 12px 16px;
+    border-radius: 0 0 12px 12px;
+  }
+
+  .details-status-btn {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
+  .chart-title {
+    font-size: 14px;
+  }
+
+  .donut-chart {
+    width: 140px;
+    height: 140px;
+  }
+
+  .chart-center-text .percentage {
+    font-size: 24px;
+  }
+
+  .chart-center-text .label {
+    font-size: 11px;
+  }
+
+  .legend-item {
+    font-size: 13px;
+  }
+
+  .attendees-title {
+    font-size: 14px;
+  }
+
+  .attendee-item {
+    padding: 10px;
+  }
+
+  .attendee-number {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+
+  .attendee-name {
+    font-size: 13px;
+  }
+
+  .attendee-email {
+    font-size: 11px;
+  }
+
+  .details-section {
+    margin-bottom: 22px;
+  }
+
+  .section-title {
+    font-size: 15px;
+    padding-bottom: 7px;
+  }
+
+  .details-grid {
+    gap: 15px;
+  }
+
+  .detail-label {
+    font-size: 11px;
+  }
+
+  .detail-value {
+    font-size: 13px;
+  }
+
+  .detail-value-bold {
+    font-size: 14px !important;
+  }
+}
+
+@media (max-width: 320px) {
+  .events-root .events-container {
+    padding: 8px;
+  }
+
+  .events-root .events-container .header-section {
+    padding: 10px;
+    margin-bottom: 16px;
+  }
+
+  .events-root .events-container .header-section .header-content h1 {
+    font-size: 18px;
+  }
+
+  .events-root .events-container .header-section .header-content p {
+    font-size: 10px;
+  }
+
+  .action-bar {
+    gap: 10px;
+  }
+
+  .search-input {
+    padding: 9px 12px;
+    font-size: 12px;
+  }
+
+  .add-event-btn {
+    padding: 9px 14px;
+    font-size: 12px;
+  }
+
+  .card-header {
+    padding: 12px 14px;
+  }
+
+  .card-header h3 {
+    font-size: 1rem;
+  }
+
+  .status-pill {
+    padding: 5px 10px;
+    font-size: 0.65rem;
+  }
+
+  .edit-btn,
+  .delete-btn {
+    width: 26px;
+    height: 26px;
+  }
+
+  .description {
+    font-size: 0.8rem;
+    margin-bottom: 12px;
+  }
+
+  .meta-item {
+    font-size: 0.75rem;
+  }
+
+  .status-label {
+    font-size: 0.7rem;
+  }
+
+  .status-btn {
+    font-size: 0.8rem;
+    padding: 8px 10px;
+  }
+
+  .modal-header {
+    padding: 14px 16px;
+  }
+
+  .modal-title {
+    font-size: 18px;
+  }
+
+  .modal-subtitle {
+    font-size: 11px;
+  }
+
+  .close-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+  }
+
+  .modal-body {
+    padding: 0 16px;
+  }
+
+  .modal-footer {
+    padding: 12px 16px;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-label {
+    font-size: 12px;
+  }
+
+  .form-input,
+  .form-textarea {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+
+  .form-textarea {
+    min-height: 100px;
+  }
+
+  .btn-cancel,
+  .btn-create,
+  .btn-delete,
+  .btn-confirm-edit {
+    padding: 9px 20px;
+    font-size: 12px;
+  }
+
+  .confirmation-text {
+    font-size: 14px;
+  }
+
+  .modal-content {
+    max-width: 98%;
+    max-height: 70vh;
+    border-radius: 12px;
+  }
+
+  .modal-content.modal-small {
+    max-width: 95%;
+    max-height: auto;
+  }
+
+  .modal-content.modal-attendee-details {
+    max-width: 98%;
+    max-height: 70vh;
+  }
+
+  .section-title {
+    font-size: 15px;
+  }
+
+  .details-grid {
+    gap: 14px;
+  }
+
+  .detail-label {
+    font-size: 11px;
+  }
+
+  .detail-value {
+    font-size: 13px;
+  }
+
+  .details-section {
+    margin-bottom: 20px;
+  }
+
+  .section-title {
+    font-size: 14px;
+    padding-bottom: 6px;
+  }
+
+  .detail-value-bold {
+    font-size: 14px !important;
+  }
+
+  /* Details Modal Mobile Styles */
+  .details-modal-content {
+    max-width: 98%;
+    max-height: 70vh;
+    border-radius: 12px;
+  }
+
+  .details-modal-header {
+    padding: 12px 14px;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .details-modal-title {
+    font-size: 14px;
+  }
+
+  .details-edit-btn,
+  .details-delete-btn {
+    padding: 4px;
+
+    img {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .details-close-btn {
+    font-size: 16px;
+    padding: 4px 6px;
+  }
+
+  .details-modal-body {
+    padding: 0 14px;
+  }
+
+  .detail-text {
+    font-size: 12px;
+    margin-bottom: 14px;
+  }
+
+  .detail-info-row {
+    font-size: 12px;
+    margin-bottom: 12px;
+
+    img {
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  .details-modal-footer {
+    padding: 10px 14px;
+    border-radius: 0 0 12px 12px;
+  }
+
+  .details-status-btn {
+    padding: 9px 12px;
+    font-size: 12px;
+  }
+
+  .rsvp-chart-section {
+    margin-top: 20px;
+    padding-top: 16px;
+  }
+
+  .chart-title {
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .donut-chart {
+    width: 120px;
+    height: 120px;
+  }
+
+  .chart-center-text .percentage {
+    font-size: 20px;
+  }
+
+  .chart-center-text .label {
+    font-size: 10px;
+  }
+
+  .legend-item {
+    font-size: 12px;
+    gap: 8px;
+  }
+
+  .legend-color {
+    width: 14px;
+    height: 14px;
+  }
+
+  .attendees-section {
+    margin-top: 20px;
+    padding-top: 16px;
+  }
+
+  .attendees-title {
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .attendees-list {
+    gap: 10px;
+  }
+
+  .attendee-item {
+    padding: 9px;
+    gap: 10px;
+  }
+
+  .attendee-number {
+    width: 26px;
+    height: 26px;
+    font-size: 11px;
+  }
+
+  .attendee-name {
+    font-size: 12px;
+  }
+
+  .attendee-email {
+    font-size: 10px;
+  }
+
+  .section-title {
+    font-size: 14px;
+  }
+
+  .detail-label {
+    font-size: 11px;
+  }
+
+  .detail-value {
+    font-size: 13px;
   }
 }

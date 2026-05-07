@@ -769,3 +769,475 @@ select:disabled {
   border-radius: 4px;
   border-left: 3px solid #d32f2f;
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .concerns-root .concerns-container {
+    padding: 15px;
+  }
+
+  .concerns-root .concerns-container .header-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+
+  .concerns-root .concerns-container .header-section .header-content h1 {
+    font-size: 24px;
+  }
+
+  .concerns-root .concerns-container .header-section .header-content p {
+    font-size: 12px;
+  }
+
+  .concerns-root .concerns-container .header-section .user-profile {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .action-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .search-group {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    flex: 1 1 auto;
+  }
+
+  .search-input {
+    min-width: 0;
+    max-width: none;
+  }
+
+  .concerns-list {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .concern-card {
+    border-radius: 12px;
+  }
+
+  .card-header {
+    padding: 14px 16px;
+  }
+
+  .card-body {
+    padding: 16px 16px 10px;
+  }
+
+  .card-footer {
+    padding: 10px 10px 12px;
+  }
+
+  .modal-content {
+    max-width: 98%;
+    max-height: 80vh;
+    border-radius: 12px;
+  }
+
+  .modal-header {
+    padding: 16px 18px;
+  }
+
+  .modal-title {
+    font-size: 20px;
+  }
+
+  .modal-subtitle {
+    font-size: 12px;
+  }
+
+  .close-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 24px;
+  }
+
+  .modal-body {
+    padding: 0 18px 16px;
+  }
+
+  .modal-footer {
+    padding: 14px 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .concerns-root .concerns-container {
+    padding: 10px;
+  }
+
+  .concerns-root .concerns-container .header-section {
+    padding: 12px;
+    margin-bottom: 18px;
+  }
+
+  .concerns-root .concerns-container .header-section .header-content h1 {
+    font-size: 20px;
+  }
+
+  .concerns-root .concerns-container .header-section .header-content p {
+    font-size: 11px;
+  }
+
+  .concerns-root .concerns-container .header-section .user-profile {
+    display: none;
+  }
+
+  .search-input {
+    padding: 10px 14px;
+    font-size: 13px;
+    border-radius: 999px;
+  }
+
+  .search-btn {
+    display: none;
+  }
+
+  .concerns-list {
+    gap: 14px;
+  }
+
+  .concern-card {
+    border-radius: 12px;
+  }
+
+  .card-header {
+    padding: 12px 14px;
+  }
+
+  .header-content h3 {
+    font-size: 1.1rem;
+  }
+
+  .concern-type {
+    font-size: 0.7rem;
+    padding: 3px 10px;
+  }
+
+  .status-badge {
+    font-size: 0.7rem;
+    padding: 3px 12px;
+  }
+
+  .card-body {
+    padding: 14px 14px 10px;
+  }
+
+  .description {
+    font-size: 0.85rem;
+  }
+
+  .meta-item {
+    font-size: 0.8rem;
+
+    .label {
+      font-size: 0.8rem;
+    }
+
+    .value {
+      font-size: 0.8rem;
+    }
+  }
+
+  .card-footer {
+    padding: 10px 10px 12px;
+  }
+
+  .action-btn {
+    font-size: 0.85rem;
+    padding: 9px 10px;
+  }
+
+  .modal-content {
+    max-width: 98%;
+    max-height: 75vh;
+    border-radius: 12px;
+  }
+
+  .modal-header {
+    padding: 14px 16px;
+  }
+
+  .modal-title {
+    font-size: 18px;
+  }
+
+  .modal-subtitle {
+    font-size: 11px;
+  }
+
+  .close-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 22px;
+  }
+
+  .modal-body {
+    padding: 0 16px 14px;
+  }
+
+  .concern-info {
+    padding: 10px 14px;
+
+    p {
+      font-size: 12px;
+    }
+  }
+
+  .updates-panel {
+    padding: 10px;
+  }
+
+  .updates-header h3 {
+    font-size: 13px;
+  }
+
+  .updates-list {
+    max-height: 180px;
+  }
+
+  .update-item {
+    padding: 8px 10px;
+  }
+
+  .update-time {
+    font-size: 10px;
+  }
+
+  .update-text {
+    font-size: 12px;
+  }
+
+  .form-group {
+    margin-bottom: 18px;
+  }
+
+  .form-label {
+    font-size: 13px;
+  }
+
+  .form-input,
+  .form-textarea {
+    padding: 11px 13px;
+    font-size: 13px;
+  }
+
+  .form-textarea {
+    min-height: 100px;
+  }
+
+  .modal-footer {
+    padding: 12px 16px;
+  }
+
+  .btn-cancel,
+  .btn-create {
+    padding: 9px 20px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 320px) {
+  .concerns-root .concerns-container {
+    padding: 8px;
+  }
+
+  .concerns-root .concerns-container .header-section {
+    padding: 10px;
+    margin-bottom: 16px;
+  }
+
+  .concerns-root .concerns-container .header-section .header-content h1 {
+    font-size: 18px;
+  }
+
+  .concerns-root .concerns-container .header-section .header-content p {
+    font-size: 10px;
+  }
+
+  .action-bar {
+    gap: 10px;
+  }
+
+  .search-input {
+    padding: 9px 12px;
+    font-size: 12px;
+  }
+
+  .concerns-list {
+    gap: 12px;
+  }
+
+  .concern-card {
+    border-radius: 12px;
+  }
+
+  .card-header {
+    padding: 10px 12px;
+  }
+
+  .header-content h3 {
+    font-size: 1rem;
+  }
+
+  .concern-type {
+    font-size: 0.65rem;
+    padding: 3px 8px;
+  }
+
+  .status-badge {
+    font-size: 0.65rem;
+    padding: 3px 10px;
+  }
+
+  .card-body {
+    padding: 12px 12px 8px;
+  }
+
+  .description {
+    font-size: 0.8rem;
+    margin-bottom: 12px;
+  }
+
+  .meta-item {
+    font-size: 0.75rem;
+
+    .label {
+      font-size: 0.75rem;
+    }
+
+    .value {
+      font-size: 0.75rem;
+    }
+  }
+
+  .card-footer {
+    padding: 8px 8px 10px;
+  }
+
+  .action-btn {
+    font-size: 0.8rem;
+    padding: 8px 10px;
+  }
+
+  .modal-content {
+    max-width: 98%;
+    max-height: 70vh;
+    border-radius: 12px;
+  }
+
+  .modal-header {
+    padding: 12px 14px;
+  }
+
+  .modal-title {
+    font-size: 16px;
+  }
+
+  .modal-subtitle {
+    font-size: 10px;
+  }
+
+  .close-btn {
+    width: 26px;
+    height: 26px;
+    font-size: 20px;
+  }
+
+  .modal-body {
+    padding: 0 14px 12px;
+  }
+
+  .concern-info {
+    padding: 8px 12px;
+
+    p {
+      font-size: 11px;
+      margin: 6px 0;
+    }
+  }
+
+  .updates-panel {
+    padding: 8px;
+    margin: 14px 0 18px;
+  }
+
+  .updates-header h3 {
+    font-size: 12px;
+  }
+
+  .updates-list {
+    max-height: 160px;
+    gap: 10px;
+  }
+
+  .update-item {
+    padding: 7px 9px;
+  }
+
+  .update-time {
+    font-size: 9px;
+  }
+
+  .update-text {
+    font-size: 11px;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-label {
+    font-size: 12px;
+  }
+
+  .form-input,
+  .form-textarea {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+
+  .form-textarea {
+    min-height: 90px;
+  }
+
+  .form-error {
+    font-size: 11px;
+  }
+
+  .form-note {
+    font-size: 11px;
+  }
+
+  .closed-note {
+    padding: 6px 10px;
+  }
+
+  .modal-footer {
+    padding: 10px 14px;
+  }
+
+  .btn-cancel,
+  .btn-create {
+    padding: 8px 18px;
+    font-size: 12px;
+  }
+
+  .alert {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
+  .modal-alert {
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+}

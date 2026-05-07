@@ -591,3 +591,323 @@ html, body, :host, .dashboard-container {
     box-shadow: 0 4px 8px rgba(0, 82, 204, 0.3);
   }
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 15px;
+  }
+
+  .header-section {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 15px;
+    gap: 15px;
+    margin-bottom: 24px;
+  }
+
+  .greeting-area h1 {
+    font-size: 24px;
+  }
+
+  .greeting-area p {
+    font-size: 12px;
+  }
+
+  .user-profile {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .stats-section {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+  }
+
+  .stat-card {
+    padding: 20px;
+    border-radius: 12px;
+  }
+
+  .content-section {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .content-card {
+    border-radius: 12px;
+    height: auto;
+  }
+
+  .card-header {
+    padding: 15px 20px;
+  }
+
+  .item-card {
+    padding: 14px 16px;
+  }
+
+  .modal-content {
+    max-width: 95%;
+    border-radius: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-container {
+    padding: 10px;
+  }
+
+  .header-section {
+    padding: 12px;
+    margin-bottom: 20px;
+  }
+
+  .greeting-area h1 {
+    font-size: 20px;
+  }
+
+  .greeting-area p {
+    font-size: 11px;
+  }
+
+  .profile-badge {
+    width: 45px;
+    height: 45px;
+    font-size: 16px;
+  }
+
+  .profile-info .name {
+    font-size: 14px;
+  }
+
+  .profile-info .email {
+    font-size: 11px;
+  }
+
+  .profile-info .position {
+    font-size: 10px;
+  }
+
+  .user-profile {
+    display: none;
+  }
+
+  .stats-section {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+  }
+
+  .stat-number {
+    font-size: 28px;
+  }
+
+  .content-section {
+    gap: 12px;
+  }
+
+  .content-card {
+    border-radius: 12px;
+    height: auto;
+  }
+
+  .card-header {
+    padding: 12px 16px;
+  }
+
+  .card-header h2 {
+    font-size: 16px;
+  }
+
+  .item-card {
+    padding: 12px 14px;
+  }
+
+  .item-header h3 {
+    font-size: 13px;
+  }
+
+  .item-date {
+    font-size: 11px;
+  }
+
+  .item-description {
+    font-size: 12px;
+  }
+
+  .item-location {
+    font-size: 11px;
+  }
+
+  .modal-content {
+    border-radius: 12px;
+  }
+
+  .modal-header {
+    padding: 16px 20px;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .modal-title {
+    font-size: 18px;
+  }
+
+  .modal-body {
+    padding: 16px 20px;
+  }
+}
+
+@media (max-width: 320px) {
+  .dashboard-container {
+    padding: 8px;
+  }
+
+  .header-section {
+    padding: 10px;
+    margin-bottom: 16px;
+  }
+
+  .greeting-area h1 {
+    font-size: 18px;
+  }
+
+  .greeting-area p {
+    font-size: 10px;
+  }
+
+  .profile-badge {
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+  }
+
+  .profile-info .name {
+    font-size: 13px;
+  }
+
+  .profile-info .email {
+    font-size: 10px;
+  }
+
+  .profile-info .position {
+    font-size: 9px;
+  }
+
+  .stats-section {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .stat-card {
+    padding: 14px;
+    border-radius: 12px;
+  }
+
+  .stat-label {
+    font-size: 10px;
+  }
+
+  .stat-number {
+    font-size: 24px;
+  }
+
+  .content-section {
+    gap: 10px;
+  }
+
+  .content-card {
+    border-radius: 12px;
+    height: auto;
+  }
+
+  .card-header {
+    padding: 10px 14px;
+  }
+
+  .card-header h2 {
+    font-size: 15px;
+  }
+
+  .view-all {
+    font-size: 13px;
+  }
+
+  .item-card {
+    padding: 10px 12px;
+  }
+
+  .item-header h3 {
+    font-size: 12px;
+  }
+
+  .item-date {
+    font-size: 10px;
+  }
+
+  .item-description {
+    font-size: 11px;
+  }
+
+  .item-location {
+    font-size: 10px;
+  }
+
+  .item-status {
+    padding: 3px 8px;
+    font-size: 10px;
+  }
+
+  .modal-content {
+    border-radius: 12px;
+  }
+
+  .modal-header {
+    padding: 14px 18px;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .modal-title {
+    font-size: 16px;
+  }
+
+  .close-btn {
+    font-size: 18px;
+    padding: 5px 7px;
+    border-radius: 6px;
+  }
+
+  .modal-body {
+    padding: 14px 18px;
+  }
+
+  .modal-description {
+    font-size: 13px;
+  }
+
+  .modal-info-row {
+    font-size: 13px;
+    margin-bottom: 14px;
+  }
+
+  .event-status-badge,
+  .task-status-badge {
+    padding: 3px 10px;
+    font-size: 11px;
+    border-radius: 12px;
+  }
+
+  .btn-view-full {
+    padding: 9px 24px;
+    font-size: 13px;
+    border-radius: 6px;
+  }
+}
