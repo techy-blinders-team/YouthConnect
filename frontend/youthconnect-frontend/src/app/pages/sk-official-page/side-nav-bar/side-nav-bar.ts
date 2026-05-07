@@ -13,6 +13,21 @@ import { CommonModule } from '@angular/common';
 export class SideNavBar {
   private authService = inject(AuthService);
   isLoggingOut = false;
+  isMobileMenuOpen = false;
+
+  toggleMobileMenu(): void {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+    if (this.isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+  }
+
+  closeMobileMenu(): void {
+    this.isMobileMenuOpen = false;
+    document.body.style.overflow = '';
+  }
 
   logout(): void {
     this.isLoggingOut = true;
