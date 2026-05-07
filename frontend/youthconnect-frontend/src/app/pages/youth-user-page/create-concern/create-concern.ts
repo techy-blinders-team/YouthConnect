@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ConcernService, ConcernResponse } from '../../../services/concern.service';
+import { ConcernService, ConcernResponse, ConcernUpdate } from '../../../services/concern.service';
 import { AuthService } from '../../../services/auth.service';
 
 @Component({
@@ -17,14 +17,19 @@ export class CreateConcern implements OnInit {
 
   showModal = false;
   showDeleteModal = false;
+  showDetailsModal = false;
   concernForm: FormGroup;
   editingConcernId: number | null = null;
   concernToDelete: ConcernResponse | null = null;
+  selectedConcern: ConcernResponse | null = null;
   youthId: number = 0;
   isLoading = false;
+  isLoadingUpdates = false;
   errorMessage = '';
   successMessage = '';
+  updateLoadError = '';
   expandedConcernId: number | null = null;
+  concernUpdates: ConcernUpdate[] = [];
 
   concerns: ConcernResponse[] = [];
   filteredConcerns: ConcernResponse[] = [];
@@ -209,11 +214,25 @@ export class CreateConcern implements OnInit {
     this.errorMessage = '';
   }
 
+  openConcernDetails(concern: ConcernResponse): void {
+    this.selectedConcern = concern;
+    this.showDetailsModal = true;
+    this.updateLoadError = '';
+    this.loadConcernUpdates(concern.concernId);
+  }
+
   closeModal() {
     this.showModal = false;
     this.editingConcernId = null;
     this.concernForm.reset();
     this.errorMessage = '';
+  }
+
+  closeConcernDetails(): void {
+    this.showDetailsModal = false;
+    this.selectedConcern = null;
+    this.concernUpdates = [];
+    this.updateLoadError = '';
   }
 
   showSuccessToast(message: string): void {
@@ -227,6 +246,23 @@ export class CreateConcern implements OnInit {
     this.expandedConcernId = this.expandedConcernId === concernId ? null : concernId;
   }
 
+  loadConcernUpdates(concernId: number): void {
+    this.isLoadingUpdates = true;
+    this.updateLoadError = '';
+
+    this.concernService.getConcernUpdates(concernId).subscribe({
+      next: (updates) => {
+        this.concernUpdates = updates;
+        this.isLoadingUpdates = false;
+      },
+      error: (error) => {
+        console.error('Error loading concern updates:', error);
+        this.updateLoadError = 'Failed to load updates. Please try again.';
+        this.isLoadingUpdates = false;
+      }
+    });
+  }
+
   getTimeAgo(dateString: string): string {
     const date = new Date(dateString);
     const now = new Date();
@@ -238,6 +274,17 @@ export class CreateConcern implements OnInit {
     if (seconds < 604800) return `${Math.floor(seconds / 86400)} days ago`;
 
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   }
 
   getConcernTypeIcon(type: string): string {

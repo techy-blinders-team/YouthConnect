@@ -3,6 +3,7 @@ package com.youthconnect.youthconnect_id.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -40,6 +41,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/register").permitAll()
                 .requestMatchers("/api/admin/auth/**").permitAll()
                 .requestMatchers("/api/password-reset/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/concerns/*/updates").permitAll()
                 
                 // Admin endpoints - Require ADMIN or SK_OFFICIAL role
                 .requestMatchers("/api/admin/users/**").hasAnyRole("ADMIN", "SK_OFFICIAL")

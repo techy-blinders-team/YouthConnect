@@ -60,6 +60,16 @@ public class ConcernController {
         }
     }
 
+    @GetMapping("/{concernId}/updates")
+    @RateLimit(type = RateLimitType.GENERAL_API, useIpAddress = false)
+    public ResponseEntity<?> getConcernUpdates(@PathVariable int concernId) {
+        try {
+            return ResponseEntity.ok(concernService.getConcernUpdates(concernId));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed: " + e.getMessage());
+        }
+    }
+
     @PutMapping("/{concernId}")
     @RateLimit(type = RateLimitType.GENERAL_API, useIpAddress = false)
     public ResponseEntity<?> editConcern(@PathVariable int concernId,

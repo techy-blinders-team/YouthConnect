@@ -26,6 +26,15 @@ export interface ConcernResponse {
     updatedAt?: string;
 }
 
+export interface ConcernUpdate {
+    updateId: number;
+    concernId: number;
+    updatedByAdminId?: number;
+    updateText: string;
+    status: 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED';
+    createdAt: string;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -60,5 +69,9 @@ export class ConcernService {
 
     getAllConcernsForSkOfficial(): Observable<ConcernResponse[]> {
         return this.http.get<ConcernResponse[]>(this.adminConcernsUrl);
+    }
+
+    getConcernUpdates(concernId: number): Observable<ConcernUpdate[]> {
+        return this.http.get<ConcernUpdate[]>(`${this.apiUrl}/${concernId}/updates`);
     }
 }
