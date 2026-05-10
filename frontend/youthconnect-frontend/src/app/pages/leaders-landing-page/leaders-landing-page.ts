@@ -97,6 +97,40 @@ export class LeadersLandingPage implements OnInit, OnDestroy {
     return this.currentSkOfficialSet.images[3];
   }
 
+  // Static images for mobile view (always show the same officials)
+  get official5Image(): string {
+    return '/assets/sk-official-5.png';
+  }
+
+  get official6Image(): string {
+    return '/assets/sk-official-6.png';
+  }
+
+  get official7Image(): string {
+    return '/assets/sk-official-7.png';
+  }
+
+  get official8Image(): string {
+    return '/assets/sk-official-8.png';
+  }
+
+  // Static getters for mobile - always show officials 1-4 regardless of carousel
+  get official1ImageStatic(): string {
+    return '/assets/sk-official-1.png';
+  }
+
+  get official2ImageStatic(): string {
+    return '/assets/sk-official-2.png';
+  }
+
+  get official3ImageStatic(): string {
+    return '/assets/sk-official-3.png';
+  }
+
+  get official4ImageStatic(): string {
+    return '/assets/sk-official-4.png';
+  }
+
   navigateTo(route: string): void {
     this.router.navigate([route]);
   }

@@ -8,7 +8,23 @@ import { Router, RouterLink } from "@angular/router";
   styleUrl: './navigation-bar.scss',
 })
 export class NavigationBar {
+  isMenuOpen = false;
+
   constructor(private router: Router) { }
+
+  toggleMenu(): void {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  handleNavClick(route: string): void {
+    this.isMenuOpen = false;
+    
+    if (route === 'home') {
+      this.scrollToTop();
+    } else {
+      this.navigateTo(route);
+    }
+  }
 
   navigateTo(route: string): void {
     if (route === '/about') {

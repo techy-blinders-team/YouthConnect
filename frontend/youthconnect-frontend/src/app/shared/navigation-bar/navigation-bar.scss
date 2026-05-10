@@ -11,13 +11,55 @@
     background: transparent;
 
     .logo {
-
         display: flex;
         gap: 10px;
+        cursor: pointer;
+        z-index: 101;
 
         img {
             height: 50px;
             width: auto;
+        }
+    }
+
+    .hamburger {
+        display: none;
+        flex-direction: column;
+        justify-content: space-around;
+        width: 30px;
+        height: 25px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        z-index: 101;
+        transition: all 0.3s ease;
+
+        .hamburger-line {
+            width: 100%;
+            height: 3px;
+            background-color: white;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            transform-origin: center;
+        }
+
+        &.active {
+            .hamburger-line:nth-child(1) {
+                transform: rotate(45deg) translateY(10px);
+            }
+
+            .hamburger-line:nth-child(2) {
+                opacity: 0;
+            }
+
+            .hamburger-line:nth-child(3) {
+                transform: rotate(-45deg) translateY(-10px);
+            }
+        }
+
+        &:hover .hamburger-line {
+            background-color: rgba(255, 255, 255, 0.8);
         }
     }
 
@@ -38,6 +80,151 @@
             &:hover {
                 opacity: 0.85;
                 transform: translateY(-1px);
+            }
+        }
+    }
+}
+
+@media (max-width: 1024px) {
+    .header {
+        padding: 20px 40px;
+
+        .logo img {
+            height: 45px;
+        }
+
+        .nav-menu {
+            gap: 32px;
+
+            .nav-link {
+                font-size: 18px;
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        padding: 16px 24px;
+        background: rgba(0, 0, 0, 0.9);
+        backdrop-filter: blur(10px);
+
+        .logo img {
+            height: 40px;
+        }
+
+        .hamburger {
+            display: flex;
+        }
+
+        .nav-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            height: 100vh;
+            width: 70%;
+            max-width: 300px;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 32px;
+            transition: right 0.3s ease-in-out;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+
+            &.active {
+                right: 0;
+            }
+
+            .nav-link {
+                font-size: 18px;
+                padding: 12px 24px;
+                width: 80%;
+                text-align: center;
+                border-radius: 8px;
+                transition: all 0.3s ease;
+
+                &:hover {
+                    background: rgba(255, 255, 255, 0.1);
+                    transform: translateY(0);
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 640px) {
+    .header {
+        padding: 14px 20px;
+        background: rgba(0, 0, 0, 0.9);
+
+        .logo img {
+            height: 35px;
+        }
+
+        .nav-menu {
+            width: 75%;
+
+            .nav-link {
+                font-size: 16px;
+            }
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 12px 16px;
+        background: rgba(0, 0, 0, 0.9);
+
+        .logo {
+            gap: 8px;
+
+            img {
+                height: 32px;
+            }
+        }
+
+        .hamburger {
+            width: 28px;
+            height: 22px;
+
+            .hamburger-line {
+                height: 2.5px;
+            }
+        }
+
+        .nav-menu {
+            width: 80%;
+
+            .nav-link {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+        }
+    }
+}
+
+@media (max-width: 360px) {
+    .header {
+        padding: 10px 12px;
+
+        .logo img {
+            height: 28px;
+        }
+
+        .hamburger {
+            width: 26px;
+            height: 20px;
+        }
+
+        .nav-menu {
+            width: 85%;
+
+            .nav-link {
+                font-size: 15px;
+                padding: 8px 16px;
             }
         }
     }
