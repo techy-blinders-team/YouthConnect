@@ -292,10 +292,32 @@
 	.action-grid {
 		grid-template-columns: 1fr;
 		gap: 18px;
+		max-width: 100%;
+	}
+
+	.left-action-card {
+		transform: none;
 	}
 
 	.card-header {
 		font-size: 18px;
+		padding: 8px 14px;
+	}
+
+	.left-card-header {
+		font-size: 18px;
+		padding: 8px 14px;
+	}
+
+	.backup-icon {
+		width: 32px;
+		height: 32px;
+	}
+
+	.restore-icon {
+		width: 40px;
+		height: 40px;
+		margin: 0;
 	}
 
 	.card-description,
@@ -304,12 +326,38 @@
 		font-size: 13px;
 	}
 
+	.card-body {
+		padding: 10px 12px 12px;
+	}
+
+	.card-description,
+	.card-warning {
+		min-height: 0;
+		margin-bottom: 10px;
+	}
+
 	.card-action {
+		font-size: 14px;
+	}
+
+	.restore-card-action {
+		transform: none;
+		margin-top: 10px;
 		font-size: 14px;
 	}
 
 	.info-title {
 		font-size: 14px;
+	}
+
+	.info-card {
+		margin-top: 20px;
+		min-height: 0;
+		padding: 10px 12px 12px;
+	}
+
+	.info-list {
+		gap: 12px;
 	}
 
 	.confirm-modal h3 {

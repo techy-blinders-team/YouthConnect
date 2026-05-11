@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
 import { AuthService } from '../../../../services/auth.service';
@@ -11,6 +11,8 @@ import { AdminInfoService } from '../../../../services/admin-auth.service';
   styleUrl: './administrator-sidebar.scss',
 })
 export class AdministratorSidebar {
+  @Output() navigate = new EventEmitter<void>();
+
   router = inject(Router);
   authService = inject(AuthService);
   adminInfoService = inject(AdminInfoService);
@@ -19,6 +21,10 @@ export class AdministratorSidebar {
 
   isRouteActive(path: string): boolean {
     return this.router.url === path;
+  }
+
+  handleNavigation(): void {
+    this.navigate.emit();
   }
 
   logout(): void {

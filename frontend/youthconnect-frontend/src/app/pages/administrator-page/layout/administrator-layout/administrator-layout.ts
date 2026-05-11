@@ -11,5 +11,13 @@ import { AdministratorSidebar } from '../administrator-sidebar/administrator-sid
   styleUrl: './administrator-layout.scss',
 })
 export class AdministratorLayout {
-  
+  isSidebarOpen = false;
+
+  toggleSidebar(): void {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+  closeSidebar(): void {
+    this.isSidebarOpen = false;
+  }
 }

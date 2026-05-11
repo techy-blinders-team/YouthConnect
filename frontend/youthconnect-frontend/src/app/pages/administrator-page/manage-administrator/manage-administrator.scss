@@ -403,9 +403,21 @@ th:nth-child(6) {
 	}
 
 	.pagination-bar {
-		bottom: calc(0.2rem + env(safe-area-inset-bottom));
-		max-width: calc(100vw - 1.1rem);
-		overflow: visible;
+		left: 50%;
+		bottom: calc(0.35rem + env(safe-area-inset-bottom));
+		transform: translateX(-50%);
+		max-width: calc(100vw - 1.5rem);
+		padding: 0.35rem 0.55rem;
+		gap: 0.3rem;
+		background: #e7e7e7;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+	}
+
+	.pagination-button {
+		min-width: 30px;
+		height: 28px;
+		font-size: 0.78rem;
+		padding: 0 0.35rem;
 	}
 
 	table {

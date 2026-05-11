@@ -2,12 +2,12 @@
     <div class="left">
         <div class="content-container">
            <div class="child-1">
-                <img src="../../../assets/yc-logo.png"
-                        alt="YouthConnect Logo"
-                        class="youthconnect-logo">
-                <img src="../../../assets/sk-logo.png"
-                        alt="Sangguniang Kabataan"
-                        class="sk-logo">
+            <img src="../../../assets/sk-logo.png"
+                alt="Sangguniang Kabataan"
+                class="sk-logo">
+            <img src="../../../assets/yc-logo.png"
+                alt="YouthConnect Logo"
+                class="youthconnect-logo">
            </div>
            <div class="child-2">YouthConnect</div>
            <div class="child-3">
@@ -18,6 +18,10 @@
     
     <div class="right">
         <form class="login-container" [formGroup]="loginForm" (ngSubmit)="login()">
+            <div class="mobile-logo-row">
+                <img src="../../../assets/sk-logo.png" alt="Sangguniang Kabataan" class="mobile-logo sk-logo-mobile">
+                <img src="../../../assets/yc-logo.png" alt="YouthConnect Logo" class="mobile-logo youthconnect-logo-mobile">
+            </div>
             <img
                 src="../../../assets/yc-logo.png"
                 alt="YouthConnect Logo"
