@@ -8,26 +8,8 @@
 
 .youth-content {
     flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: hidden;
     background: #fff;
-    padding: 20px;
+    padding: 0;
     position: relative;
-
-    &::-webkit-scrollbar {
-        width: 10px;
-    }
-
-    &::-webkit-scrollbar-track {
-        background: #f1f1f1;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background: #888;
-        border-radius: 5px;
-    }
-
-    &::-webkit-scrollbar-thumb:hover {
-        background: #555;
-    }
 }
