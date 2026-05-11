@@ -1,7 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { NotificationService, NotificationResponse } from '../../../services/notification.service';
+import { EventService, EventResponse } from '../../../services/event.service';
 import { AuthService } from '../../../services/auth.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-notification',
@@ -12,6 +15,8 @@ import { AuthService } from '../../../services/auth.service';
 export class NotificationPage implements OnInit {
   private notificationService = inject(NotificationService);
   private authService = inject(AuthService);
+  private eventService = inject(EventService);
+  private router = inject(Router);
 
   activeFilter: 'all' | 'unread' = 'all';
   notifications: NotificationResponse[] = [];
@@ -52,9 +57,34 @@ export class NotificationPage implements OnInit {
 
   loadNotifications(): void {
     this.isLoading = true;
-    this.notificationService.getNotificationsByYouthId(this.youthId).subscribe({
-      next: (data) => {
-        this.notifications = data;
+    
+    // Fetch both concern notifications and event notifications
+    forkJoin({
+      concernNotifications: this.notificationService.getNotificationsByYouthId(this.youthId),
+      events: this.eventService.getAllEvents()
+    }).subscribe({
+      next: (result) => {
+        // Combine concern notifications with event notifications
+        const concernNotifs = result.concernNotifications;
+        
+        // Create event notifications for all new events
+        const eventNotifs: NotificationResponse[] = result.events.map(event => ({
+          updateId: event.eventId + 100000, // Offset to avoid ID collision
+          eventId: event.eventId,
+          eventTitle: event.title,
+          eventDate: event.eventDate,
+          eventLocation: event.location,
+          updateText: `New event: ${event.title}`,
+          updatedByAdminName: 'SK Official',
+          createdAt: event.createdAt,
+          notificationType: 'event' as const
+        }));
+        
+        // Combine and sort by date (newest first)
+        this.notifications = [...concernNotifs, ...eventNotifs].sort((a, b) => 
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        
         this.isLoading = false;
         this.updateUnreadCount();
       },
@@ -92,11 +122,43 @@ export class NotificationPage implements OnInit {
       this.saveReadNotificationsToStorage();
       this.updateUnreadCount();
     }
+    
+    // Navigate to event page if it's an event notification
+    if (notification.notificationType === 'event' && notification.eventId) {
+      // Store the event ID in session storage so the event page can highlight it
+      sessionStorage.setItem('highlightEventId', notification.eventId.toString());
+      this.router.navigate(['/youth/events']);
+    }
   }
 
-  getNotificationColor(index: number): 'red' | 'blue' | 'yellow' {
-    const colors: ('red' | 'blue' | 'yellow')[] = ['red', 'blue', 'yellow'];
-    return colors[index % 3];
+  getNotificationIcon(notification: NotificationResponse): string {
+    if (notification.notificationType === 'event') {
+      return 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z';
+    }
+    return 'M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z';
+  }
+
+  getNotificationTitle(notification: NotificationResponse): string {
+    if (notification.notificationType === 'event') {
+      return `New Event: ${notification.eventTitle}`;
+    }
+    return `${notification.updatedByAdminName || 'SK Official'} replied to your concern`;
+  }
+
+  getNotificationSubtitle(notification: NotificationResponse): string {
+    if (notification.notificationType === 'event') {
+      const eventDate = new Date(notification.eventDate!);
+      return `${eventDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} at ${notification.eventLocation}`;
+    }
+    return `Re: ${notification.concernTitle}`;
+  }
+
+  getNotificationColor(notification: NotificationResponse): 'red' | 'blue' | 'yellow' {
+    if (notification.notificationType === 'event') {
+      return 'yellow';
+    }
+    const colors: ('red' | 'blue')[] = ['red', 'blue'];
+    return colors[notification.updateId % 2];
   }
 
   getTimeAgo(dateString: string): string {

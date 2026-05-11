@@ -4,11 +4,17 @@ import { Observable, BehaviorSubject } from 'rxjs';
 
 export interface NotificationResponse {
     updateId: number;
-    concernId: number;
-    concernTitle: string;
+    concernId?: number;
+    concernTitle?: string;
     updateText: string;
     updatedByAdminName: string;
     createdAt: string;
+    // Event notification fields
+    eventId?: number;
+    eventTitle?: string;
+    eventDate?: string;
+    eventLocation?: string;
+    notificationType: 'concern' | 'event';
 }
 
 @Injectable({
@@ -23,6 +29,14 @@ export class NotificationService {
 
     getNotificationsByYouthId(youthId: number): Observable<NotificationResponse[]> {
         return this.http.get<NotificationResponse[]>(`${this.apiUrl}/youth/${youthId}`);
+    }
+
+    getEventNotifications(): Observable<NotificationResponse[]> {
+        return this.http.get<NotificationResponse[]>(`${this.apiUrl}/events`);
+    }
+
+    getAllNotifications(youthId: number): Observable<NotificationResponse[]> {
+        return this.http.get<NotificationResponse[]>(`${this.apiUrl}/all/${youthId}`);
     }
 
     updateUnreadCount(count: number): void {

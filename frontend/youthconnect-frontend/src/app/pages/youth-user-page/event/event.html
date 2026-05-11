@@ -66,8 +66,10 @@
 
         <!-- Events List -->
         <div class="events-list" *ngIf="!isLoading || events.length > 0">
-            <div class="event-card" *ngFor="let event of paginatedEvents; let i = index"
-                [ngClass]="'event-' + getEventColor(i)">
+            <div class="event-card" 
+                *ngFor="let event of paginatedEvents; let i = index"
+                [id]="'event-' + event.eventId"
+                [ngClass]="['event-' + getEventColor(i), isHighlighted(event.eventId) ? 'highlight-event' : '']">
                 <div class="event-info">
                     <div class="event-title-row">
                         <h3>{{ event.title }}</h3>
