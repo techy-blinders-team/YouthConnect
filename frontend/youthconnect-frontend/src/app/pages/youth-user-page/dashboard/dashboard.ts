@@ -146,4 +146,23 @@ export class Dashboard implements OnInit {
 
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   }
+
+  getStatClass(index: number): string {
+    const classes = ['yellow-border', 'blue-border', 'red-border', 'gray-border'];
+    return classes[index] || 'yellow-border';
+  }
+
+  getItemColor(index: number): string {
+    const colors = ['red', 'blue', 'yellow', 'gray'];
+    return colors[index % colors.length];
+  }
+
+  getInitials(): string {
+    if (!this.userName) return 'YM';
+    const names = this.userName.split(' ');
+    if (names.length >= 2) {
+      return (names[0][0] + names[names.length - 1][0]).toUpperCase();
+    }
+    return this.userName.substring(0, 2).toUpperCase();
+  }
 }
