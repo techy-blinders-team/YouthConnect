@@ -4,11 +4,18 @@
         <img src="assets/barangay-logo.png">
         <img src="assets/youthconnect-logo.png" alt="YouthConnect Logo" />
     </div>
-    <nav class="nav-menu">
-        <a (click)="scrollToTop()" class="nav-link">Home</a>
-        <a (click)="navigateTo('/about')" class="nav-link">About</a>
-        <a (click)="navigateTo('/projects')" class="nav-link">Projects</a>
-        <a (click)="navigateTo('/leaders')" class="nav-link">Leaders</a>
-        <a (click)="navigateTo('/login')" class="nav-link">Login</a>
+    
+    <button class="hamburger" [class.active]="isMenuOpen" (click)="toggleMenu()" aria-label="Toggle menu">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+    </button>
+    
+    <nav class="nav-menu" [class.active]="isMenuOpen">
+        <a (click)="handleNavClick('home')" class="nav-link">Home</a>
+        <a (click)="handleNavClick('/about')" class="nav-link">About</a>
+        <a (click)="handleNavClick('/projects')" class="nav-link">Projects</a>
+        <a (click)="handleNavClick('/leaders')" class="nav-link">Leaders</a>
+        <a (click)="handleNavClick('/login')" class="nav-link">Login</a>
     </nav>
 </header>
