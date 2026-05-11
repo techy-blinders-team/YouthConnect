@@ -774,55 +774,76 @@ body,
 }
 
 @media (max-width: 768px) {
-  .youth-profiling-container {
+  .profiling-root .youth-profiling-container {
     padding: 15px;
   }
 
-  .search-group {
-    min-width: auto;
-  }
-
-  .search-input {
-    min-width: auto;
-  }
-
-  .approval-panel {
-    width: 100vw;
-    right: -100vw;
-  }
-
-  .profiling-header {
+  .profiling-root .youth-profiling-container .header-section {
     flex-direction: column;
     align-items: flex-start;
+    gap: 12px;
     padding: 15px;
+    margin-bottom: 20px;
+  }
 
-    h1 {
-      font-size: 24px;
-    }
+  .profiling-root .youth-profiling-container .header-section .header-content h1 {
+    font-size: 24px;
+  }
 
-    .subtitle {
-      font-size: 12px;
-    }
+  .profiling-root .youth-profiling-container .header-section .header-content p {
+    font-size: 12px;
+  }
+
+  .profiling-root .youth-profiling-container .header-section .user-profile {
+    width: 100%;
+    justify-content: flex-start;
   }
 
   .search-section {
     flex-direction: column;
     align-items: stretch;
-    padding: 15px;
+    gap: 12px;
   }
 
-  .search-box {
-    flex-direction: column;
+  .search-group {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    flex: 1 1 auto;
+  }
+
+  .search-input {
+    min-width: 0;
+    max-width: none;
+  }
+
+  .search-btn {
+    width: 100%;
   }
 
   .export-buttons {
     width: 100%;
+    margin-left: 0;
+    flex-wrap: wrap;
 
-    .btn {
+    .btn-approval-panel {
+      width: 100%;
+      order: -1;
+      font-size: 13px;
+      padding: 10px 16px;
+    }
+
+    .btn-pdf,
+    .btn-excel {
       flex: 1;
       font-size: 13px;
       padding: 10px 16px;
     }
+  }
+
+  .approval-panel {
+    width: 100vw;
+    right: -100vw;
   }
 
   .profiles-table {
@@ -842,40 +863,118 @@ body,
     padding: 4px 8px;
     font-size: 11px;
   }
+
+  .results-footer {
+    text-align: center;
+  }
+
+  .modal-content {
+    max-width: 98%;
+    max-height: 80vh;
+    border-radius: 12px;
+  }
+
+  .modal-content.modal-small {
+    max-width: 95%;
+    max-height: auto;
+  }
+
+  .modal-details {
+    max-width: 98%;
+    max-height: 80vh;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-header {
+    padding: 16px 18px;
+  }
+
+  .modal-title {
+    font-size: 20px;
+  }
+
+  .modal-subtitle {
+    font-size: 12px;
+  }
+
+  .close-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+  }
+
+  .modal-body {
+    padding: 0 18px;
+  }
+
+  .modal-footer {
+    padding: 14px 18px;
+  }
 }
 
 @media (max-width: 480px) {
-  .youth-profiling-container {
+  .profiling-root .youth-profiling-container {
     padding: 10px;
   }
 
-  .profiling-header {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 10px;
+  .profiling-root .youth-profiling-container .header-section {
+    padding: 12px;
+    margin-bottom: 18px;
+  }
 
-    h1 {
-      font-size: 18px;
-    }
+  .profiling-root .youth-profiling-container .header-section .header-content h1 {
+    font-size: 20px;
+  }
 
-    .subtitle {
-      font-size: 11px;
-    }
+  .profiling-root .youth-profiling-container .header-section .header-content p {
+    font-size: 11px;
+  }
+
+  .profiling-root .youth-profiling-container .header-section .user-profile {
+    display: none;
   }
 
   .search-input {
     font-size: 13px;
-    padding: 10px;
+    padding: 10px 14px;
+    border-radius: 999px;
   }
 
   .search-btn {
-    font-size: 12px;
-    padding: 10px 16px;
+    display: none;
   }
 
-  .btn {
-    padding: 10px 14px;
+  .export-buttons {
+    gap: 8px;
+
+    .btn-approval-panel {
+      width: 100%;
+      order: -1;
+      font-size: 12px;
+      padding: 10px 14px;
+    }
+
+    .btn-pdf,
+    .btn-excel {
+      flex: 1;
+      padding: 10px 14px;
+      font-size: 12px;
+    }
+  }
+
+  .btn-approval-panel {
     font-size: 11px;
+    padding: 10px 12px;
+  }
+
+  .notification-badge {
+    min-width: 16px;
+    height: 16px;
+    font-size: 9px;
+    padding: 2px 4px;
   }
 
   .profiles-table-container {
@@ -890,6 +989,410 @@ body,
     td {
       padding: 8px;
     }
+  }
+
+  .btn-icon {
+    width: 28px;
+    height: 28px;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  .results-footer {
+    text-align: center;
+  }
+
+  .modal-content {
+    max-width: 98%;
+    max-height: 75vh;
+    border-radius: 12px;
+  }
+
+  .modal-content.modal-small {
+    max-width: 95%;
+    max-height: auto;
+  }
+
+  .modal-details {
+    max-width: 98%;
+    max-height: 75vh;
+  }
+
+  .modal-header {
+    padding: 14px 16px;
+  }
+
+  .modal-header-actions {
+    gap: 8px;
+  }
+
+  .modal-status-badge {
+    padding: 5px 10px;
+    font-size: 10px;
+  }
+
+  .modal-title {
+    font-size: 18px;
+  }
+
+  .modal-subtitle {
+    font-size: 11px;
+  }
+
+  .close-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+  }
+
+  .modal-body {
+    padding: 0 16px;
+  }
+
+  .modal-footer {
+    padding: 12px 16px;
+    flex-wrap: wrap;
+
+    .btn-approve,
+    .btn-reject {
+      flex: 1;
+      min-width: 120px;
+      padding: 10px 20px;
+      font-size: 13px;
+    }
+  }
+
+  .form-group {
+    margin-bottom: 14px;
+  }
+
+  .form-label {
+    font-size: 13px;
+  }
+
+  .form-input,
+  .form-textarea,
+  .form-control {
+    padding: 11px 13px;
+    font-size: 13px;
+  }
+
+  .btn-cancel,
+  .btn-create,
+  .btn-delete,
+  .btn-confirm-edit,
+  .btn-confirm-deactivate {
+    padding: 10px 24px;
+    font-size: 13px;
+  }
+
+  .section-title {
+    font-size: 15px;
+  }
+
+  .detail-label {
+    font-size: 11px;
+  }
+
+  .detail-value {
+    font-size: 13px;
+  }
+
+  .approval-panel-header {
+    padding: 16px 16px 12px;
+
+    h2 {
+      font-size: 18px;
+    }
+
+    p {
+      font-size: 12px;
+    }
+  }
+
+  .approval-filter-group {
+    padding: 10px 16px 8px;
+    gap: 6px;
+  }
+
+  .filter-chip {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .approval-list {
+    padding: 12px 16px 20px;
+    gap: 10px;
+  }
+
+  .approval-card {
+    padding: 12px;
+  }
+
+  .approval-card-head h3 {
+    font-size: 14px;
+  }
+
+  .approval-status {
+    font-size: 10px;
+    padding: 3px 7px;
+  }
+
+  .approval-meta {
+    font-size: 12px;
+  }
+
+  .approval-actions {
+    margin-top: 10px;
+    gap: 8px;
+    flex-wrap: wrap;
+
+    button {
+      font-size: 13px;
+    }
+  }
+
+  .btn-see-details {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .btn-approve,
+  .btn-reject {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 320px) {
+  .profiling-root .youth-profiling-container {
+    padding: 8px;
+  }
+
+  .profiling-root .youth-profiling-container .header-section {
+    padding: 10px;
+    margin-bottom: 16px;
+  }
+
+  .profiling-root .youth-profiling-container .header-section .header-content h1 {
+    font-size: 18px;
+  }
+
+  .profiling-root .youth-profiling-container .header-section .header-content p {
+    font-size: 10px;
+  }
+
+  .search-input {
+    font-size: 12px;
+    padding: 9px 12px;
+  }
+
+  .export-buttons {
+    gap: 6px;
+
+    .btn-approval-panel {
+      width: 100%;
+      order: -1;
+      font-size: 11px;
+      padding: 9px 12px;
+    }
+
+    .btn-pdf,
+    .btn-excel {
+      flex: 1;
+      padding: 9px 12px;
+      font-size: 11px;
+    }
+  }
+
+  .btn-approval-panel {
+    font-size: 10px;
+    padding: 9px 10px;
+  }
+
+  .notification-badge {
+    min-width: 14px;
+    height: 14px;
+    font-size: 8px;
+    padding: 1px 3px;
+  }
+
+  .btn-icon {
+    width: 26px;
+    height: 26px;
+
+    svg {
+      width: 13px;
+      height: 13px;
+    }
+  }
+
+  .results-footer {
+    text-align: center;
+  }
+
+  .modal-content {
+    max-width: 98%;
+    max-height: 70vh;
+    border-radius: 12px;
+  }
+
+  .modal-content.modal-small {
+    max-width: 95%;
+    max-height: auto;
+  }
+
+  .modal-details {
+    max-width: 98%;
+    max-height: 70vh;
+  }
+
+  .modal-header {
+    padding: 12px 14px;
+  }
+
+  .modal-header-actions {
+    gap: 6px;
+  }
+
+  .modal-status-badge {
+    padding: 4px 8px;
+    font-size: 9px;
+  }
+
+  .modal-title {
+    font-size: 16px;
+  }
+
+  .modal-subtitle {
+    font-size: 10px;
+  }
+
+  .close-btn {
+    width: 26px;
+    height: 26px;
+    font-size: 14px;
+  }
+
+  .modal-body {
+    padding: 0 14px;
+  }
+
+  .modal-footer {
+    padding: 10px 14px;
+
+    .btn-approve,
+    .btn-reject {
+      padding: 9px 16px;
+      font-size: 12px;
+    }
+  }
+
+  .form-group {
+    margin-bottom: 12px;
+  }
+
+  .form-label {
+    font-size: 12px;
+  }
+
+  .form-input,
+  .form-textarea,
+  .form-control {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+
+  .form-textarea {
+    min-height: 100px;
+  }
+
+  .btn-cancel,
+  .btn-create,
+  .btn-delete,
+  .btn-confirm-edit,
+  .btn-confirm-deactivate {
+    padding: 9px 20px;
+    font-size: 12px;
+  }
+
+  .section-title {
+    font-size: 14px;
+  }
+
+  .detail-label {
+    font-size: 10px;
+  }
+
+  .detail-value {
+    font-size: 12px;
+  }
+
+  .approval-panel-header {
+    padding: 14px 14px 10px;
+
+    h2 {
+      font-size: 16px;
+    }
+
+    p {
+      font-size: 11px;
+    }
+  }
+
+  .approval-filter-group {
+    padding: 8px 14px 6px;
+    gap: 5px;
+  }
+
+  .filter-chip {
+    padding: 5px 8px;
+    font-size: 10px;
+  }
+
+  .approval-list {
+    padding: 10px 14px 18px;
+    gap: 8px;
+  }
+
+  .approval-card {
+    padding: 10px;
+  }
+
+  .approval-card-head h3 {
+    font-size: 13px;
+  }
+
+  .approval-status {
+    font-size: 9px;
+    padding: 3px 6px;
+  }
+
+  .approval-meta {
+    font-size: 11px;
+  }
+
+  .approval-actions {
+    margin-top: 8px;
+    gap: 6px;
+
+    button {
+      font-size: 12px;
+    }
+  }
+
+  .btn-see-details {
+    padding: 9px 14px;
+    font-size: 12px;
+  }
+
+  .btn-approve,
+  .btn-reject {
+    padding: 9px 16px;
+    font-size: 12px;
   }
 }
 
@@ -1492,22 +1995,16 @@ textarea.form-control {
 }
 
 @media (max-width: 768px) {
-  .modal-content {
-    max-width: 100%;
-    max-height: 100vh;
-  }
-
-  .form-row {
+  .details-grid {
     grid-template-columns: 1fr;
   }
-
-  .modal-header {
-    flex-direction: column;
-    gap: 12px;
+  
+  .detail-item.full-width {
+    grid-column: 1;
   }
 
-  .close-btn {
-    align-self: flex-end;
+  .modal-header-actions {
+    flex-wrap: wrap;
   }
 }
 
