@@ -27,6 +27,7 @@ export class EventPage implements OnInit {
     rsvpedEventIds: Set<number> = new Set();
     searchQuery = '';
     selectedStatusFilter: string = 'ALL';
+    highlightedEventId: number | null = null;
 
     // Pagination
     currentPage = 1;
@@ -46,6 +47,14 @@ export class EventPage implements OnInit {
         const user = this.authService.getCurrentUser();
         if (user && user.userId) {
             this.userId = user.userId;
+            
+            // Check if there's a highlighted event from notification
+            const highlightedId = sessionStorage.getItem('highlightEventId');
+            if (highlightedId) {
+                this.highlightedEventId = parseInt(highlightedId);
+                sessionStorage.removeItem('highlightEventId');
+            }
+            
             this.loadEvents();
         } else {
             this.errorMessage = 'Unable to load user information';
@@ -63,6 +72,11 @@ export class EventPage implements OnInit {
                 this.rsvpedEventIds = new Set(result.rsvps.map(r => r.eventId));
                 this.applyFilters();
                 this.isLoading = false;
+                
+                // Scroll to highlighted event if exists
+                if (this.highlightedEventId) {
+                    setTimeout(() => this.scrollToEvent(this.highlightedEventId!), 500);
+                }
             },
             error: (error) => {
                 console.error('Error loading events:', error);
@@ -251,5 +265,22 @@ export class EventPage implements OnInit {
             'Cancelled': 'status-cancelled'
         };
         return statusMap[status] || 'status-default';
+    }
+
+    scrollToEvent(eventId: number): void {
+        const eventElement = document.getElementById(`event-${eventId}`);
+        if (eventElement) {
+            eventElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // Add a highlight animation
+            eventElement.classList.add('highlight-event');
+            setTimeout(() => {
+                eventElement.classList.remove('highlight-event');
+                this.highlightedEventId = null;
+            }, 3000);
+        }
+    }
+
+    isHighlighted(eventId: number): boolean {
+        return this.highlightedEventId === eventId;
     }
 }

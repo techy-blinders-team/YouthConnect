@@ -34,20 +34,22 @@
         </div>
 
         <div class="notifications-list" *ngIf="!isLoading || notifications.length > 0">
-            <div class="notification-card" *ngFor="let notification of filteredNotifications; let i = index"
-                [ngClass]="'notification-' + getNotificationColor(i)" (click)="markAsRead(notification)">
+            <div class="notification-card" *ngFor="let notification of filteredNotifications"
+                [ngClass]="'notification-' + getNotificationColor(notification)" 
+                (click)="markAsRead(notification)"
+                [style.cursor]="'pointer'">
                 <div class="notification-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        <path [attr.d]="getNotificationIcon(notification)"></path>
                     </svg>
                 </div>
                 <div class="notification-info">
                     <div class="notification-title-row">
-                        <h3>{{ notification.updatedByAdminName || 'SK Official' }} replied to your concern</h3>
+                        <h3>{{ getNotificationTitle(notification) }}</h3>
                         <span class="notification-time">{{ getTimeAgo(notification.createdAt) }}</span>
                     </div>
-                    <p class="concern-title">Re: {{ notification.concernTitle }}</p>
+                    <p class="concern-title">{{ getNotificationSubtitle(notification) }}</p>
                     <p class="notification-message">{{ notification.updateText }}</p>
                 </div>
                 <div class="notification-status" *ngIf="!isRead(notification)">
