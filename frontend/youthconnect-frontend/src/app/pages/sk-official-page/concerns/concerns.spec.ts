@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Concerns } from './concerns';
 import { AuthService } from '../../../services/auth.service';
@@ -44,8 +45,10 @@ describe('Concerns', () => {
     });
 
     await TestBed.configureTestingModule({
-      imports: [Concerns, HttpClientTestingModule, ReactiveFormsModule, FormsModule],
+      imports: [Concerns, ReactiveFormsModule, FormsModule],
       providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
         AdminConcernService,
         SkOfficialManagementService,
         { provide: AuthService, useValue: authServiceSpy }
@@ -91,7 +94,7 @@ describe('Concerns', () => {
     expect(skOfficialsReq.request.method).toBe('GET');
     skOfficialsReq.flush(mockSkOfficials);
 
-    // Mock the concerns request (uses absolute URL)
+    // Mock the concerns request (uses environment-based URL)
     const concernsReq = httpMock.expectOne('http://localhost:8080/api/admin/concerns');
     expect(concernsReq.request.method).toBe('GET');
     concernsReq.flush(mockConcerns);

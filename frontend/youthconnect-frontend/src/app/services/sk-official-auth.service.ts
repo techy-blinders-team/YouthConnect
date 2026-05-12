@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment.development';
 
 export interface SkOfficialLoginRequest {
   email: string;
@@ -23,7 +24,7 @@ export interface SkOfficialLoginResponse {
 })
 export class SkOfficialAuthService {
   
-  private apiUrl = 'https://sk183pasay.site/api/admin/auth';
+  private apiUrl = `${environment.apiUrl}/api/admin/auth`;
 
   constructor(private http: HttpClient) { }
 

@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment.development';
 
 export interface ConcernRequest {
     youthId: number;
@@ -40,8 +41,8 @@ export interface ConcernUpdate {
 })
 export class ConcernService {
     private http = inject(HttpClient);
-    private apiUrl = 'https://sk183pasay.site/api/concerns';
-    private adminConcernsUrl = 'https://sk183pasay.site/api/admin/concerns';
+    private apiUrl = `${environment.apiUrl}/api/concerns`;
+    private adminConcernsUrl = `${environment.apiUrl}/api/admin/concerns`;
 
     submitConcern(request: ConcernRequest): Observable<ConcernResponse> {
         return this.http.post<ConcernResponse>(this.apiUrl, request);

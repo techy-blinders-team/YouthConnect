@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment.development';
 
 export interface RsvpRequest {
     eventId: number;
@@ -44,8 +45,8 @@ export interface EventRequest {
 })
 export class EventService {
     private http = inject(HttpClient);
-    private apiUrl = 'https://sk183pasay.site/api/events';
-    private skApiUrl = 'https://sk183pasay.site/api/sk/events';
+    private apiUrl = `${environment.apiUrl}/api/events`;
+    private skApiUrl = `${environment.apiUrl}/api/sk/events`;
 
     // SK Official endpoints
     createEvent(request: EventRequest): Observable<EventResponse> {
