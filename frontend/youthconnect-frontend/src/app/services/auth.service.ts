@@ -4,7 +4,7 @@ import { UserRole } from "../models/UserRole";
 import { LoginRequest, LoginResponse, RegistrationRequest, RegistrationResponse } from "../models/auth.model";
 import { BehaviorSubject, map, Observable, catchError, throwError } from "rxjs";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
-import { environmentProduction } from "../../environments/environment-production";
+import { environmentProduction } from "../../environments/environment";
 
 @Injectable({
     providedIn: 'root'
