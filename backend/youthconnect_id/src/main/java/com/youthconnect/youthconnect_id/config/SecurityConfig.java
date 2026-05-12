@@ -34,7 +34,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(csrf -> csrf.disable()) // Disabled for stateless REST API
+            .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 // Public endpoints - No authentication required
                 .requestMatchers("/api/auth/login").permitAll()
@@ -43,16 +43,16 @@ public class SecurityConfig {
                 .requestMatchers("/api/password-reset/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/concerns/*/updates").permitAll()
                 
-                // Admin endpoints - Require ADMIN or SK_OFFICIAL role
+                // Admin endpoints
                 .requestMatchers("/api/admin/users/**").hasAnyRole("ADMIN", "SK_OFFICIAL")
                 .requestMatchers("/api/admin/concerns/**").hasAnyRole("ADMIN", "SK_OFFICIAL")
                 .requestMatchers("/api/administrator/**").hasAnyRole("ADMIN", "SK_OFFICIAL")
                 
                 // SK Official endpoints
-                .requestMatchers("/api/sk/events").authenticated() // Allow all authenticated users to view events
+                .requestMatchers("/api/sk/events").authenticated()
                 .requestMatchers("/api/sk/**").hasAnyRole("SK_OFFICIAL", "ADMIN")
                 
-                // Protected endpoints - Require authentication
+                // Protected endpoints
                 .requestMatchers("/api/concerns/**").authenticated()
                 .requestMatchers("/api/events/**").authenticated()
                 .requestMatchers("/api/notifications/**").authenticated()
@@ -62,13 +62,12 @@ public class SecurityConfig {
                 .requestMatchers("/api/email-test/**").permitAll()
                 .requestMatchers("/api/debug/**").permitAll()
                 
-                // All other requests require authentication
+                // All other requests
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-            // Add JWT filter before UsernamePasswordAuthenticationFilter
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
@@ -78,19 +77,20 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         
-        // Allow specific origins (update for production)
+        // Allow all your origins including production
         configuration.setAllowedOrigins(Arrays.asList(
             "http://localhost:4200",
-            "http://localhost:3000"
-            // Add production URLs here
+            "http://localhost:3000",
+            "http://localhost:8080",
+            "http://127.0.0.1:4200",
+            "http://127.0.0.1:8080",
+            "https://sk183pasay.site"  // ✅ ADD YOUR PRODUCTION DOMAIN
         ));
         
-        // Allow specific HTTP methods
         configuration.setAllowedMethods(Arrays.asList(
             "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"
         ));
         
-        // Allow specific headers
         configuration.setAllowedHeaders(Arrays.asList(
             "Authorization",
             "Content-Type",
@@ -101,13 +101,9 @@ public class SecurityConfig {
             "Access-Control-Request-Headers"
         ));
         
-        // Allow credentials (cookies, authorization headers)
         configuration.setAllowCredentials(true);
-        
-        // How long the response from a pre-flight request can be cached
         configuration.setMaxAge(3600L);
         
-        // Expose headers to the client
         configuration.setExposedHeaders(Arrays.asList(
             "Authorization",
             "Content-Disposition"

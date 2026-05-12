@@ -19,6 +19,7 @@ public class WebConfig {
         config.addAllowedOrigin("http://localhost:8080");
         config.addAllowedOrigin("http://127.0.0.1:4200");
         config.addAllowedOrigin("http://127.0.0.1:8080");
+        config.addAllowedOrigin("https://sk183pasay.site");
 
         config.addAllowedHeader("*");
         config.addExposedHeader("Authorization");
