@@ -40,8 +40,8 @@ export interface ConcernUpdate {
 })
 export class ConcernService {
     private http = inject(HttpClient);
-    private apiUrl = 'http://localhost:8080/api/concerns';
-    private adminConcernsUrl = 'http://localhost:8080/api/admin/concerns';
+    private apiUrl = 'https://sk183pasay.site/api/concerns';
+    private adminConcernsUrl = 'https://sk183pasay.site/api/admin/concerns';
 
     submitConcern(request: ConcernRequest): Observable<ConcernResponse> {
         return this.http.post<ConcernResponse>(this.apiUrl, request);

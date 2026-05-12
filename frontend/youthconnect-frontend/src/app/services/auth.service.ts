@@ -14,7 +14,7 @@ export class AuthService {
     private readonly ROLE_KEY = 'auth_role';
     private readonly USER_KEY = 'auth_user';
 
-    private apiUrl = 'http://localhost:8080/api/auth';
+    private apiUrl = 'https://sk183pasay.site/api/auth';
 
     private http: HttpClient;
     private router: Router;

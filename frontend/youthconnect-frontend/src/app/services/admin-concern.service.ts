@@ -34,7 +34,7 @@ export interface AdminConcernUpdateRequest {
   providedIn: 'root'
 })
 export class AdminConcernService {
-  private apiUrl = 'http://localhost:8080/api/admin/concerns';
+  private apiUrl = 'https://sk183pasay.site/api/admin/concerns';
 
   constructor(private http: HttpClient) {}
 

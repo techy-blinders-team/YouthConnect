@@ -9,7 +9,7 @@ import { TaskStatus } from '../models/enums';
 })
 export class TaskTrackerService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8080/api/sk/tasks';
+  private apiUrl = 'https://sk183pasay.site/api/sk/tasks';
 
   // Create a new task
   createTask(request: TaskRequest): Observable<TaskResponse> {

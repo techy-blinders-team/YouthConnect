@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
     providedIn: 'root'
 })
 export class PasswordResetService {
-    private baseUrl = 'http://localhost:8080/api/password-reset';
+    private baseUrl = 'https://sk183pasay.site/api/password-reset';
 
     constructor(private http: HttpClient) { }
 

@@ -23,7 +23,7 @@ export interface SkOfficialLoginResponse {
 })
 export class SkOfficialAuthService {
   
-  private apiUrl = 'http://localhost:8080/api/admin/auth';
+  private apiUrl = 'https://sk183pasay.site/api/admin/auth';
 
   constructor(private http: HttpClient) { }
 

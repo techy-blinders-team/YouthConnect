@@ -44,8 +44,8 @@ export interface EventRequest {
 })
 export class EventService {
     private http = inject(HttpClient);
-    private apiUrl = 'http://localhost:8080/api/events';
-    private skApiUrl = 'http://localhost:8080/api/sk/events';
+    private apiUrl = 'https://sk183pasay.site/api/events';
+    private skApiUrl = 'https://sk183pasay.site/api/sk/events';
 
     // SK Official endpoints
     createEvent(request: EventRequest): Observable<EventResponse> {
