@@ -3,13 +3,14 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { TaskRequest, TaskEditRequest, TaskResponse, TaskHyperlinkRequest } from '../models/task.model';
 import { TaskStatus } from '../models/enums';
+import { environment } from '../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TaskTrackerService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8080/api/sk/tasks';
+  private apiUrl = `${environment.apiUrl}/api/sk/tasks`;
 
   // Create a new task
   createTask(request: TaskRequest): Observable<TaskResponse> {
