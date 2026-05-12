@@ -131,6 +131,22 @@
 		grid-template-columns: 1fr;
 		max-width: none;
 		column-gap: 0;
+		row-gap: 1.25rem;
+		margin-top: 1rem;
+	}
+
+	.panel {
+		padding: 0.6rem 0.7rem;
+	}
+
+	.status-panel,
+	.info-panel {
+		min-height: 0;
+	}
+
+	.info-list {
+		gap: 1rem;
+		margin-top: 0.6rem;
 	}
 
 	.status-pill,

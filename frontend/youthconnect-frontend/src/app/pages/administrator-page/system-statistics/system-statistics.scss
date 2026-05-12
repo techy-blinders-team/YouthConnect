@@ -88,9 +88,39 @@
 @media (max-width: 720px) {
 	.statistics-grid {
 		grid-template-columns: 1fr;
+		gap: 0.75rem;
+	}
+
+	.system-statistics-shell {
+		padding-bottom: 4.5rem;
 	}
 
 	.section-title {
+		font-size: 1.6rem;
+	}
+
+	.statistics-card {
+		min-height: 0;
+		padding: 0.75rem;
+		max-width: 320px;
+		width: 100%;
+		margin: 0 auto;
+	}
+
+	.statistics-card h3 {
+		font-size: 1.05rem;
+	}
+
+	.statistics-row {
+		gap: 0.6rem;
+		padding-top: 0.6rem;
+	}
+
+	.row-label {
+		font-size: 0.9rem;
+	}
+
+	.row-value {
 		font-size: 1.6rem;
 	}
 }
