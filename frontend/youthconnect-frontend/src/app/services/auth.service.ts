@@ -4,7 +4,7 @@ import { UserRole } from "../models/UserRole";
 import { LoginRequest, LoginResponse, RegistrationRequest, RegistrationResponse } from "../models/auth.model";
 import { BehaviorSubject, map, Observable, catchError, throwError } from "rxjs";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
-import { environmentProduction } from "../../environments/environment";
+import { environment } from "../../environments/environment.development";
 
 @Injectable({
     providedIn: 'root'
@@ -15,7 +15,7 @@ export class AuthService {
     private readonly ROLE_KEY = 'auth_role';
     private readonly USER_KEY = 'auth_user';
 
-    private apiUrl = `${environmentProduction.apiUrl}/api/auth`;
+    private apiUrl = `${environment.apiUrl}/api/auth`;
 
     private http: HttpClient;
     private router: Router;
