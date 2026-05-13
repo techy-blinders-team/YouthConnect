@@ -55,7 +55,7 @@
                 <p>{{ searchTerm ? 'No events match your search.' : 'No events found.' }}</p>
             </div>
             
-            <div *ngFor="let event of filteredEvents" class="event-card" (click)="openDetailsModal(event)">
+            <div *ngFor="let event of filteredEvents" class="event-card" (click)="viewEvent(event)">
                 <div class="card-header">
                     <h3>{{ event.title }}</h3>
                     <div class="card-actions">
@@ -103,151 +103,6 @@
         </div>
     </div>
 
-    <!-- Event Details Modal -->
-    <div class="modal-overlay details-modal-overlay" *ngIf="isDetailsModalOpen && selectedEvent">
-        <div class="details-modal-content" (click)="$event.stopPropagation()">
-            <div class="details-modal-header">
-                <h2 class="details-modal-title">{{ selectedEvent.title }}</h2>
-                <div class="details-modal-actions">
-                    <button class="details-edit-btn" (click)="editEvent(selectedEvent); closeDetailsModal()" title="Edit event" [disabled]="isEditDisabled(selectedEvent.status)">
-                        <img src="../../assets/sk-official-events-icons/edit.svg" alt="Edit" width="20" height="20">
-                    </button>
-                    <button class="details-delete-btn" (click)="deleteEvent(selectedEvent); closeDetailsModal()" title="Delete event" [disabled]="isEventOngoing(selectedEvent.status)">
-                        <img src="../../assets/sk-official-events-icons/delete.svg" alt="Delete" width="20" height="20">
-                    </button>
-                    <button class="details-close-btn" (click)="closeDetailsModal()" title="Close">✕</button>
-                </div>
-            </div>
-
-            <div class="details-modal-body-wrapper">
-                <div class="scroll-indicator scroll-indicator-top"></div>
-                
-                <div class="details-modal-body">
-                    <p class="detail-text">{{ selectedEvent.description }}</p>
-
-                    <div class="detail-info-row">
-                        <img src="../../assets/sk-official-events-icons/location.svg" alt="Location" width="16" height="16" style="vertical-align: middle; margin-right: 1px;">
-                        <span class="detail-info-label">LOCATION:</span>
-                        <span class="detail-info-value">
-                            {{ selectedEvent.location }}
-                        </span>
-                    </div>
-
-                    <div class="detail-info-row">
-                        <img src="../../assets/sk-official-events-icons/time.svg" alt="Time" width="16" height="16" style="vertical-align: middle; margin-right: 1px;">
-                        <span class="detail-info-label">DATE & TIME:</span>
-                        <span class="detail-info-value">
-                            {{ formatDate(selectedEvent.eventDate) }}
-                        </span>
-                    </div>
-
-                    <div class="detail-info-row">
-                        <img src="../../assets/sk-official-events-icons/calendar.svg" alt="RSVPs" width="16" height="16" style="vertical-align: middle; margin-right: 1px;">
-                        <span class="detail-info-label">RSVPs:</span>
-                        <span class="detail-info-value">
-                            {{ selectedEvent.rsvpCount || 0 }} RSVP{{ (selectedEvent.rsvpCount || 0) === 1 ? '' : 's' }}
-                        </span>
-                    </div>
-
-                    <div class="detail-info-row">
-                        <span class="detail-info-label">STATUS:</span>
-                        <span class="status-pill" [ngClass]="(selectedEvent.status || 'upcoming').toLowerCase()">
-                            {{ selectedEvent.status || 'Upcoming' }}
-                        </span>
-                    </div>
-
-                    <!-- RSVP Donut Chart -->
-                    <div class="rsvp-chart-section">
-                        <h4 class="chart-title">RSVP Overview</h4>
-                        <div class="chart-container">
-                            <div class="donut-chart">
-                                <svg viewBox="0 0 200 200" class="donut-svg">
-                                    <!-- Background circle -->
-                                    <circle
-                                        cx="100"
-                                        cy="100"
-                                        r="80"
-                                        fill="none"
-                                        stroke="#e8e8e8"
-                                        stroke-width="30"
-                                    />
-                                    <!-- RSVP segment -->
-                                    <circle
-                                        cx="100"
-                                        cy="100"
-                                        r="80"
-                                        fill="none"
-                                        stroke="#0052cc"
-                                        stroke-width="30"
-                                        [attr.stroke-dasharray]="getRsvpStrokeDasharray(selectedEvent)"
-                                        stroke-dashoffset="125.6"
-                                        transform="rotate(-90 100 100)"
-                                        class="rsvp-segment"
-                                    />
-                                </svg>
-                                <div class="chart-center-text">
-                                    <div class="percentage">{{ getRsvpPercentage(selectedEvent) }}%</div>
-                                    <div class="label">RSVP'd</div>
-                                </div>
-                            </div>
-                            <div class="chart-legend">
-                                <div class="legend-item">
-                                    <span class="legend-color rsvp-color"></span>
-                                    <span class="legend-label">RSVP: {{ selectedEvent.rsvpCount || 0 }}</span>
-                                </div>
-                                <div class="legend-item">
-                                    <span class="legend-color remaining-color"></span>
-                                    <span class="legend-label">Remaining: {{ getRemainingCount(selectedEvent) }}</span>
-                                </div>
-                                <div class="legend-item total">
-                                    <span class="legend-label">Expected Total: {{ selectedEvent.expectedCount || 0 }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- RSVP Attendees List -->
-                    <div class="attendees-section">
-                        <h4 class="attendees-title">RSVP'd Attendees ({{ eventAttendees.length }})</h4>
-                        
-                        <div *ngIf="isLoadingAttendees" class="attendees-loading">
-                            <p>Loading attendees...</p>
-                        </div>
-
-                        <div *ngIf="!isLoadingAttendees && eventAttendees.length > 0" class="attendees-list">
-                            <div *ngFor="let attendee of eventAttendees; let i = index" 
-                                class="attendee-item" 
-                                (click)="openAttendeeDetailsModal(attendee)"
-                                [class.clickable]="attendee.youthId !== 0">
-                                <div class="attendee-number">{{ i + 1 }}</div>
-                                <div class="attendee-info">
-                                    <div class="attendee-name">{{ attendee.name }}</div>
-                                    <div class="attendee-email">{{ attendee.email }}</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div *ngIf="!isLoadingAttendees && eventAttendees.length === 0" class="attendees-empty">
-                            <p>No one has RSVP'd yet.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="scroll-indicator scroll-indicator-bottom"></div>
-            </div>
-
-            <div class="details-modal-footer">
-                <button
-                    class="details-status-btn"
-                    [ngClass]="getStatusActionClass(selectedEvent.status)"
-                    [disabled]="isStatusActionDisabled(selectedEvent.status)"
-                    (click)="updateEventStatus(selectedEvent)">
-                    {{ getStatusActionLabel(selectedEvent.status) }}
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- Create Event Modal -->
     <div class="modal-overlay" *ngIf="isModalOpen">
         <div class="modal-content" (click)="$event.stopPropagation()">
@@ -276,9 +131,12 @@
                                 id="eventTitle" 
                                 class="form-input" 
                                 placeholder="Enter event title"
-                                formControlName="eventTitle">
+                                formControlName="eventTitle"
+                                maxlength="200">
+                            <div class="form-hint">{{ eventForm.get('eventTitle')?.value?.length || 0 }}/200 characters</div>
                             <div *ngIf="eventForm.get('eventTitle')?.invalid && eventForm.get('eventTitle')?.touched" class="form-error">
                                 <span *ngIf="eventForm.get('eventTitle')?.hasError('required')">Event title is required</span>
+                                <span *ngIf="eventForm.get('eventTitle')?.hasError('maxlength')">Title cannot exceed 200 characters</span>
                             </div>
                         </div>
 
@@ -289,9 +147,12 @@
                                 class="form-textarea" 
                                 placeholder="Enter event description" 
                                 rows="4"
-                                formControlName="description"></textarea>
+                                formControlName="description"
+                                maxlength="5000"></textarea>
+                            <div class="form-hint">{{ eventForm.get('description')?.value?.length || 0 }}/5000 characters</div>
                             <div *ngIf="eventForm.get('description')?.invalid && eventForm.get('description')?.touched" class="form-error">
                                 <span *ngIf="eventForm.get('description')?.hasError('required')">Description is required</span>
+                                <span *ngIf="eventForm.get('description')?.hasError('maxlength')">Description cannot exceed 5000 characters</span>
                             </div>
                         </div>
 
@@ -314,9 +175,12 @@
                                 id="location" 
                                 class="form-input" 
                                 placeholder="Enter event location"
-                                formControlName="location">
+                                formControlName="location"
+                                maxlength="255">
+                            <div class="form-hint">{{ eventForm.get('location')?.value?.length || 0 }}/255 characters</div>
                             <div *ngIf="eventForm.get('location')?.invalid && eventForm.get('location')?.touched" class="form-error">
                                 <span *ngIf="eventForm.get('location')?.hasError('required')">Location is required</span>
+                                <span *ngIf="eventForm.get('location')?.hasError('maxlength')">Location cannot exceed 255 characters</span>
                             </div>
                         </div>
                     </div>
@@ -392,68 +256,4 @@
         </div>
     </div>
 
-    <!-- Attendee Details Modal -->
-    <div class="modal-overlay" *ngIf="isAttendeeDetailsModalOpen && selectedAttendeeProfile">
-        <div class="modal-content modal-attendee-details" (click)="$event.stopPropagation()">
-            <div class="modal-header">
-                <div>
-                    <h2 class="modal-title">Attendee Details</h2>
-                    <p class="modal-subtitle">Complete attendee information overview</p>
-                </div>
-                <button class="close-btn" (click)="closeAttendeeDetailsModal()">✕</button>
-            </div>
-
-            <div class="modal-body-wrapper">
-                <div class="scroll-indicator scroll-indicator-top"></div>
-
-                <div class="modal-body">
-                    <div class="details-section">
-                        <h3 class="section-title">Personal Information</h3>
-                        <div class="details-grid">
-                            <div class="detail-item full-width">
-                                <span class="detail-label">Full Name:</span>
-                                <span class="detail-value" style="font-weight: 700; font-size: 16px;">{{ selectedAttendeeProfile?.firstName }} {{ selectedAttendeeProfile?.middleName || '' }} {{ selectedAttendeeProfile?.lastName }} {{ selectedAttendeeProfile?.suffix || '' }}</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Gender:</span>
-                                <span class="detail-value">{{ selectedAttendeeProfile?.gender }}</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Birthday:</span>
-                                <span class="detail-value">{{ formatBirthday(selectedAttendeeProfile?.birthday || '') }}</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Age:</span>
-                                <span class="detail-value">{{ getAge(selectedAttendeeProfile?.birthday || '') }} years old</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Civil Status:</span>
-                                <span class="detail-value">{{ selectedAttendeeProfile?.civilStatus }}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="details-section">
-                        <h3 class="section-title">Contact Information</h3>
-                        <div class="details-grid">
-                            <div class="detail-item">
-                                <span class="detail-label">Email:</span>
-                                <span class="detail-value">{{ selectedAttendeeProfile?.email || 'N/A' }}</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Contact Number:</span>
-                                <span class="detail-value">{{ selectedAttendeeProfile?.contactNumber }}</span>
-                            </div>
-                            <div class="detail-item full-width">
-                                <span class="detail-label">Complete Address:</span>
-                                <span class="detail-value">{{ selectedAttendeeProfile?.completeAddress || 'N/A' }}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="scroll-indicator scroll-indicator-bottom"></div>
-            </div>
-        </div>
-    </div>
 </div>
