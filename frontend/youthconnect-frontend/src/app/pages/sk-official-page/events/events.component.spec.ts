@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
 import { EventsComponent } from './events.component';
 
 describe('EventsComponent', () => {
@@ -8,7 +10,22 @@ describe('EventsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ EventsComponent, HttpClientTestingModule ]
+      imports: [EventsComponent, HttpClientTestingModule],
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              paramMap: {
+                get: () => null
+              }
+            },
+            queryParamMap: of({
+              get: () => null
+            })
+          }
+        }
+      ]
     })
     .compileComponents();
   });
