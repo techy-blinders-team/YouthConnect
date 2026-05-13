@@ -153,17 +153,9 @@
         (click)="setApprovalFilter('pending')">
         Pending
       </button>
-      <button type="button" class="filter-chip" [class.active]="approvalFilter === 'approved'"
-        (click)="setApprovalFilter('approved')">
-        Approved
-      </button>
       <button type="button" class="filter-chip" [class.active]="approvalFilter === 'rejected'"
         (click)="setApprovalFilter('rejected')">
         Rejected
-      </button>
-      <button type="button" class="filter-chip" [class.active]="approvalFilter === 'all'"
-        (click)="setApprovalFilter('all')">
-        All
       </button>
     </div>
 
