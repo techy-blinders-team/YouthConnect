@@ -208,6 +208,10 @@ export class EventPage implements OnInit {
         return !this.isEventOngoing(event) && !this.isEventCompleted(event) && !this.isRsvped(event.eventId);
     }
 
+    canCancelRsvp(event: EventResponse): boolean {
+        return this.isRsvped(event.eventId) && !this.isEventOngoing(event) && !this.isEventCompleted(event);
+    }
+
     rsvpEvent(event: EventResponse): void {
         if (this.isRsvped(event.eventId) || this.isEventOngoing(event) || this.isEventCompleted(event)) {
             return;
@@ -229,6 +233,26 @@ export class EventPage implements OnInit {
             error: (error) => {
                 console.error('Error RSVPing event:', error);
                 this.errorMessage = 'Failed to RSVP for event';
+                this.isLoading = false;
+            }
+        });
+    }
+
+    cancelRsvp(event: EventResponse): void {
+        if (!this.canCancelRsvp(event)) {
+            return;
+        }
+
+        this.isLoading = true;
+        this.eventService.cancelRsvp(event.eventId, this.userId).subscribe({
+            next: () => {
+                this.rsvpedEventIds.delete(event.eventId);
+                this.showSuccessToast('RSVP cancelled successfully.');
+                this.isLoading = false;
+            },
+            error: (error) => {
+                console.error('Error cancelling RSVP:', error);
+                this.errorMessage = 'Failed to cancel RSVP';
                 this.isLoading = false;
             }
         });

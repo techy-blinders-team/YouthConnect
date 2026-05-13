@@ -73,9 +73,14 @@
                 <div class="event-info">
                     <div class="event-title-row">
                         <h3>{{ event.title }}</h3>
-                        <span class="event-status" [ngClass]="getStatusBadgeClass(event.status)">
-                            {{ event.status }}
-                        </span>
+                        <div class="event-status-group">
+                            <span class="event-status" [ngClass]="getStatusBadgeClass(event.status)">
+                                {{ event.status }}
+                            </span>
+                            <span class="rsvp-status" *ngIf="isRsvped(event.eventId)">
+                                Joined
+                            </span>
+                        </div>
                     </div>
                     <p class="event-description">{{ event.description }}</p>
                     <div class="event-details">
@@ -99,12 +104,19 @@
                         </span>
                     </div>
                 </div>
-                <button class="btn-rsvp" [class.confirmed]="isRsvped(event.eventId)" 
-                    [class.ongoing]="isEventOngoing(event)" [class.completed]="isEventCompleted(event)" 
-                    (click)="rsvpEvent(event)"
-                    [disabled]="isLoading || !canRsvp(event)">
-                    {{ isEventCompleted(event) ? 'Completed' : (isEventOngoing(event) ? 'Ongoing' : (isRsvped(event.eventId) ? 'Confirmed' : 'RSVP')) }}
-                </button>
+                <div class="event-actions">
+                    <button class="btn-rsvp" [class.ongoing]="isEventOngoing(event)" [class.completed]="isEventCompleted(event)" 
+                        (click)="rsvpEvent(event)"
+                        [disabled]="isLoading || !canRsvp(event)"
+                        *ngIf="!isRsvped(event.eventId)">
+                        {{ isEventCompleted(event) ? 'Completed' : (isEventOngoing(event) ? 'Ongoing' : 'RSVP') }}
+                    </button>
+                    <button class="btn-cancel" *ngIf="canCancelRsvp(event)"
+                        (click)="cancelRsvp(event)"
+                        [disabled]="isLoading">
+                        Cancel
+                    </button>
+                </div>
             </div>
 
             <!-- Empty State -->
