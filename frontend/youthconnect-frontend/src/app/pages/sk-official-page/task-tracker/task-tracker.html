@@ -57,7 +57,7 @@
                 <thead>
                     <tr>
                         <th>Tasking / Committee</th>
-                        <th>SK Incharge</th>
+                        <th class="sk-incharge-col">SK Incharge</th>
                         <th>Status</th>
                         <th>Due Date</th>
                         <th class="actions-th">Actions</th>
@@ -71,7 +71,7 @@
                     </tr>
                     <tr *ngFor="let task of filteredTasks" class="task-row clickable-row" (click)="openDetailsModal(task)">
                         <td class="tasking-cell">{{ getTaskingDisplayName(task.tasking) }}</td>
-                        <td>{{ task.skIncharge || getSkOfficialName(task.adminId) }}</td>
+                        <td class="sk-incharge-col">{{ task.skIncharge || getSkOfficialName(task.adminId) }}</td>
                         <td>
                             <span class="status-badge" [ngClass]="'status-' + task.status.toLowerCase()">
                                 {{ task.status }}
