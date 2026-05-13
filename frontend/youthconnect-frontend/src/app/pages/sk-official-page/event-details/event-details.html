@@ -1,0 +1,229 @@
+<div class="event-details-root">
+    <div class="event-details-container">
+        <div class="details-top-bar">
+            <button class="back-btn" (click)="goBack()">← Back to Events</button>
+            <div class="details-actions" *ngIf="selectedEvent">
+                <button
+                    class="details-edit-btn"
+                    (click)="editEvent(selectedEvent)"
+                    title="Edit event"
+                    [disabled]="isEditDisabled(selectedEvent.status)">
+                    <img src="../../assets/sk-official-events-icons/edit.svg" alt="Edit" width="20" height="20">
+                    <span>Edit</span>
+                </button>
+                <button
+                    class="details-delete-btn"
+                    (click)="deleteEvent(selectedEvent)"
+                    title="Delete event"
+                    [disabled]="isEventOngoing(selectedEvent.status)">
+                    <img src="../../assets/sk-official-events-icons/delete.svg" alt="Delete" width="20" height="20">
+                    <span>Delete</span>
+                </button>
+            </div>
+        </div>
+
+        <div *ngIf="isLoading" class="loading-indicator">
+            <p>Loading event details...</p>
+        </div>
+
+        <div *ngIf="errorMessage && !isLoading" class="alert alert-error">
+            {{ errorMessage }}
+        </div>
+
+        <div *ngIf="selectedEvent" class="event-details-grid">
+            <div class="details-card details-card-main">
+                <div class="details-header">
+                    <div class="details-title-wrapper">
+                        <h1 class="details-title">{{ selectedEvent.title }}</h1>
+                    </div>
+                    <span class="status-pill" [ngClass]="(selectedEvent.status || 'upcoming').toLowerCase()">
+                        {{ selectedEvent.status || 'Upcoming' }}
+                    </span>
+                </div>
+
+                <div class="details-card-body">
+                    <p class="detail-text">{{ selectedEvent.description }}</p>
+
+                    <div class="detail-info-row">
+                        <img src="../../assets/sk-official-events-icons/location.svg" alt="Location" width="16" height="16">
+                        <span class="detail-info-label">LOCATION:</span>
+                        <span class="detail-info-value">{{ selectedEvent.location }}</span>
+                    </div>
+
+                    <div class="detail-info-row">
+                        <img src="../../assets/sk-official-events-icons/time.svg" alt="Time" width="16" height="16">
+                        <span class="detail-info-label">DATE & TIME:</span>
+                        <span class="detail-info-value">{{ formatDate(selectedEvent.eventDate) }}</span>
+                    </div>
+
+                    <div class="detail-info-row">
+                        <img src="../../assets/sk-official-events-icons/calendar.svg" alt="RSVPs" width="16" height="16">
+                        <span class="detail-info-label">RSVPs:</span>
+                        <span class="detail-info-value">
+                            {{ selectedEvent.rsvpCount || 0 }} RSVP{{ (selectedEvent.rsvpCount || 0) === 1 ? '' : 's' }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="details-status-bar">
+                    <button
+                        class="details-status-btn"
+                        [ngClass]="getStatusActionClass(selectedEvent.status)"
+                        [disabled]="isStatusActionDisabled(selectedEvent.status)"
+                        (click)="updateEventStatus(selectedEvent)">
+                        {{ getStatusActionLabel(selectedEvent.status) }}
+                    </button>
+                </div>
+            </div>
+
+            <div class="details-card details-card-side">
+                <div class="details-card-body">
+                    <div class="rsvp-chart-section">
+                    <h4 class="chart-title">RSVP Overview</h4>
+                    <div class="chart-container">
+                        <div class="donut-chart">
+                            <svg viewBox="0 0 200 200" class="donut-svg">
+                                <circle
+                                    cx="100"
+                                    cy="100"
+                                    r="85"
+                                    fill="none"
+                                    stroke="#e8e8e8"
+                                    stroke-width="30"
+                                />
+                                <circle
+                                    cx="100"
+                                    cy="100"
+                                    r="85"
+                                    fill="none"
+                                    stroke="#0052cc"
+                                    stroke-width="30"
+                                    [attr.stroke-dasharray]="getRsvpStrokeDasharray(selectedEvent)"
+                                    stroke-dashoffset="133.5"
+                                    transform="rotate(-90 100 100)"
+                                    class="rsvp-segment"
+                                />
+                            </svg>
+                            <div class="chart-center-text">
+                                <div class="percentage">{{ getRsvpPercentage(selectedEvent) }}%</div>
+                                <div class="label">RSVP'd</div>
+                            </div>
+                        </div>
+                        <div class="chart-legend">
+                            <div class="legend-item">
+                                <span class="legend-color rsvp-color"></span>
+                                <span class="legend-label">RSVP: {{ selectedEvent.rsvpCount || 0 }}</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color remaining-color"></span>
+                                <span class="legend-label">Remaining: {{ getRemainingCount(selectedEvent) }}</span>
+                            </div>
+                            <div class="legend-item total">
+                                <span class="legend-label">Expected Total: {{ selectedEvent.expectedCount || 0 }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+
+                    <div class="attendees-section">
+                        <h4 class="attendees-title">RSVP'd Attendees ({{ eventAttendees.length }})</h4>
+
+                        <div *ngIf="isLoadingAttendees" class="attendees-loading">
+                            <p>Loading attendees...</p>
+                        </div>
+
+                        <div *ngIf="!isLoadingAttendees && eventAttendees.length > 0" class="attendees-list">
+                            <div
+                                *ngFor="let attendee of pagedEventAttendees; let i = index"
+                                class="attendee-item"
+                                (click)="openAttendeeDetailsModal(attendee)"
+                                [class.clickable]="attendee.youthId !== 0">
+                                <div class="attendee-number">{{ ((attendeesPage - 1) * attendeesPageSize) + i + 1 }}</div>
+                                <div class="attendee-info">
+                                    <div class="attendee-name">{{ attendee.name }}</div>
+                                    <div class="attendee-email">{{ attendee.email }}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div *ngIf="totalAttendeePages > 1" class="attendees-pagination">
+                            <button class="pagination-btn" (click)="prevAttendeePage()" [disabled]="attendeesPage === 1">Prev</button>
+                            <span class="pagination-indicator">Page {{ attendeesPage }} of {{ totalAttendeePages }}</span>
+                            <button class="pagination-btn" (click)="nextAttendeePage()" [disabled]="attendeesPage === totalAttendeePages">Next</button>
+                        </div>
+
+                        <div *ngIf="!isLoadingAttendees && eventAttendees.length === 0" class="attendees-empty">
+                            <p>No one has RSVP'd yet.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" *ngIf="isAttendeeDetailsModalOpen && selectedAttendeeProfile">
+        <div class="modal-content modal-attendee-details" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <div>
+                    <h2 class="modal-title">Attendee Details</h2>
+                    <p class="modal-subtitle">Complete attendee information overview</p>
+                </div>
+                <button class="close-btn" (click)="closeAttendeeDetailsModal()">✕</button>
+            </div>
+
+            <div class="modal-body-wrapper">
+                <div class="scroll-indicator scroll-indicator-top"></div>
+
+                <div class="modal-body">
+                    <div class="details-section">
+                        <h3 class="section-title">Personal Information</h3>
+                        <div class="details-grid">
+                            <div class="detail-item full-width">
+                                <span class="detail-label">Full Name:</span>
+                                <span class="detail-value detail-value-bold">
+                                    {{ selectedAttendeeProfile?.firstName }} {{ selectedAttendeeProfile?.middleName || '' }} {{ selectedAttendeeProfile?.lastName }} {{ selectedAttendeeProfile?.suffix || '' }}
+                                </span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Gender:</span>
+                                <span class="detail-value">{{ selectedAttendeeProfile?.gender }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Birthday:</span>
+                                <span class="detail-value">{{ formatBirthday(selectedAttendeeProfile?.birthday || '') }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Age:</span>
+                                <span class="detail-value">{{ getAge(selectedAttendeeProfile?.birthday || '') }} years old</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Civil Status:</span>
+                                <span class="detail-value">{{ selectedAttendeeProfile?.civilStatus }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="details-section">
+                        <h3 class="section-title">Contact Information</h3>
+                        <div class="details-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">Email:</span>
+                                <span class="detail-value">{{ selectedAttendeeProfile?.email || 'N/A' }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Contact Number:</span>
+                                <span class="detail-value">{{ selectedAttendeeProfile?.contactNumber }}</span>
+                            </div>
+                            <div class="detail-item full-width">
+                                <span class="detail-label">Complete Address:</span>
+                                <span class="detail-value">{{ selectedAttendeeProfile?.completeAddress || 'N/A' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scroll-indicator scroll-indicator-bottom"></div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -2,11 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
-import { EventService, EventResponse, AttendanceResponse } from '../../../services/event.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { EventService, EventResponse } from '../../../services/event.service';
 import { AuthService } from '../../../services/auth.service';
 import { SkOfficialManagementService } from '../../../services/sk-official-management.service';
-import { YouthMemberManagementService, YouthProfileAccount } from '../../../services/youth-member-management.service';
-import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-events',
@@ -17,7 +16,6 @@ import { forkJoin } from 'rxjs';
 })
 export class EventsComponent implements OnInit {
   isModalOpen = false;
-  isDetailsModalOpen = false;
   eventForm!: FormGroup;
   events: EventResponse[] = [];
   filteredEvents: EventResponse[] = [];
@@ -26,6 +24,7 @@ export class EventsComponent implements OnInit {
   successMessage: string = '';
   currentAdminId: number = 0;
   editingEventId: number | null = null;
+  editingEvent: EventResponse | null = null;
   searchTerm: string = '';
   skOfficialName = 'SK Official';
   skOfficialEmail = '';
@@ -37,18 +36,16 @@ export class EventsComponent implements OnInit {
   pendingDeleteEvent: EventResponse | null = null;
   isEditConfirmationModalOpen = false;
   pendingEditPayload: any = null;
-  selectedEvent: EventResponse | null = null;
-  eventAttendees: Array<{ name: string; email: string; userId: number; youthId: number }> = [];
-  isLoadingAttendees = false;
-  isAttendeeDetailsModalOpen = false;
-  selectedAttendeeProfile: any = null;
+  private pendingEditEventId: number | null = null;
+  private pendingDeleteEventId: number | null = null;
 
   constructor(
     private fb: FormBuilder,
     private eventService: EventService,
     private authService: AuthService,
     private skOfficialService: SkOfficialManagementService,
-    private youthMemberService: YouthMemberManagementService
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.initForm();
   }
@@ -57,6 +54,7 @@ export class EventsComponent implements OnInit {
     this.getCurrentUser();
     this.loadSkOfficialProfile();
     this.loadEvents();
+    this.watchRouteActions();
   }
 
   ngAfterViewInit() {
@@ -96,107 +94,6 @@ export class EventsComponent implements OnInit {
     }, 100);
   }
 
-  openDetailsModal(event: EventResponse) {
-    this.selectedEvent = event;
-    this.isDetailsModalOpen = true;
-    this.loadEventAttendees(event.eventId);
-    setTimeout(() => this.setupScrollIndicators(), 100);
-  }
-
-  closeDetailsModal() {
-    this.isDetailsModalOpen = false;
-    this.selectedEvent = null;
-    this.eventAttendees = [];
-  }
-
-  loadEventAttendees(eventId: number) {
-    this.isLoadingAttendees = true;
-    this.eventAttendees = [];
-
-    forkJoin({
-      rsvps: this.eventService.getEventRsvps(eventId),
-      profiles: this.youthMemberService.getYouthProfiles(),
-      users: this.youthMemberService.getUsers()
-    }).subscribe({
-      next: ({ rsvps, profiles, users }) => {
-        // Create a map of userId to youthId
-        const userToYouthMap = new Map(users.map(user => [user.userId, user.youthId]));
-        
-        // Create a map of youthId to profile
-        const profileMap = new Map(profiles.map(profile => [profile.youthId, profile]));
-
-        // Map RSVPs to attendee details
-        this.eventAttendees = rsvps.map(rsvp => {
-          const youthId = userToYouthMap.get(rsvp.userId);
-          const profile = youthId ? profileMap.get(youthId) : null;
-          const user = users.find(u => u.userId === rsvp.userId);
-          
-          const name = profile ? `${profile.firstName || ''} ${profile.lastName || ''}`.trim() : 'Unknown User';
-          const email = user?.email || 'No email';
-          
-          return { 
-            name, 
-            email, 
-            userId: rsvp.userId,
-            youthId: youthId || 0
-          };
-        });
-
-        this.isLoadingAttendees = false;
-      },
-      error: (error) => {
-        console.error('Error loading event attendees:', error);
-        this.isLoadingAttendees = false;
-      }
-    });
-  }
-
-  openAttendeeDetailsModal(attendee: any) {
-    if (attendee.youthId === 0) {
-      return;
-    }
-
-    // Fetch full profile details
-    forkJoin({
-      profiles: this.youthMemberService.getYouthProfiles(),
-      users: this.youthMemberService.getUsers()
-    }).subscribe({
-      next: ({ profiles, users }) => {
-        const profile = profiles.find(p => p.youthId === attendee.youthId);
-        const user = users.find(u => u.youthId === attendee.youthId);
-        
-        if (profile) {
-          this.selectedAttendeeProfile = {
-            ...profile,
-            email: user?.email || attendee.email || 'No email'
-          };
-          this.isAttendeeDetailsModalOpen = true;
-          setTimeout(() => this.setupScrollIndicators(), 100);
-        }
-      },
-      error: (error) => {
-        console.error('Error loading attendee profile:', error);
-      }
-    });
-  }
-
-  closeAttendeeDetailsModal() {
-    this.isAttendeeDetailsModalOpen = false;
-    this.selectedAttendeeProfile = null;
-  }
-
-  getAge(birthday: string): number {
-    const birthDate = new Date(birthday);
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
-
-    return age;
-  }
 
   formatDate(dateString: string): string {
     const date = new Date(dateString);
@@ -209,21 +106,66 @@ export class EventsComponent implements OnInit {
     });
   }
 
-  formatBirthday(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+  private parseParamId(value: string | null): number | null {
+    if (!value) {
+      return null;
+    }
+
+    const parsed = Number(value);
+    if (Number.isNaN(parsed) || parsed <= 0) {
+      return null;
+    }
+
+    return parsed;
+  }
+
+  private watchRouteActions(): void {
+    this.route.queryParamMap.subscribe((params) => {
+      this.pendingEditEventId = this.parseParamId(params.get('edit'));
+      this.pendingDeleteEventId = this.parseParamId(params.get('delete'));
+      this.handlePendingActions();
     });
+  }
+
+  private handlePendingActions(): void {
+    if (this.events.length === 0) {
+      return;
+    }
+
+    const shouldClearParams = this.pendingEditEventId || this.pendingDeleteEventId;
+
+    if (this.pendingEditEventId) {
+      const event = this.events.find(item => item.eventId === this.pendingEditEventId);
+      if (event) {
+        this.editEvent(event);
+      }
+      this.pendingEditEventId = null;
+    }
+
+    if (this.pendingDeleteEventId) {
+      const event = this.events.find(item => item.eventId === this.pendingDeleteEventId);
+      if (event) {
+        this.deleteEvent(event);
+      }
+      this.pendingDeleteEventId = null;
+    }
+
+    if (shouldClearParams) {
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { edit: null, delete: null },
+        queryParamsHandling: 'merge',
+        replaceUrl: true
+      });
+    }
   }
 
   initForm() {
     this.eventForm = this.fb.group({
-      eventTitle: ['', [Validators.required]],
-      description: ['', [Validators.required]],
+      eventTitle: ['', [Validators.required, Validators.maxLength(200)]],
+      description: ['', [Validators.required, Validators.maxLength(5000)]],
       dateTime: ['', Validators.required],
-      location: ['', [Validators.required]]
+      location: ['', [Validators.required, Validators.maxLength(255)]]
     });
   }
 
@@ -294,6 +236,7 @@ export class EventsComponent implements OnInit {
         this.filteredEvents = this.events;
         this.searchTerm = '';
         this.isLoading = false;
+        this.handlePendingActions();
       },
       error: (error) => {
         console.error('Error loading events:', error);
@@ -301,6 +244,10 @@ export class EventsComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  viewEvent(event: EventResponse): void {
+    this.router.navigate(['/sk-official/events', event.eventId]);
   }
 
   searchEvents(term: string) {
@@ -322,6 +269,7 @@ export class EventsComponent implements OnInit {
   openModal() {
     this.isModalOpen = true;
     this.editingEventId = null;
+    this.editingEvent = null;
     this.eventForm.reset();
     this.errorMessage = '';
     this.successMessage = '';
@@ -331,6 +279,7 @@ export class EventsComponent implements OnInit {
   editEvent(event: EventResponse) {
     this.isModalOpen = true;
     this.editingEventId = event.eventId;
+    this.editingEvent = event;
     this.errorMessage = '';
     this.successMessage = '';
 
@@ -356,6 +305,7 @@ export class EventsComponent implements OnInit {
   closeModal() {
     this.isModalOpen = false;
     this.editingEventId = null;
+    this.editingEvent = null;
     this.eventForm.reset();
     this.errorMessage = '';
     this.successMessage = '';
@@ -365,21 +315,58 @@ export class EventsComponent implements OnInit {
     if (this.editingEventId) {
       // Show confirmation modal for edit
       if (this.eventForm.invalid) {
-        this.errorMessage = 'Please fill in all required fields correctly';
+        // Mark all fields as touched to show validation errors
+        Object.keys(this.eventForm.controls).forEach(key => {
+          this.eventForm.get(key)?.markAsTouched();
+        });
+        
+        // Show specific validation error
+        if (this.eventForm.get('eventTitle')?.hasError('maxlength')) {
+          this.errorMessage = 'Event title cannot exceed 200 characters';
+        } else if (this.eventForm.get('description')?.hasError('maxlength')) {
+          this.errorMessage = 'Event description cannot exceed 5000 characters';
+        } else if (this.eventForm.get('location')?.hasError('maxlength')) {
+          this.errorMessage = 'Event location cannot exceed 255 characters';
+        } else {
+          this.errorMessage = 'Please fill in all required fields correctly';
+        }
         return;
       }
 
       const formValue = this.eventForm.value;
-      const eventDate = new Date(formValue.dateTime).toISOString();
+      
+      // Ensure all required fields are present and not empty
+      if (!formValue.eventTitle?.trim() || !formValue.description?.trim() || 
+          !formValue.location?.trim() || !formValue.dateTime) {
+        this.errorMessage = 'Please fill in all required fields correctly';
+        return;
+      }
+
+      // Convert datetime-local to ISO 8601 format without milliseconds and timezone
+      const dateObj = new Date(formValue.dateTime);
+      if (isNaN(dateObj.getTime())) {
+        this.errorMessage = 'Invalid date format';
+        return;
+      }
+      
+      const year = dateObj.getFullYear();
+      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const day = String(dateObj.getDate()).padStart(2, '0');
+      const hours = String(dateObj.getHours()).padStart(2, '0');
+      const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+      const seconds = String(dateObj.getSeconds()).padStart(2, '0');
+      const eventDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
 
       this.pendingEditPayload = {
-        title: formValue.eventTitle,
-        description: formValue.description,
+        title: formValue.eventTitle.trim(),
+        description: formValue.description.trim(),
         eventDate: eventDate,
-        location: formValue.location,
+        location: formValue.location.trim(),
         createdByAdminId: this.currentAdminId,
-        status: 'Upcoming'
+        status: this.editingEvent?.status || 'Upcoming'
       };
+
+      console.log('Prepared edit payload:', this.pendingEditPayload);
 
       this.isEditConfirmationModalOpen = true;
     } else {
@@ -408,7 +395,16 @@ export class EventsComponent implements OnInit {
     }
 
     const formValue = this.eventForm.value;
-    const eventDate = new Date(formValue.dateTime).toISOString();
+    
+    // Convert datetime-local to LocalDateTime format for backend (without timezone)
+    const dateObj = new Date(formValue.dateTime);
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const hours = String(dateObj.getHours()).padStart(2, '0');
+    const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+    const seconds = String(dateObj.getSeconds()).padStart(2, '0');
+    const eventDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
 
     const request = {
       title: formValue.eventTitle,
@@ -416,8 +412,10 @@ export class EventsComponent implements OnInit {
       eventDate: eventDate,
       location: formValue.location,
       createdByAdminId: this.currentAdminId,
-      status: 'Upcoming'
+      status: this.editingEvent?.status || 'Upcoming'
     };
+
+    console.log('Saving edited event:', { eventId: this.editingEventId, request });
 
     this.isLoading = true;
     this.eventService.editEvent(this.editingEventId, request).subscribe({
@@ -426,6 +424,7 @@ export class EventsComponent implements OnInit {
         this.showNotification('Event updated successfully!');
         this.eventForm.reset();
         this.editingEventId = null;
+        this.editingEvent = null;
         this.loadEvents();
         this.closeModal();
       },
@@ -439,7 +438,21 @@ export class EventsComponent implements OnInit {
 
   createEvent() {
     if (this.eventForm.invalid) {
-      this.errorMessage = 'Please fill in all required fields correctly';
+      // Mark all fields as touched to show validation errors
+      Object.keys(this.eventForm.controls).forEach(key => {
+        this.eventForm.get(key)?.markAsTouched();
+      });
+      
+      // Show specific validation error
+      if (this.eventForm.get('eventTitle')?.hasError('maxlength')) {
+        this.errorMessage = 'Event title cannot exceed 200 characters';
+      } else if (this.eventForm.get('description')?.hasError('maxlength')) {
+        this.errorMessage = 'Event description cannot exceed 5000 characters';
+      } else if (this.eventForm.get('location')?.hasError('maxlength')) {
+        this.errorMessage = 'Event location cannot exceed 255 characters';
+      } else {
+        this.errorMessage = 'Please fill in all required fields correctly';
+      }
       return;
     }
 
@@ -450,17 +463,38 @@ export class EventsComponent implements OnInit {
 
     const formValue = this.eventForm.value;
     
-    // Convert datetime-local to ISO format for backend
-    const eventDate = new Date(formValue.dateTime).toISOString();
+    // Ensure all required fields are present and not empty
+    if (!formValue.eventTitle?.trim() || !formValue.description?.trim() || 
+        !formValue.location?.trim() || !formValue.dateTime) {
+      this.errorMessage = 'Please fill in all required fields correctly';
+      return;
+    }
+    
+    // Convert datetime-local to ISO 8601 format without milliseconds and timezone
+    const dateObj = new Date(formValue.dateTime);
+    if (isNaN(dateObj.getTime())) {
+      this.errorMessage = 'Invalid date format';
+      return;
+    }
+    
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const hours = String(dateObj.getHours()).padStart(2, '0');
+    const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+    const seconds = String(dateObj.getSeconds()).padStart(2, '0');
+    const eventDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
 
     const request = {
-      title: formValue.eventTitle,
-      description: formValue.description,
+      title: formValue.eventTitle.trim(),
+      description: formValue.description.trim(),
       eventDate: eventDate,
-      location: formValue.location,
+      location: formValue.location.trim(),
       createdByAdminId: this.currentAdminId,
       status: 'Upcoming'
     };
+
+    console.log('Creating event with payload:', request);
 
     this.isLoading = true;
     this.eventService.createEvent(request).subscribe({
@@ -473,7 +507,30 @@ export class EventsComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error creating event:', error);
-        this.errorMessage = error.error?.message || 'Failed to create event. Please try again.';
+        console.error('Error details:', {
+          status: error.status,
+          statusText: error.statusText,
+          error: error.error,
+          message: error.message
+        });
+        
+        // Parse backend error message
+        let errorMsg = 'Failed to create event. Please try again.';
+        if (error.error && typeof error.error === 'string') {
+          if (error.error.includes('Data too long for column')) {
+            if (error.error.includes("'title'")) {
+              errorMsg = 'Event title is too long. Maximum 200 characters allowed.';
+            } else if (error.error.includes("'description'")) {
+              errorMsg = 'Event description is too long. Maximum 5000 characters allowed.';
+            } else if (error.error.includes("'location'")) {
+              errorMsg = 'Event location is too long. Maximum 255 characters allowed.';
+            }
+          } else {
+            errorMsg = error.error;
+          }
+        }
+        
+        this.errorMessage = errorMsg;
         this.isLoading = false;
       }
     });
@@ -501,7 +558,6 @@ export class EventsComponent implements OnInit {
         this.showNotification('Event deleted successfully!');
         this.isLoading = false;
         this.closeDeleteConfirmationModal();
-        this.closeDetailsModal();
         this.loadEvents();
       },
       error: (error) => {
@@ -524,6 +580,11 @@ export class EventsComponent implements OnInit {
 
     this.isLoading = true;
 
+    console.log('Sending edit request:', {
+      eventId: this.editingEventId,
+      payload: this.pendingEditPayload
+    });
+
     this.eventService.editEvent(this.editingEventId, this.pendingEditPayload).subscribe({
       next: () => {
         this.showNotification('Event updated successfully!');
@@ -531,12 +592,36 @@ export class EventsComponent implements OnInit {
         this.closeEditConfirmationModal();
         this.eventForm.reset();
         this.editingEventId = null;
+        this.editingEvent = null;
         this.loadEvents();
         this.closeModal();
       },
       error: (error) => {
         console.error('Error updating event:', error);
-        this.errorMessage = error.error?.message || 'Failed to update event. Please try again.';
+        console.error('Error details:', {
+          status: error.status,
+          statusText: error.statusText,
+          error: error.error,
+          message: error.message
+        });
+        
+        // Parse backend error message
+        let errorMsg = 'Failed to update event. Please try again.';
+        if (error.error && typeof error.error === 'string') {
+          if (error.error.includes('Data too long for column')) {
+            if (error.error.includes("'title'")) {
+              errorMsg = 'Event title is too long. Maximum 200 characters allowed.';
+            } else if (error.error.includes("'description'")) {
+              errorMsg = 'Event description is too long. Maximum 5000 characters allowed.';
+            } else if (error.error.includes("'location'")) {
+              errorMsg = 'Event location is too long. Maximum 255 characters allowed.';
+            }
+          } else {
+            errorMsg = error.error;
+          }
+        }
+        
+        this.errorMessage = errorMsg;
         this.isLoading = false;
       }
     });
@@ -591,19 +676,26 @@ export class EventsComponent implements OnInit {
     const currentStatus = (event.status || 'Upcoming').toLowerCase();
     const nextStatus = currentStatus === 'upcoming' ? 'Ongoing' : 'Completed';
 
+    // Convert eventDate to LocalDateTime format (without timezone)
+    const dateObj = new Date(event.eventDate);
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const hours = String(dateObj.getHours()).padStart(2, '0');
+    const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+    const seconds = String(dateObj.getSeconds()).padStart(2, '0');
+    const eventDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+
     const request = {
       title: event.title,
       description: event.description,
-      eventDate: event.eventDate,
+      eventDate: eventDate,
       location: event.location,
       createdByAdminId: event.createdByAdminId,
       status: nextStatus
     };
 
     this.errorMessage = '';
-
-    // Check if we're in the details modal
-    const isInModal = (window.event?.target as HTMLElement)?.closest('.details-modal-content') !== null;
 
     this.eventService.editEvent(event.eventId, request).subscribe({
       next: () => {
@@ -612,23 +704,6 @@ export class EventsComponent implements OnInit {
         if (index !== -1) {
           this.events[index].status = nextStatus;
           this.filteredEvents = [...this.events];
-        }
-        
-        // Update selected event if it's currently being viewed in details modal
-        if (this.selectedEvent && this.selectedEvent.eventId === event.eventId) {
-          this.selectedEvent.status = nextStatus;
-        }
-
-        // Only apply animations if action was triggered from modal
-        if (isInModal) {
-          // Trigger status pill animation in modal
-          setTimeout(() => {
-            const modalStatusPills = document.querySelectorAll('.details-modal-content .status-pill');
-            modalStatusPills.forEach(pill => {
-              pill.classList.add('status-changed');
-              setTimeout(() => pill.classList.remove('status-changed'), 600);
-            });
-          }, 100);
         }
         
         this.showNotification(`Event status updated to ${nextStatus}`);

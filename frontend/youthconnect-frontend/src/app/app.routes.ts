@@ -164,6 +164,12 @@ export const routes: Routes = [
                 title: 'SK Official Events - YouthConnect'
             },
             {
+                path: 'events/:eventId',
+                loadComponent: () =>
+                    import('./pages/sk-official-page/event-details/event-details').then(m => m.EventDetailsPage),
+                title: 'Event Details - YouthConnect'
+            },
+            {
                 path: 'concerns',
                 loadComponent: () =>
                     import('./pages/sk-official-page/concerns/concerns').then(move => move.Concerns),

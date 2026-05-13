@@ -932,6 +932,15 @@ html, body, :host, .events-container {
   gap: 2px;
 }
 
+/* Form Hint Styles */
+.form-hint {
+  color: #666;
+  font-size: 11px;
+  margin-top: 4px;
+  text-align: right;
+  font-weight: 400;
+}
+
 .form-input.ng-invalid.ng-touched,
 .form-textarea.ng-invalid.ng-touched {
   border-color: #d32f2f;
