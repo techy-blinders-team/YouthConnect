@@ -296,46 +296,16 @@ html, body, :host, .tasks-container {
 }
 
 .actions-th {
-  position: sticky;
-  right: 0;
-  z-index: 12;
   background-color: #f2f2f2;
-}
-
-.hyperlink-cell {
-  max-width: 180px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-
-  a {
-    color: #0052cc;
-    text-decoration: none;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
+  text-align: left;
 }
 
 .actions-cell {
-  position: sticky;
-  right: 0;
-  z-index: 10;
-  background-color: white;
   display: flex;
   gap: 8px;
   align-items: center;
   padding: 10px 20px;
-
-  // keep bg in sync with row hover
-  .task-row:hover & {
-    background-color: #e8f4ff;
-  }
-
-  .task-row:active & {
-    background-color: #d0e7ff;
-  }
+  background-color: transparent;
 }
 
 .btn-icon {
@@ -370,6 +340,7 @@ html, body, :host, .tasks-container {
 .btn-edit {
   color: #0052cc;
   img { filter: none; }
+  margin-left: 30px;
 }
 
 .btn-deactivate {
