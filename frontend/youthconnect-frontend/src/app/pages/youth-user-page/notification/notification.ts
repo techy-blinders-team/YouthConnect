@@ -23,17 +23,88 @@ export class NotificationPage implements OnInit {
   isLoading = false;
   errorMessage = '';
   youthId: number = 0;
+  userId: number = 0;
   readNotifications: Set<number> = new Set();
 
   ngOnInit(): void {
     const user = this.authService.getCurrentUser();
-    if (user && user.youthId) {
+    if (user && user.youthId && user.userId) {
       this.youthId = user.youthId;
+      this.userId = user.userId;
       this.loadReadNotificationsFromStorage();
       this.loadNotifications();
     } else {
       this.errorMessage = 'Unable to load user information';
     }
+  }
+
+  private loadEventStatusCache(): Record<number, string> {
+    const storageKey = `eventStatus_${this.youthId}`;
+    const stored = localStorage.getItem(storageKey);
+    if (!stored) {
+      return {};
+    }
+
+    try {
+      return JSON.parse(stored);
+    } catch (error) {
+      console.error('Error loading event status cache:', error);
+      return {};
+    }
+  }
+
+  private loadEventNotificationsFromStorage(): NotificationResponse[] {
+    const storageKey = `eventNotifications_${this.youthId}`;
+    const stored = localStorage.getItem(storageKey);
+    if (!stored) {
+      return [];
+    }
+
+    try {
+      return JSON.parse(stored);
+    } catch (error) {
+      console.error('Error loading event notifications from storage:', error);
+      return [];
+    }
+  }
+
+  private saveEventNotificationsToStorage(notifs: NotificationResponse[]): void {
+    const storageKey = `eventNotifications_${this.youthId}`;
+    localStorage.setItem(storageKey, JSON.stringify(notifs));
+  }
+
+  private loadNewEventCache(): Record<number, boolean> {
+    const storageKey = `newEventNotified_${this.youthId}`;
+    const stored = localStorage.getItem(storageKey);
+    if (!stored) {
+      return {};
+    }
+
+    try {
+      return JSON.parse(stored);
+    } catch (error) {
+      console.error('Error loading new event cache:', error);
+      return {};
+    }
+  }
+
+  private saveNewEventCache(cache: Record<number, boolean>): void {
+    const storageKey = `newEventNotified_${this.youthId}`;
+    localStorage.setItem(storageKey, JSON.stringify(cache));
+  }
+
+  private saveEventStatusCache(cache: Record<number, string>): void {
+    const storageKey = `eventStatus_${this.youthId}`;
+    localStorage.setItem(storageKey, JSON.stringify(cache));
+  }
+
+  private hashStringToInt(value: string): number {
+    let hash = 0;
+    for (let i = 0; i < value.length; i += 1) {
+      hash = (hash << 5) - hash + value.charCodeAt(i);
+      hash |= 0;
+    }
+    return Math.abs(hash);
   }
 
   loadReadNotificationsFromStorage(): void {
@@ -61,27 +132,77 @@ export class NotificationPage implements OnInit {
     // Fetch both concern notifications and event notifications
     forkJoin({
       concernNotifications: this.notificationService.getNotificationsByYouthId(this.youthId),
-      events: this.eventService.getAllEvents()
+      events: this.eventService.getAllEvents(),
+      rsvps: this.eventService.getOwnRsvps(this.userId)
     }).subscribe({
       next: (result) => {
         // Combine concern notifications with event notifications
         const concernNotifs = result.concernNotifications;
-        
-        // Create event notifications for all new events
-        const eventNotifs: NotificationResponse[] = result.events.map(event => ({
-          updateId: event.eventId + 100000, // Offset to avoid ID collision
-          eventId: event.eventId,
-          eventTitle: event.title,
-          eventDate: event.eventDate,
-          eventLocation: event.location,
-          updateText: `New event: ${event.title}`,
-          updatedByAdminName: 'SK Official',
-          createdAt: event.createdAt,
-          notificationType: 'event' as const
-        }));
+        const rsvpedEventIds = new Set(result.rsvps.map(r => r.eventId));
+        const rsvpedEvents = result.events.filter(event => rsvpedEventIds.has(event.eventId));
+
+        const statusCache = this.loadEventStatusCache();
+        const newEventCache = this.loadNewEventCache();
+        const storedEventNotifs = this.loadEventNotificationsFromStorage();
+        const storedIds = new Set(storedEventNotifs.map(n => n.updateId));
+        const eventNotifs: NotificationResponse[] = [];
+
+        result.events.forEach(event => {
+          if (!newEventCache[event.eventId]) {
+            const createdAt = event.createdAt;
+            const hashSource = `${event.eventId}|new|${createdAt}`;
+            const updateId = this.hashStringToInt(hashSource);
+            eventNotifs.push({
+              updateId,
+              eventId: event.eventId,
+              eventTitle: event.title,
+              eventDate: event.eventDate,
+              eventLocation: event.location,
+              eventStatus: event.status,
+              updateText: `New event: ${event.title}`,
+              updatedByAdminName: 'SK Official',
+              createdAt,
+              notificationType: 'event' as const
+            });
+            newEventCache[event.eventId] = true;
+          }
+        });
+
+        rsvpedEvents.forEach(event => {
+          const previousStatus = statusCache[event.eventId];
+          const currentStatus = event.status;
+          const statusChanged = !previousStatus || previousStatus !== currentStatus;
+          const createdAt = event.updatedAt ?? event.createdAt;
+
+          if (statusChanged) {
+            const hashSource = `${event.eventId}|${currentStatus}|${createdAt}`;
+            const updateId = this.hashStringToInt(hashSource);
+            eventNotifs.push({
+              updateId,
+              eventId: event.eventId,
+              eventTitle: event.title,
+              eventDate: event.eventDate,
+              eventLocation: event.location,
+              eventStatus: currentStatus,
+              updateText: `Status changed to ${currentStatus}`,
+              updatedByAdminName: 'SK Official',
+              createdAt,
+              notificationType: 'event' as const
+            });
+          }
+
+          statusCache[event.eventId] = currentStatus;
+        });
+
+        const newUniqueNotifs = eventNotifs.filter(n => !storedIds.has(n.updateId));
+        const mergedEventNotifs = [...storedEventNotifs, ...newUniqueNotifs];
+
+        this.saveNewEventCache(newEventCache);
+        this.saveEventStatusCache(statusCache);
+        this.saveEventNotificationsToStorage(mergedEventNotifs);
         
         // Combine and sort by date (newest first)
-        this.notifications = [...concernNotifs, ...eventNotifs].sort((a, b) => 
+        this.notifications = [...concernNotifs, ...mergedEventNotifs].sort((a, b) => 
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
         
@@ -140,7 +261,7 @@ export class NotificationPage implements OnInit {
 
   getNotificationTitle(notification: NotificationResponse): string {
     if (notification.notificationType === 'event') {
-      return `New Event: ${notification.eventTitle}`;
+      return `Event Update: ${notification.eventTitle}`;
     }
     return `${notification.updatedByAdminName || 'SK Official'} replied to your concern`;
   }
@@ -148,7 +269,8 @@ export class NotificationPage implements OnInit {
   getNotificationSubtitle(notification: NotificationResponse): string {
     if (notification.notificationType === 'event') {
       const eventDate = new Date(notification.eventDate!);
-      return `${eventDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} at ${notification.eventLocation}`;
+      const statusText = notification.eventStatus ?? 'Upcoming';
+      return `Status: ${statusText} • ${eventDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} at ${notification.eventLocation}`;
     }
     return `Re: ${notification.concernTitle}`;
   }

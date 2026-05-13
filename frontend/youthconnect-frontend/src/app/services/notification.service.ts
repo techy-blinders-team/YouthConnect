@@ -15,6 +15,7 @@ export interface NotificationResponse {
     eventTitle?: string;
     eventDate?: string;
     eventLocation?: string;
+    eventStatus?: string;
     notificationType: 'concern' | 'event';
 }
 
