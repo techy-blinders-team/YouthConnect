@@ -23,6 +23,7 @@ import com.youthconnect.youthconnect_id.repositories.EventAttendanceRepo;
 import com.youthconnect.youthconnect_id.repositories.EventRepo;
 import com.youthconnect.youthconnect_id.repositories.UserRepo;
 import com.youthconnect.youthconnect_id.repositories.projection.EventRsvpCountProjection;
+import com.youthconnect.youthconnect_id.services.EmailService;
 import com.youthconnect.youthconnect_id.services.EventService;
 
 @Service
@@ -36,6 +37,12 @@ public class EventServiceImpl implements EventService {
 
     @Autowired
     private UserRepo userRepo;
+
+    @Autowired
+    private EmailService emailService;
+    
+    @Autowired
+    private com.youthconnect.youthconnect_id.repositories.YouthProfileRepo youthProfileRepo;
 
     //Helpers
     private EventResponse toEventResponse(Event event, long rsvpCount) {
@@ -81,6 +88,7 @@ public class EventServiceImpl implements EventService {
 
     //SkOfficial
     @Override
+    @Transactional
     public EventResponse createEvent(EventRequest request) {
         Event event = new Event();
         event.setTitle(request.getTitle());
@@ -90,7 +98,46 @@ public class EventServiceImpl implements EventService {
         event.setCreatedByAdminId(request.getCreatedByAdminId());
         event.setStatus(request.getStatus() != null ? request.getStatus() : "Upcoming");
         event.setCreatedAt(LocalDateTime.now());
-        return toEventResponse(eventRepo.save(event), 0L);
+        
+        Event savedEvent = eventRepo.save(event);
+        
+        // Send email notifications to all approved youth users
+        notifyYouthUsersAboutNewEvent(savedEvent);
+        
+        return toEventResponse(savedEvent, 0L);
+    }
+    
+    private void notifyYouthUsersAboutNewEvent(Event event) {
+        try {
+            // Get all approved users
+            List<com.youthconnect.youthconnect_id.models.User> approvedUsers = userRepo.findByStatus("approved");
+            
+            if (approvedUsers.isEmpty()) {
+                System.out.println("⚠️ No approved users to notify about new event");
+                return;
+            }
+            
+            System.out.println("📧 Queuing event notifications for " + approvedUsers.size() + " approved users (async)");
+            
+            // Format event date
+            String formattedDate = event.getEventDate() != null ? 
+                event.getEventDate().toString() : "TBA";
+            
+            // Send emails asynchronously in background
+            emailService.sendNewEventNotificationsAsync(
+                approvedUsers,
+                event.getTitle(),
+                event.getDescription(),
+                formattedDate,
+                event.getLocation()
+            );
+            
+            System.out.println("✅ Event notification task queued successfully (will process in background)");
+        } catch (Exception e) {
+            System.err.println("❌ Error queuing event notifications: " + e.getMessage());
+            e.printStackTrace();
+            // Don't throw exception - event creation should succeed even if email queuing fails
+        }
     }
 
     @Override
@@ -98,6 +145,10 @@ public class EventServiceImpl implements EventService {
     public EventResponse editEvent(int eventId, EventRequest request) {
         Event event = eventRepo.findById(eventId)
                 .orElseThrow(() -> new RuntimeException("Event not found"));
+        
+        // Store old status to detect changes
+        String oldStatus = event.getStatus();
+        
         event.setTitle(request.getTitle());
         event.setDescription(request.getDescription());
         event.setEventDate(request.getEventDate());
@@ -105,8 +156,70 @@ public class EventServiceImpl implements EventService {
         event.setStatus(request.getStatus());
         event.setUpdatedAt(LocalDateTime.now());
         Event updated = eventRepo.save(event);
+        
+        // Check if status changed and notify registered users
+        String newStatus = request.getStatus();
+        if (newStatus != null && !newStatus.equalsIgnoreCase(oldStatus)) {
+            // Only send notifications for specific status changes
+            if (newStatus.equalsIgnoreCase("Ongoing") || 
+                newStatus.equalsIgnoreCase("Completed") || 
+                newStatus.equalsIgnoreCase("Cancelled")) {
+                notifyRegisteredUsersAboutStatusChange(updated, newStatus);
+            }
+        }
+        
         long rsvpCount = eventAttendanceRepo.countByEventId(updated.getEventId());
         return toEventResponse(updated, rsvpCount);
+    }
+    
+    private void notifyRegisteredUsersAboutStatusChange(Event event, String newStatus) {
+        try {
+            // Get all users who RSVP'd to this event
+            List<EventAttendance> attendances = eventAttendanceRepo.findByEventId(event.getEventId());
+            
+            if (attendances.isEmpty()) {
+                System.out.println("⚠️ No registered users to notify about status change for event: " + event.getTitle());
+                return;
+            }
+            
+            System.out.println("📧 Queuing event status change notifications (" + newStatus + ") for " + 
+                             attendances.size() + " registered users (async)");
+            
+            // Get user objects from attendances
+            List<com.youthconnect.youthconnect_id.models.User> registeredUsers = new java.util.ArrayList<>();
+            for (EventAttendance attendance : attendances) {
+                com.youthconnect.youthconnect_id.models.User user = 
+                    userRepo.findById(attendance.getUserId()).orElse(null);
+                if (user != null) {
+                    registeredUsers.add(user);
+                }
+            }
+            
+            if (registeredUsers.isEmpty()) {
+                System.out.println("⚠️ No valid users found for status change notification");
+                return;
+            }
+            
+            // Format event date
+            String formattedDate = event.getEventDate() != null ? 
+                event.getEventDate().toString() : "TBA";
+            
+            // Send emails asynchronously in background
+            emailService.sendEventStatusChangeNotificationsAsync(
+                registeredUsers,
+                event.getTitle(),
+                event.getDescription(),
+                formattedDate,
+                event.getLocation(),
+                newStatus
+            );
+            
+            System.out.println("✅ Status change notification task queued successfully (will process in background)");
+        } catch (Exception e) {
+            System.err.println("❌ Error queuing event status change notifications: " + e.getMessage());
+            e.printStackTrace();
+            // Don't throw exception - event update should succeed even if email queuing fails
+        }
     }
 
     @Override

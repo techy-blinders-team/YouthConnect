@@ -8,4 +8,14 @@ public interface EmailService {
     void notifySkOfficialsNewUser(User user, String youthName);
     void sendRegistrationConfirmationEmail(String to, String firstName);
     void sendPasswordResetEmail(String toEmail, String firstName, String resetToken, boolean isSkOfficial);
+    void sendNewEventNotification(String toEmail, String userName, String eventTitle, String eventDescription, 
+                                   String eventDate, String eventLocation);
+    void sendEventStatusChangeNotification(String toEmail, String userName, String eventTitle, String eventDescription,
+                                          String eventDate, String eventLocation, String newStatus);
+    
+    // Async methods for bulk notifications
+    void sendNewEventNotificationsAsync(java.util.List<User> users, String eventTitle, String eventDescription,
+                                       String eventDate, String eventLocation);
+    void sendEventStatusChangeNotificationsAsync(java.util.List<User> users, String eventTitle, String eventDescription,
+                                                String eventDate, String eventLocation, String newStatus);
 }
