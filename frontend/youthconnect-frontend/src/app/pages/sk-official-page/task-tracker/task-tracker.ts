@@ -33,6 +33,9 @@ export class TaskTracker implements OnInit {
   tasks: TaskResponse[] = [];
   filteredTasks: TaskResponse[] = [];
 
+  // SK Officials list for dropdown
+  skOfficials: any[] = [];
+
   // Form
   taskForm!: FormGroup;
 
@@ -89,6 +92,7 @@ export class TaskTracker implements OnInit {
 
   ngOnInit() {
     this.loadSkOfficialProfile();
+    this.loadSkOfficials();
     this.loadTasks();
   }
 
@@ -99,30 +103,30 @@ export class TaskTracker implements OnInit {
   setupScrollIndicators() {
     setTimeout(() => {
       const modalBodyWrappers = document.querySelectorAll('.modal-body-wrapper, .details-modal-body-wrapper');
-      
+
       modalBodyWrappers.forEach((wrapper) => {
         const element = wrapper as HTMLElement;
-        
+
         const updateScrollIndicators = () => {
           const canScrollUp = element.scrollTop > 10;
           const canScrollDown = element.scrollTop < element.scrollHeight - element.clientHeight - 10;
-          
+
           if (canScrollUp) {
             element.classList.add('can-scroll-up');
           } else {
             element.classList.remove('can-scroll-up');
           }
-          
+
           if (canScrollDown) {
             element.classList.add('can-scroll-down');
           } else {
             element.classList.remove('can-scroll-down');
           }
         };
-        
+
         element.addEventListener('scroll', updateScrollIndicators);
         updateScrollIndicators();
-        
+
         const resizeObserver = new ResizeObserver(updateScrollIndicators);
         resizeObserver.observe(element);
       });
@@ -158,6 +162,22 @@ export class TaskTracker implements OnInit {
       },
       error: (error) => {
         console.error('Error loading SK Official profile:', error);
+      }
+    });
+  }
+
+  loadSkOfficials() {
+    this.skOfficialService.getSkOfficials().subscribe({
+      next: (officials) => {
+        this.skOfficials = officials.map(official => ({
+          adminId: official.adminId,
+          fullName: `${official.firstName} ${official.lastName}`.trim(),
+          email: official.email,
+          position: 'SK Official' // Default position since it's not in the model
+        }));
+      },
+      error: (error) => {
+        console.error('Error loading SK Officials list:', error);
       }
     });
   }
@@ -259,17 +279,48 @@ export class TaskTracker implements OnInit {
     };
 
     this.isLoading = true;
+
+    // Optimistic UI update - add task immediately to the list
+    const optimisticTask: TaskResponse = {
+      taskId: Date.now(), // Temporary ID
+      adminId: this.currentAdminId,
+      tasking: request.tasking,
+      taskDescription: request.taskDescription,
+      skIncharge: request.skIncharge,
+      hyperlink: request.hyperlink,
+      status: request.status || TaskStatus.PRIO,
+      dueDate: request.dueDate,
+      createdAt: new Date().toISOString()
+    };
+
+    // Add to the beginning of the list for immediate feedback
+    this.tasks.unshift(optimisticTask);
+    this.filteredTasks = [...this.tasks];
+
+    // Close modal immediately for better UX
+    this.closeModal();
+    this.showNotification('Creating task...');
+
     this.taskService.createTask(request).subscribe({
       next: (response) => {
-        this.tasks.push(response);
+        // Replace optimistic task with real one from server
+        const index = this.tasks.findIndex(t => t.taskId === optimisticTask.taskId);
+        if (index !== -1) {
+          this.tasks[index] = response;
+        } else {
+          this.tasks.unshift(response);
+        }
         this.filteredTasks = [...this.tasks];
-        this.showNotification('Task created successfully!');
-        this.closeModal();
+        this.showNotification('Task created successfully! Email notification sent.');
         this.isLoading = false;
       },
       error: (error) => {
         console.error('Error creating task:', error);
+        // Remove optimistic task on error
+        this.tasks = this.tasks.filter(t => t.taskId !== optimisticTask.taskId);
+        this.filteredTasks = [...this.tasks];
         this.errorMessage = 'Failed to create task';
+        this.showNotification('Failed to create task', 'error');
         this.isLoading = false;
       }
     });
@@ -296,7 +347,7 @@ export class TaskTracker implements OnInit {
         if (index !== -1) {
           this.tasks[index] = response;
           this.filteredTasks = [...this.tasks];
-          
+
           // Update selected task if it's currently being viewed in details modal
           if (this.selectedTask && this.selectedTask.taskId === taskId) {
             this.selectedTask = response;
@@ -404,7 +455,7 @@ export class TaskTracker implements OnInit {
         if (index !== -1) {
           this.tasks[index] = response;
           this.filteredTasks = [...this.tasks];
-          
+
           // Update selected task if it's currently being viewed in details modal
           if (this.selectedTask && this.selectedTask.taskId === taskId) {
             this.selectedTask = response;

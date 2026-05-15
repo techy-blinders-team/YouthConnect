@@ -18,4 +18,8 @@ public interface EmailService {
                                        String eventDate, String eventLocation);
     void sendEventStatusChangeNotificationsAsync(java.util.List<User> users, String eventTitle, String eventDescription,
                                                 String eventDate, String eventLocation, String newStatus);
+    
+    // Task assignment notification (async)
+    void sendTaskAssignmentNotificationAsync(String toEmail, String skOfficialName, String taskTitle, 
+                                            String taskDescription, String dueDate, String assignedBy);
 }
