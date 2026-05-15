@@ -28,6 +28,7 @@ public interface AdminManagementService {
     User approveUser(int userId);
     User rejectUser(int userId);
     User deactivateUser(int userId);
+    User reactivateUser(int userId);
 
     // Youth Profile
     List<YouthProfile> getAllYouthProfiles();

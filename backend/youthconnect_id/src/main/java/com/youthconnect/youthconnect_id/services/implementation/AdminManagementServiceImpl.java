@@ -237,6 +237,15 @@ public class AdminManagementServiceImpl implements AdminManagementService {
         return userRepo.save(user);
     }
 
+    @Override
+    @Transactional
+    public User reactivateUser(int userId) {
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setActive(true);
+        return userRepo.save(user);
+    }
+
     // ── Youth Profile ─────────────────────────────────────
     @Override
     public List<YouthProfile> getAllYouthProfiles() {

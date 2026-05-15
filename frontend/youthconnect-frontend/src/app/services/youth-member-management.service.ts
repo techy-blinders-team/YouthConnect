@@ -122,6 +122,10 @@ export class YouthMemberManagementService {
     return this.http.put<YouthUserAccount>(`/api/administrator/users/${userId}/deactivate`, {});
   }
 
+  reactivateUser(userId: number): Observable<YouthUserAccount> {
+    return this.http.put<YouthUserAccount>(`/api/administrator/users/${userId}/reactivate`, {});
+  }
+
   rejectUser(userId: number, reason: string): Observable<YouthUserAccount> {
     return this.http.post<YouthUserAccount>(`/api/admin/users/${userId}/reject`, { reason });
   }

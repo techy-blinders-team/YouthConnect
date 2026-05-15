@@ -93,4 +93,14 @@ public class AdminUserManagementController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed: " + e.getMessage());
         }
     }
+
+    @PutMapping("/{userId}/reactivate")
+    public ResponseEntity<?> reactivateUser(@PathVariable int userId) {
+        try {
+            return ResponseEntity.ok(adminManagementService.reactivateUser(userId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "Failed: " + e.getMessage()));
+        }
+    }
 }

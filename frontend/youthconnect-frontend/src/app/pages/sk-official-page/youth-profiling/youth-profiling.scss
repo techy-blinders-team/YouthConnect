@@ -303,6 +303,33 @@ body,
   }
 }
 
+.approval-search-section {
+  padding: 8px 20px 12px;
+}
+
+.approval-search-input {
+  width: 100%;
+  max-width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #d0d7e3;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #1f2a44;
+  background: #ffffff;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+    border-color: #0052cc;
+    box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.1);
+  }
+
+  &::placeholder {
+    color: #98a2b3;
+  }
+}
+
 .approval-alert {
   margin: 8px 20px 0;
   border-radius: 8px;
@@ -329,6 +356,100 @@ body,
   display: flex;
   flex-direction: column;
   gap: 12px;
+  max-height: calc(100vh - 380px);
+
+  /* Custom scrollbar styling */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f3f5;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #c1c8d1;
+    border-radius: 4px;
+
+    &:hover {
+      background: #a8b1bd;
+    }
+  }
+}
+
+.approval-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px 16px;
+  border-top: 1px solid #eef1f6;
+}
+
+.pagination-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #d0d7e3;
+  background: #ffffff;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #385079;
+
+  &:hover:not(:disabled) {
+    background: #f7f9fc;
+    border-color: #0052cc;
+    color: #0052cc;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.pagination-numbers {
+  display: flex;
+  gap: 4px;
+}
+
+.pagination-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid #d0d7e3;
+  background: #ffffff;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 13px;
+  font-weight: 500;
+  color: #385079;
+
+  &:hover {
+    background: #f7f9fc;
+    border-color: #0052cc;
+    color: #0052cc;
+  }
+
+  &.active {
+    background: #0052cc;
+    border-color: #0052cc;
+    color: #ffffff;
+    font-weight: 600;
+  }
 }
 
 .approval-card {
@@ -373,6 +494,11 @@ body,
   &.rejected {
     background: #ffebee;
     color: #c62828;
+  }
+
+  &.deactivated {
+    background: #f5f5f5;
+    color: #757575;
   }
 }
 
@@ -448,6 +574,27 @@ body,
 
   &:disabled {
     background: #fca5a5;
+    cursor: not-allowed;
+  }
+}
+
+.btn-reactivate-panel {
+  background: #00a651;
+  color: #fff;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: #008a44;
+  }
+
+  &:disabled {
+    background: #b6e3cb;
     cursor: not-allowed;
   }
 }
@@ -1412,6 +1559,7 @@ body,
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -1440,6 +1588,7 @@ body,
     opacity: 0;
     transform: scale(0.9) translateY(-20px);
   }
+
   to {
     opacity: 1;
     transform: scale(1) translateY(0);
@@ -1470,17 +1619,17 @@ body,
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.5px;
-  
+
   &.pending {
     background: #fff3cd;
     color: #8a5a00;
   }
-  
+
   &.approved {
     background: #e8f5e9;
     color: #1b5e20;
   }
-  
+
   &.rejected {
     background: #ffebee;
     color: #c62828;
@@ -1531,19 +1680,19 @@ body,
   overflow-y: auto;
   overflow-x: hidden;
   min-height: 0;
-  
+
   &::-webkit-scrollbar {
     width: 8px;
   }
-  
+
   &::-webkit-scrollbar-track {
     background: #f5f5f5;
   }
-  
+
   &::-webkit-scrollbar-thumb {
     background: #c0c0c0;
     border-radius: 4px;
-    
+
     &:hover {
       background: #a0a0a0;
     }
@@ -1993,7 +2142,7 @@ textarea.form-control {
   .details-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .detail-item.full-width {
     grid-column: 1;
   }
@@ -2054,6 +2203,7 @@ textarea.form-control {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -2075,7 +2225,7 @@ textarea.form-control {
 
 .details-section {
   margin-bottom: 24px;
-  
+
   &:last-child {
     margin-bottom: 0;
   }
@@ -2100,7 +2250,7 @@ textarea.form-control {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  
+
   &.full-width {
     grid-column: 1 / -1;
   }
@@ -2129,17 +2279,17 @@ textarea.form-control {
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  
+
   &.status-pending {
     background: #fff3cd;
     color: #8a5a00;
   }
-  
+
   &.status-approved {
     background: #e8f5e9;
     color: #1b5e20;
   }
-  
+
   &.status-rejected {
     background: #ffebee;
     color: #c62828;
@@ -2150,7 +2300,7 @@ textarea.form-control {
   .details-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .detail-item.full-width {
     grid-column: 1;
   }
