@@ -291,12 +291,17 @@ html, body, :host, .dashboard-container {
   font-size: 14px;
   font-weight: 600;
   color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-break: break-word;
 }
 
 .item-date {
   font-size: 12px;
   color: #999;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .item-description {
@@ -309,10 +314,22 @@ html, body, :host, .dashboard-container {
   white-space: nowrap;
 }
 
+.item-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
 .item-location {
-  margin: 5px 0 0 0;
+  margin: 0;
   font-size: 12px;
   color: #999;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .item-footer {
