@@ -1,149 +1,124 @@
-<div class="concern-container">
-    <!-- Success Toast -->
-    <div class="success-toast" *ngIf="successMessage" [@slideIn]>
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-        </svg>
-        <span>{{ successMessage }}</span>
+<div class="concern-root">
+    <!-- Toast Notifications -->
+    <div class="notification-stack">
+        <div *ngIf="successMessage" class="toast-notification toast-success">
+            {{ successMessage }}
+        </div>
+        <div *ngIf="errorMessage && !showModal && !showDeleteModal && !showDetailsModal" class="toast-notification toast-error">
+            {{ errorMessage }}
+        </div>
     </div>
 
-    <!-- Header with Create Button -->
-    <div class="concern-header">
-        <button class="btn-create-concern" (click)="openModal()" [disabled]="isLoading">
-            {{ isLoading ? 'Loading...' : 'Create Concern' }}
-        </button>
-    </div>
-
-    <!-- Error Message -->
-    <div class="error-banner" *ngIf="errorMessage">
-        <p>{{ errorMessage }}</p>
-    </div>
-
-    <!-- Concerns List -->
-    <div class="concerns-content">
-        <div class="concerns-header">
-            <div class="header-text">
-                <h1>Your Concerns</h1>
-                <p class="subtitle">Submit and track your concerns to SK officials for resolution</p>
-            </div>
-            <div class="concerns-stats">
-                <span class="stat-badge">Total: {{ concerns.length }}</span>
-                <span class="stat-badge" *ngIf="filteredConcerns.length !== concerns.length">
-                    Filtered: {{ filteredConcerns.length }}
-                </span>
+    <div class="concern-container">
+        <!-- Header Section -->
+        <div class="header-section">
+            <div class="header-content">
+                <h1>MY CONCERNS</h1>
+                <p>Submit and track your concerns to SK officials for resolution</p>
             </div>
         </div>
 
-        <!-- Search and Filters -->
-        <div class="filters-section">
-            <div class="search-box">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" class="search-icon">
+        <!-- Action Bar: Search + Filters + Create -->
+        <div class="action-bar">
+            <div class="search-group">
+                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="11" cy="11" r="8"></circle>
                     <path d="m21 21-4.35-4.35"></path>
                 </svg>
-                <input type="text" placeholder="Search concerns by title or description..." [value]="searchQuery"
-                    (input)="onSearchChange($event)" class="search-input" />
-                <button *ngIf="searchQuery" class="clear-search" (click)="searchQuery = ''; applyFilters()"
-                    aria-label="Clear search">
-                    ×
-                </button>
+                <input
+                    type="text"
+                    placeholder="Search concerns"
+                    class="search-input"
+                    [value]="searchQuery"
+                    (input)="onSearchChange($event)">
             </div>
-
-            <div class="filter-controls">
+            <div class="filter-group">
                 <select class="filter-select" [value]="selectedStatusFilter"
                     (change)="onStatusFilterChange($any($event.target).value)">
-                    <option *ngFor="let filter of statusFilters" [value]="filter.value">
-                        {{ filter.label }}
-                    </option>
+                    <option *ngFor="let filter of statusFilters" [value]="filter.value">{{ filter.label }}</option>
                 </select>
-
                 <select class="filter-select" [value]="selectedTypeFilter"
                     (change)="onTypeFilterChange($any($event.target).value)">
-                    <option *ngFor="let filter of typeFilters" [value]="filter.value">
-                        {{ filter.label }}
-                    </option>
+                    <option *ngFor="let filter of typeFilters" [value]="filter.value">{{ filter.label }}</option>
                 </select>
-
-                <button class="btn-clear-filters" (click)="clearFilters()"
-                    *ngIf="searchQuery || selectedStatusFilter !== 'ALL' || selectedTypeFilter !== 'ALL'">
-                    Clear Filters
-                </button>
             </div>
+            <button class="add-concern-btn" (click)="openModal()" [disabled]="isLoading">
+                + Create Concern
+            </button>
         </div>
 
-        <div class="loading-state" *ngIf="isLoading && concerns.length === 0">
-            <p>Loading concerns...</p>
-        </div>
+        <!-- Concerns List -->
+        <div class="concerns-list">
+            <div *ngIf="isLoading && concerns.length === 0" class="loading-indicator">
+                <p>Loading concerns...</p>
+            </div>
+            <div *ngIf="!isLoading && filteredConcerns.length === 0" class="empty-state">
+                <p>{{ concerns.length === 0 ? 'No concerns yet. Create your first concern!' : 'No concerns match your filters.' }}</p>
+            </div>
 
-        <div class="concerns-list" *ngIf="!isLoading || concerns.length > 0">
-            <div class="concern-item" *ngFor="let concern of paginatedConcerns" (click)="openConcernDetails(concern)">
-                <div class="concern-content">
-                    <div class="concern-left">
-                        <span class="concern-type-icon">{{ getConcernTypeIcon(concern.typeOfConcern) }}</span>
-                        <div class="concern-text">
-                            <h3 class="concern-title">{{ concern.title }}</h3>
-                            <div class="concern-meta">
-                                <span class="concern-type-label">{{ getConcernTypeLabel(concern.typeOfConcern) }}</span>
-                                <span class="concern-date">{{ getTimeAgo(concern.createdAt) }}</span>
-                            </div>
-                        </div>
+            <div *ngFor="let concern of paginatedConcerns" class="concern-card" (click)="openConcernDetails(concern)">
+                <div class="card-header">
+                    <div class="card-title-group">
+                        <h3>{{ concern.title }}</h3>
                     </div>
-                    <div class="concern-right">
-                        <span class="concern-status" [ngClass]="getStatusBadgeClass(concern.status)">
-                            {{ getStatusLabel(concern.status) }}
-                        </span>
-                        <div class="concern-actions">
-                            <button class="btn-edit" (click)="$event.stopPropagation(); editConcern(concern)"
-                                [disabled]="isLoading || concern.status === 'CLOSED'" aria-label="Edit concern"
-                                title="Edit concern">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                </svg>
-                            </button>
-                            <button class="btn-delete" (click)="$event.stopPropagation(); deleteConcern(concern)" [disabled]="isLoading"
-                                aria-label="Delete concern" title="Delete concern">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="3 6 5 6 21 6"></polyline>
-                                    <path
-                                        d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
-                                    </path>
-                                </svg>
-                            </button>
+                    <div class="card-actions">
+                        <button class="edit-btn"
+                            (click)="editConcern(concern); $event.stopPropagation()"
+                            title="Edit concern"
+                            [disabled]="isLoading || concern.status === 'CLOSED'">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                        </button>
+                        <button class="delete-btn"
+                            (click)="deleteConcern(concern); $event.stopPropagation()"
+                            title="Delete concern"
+                            [disabled]="isLoading">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="description">{{ concern.description }}</p>
+                    <div class="concern-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">TYPE:</span>
+                            <span>{{ getConcernTypeLabel(concern.typeOfConcern) }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">SUBMITTED:</span>
+                            <span>{{ getTimeAgo(concern.createdAt) }}</span>
+                        </div>
+                        <div class="meta-item status-meta">
+                            <span class="meta-label">STATUS:</span>
+                            <span class="status-pill" [ngClass]="getStatusBadgeClass(concern.status)">
+                                {{ getStatusLabel(concern.status) }}
+                            </span>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="empty-state" *ngIf="filteredConcerns.length === 0 && !isLoading">
-                <p *ngIf="concerns.length === 0">No concerns yet. Create your first concern!</p>
-                <p *ngIf="concerns.length > 0">No concerns match your filters. Try adjusting your search or filters.
-                </p>
             </div>
         </div>
 
         <!-- Pagination -->
         <div class="pagination" *ngIf="filteredConcerns.length > itemsPerPage && !isLoading">
             <button class="pagination-btn" (click)="previousPage()" [disabled]="currentPage === 1">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="15 18 9 12 15 6"></polyline>
                 </svg>
             </button>
-
             <button *ngFor="let page of getPageNumbers()" class="pagination-number"
-                [class.active]="page === currentPage" [disabled]="page === -1" (click)="page !== -1 && goToPage(page)">
+                [class.active]="page === currentPage"
+                [disabled]="page === -1"
+                (click)="page !== -1 && goToPage(page)">
                 {{ page === -1 ? '...' : page }}
             </button>
-
             <button class="pagination-btn" (click)="nextPage()" [disabled]="currentPage === totalPages">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="9 18 15 12 9 6"></polyline>
                 </svg>
             </button>
@@ -151,47 +126,132 @@
     </div>
 </div>
 
-<!-- Concern Details Modal -->
-<div class="modal-overlay" *ngIf="showDetailsModal" (click)="closeConcernDetails()">
-    <div class="modal-content details-modal" (click)="$event.stopPropagation()">
+<!-- Create / Edit Concern Modal (full-screen like events) -->
+<div class="modal-overlay" *ngIf="showModal">
+    <div class="modal-content" (click)="$event.stopPropagation()">
         <div class="modal-header">
-            <h3>{{ selectedConcern?.title }}</h3>
-            <button class="btn-close" (click)="closeConcernDetails()" aria-label="Close modal">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-            </button>
+            <div>
+                <h2 class="modal-title">{{ editingConcernId ? 'Edit Concern' : 'Create New Concern' }}</h2>
+                <p class="modal-subtitle">{{ editingConcernId ? 'Update your concern details' : 'Describe your concern and submit it to SK officials' }}</p>
+            </div>
+            <button class="close-btn" (click)="closeModal()">✕</button>
         </div>
 
-        <div class="details-body">
-            <div class="concern-info">
-                <p><strong>Type:</strong> {{ getConcernTypeLabel(selectedConcern?.typeOfConcern || '') }}</p>
-                <p><strong>Status:</strong>
-                    <span class="status-badge" [ngClass]="getStatusBadgeClass(selectedConcern?.status || 'OPEN')">
-                        {{ getStatusLabel(selectedConcern?.status || 'OPEN') }}
-                    </span>
-                </p>
-                <p class="concern-description"><strong>Description:</strong> {{ selectedConcern?.description }}</p>
+        <div class="modal-body-wrapper">
+            <div class="scroll-indicator scroll-indicator-top"></div>
+
+            <div *ngIf="errorMessage" class="modal-alert alert-error">
+                {{ errorMessage }}
             </div>
 
-            <div class="updates-panel">
-                <div class="updates-header">
-                    <h3>Updates</h3>
-                </div>
-                <div class="updates-list">
-                    <div *ngIf="isLoadingUpdates" class="updates-loading">Loading updates...</div>
-                    <div *ngIf="!isLoadingUpdates && updateLoadError" class="updates-error">
-                        {{ updateLoadError }}
+            <form [formGroup]="concernForm" (ngSubmit)="submitConcern()">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="title" class="form-label">Title <span class="required">*</span></label>
+                        <input
+                            type="text"
+                            id="title"
+                            class="form-input"
+                            placeholder="Enter concern title"
+                            formControlName="title"
+                            maxlength="200"
+                            [class.ng-invalid]="concernForm.get('title')?.invalid && concernForm.get('title')?.touched"
+                            [class.ng-touched]="concernForm.get('title')?.touched">
+                        <div class="form-hint">{{ concernForm.get('title')?.value?.length || 0 }}/200 characters</div>
+                        <div *ngIf="concernForm.get('title')?.invalid && concernForm.get('title')?.touched" class="form-error">
+                            <span *ngIf="concernForm.get('title')?.errors?.['required']">Title is required</span>
+                            <span *ngIf="concernForm.get('title')?.errors?.['maxlength']">Title must be less than 200 characters</span>
+                        </div>
                     </div>
-                    <div *ngIf="!isLoadingUpdates && !updateLoadError && concernUpdates.length === 0"
-                        class="updates-empty">
+
+                    <div class="form-group">
+                        <label for="typeOfConcern" class="form-label">Type of Concern <span class="required">*</span></label>
+                        <select
+                            id="typeOfConcern"
+                            class="form-input form-select"
+                            formControlName="typeOfConcern"
+                            [class.ng-invalid]="concernForm.get('typeOfConcern')?.invalid && concernForm.get('typeOfConcern')?.touched"
+                            [class.ng-touched]="concernForm.get('typeOfConcern')?.touched">
+                            <option value="">Select concern type</option>
+                            <option *ngFor="let type of concernTypes" [value]="type.value">{{ type.label }}</option>
+                        </select>
+                        <div *ngIf="concernForm.get('typeOfConcern')?.invalid && concernForm.get('typeOfConcern')?.touched" class="form-error">
+                            <span>Type of concern is required</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description" class="form-label">Description <span class="required">*</span></label>
+                        <textarea
+                            id="description"
+                            class="form-textarea"
+                            placeholder="Describe your concern in detail"
+                            rows="5"
+                            formControlName="description"
+                            maxlength="1000"
+                            [class.ng-invalid]="concernForm.get('description')?.invalid && concernForm.get('description')?.touched"
+                            [class.ng-touched]="concernForm.get('description')?.touched"></textarea>
+                        <div class="form-hint">{{ concernForm.get('description')?.value?.length || 0 }}/1000 characters</div>
+                        <div *ngIf="concernForm.get('description')?.invalid && concernForm.get('description')?.touched" class="form-error">
+                            <span *ngIf="concernForm.get('description')?.errors?.['required']">Description is required</span>
+                            <span *ngIf="concernForm.get('description')?.errors?.['maxlength']">Description must be less than 1000 characters</span>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="scroll-indicator scroll-indicator-bottom"></div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn-cancel" (click)="closeModal()" [disabled]="isLoading">Cancel</button>
+            <button type="button" class="btn-create" (click)="submitConcern()" [disabled]="concernForm.invalid || isLoading">
+                {{ isLoading ? (editingConcernId ? 'Updating...' : 'Submitting...') : (editingConcernId ? 'Update Concern' : 'Submit Concern') }}
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Concern Details Modal -->
+<div class="modal-overlay" *ngIf="showDetailsModal" (click)="closeConcernDetails()">
+    <div class="modal-content modal-small" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <div>
+                <h2 class="modal-title">{{ selectedConcern?.title }}</h2>
+                <p class="modal-subtitle">{{ getConcernTypeLabel(selectedConcern?.typeOfConcern || '') }} Concern</p>
+            </div>
+            <button class="close-btn" (click)="closeConcernDetails()">✕</button>
+        </div>
+
+        <div class="modal-body-wrapper">
+            <div class="modal-body">
+                <div class="detail-info-row">
+                    <span class="detail-info-label">Status:</span>
+                    <span class="status-pill" [ngClass]="getStatusBadgeClass(selectedConcern?.status || 'OPEN')">
+                        {{ getStatusLabel(selectedConcern?.status || 'OPEN') }}
+                    </span>
+                </div>
+                <div class="detail-info-row">
+                    <span class="detail-info-label">Type:</span>
+                    <span class="detail-info-value">{{ getConcernTypeLabel(selectedConcern?.typeOfConcern || '') }}</span>
+                </div>
+                <div class="detail-info-row">
+                    <span class="detail-info-label">Submitted:</span>
+                    <span class="detail-info-value">{{ selectedConcern?.createdAt ? formatDate(selectedConcern!.createdAt) : '—' }}</span>
+                </div>
+                <p class="detail-text" style="margin-top: 16px;">{{ selectedConcern?.description }}</p>
+
+                <!-- Updates Panel -->
+                <div class="updates-section">
+                    <h4 class="updates-title">Updates from SK Officials</h4>
+                    <div *ngIf="isLoadingUpdates" class="updates-loading">Loading updates...</div>
+                    <div *ngIf="!isLoadingUpdates && updateLoadError" class="updates-error">{{ updateLoadError }}</div>
+                    <div *ngIf="!isLoadingUpdates && !updateLoadError && concernUpdates.length === 0" class="updates-empty">
                         No updates yet.
                     </div>
                     <div *ngFor="let update of concernUpdates" class="update-item">
                         <div class="update-meta">
-                            <span class="status-badge" [ngClass]="getStatusBadgeClass(update.status)">
+                            <span class="status-pill" [ngClass]="getStatusBadgeClass(update.status)">
                                 {{ getStatusLabel(update.status) }}
                             </span>
                             <span class="update-time">{{ formatDate(update.createdAt) }}</span>
@@ -202,7 +262,7 @@
             </div>
         </div>
 
-        <div class="modal-actions">
+        <div class="modal-footer">
             <button type="button" class="btn-cancel" (click)="closeConcernDetails()">Close</button>
         </div>
     </div>
@@ -210,109 +270,28 @@
 
 <!-- Delete Confirmation Modal -->
 <div class="modal-overlay" *ngIf="showDeleteModal" (click)="cancelDelete()">
-    <div class="modal-content delete-modal" (click)="$event.stopPropagation()">
+    <div class="modal-content modal-small" (click)="$event.stopPropagation()">
         <div class="modal-header">
-            <h3>Delete Concern</h3>
-            <button class="btn-close" (click)="cancelDelete()" aria-label="Close modal">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
+            <div>
+                <h2 class="modal-title">Confirm Delete</h2>
+            </div>
+            <button class="close-btn" (click)="cancelDelete()">✕</button>
+        </div>
+
+        <div class="modal-body-wrapper">
+            <div class="modal-body">
+                <p class="confirmation-text">
+                    Are you sure you want to permanently delete <strong>{{ concernToDelete?.title }}</strong>?
+                </p>
+                <p class="confirmation-warning">This action cannot be undone.</p>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn-cancel" (click)="cancelDelete()" [disabled]="isLoading">Cancel</button>
+            <button type="button" class="btn-delete" (click)="confirmDelete()" [disabled]="isLoading">
+                {{ isLoading ? 'Deleting...' : 'Delete' }}
             </button>
         </div>
-        <div class="delete-modal-body">
-            <div class="delete-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="8" x2="12" y2="12"></line>
-                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                </svg>
-            </div>
-            <p class="delete-message">Are you sure you want to delete this concern?</p>
-            <p class="delete-concern-title">"{{ concernToDelete?.title }}"</p>
-            <p class="delete-warning">This action cannot be undone.</p>
-        </div>
-        <div class="modal-actions">
-            <button type="button" class="btn-cancel" (click)="cancelDelete()">Cancel</button>
-            <button type="button" class="btn-delete-confirm" (click)="confirmDelete()">Delete</button>
-        </div>
-    </div>
-</div>
-
-<!-- Create Concern Modal -->
-<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-            <h3>{{ editingConcernId ? 'Edit Concern' : 'Create New Concern' }}</h3>
-            <button class="btn-close" (click)="closeModal()" aria-label="Close modal">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-            </button>
-        </div>
-
-        <form [formGroup]="concernForm" (ngSubmit)="submitConcern()">
-            <!-- Error Message in Modal -->
-            <div class="form-error" *ngIf="errorMessage">
-                <p>{{ errorMessage }}</p>
-            </div>
-            <div class="form-group">
-                <label for="title">Title <span class="required">*</span></label>
-                <input type="text" id="title" formControlName="title" placeholder="Enter concern title"
-                    [class.error]="concernForm.get('title')?.invalid && concernForm.get('title')?.touched"
-                    maxlength="200" />
-                <div class="char-counter">
-                    {{ concernForm.get('title')?.value?.length || 0 }} / 200
-                </div>
-                <div class="error-message"
-                    *ngIf="concernForm.get('title')?.invalid && concernForm.get('title')?.touched">
-                    <span *ngIf="concernForm.get('title')?.errors?.['required']">Title is required</span>
-                    <span *ngIf="concernForm.get('title')?.errors?.['maxlength']">Title must be less than 200
-                        characters</span>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="typeOfConcern">Type of Concern <span class="required">*</span></label>
-                <select id="typeOfConcern" formControlName="typeOfConcern"
-                    [class.error]="concernForm.get('typeOfConcern')?.invalid && concernForm.get('typeOfConcern')?.touched">
-                    <option value="">Select concern type</option>
-                    <option *ngFor="let type of concernTypes" [value]="type.value">{{ type.label }}</option>
-                </select>
-                <div class="error-message"
-                    *ngIf="concernForm.get('typeOfConcern')?.invalid && concernForm.get('typeOfConcern')?.touched">
-                    Type of concern is required
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="description">Description <span class="required">*</span></label>
-                <textarea id="description" formControlName="description" rows="5"
-                    placeholder="Describe your concern in detail"
-                    [class.error]="concernForm.get('description')?.invalid && concernForm.get('description')?.touched"
-                    maxlength="1000"></textarea>
-                <div class="char-counter">
-                    {{ concernForm.get('description')?.value?.length || 0 }} / 1000
-                </div>
-                <div class="error-message"
-                    *ngIf="concernForm.get('description')?.invalid && concernForm.get('description')?.touched">
-                    <span *ngIf="concernForm.get('description')?.errors?.['required']">Description is
-                        required</span>
-                    <span *ngIf="concernForm.get('description')?.errors?.['maxlength']">Description must be less
-                        than 1000 characters</span>
-                </div>
-            </div>
-
-            <div class="modal-actions">
-                <button type="button" class="btn-cancel" (click)="closeModal()" [disabled]="isLoading">Cancel</button>
-                <button type="submit" class="btn-submit" [disabled]="concernForm.invalid || isLoading">
-                    {{ isLoading ? 'Saving...' : (editingConcernId ? 'Update Concern' : 'Submit Concern') }}
-                </button>
-            </div>
-        </form>
     </div>
 </div>
