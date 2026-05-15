@@ -23,7 +23,7 @@
         <div *ngIf="successMessage" class="alert alert-success">
             {{ successMessage }}
         </div>
-        <div *ngIf="errorMessage && !isResponseModalOpen" class="alert alert-error">
+        <div *ngIf="errorMessage" class="alert alert-error">
             {{ errorMessage }}
         </div>
 
@@ -77,113 +77,13 @@
                 <div class="card-footer">
                     <button 
                         class="action-btn response-btn" 
-                        (click)="openResponseModal(concern)"
+                        (click)="updateConcern(concern)"
                         [disabled]="!canSendResponse(concern.status)"
                         [title]="concern.status === 'CLOSED' ? 'This concern is closed and cannot be modified' : 'Send a response to this concern'">
                         Update Status
                     </button>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Send Response Modal -->
-    <div class="modal-overlay" *ngIf="isResponseModalOpen" (click)="closeResponseModal()">
-        <div class="modal-content" (click)="$event.stopPropagation()">
-            <div class="modal-header">
-                <div>
-                    <h2 class="modal-title">{{ selectedConcern?.title }}</h2>
-                    <p class="modal-subtitle">Send a response to this concern</p>
-                </div>
-                <button class="close-btn" (click)="closeResponseModal()">✕</button>
-            </div>
-
-            <!-- Modal Error Message -->
-            <div *ngIf="errorMessage" class="modal-alert alert-error">
-                {{ errorMessage }}
-            </div>
-
-            <!-- Modal Success Message -->
-            <div *ngIf="successMessage" class="modal-alert alert-success">
-                {{ successMessage }}
-            </div>
-
-            <form [formGroup]="responseForm">
-                <div class="modal-body">
-                    <div class="concern-info">
-                        <p><strong>Type:</strong> {{ getConcernTypeDisplay(selectedConcern?.typeOfConcern || '') }}</p>
-                        <p><strong>Status:</strong> {{ selectedConcern?.status }}</p>
-                        <p class="concern-description"><strong>Description:</strong> {{ selectedConcern?.description }}</p>
-                    </div>
-
-                    <div class="updates-panel">
-                        <div class="updates-header">
-                            <h3>Updates</h3>
-                        </div>
-                        <div class="updates-list">
-                            <div *ngIf="isLoadingUpdates" class="updates-loading">Loading updates...</div>
-                            <div *ngIf="!isLoadingUpdates && updateLoadError" class="updates-error">
-                                {{ updateLoadError }}
-                            </div>
-                            <div *ngIf="!isLoadingUpdates && !updateLoadError && concernUpdates.length === 0" class="updates-empty">
-                                No updates yet.
-                            </div>
-                            <div *ngFor="let update of concernUpdates" class="update-item">
-                                <div class="update-meta">
-                                    <span class="status-badge" [ngClass]="'status-' + getStatusClass(update.status)">
-                                        {{ getStatusLabel(update.status) }}
-                                    </span>
-                                    <span class="update-time">{{ formatDate(update.createdAt) }}</span>
-                                </div>
-                                <p class="update-text">{{ update.updateText }}</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="status" class="form-label">Update Status<span class="required">*</span></label>
-                        <select 
-                            id="status" 
-                            class="form-input" 
-                            formControlName="status"
-                            [disabled]="selectedConcern?.status === 'CLOSED'">
-                            <option *ngFor="let option of statusOptions" [value]="option.value">
-                                {{ option.label }}
-                            </option>
-                        </select>
-                        <p *ngIf="selectedConcern?.status === 'CLOSED'" class="form-note closed-note">
-                            This concern is closed and cannot be modified.
-                        </p>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="response" class="form-label">Response<span class="required">*</span></label>
-                        <textarea 
-                            id="response" 
-                            class="form-textarea" 
-                            placeholder="Enter your response message" 
-                            rows="6"
-                            formControlName="response"></textarea>
-                        <div *ngIf="responseForm.get('response')?.invalid && responseForm.get('response')?.touched" class="form-error">
-                            <span *ngIf="responseForm.get('response')?.hasError('required')">Response is required</span>
-                            <span *ngIf="responseForm.get('response')?.hasError('minlength')">Response must be at least 10 characters</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn-cancel" (click)="closeResponseModal()" [disabled]="isLoading">
-                        Cancel
-                    </button>
-                    <button 
-                        type="button" 
-                        class="btn-create" 
-                        (click)="sendResponse()" 
-                        [disabled]="responseForm.invalid || isLoading || selectedConcern?.status === 'CLOSED'">
-                        {{ isLoading ? 'Updating...' : 'Update Status' }}
-                    </button>
-                </div>
-            </form>
         </div>
     </div>
 </div>

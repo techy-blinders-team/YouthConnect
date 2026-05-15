@@ -1,7 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Concerns } from './concerns';
 import { AuthService } from '../../../services/auth.service';
 import { AdminConcernService } from '../../../services/admin-concern.service';
@@ -12,6 +13,7 @@ describe('Concerns', () => {
   let fixture: ComponentFixture<Concerns>;
   let httpMock: HttpTestingController;
   let authService: jasmine.SpyObj<AuthService>;
+  let router: jasmine.SpyObj<Router>;
 
   const mockConcerns = [
     {
@@ -44,18 +46,22 @@ describe('Concerns', () => {
       role: 'sk-official'
     });
 
+    const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+
     await TestBed.configureTestingModule({
-      imports: [Concerns, ReactiveFormsModule, FormsModule],
+      imports: [Concerns, FormsModule],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
         AdminConcernService,
         SkOfficialManagementService,
-        { provide: AuthService, useValue: authServiceSpy }
+        { provide: AuthService, useValue: authServiceSpy },
+        { provide: Router, useValue: routerSpy }
       ]
     }).compileComponents();
 
     authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
+    router = TestBed.inject(Router) as jasmine.SpyObj<Router>;
     httpMock = TestBed.inject(HttpTestingController);
 
     fixture = TestBed.createComponent(Concerns);
@@ -73,7 +79,6 @@ describe('Concerns', () => {
   it('should initialize with empty concerns', () => {
     expect(component.concerns.length).toBe(0);
     expect(component.filteredConcerns.length).toBe(0);
-    expect(component.isResponseModalOpen).toBeFalse();
   });
 
   it('should load concerns on init', () => {
@@ -123,43 +128,10 @@ describe('Concerns', () => {
     expect(component.filteredConcerns[0].concernId).toBe(2);
   });
 
-  it('should open response modal with concern', () => {
-    component.openResponseModal(mockConcerns[0]);
+  it('should navigate to update concern page', () => {
+    component.updateConcern(mockConcerns[0]);
 
-    const updatesReq = httpMock.expectOne('http://localhost:8080/api/admin/concerns/1/updates');
-    expect(updatesReq.request.method).toBe('GET');
-    updatesReq.flush([]);
-
-    expect(component.isResponseModalOpen).toBeTrue();
-    expect(component.selectedConcern).toEqual(mockConcerns[0]);
-  });
-
-  it('should close response modal', () => {
-    component.isResponseModalOpen = true;
-    component.closeResponseModal();
-
-    expect(component.isResponseModalOpen).toBeFalse();
-  });
-
-  it('should send response successfully', () => {
-    component.selectedConcern = mockConcerns[0];
-    component.currentAdminId = 1;
-    component.responseForm.patchValue({
-      response: 'This is a detailed admin response to the concern.',
-      status: 'IN_PROGRESS'
-    });
-
-    component.sendResponse();
-
-    const req = httpMock.expectOne('http://localhost:8080/api/admin/concerns/1/updates');
-    expect(req.request.method).toBe('POST');
-    expect(req.request.body.updateText).toBe('This is a detailed admin response to the concern.');
-    
-    req.flush('Success', { status: 201, statusText: 'Created' });
-
-    const updatesReq = httpMock.expectOne('http://localhost:8080/api/admin/concerns/1/updates');
-    expect(updatesReq.request.method).toBe('GET');
-    updatesReq.flush([]);
+    expect(router.navigate).toHaveBeenCalledWith(['/sk-official/concerns/update', 1]);
   });
 
   it('should display concern type correctly', () => {
