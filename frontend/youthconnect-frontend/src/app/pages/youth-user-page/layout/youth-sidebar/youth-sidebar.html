@@ -1,68 +1,56 @@
-<!-- Mobile Backdrop Overlay -->
-<div class="mobile-backdrop" *ngIf="isMobile && isMobileMenuOpen" (click)="closeMobileMenu()"></div>
-
-<!-- Mobile Hamburger Button -->
-<button class="mobile-menu-btn" *ngIf="isMobile" (click)="toggleSidebar()" aria-label="Toggle Menu">
-    <span class="hamburger-icon">
-        <span></span>
-        <span></span>
-        <span></span>
-    </span>
-</button>
-
-<div class="sidebar-container" [class.collapsed]="isCollapsed" [class.mobile-open]="isMobileMenuOpen">
-    <button class="toggle-btn" (click)="toggleSidebar()" aria-label="Toggle Sidebar" *ngIf="!isMobile">
-        <span class="toggle-icon">{{ isCollapsed ? '→' : '←' }}</span>
+<!-- Mobile Top Bar (shown only on mobile) -->
+<div class="mobile-top-bar">
+    <button class="mobile-menu-toggle" (click)="toggleMobileMenu()" aria-label="Toggle menu">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
     </button>
+    <span class="mobile-top-bar-title">YouthConnect</span>
+</div>
 
-    <!-- Mobile Close Button -->
-    <button class="mobile-close-btn" *ngIf="isMobile" (click)="closeMobileMenu()" aria-label="Close Menu">
-        <span>×</span>
-    </button>
-
-    <div class="side-header">
-        <img src="assets/sk-logo.png" alt="SK Logo" class="logo" />
-        <div class="system-title" *ngIf="!isCollapsed || isMobile">
-            <span>Youth</span><br />
-            <span>Portal</span>
+<!-- Sidebar -->
+<div class="side-nav-bar" [class.mobile-open]="isMobileMenuOpen">
+    <div class="mobile-overlay" (click)="closeMobileMenu()"></div>
+    <div class="sidebar-content">
+        <div class="sidebar-header">
+            <img src="assets/sk-logo.png" alt="Youth Portal Logo" class="logo-img">
+            <h1 class="logo-text">YouthConnect</h1>
+            <button class="mobile-close-btn" (click)="closeMobileMenu()" aria-label="Close menu">✕</button>
         </div>
-    </div>
-    <div class="side-menu">
         <ul>
-            <li routerLink="/youth/dashboard" [class.active]="isRouteActive('/youth/dashboard')"
-                [title]="isCollapsed ? 'Dashboard' : ''" (click)="closeMobileMenu()">
-                <img src="assets/youth-sidebar/dashboard.png" alt="Dashboard" class="menu-icon" />
-                <span *ngIf="!isCollapsed || isMobile">Dashboard</span>
+            <li>
+                <a routerLink="/youth/dashboard" routerLinkActive="active" (click)="closeMobileMenu()">
+                    <img src="assets/youth-sidebar/dashboard.png" alt="Dashboard Icon" class="sidebar-icon">
+                    Dashboard
+                </a>
             </li>
-            <li routerLink="/youth/create-concern" [class.active]="isRouteActive('/youth/create-concern')"
-                [title]="isCollapsed ? 'Concern' : ''" (click)="closeMobileMenu()">
-                <img src="assets/youth-sidebar/attention.png" alt="Concern" class="menu-icon" />
-                <span *ngIf="!isCollapsed || isMobile">Concern</span>
+            <li>
+                <a routerLink="/youth/create-concern" routerLinkActive="active" (click)="closeMobileMenu()">
+                    <img src="assets/youth-sidebar/attention.png" alt="Concern Icon" class="sidebar-icon">
+                    Concern
+                </a>
             </li>
-            <li routerLink="/youth/events" [class.active]="isRouteActive('/youth/events')"
-                [title]="isCollapsed ? 'Event' : ''" (click)="closeMobileMenu()">
-                <img src="assets/youth-sidebar/event.png" alt="Event" class="menu-icon" />
-                <span *ngIf="!isCollapsed || isMobile">Event</span>
+            <li>
+                <a routerLink="/youth/events" routerLinkActive="active" (click)="closeMobileMenu()">
+                    <img src="assets/youth-sidebar/event.png" alt="Event Icon" class="sidebar-icon">
+                    Event
+                </a>
             </li>
-            <li routerLink="/youth/notifications" [class.active]="isRouteActive('/youth/notifications')"
-                [title]="isCollapsed ? 'Notification' : ''" (click)="closeMobileMenu()" class="notification-menu-item">
-                <img src="assets/youth-sidebar/notification.png" alt="Notification" class="menu-icon" />
-                <span *ngIf="!isCollapsed || isMobile">Notification</span>
-                <span class="notification-badge" *ngIf="unreadNotificationCount > 0">
-                    {{ unreadNotificationCount > 99 ? '99+' : unreadNotificationCount }}
-                </span>
+            <li class="notification-menu-item">
+                <a routerLink="/youth/notifications" routerLinkActive="active" (click)="closeMobileMenu()">
+                    <img src="assets/youth-sidebar/notification.png" alt="Notification Icon" class="sidebar-icon">
+                    Notification
+                    <span class="notification-badge" *ngIf="unreadNotificationCount > 0">
+                        {{ unreadNotificationCount > 99 ? '99+' : unreadNotificationCount }}
+                    </span>
+                </a>
             </li>
         </ul>
-    </div>
-    <div class="side-footer">
-        <img src="assets/youth-sidebar/youth-member-icon.png" alt="User" class="footer-icon" />
-        <div class="user-email" *ngIf="!isCollapsed || isMobile">
-            <span class="email-text">{{ userEmail }}</span>
+        <div class="logout-section">
+            <button (click)="logout()" [disabled]="isLoggingOut" class="logout-btn">
+                <span class="logout-text">Logout</span>
+            </button>
         </div>
-        <button type="button" class="logout-btn" aria-label="Logout" (click)="logout(); closeMobileMenu()"
-            [title]="isCollapsed ? 'Logout' : ''" [disabled]="isLoggingOut">
-            <img src="assets/administrator-sidebar/logout-icon.png" alt="Logout" class="footer-logout-icon" />
-        </button>
     </div>
 </div>
 
