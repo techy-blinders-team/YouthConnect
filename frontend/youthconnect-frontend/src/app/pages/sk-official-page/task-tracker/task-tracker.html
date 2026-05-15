@@ -1,8 +1,6 @@
 <div class="tasks-root">
     <div class="notification-stack">
-        <div
-            *ngFor="let notification of notifications"
-            class="toast-notification"
+        <div *ngFor="let notification of notifications" class="toast-notification"
             [ngClass]="notification.type === 'success' ? 'toast-success' : 'toast-error'">
             {{ notification.message }}
         </div>
@@ -36,12 +34,8 @@
         <!-- Search Bar and Add Task Button -->
         <div class="action-bar">
             <div class="search-group">
-                <input 
-                    type="text" 
-                    placeholder="Search tasks by description, type, or hyperlink" 
-                    class="search-input"
-                    [(ngModel)]="searchTerm"
-                    (input)="searchTasks(searchTerm)">
+                <input type="text" placeholder="Search tasks by description, type, or hyperlink" class="search-input"
+                    [(ngModel)]="searchTerm" (input)="searchTasks(searchTerm)">
                 <button class="search-btn" (click)="searchTasks(searchTerm)">Search</button>
             </div>
             <button class="add-task-btn" (click)="openModal()">+ Add Task</button>
@@ -69,7 +63,8 @@
                             <p>{{ searchTerm ? 'No tasks match your search.' : 'No tasks found.' }}</p>
                         </td>
                     </tr>
-                    <tr *ngFor="let task of filteredTasks" class="task-row clickable-row" (click)="openDetailsModal(task)">
+                    <tr *ngFor="let task of filteredTasks" class="task-row clickable-row"
+                        (click)="openDetailsModal(task)">
                         <td class="tasking-cell">{{ getTaskingDisplayName(task.tasking) }}</td>
                         <td class="sk-incharge-col">{{ task.skIncharge || getSkOfficialName(task.adminId) }}</td>
                         <td>
@@ -80,23 +75,23 @@
                         <td>{{ task.dueDate ? formatDate(task.dueDate) : '—' }}</td>
                         <td class="actions-cell" (click)="$event.stopPropagation()">
                             <button class="btn-task-action btn-in-progress"
-                                    *ngIf="task.status === 'PRIO' || task.status === 'TODO'"
-                                    (click)="setAsInProgress(task.taskId)"
-                                    title="Set as In Progress">
+                                *ngIf="task.status === 'PRIO' || task.status === 'TODO'"
+                                (click)="setAsInProgress(task.taskId)" title="Set as In Progress">
                                 Set as In Progress
                             </button>
                             <button class="btn-task-action btn-mark-done"
-                                    *ngIf="task.status === 'IN_PROGRESS' || task.status === 'CUSTOM'"
-                                    (click)="updateTaskStatus(task.taskId, 'DONE')"
-                                    title="Mark as Done">
+                                *ngIf="task.status === 'IN_PROGRESS' || task.status === 'CUSTOM'"
+                                (click)="updateTaskStatus(task.taskId, 'DONE')" title="Mark as Done">
                                 Mark as Done
                             </button>
                             <span *ngIf="task.status === 'DONE'" class="task-done-badge">Done</span>
                             <button class="btn-icon btn-edit" (click)="openEditModal(task)" title="Edit task">
                                 <img src="assets/sk-official-events-icons/edit.svg" alt="Edit" width="16" height="16">
                             </button>
-                            <button class="btn-icon btn-deactivate" (click)="deleteTask(task.taskId)" title="Delete task">
-                                <img src="assets/sk-official-events-icons/delete.svg" alt="Delete" width="16" height="16">
+                            <button class="btn-icon btn-deactivate" (click)="deleteTask(task.taskId)"
+                                title="Delete task">
+                                <img src="assets/sk-official-events-icons/delete.svg" alt="Delete" width="16"
+                                    height="16">
                             </button>
                         </td>
                     </tr>
@@ -111,63 +106,65 @@
             <div class="modal-header">
                 <div>
                     <h2 class="modal-title">{{ isEditing ? 'Edit Task' : 'Create New Task' }}</h2>
-                    <p class="modal-subtitle">{{ isEditing ? 'Update task details' : 'Set up and organize a new task' }}</p>
+                    <p class="modal-subtitle">{{ isEditing ? 'Update task details' : 'Set up and organize a new task' }}
+                    </p>
                 </div>
                 <button class="close-btn" (click)="closeModal()">✕</button>
             </div>
 
             <div class="modal-body-wrapper">
                 <div class="scroll-indicator scroll-indicator-top"></div>
-                
+
                 <form [formGroup]="taskForm">
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="taskingType" class="form-label">Tasking/Committee<span class="required">*</span></label>
+                            <label for="taskingType" class="form-label">Tasking/Committee<span
+                                    class="required">*</span></label>
                             <select id="taskingType" class="form-input" formControlName="taskingType">
                                 <option value="" disabled selected>Select a tasking/committee</option>
                                 <option *ngFor="let tasking of taskingOptions" [value]="tasking">
                                     {{ getTaskingDisplayName(tasking) }}
                                 </option>
                             </select>
-                            <div *ngIf="taskForm.get('taskingType')?.invalid && taskForm.get('taskingType')?.touched" class="form-error">
-                                <span *ngIf="taskForm.get('taskingType')?.hasError('required')">Tasking/Committee is required</span>
+                            <div *ngIf="taskForm.get('taskingType')?.invalid && taskForm.get('taskingType')?.touched"
+                                class="form-error">
+                                <span *ngIf="taskForm.get('taskingType')?.hasError('required')">Tasking/Committee is
+                                    required</span>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="description" class="form-label">Description of Tasks<span class="required">*</span></label>
-                            <textarea 
-                                id="description" 
-                                class="form-textarea" 
-                                placeholder="Enter task description" 
-                                rows="5"
-                                formControlName="taskDescription"></textarea>
-                            <div *ngIf="taskForm.get('taskDescription')?.invalid && taskForm.get('taskDescription')?.touched" class="form-error">
-                                <span *ngIf="taskForm.get('taskDescription')?.hasError('required')">Description is required</span>
+                            <label for="description" class="form-label">Description of Tasks<span
+                                    class="required">*</span></label>
+                            <textarea id="description" class="form-textarea" placeholder="Enter task description"
+                                rows="5" formControlName="taskDescription"></textarea>
+                            <div *ngIf="taskForm.get('taskDescription')?.invalid && taskForm.get('taskDescription')?.touched"
+                                class="form-error">
+                                <span *ngIf="taskForm.get('taskDescription')?.hasError('required')">Description is
+                                    required</span>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="skIncharge" class="form-label">SK Incharge<span class="required">*</span></label>
-                            <input 
-                                type="text" 
-                                id="skIncharge" 
-                                class="form-input" 
-                                placeholder="Enter SK incharge"
-                                formControlName="skIncharge">
-                            <div *ngIf="taskForm.get('skIncharge')?.invalid && taskForm.get('skIncharge')?.touched" class="form-error">
-                                <span *ngIf="taskForm.get('skIncharge')?.hasError('required')">SK Incharge is required</span>
+                            <label for="skIncharge" class="form-label">SK Incharge<span
+                                    class="required">*</span></label>
+                            <select id="skIncharge" class="form-input" formControlName="skIncharge">
+                                <option value="" disabled selected>Select SK Official</option>
+                                <option *ngFor="let official of skOfficials" [value]="official.fullName">
+                                    {{ official.fullName }} - {{ official.position }}
+                                </option>
+                            </select>
+                            <div *ngIf="taskForm.get('skIncharge')?.invalid && taskForm.get('skIncharge')?.touched"
+                                class="form-error">
+                                <span *ngIf="taskForm.get('skIncharge')?.hasError('required')">SK Incharge is
+                                    required</span>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="hyperlink" class="form-label">Notes/Hyperlink</label>
-                            <input 
-                                type="text" 
-                                id="hyperlink" 
-                                class="form-input" 
-                                placeholder="Enter notes/hyperlink (Optional)"
-                                formControlName="hyperlink">
+                            <input type="text" id="hyperlink" class="form-input"
+                                placeholder="Enter notes/hyperlink (Optional)" formControlName="hyperlink">
                         </div>
 
                         <div class="form-group">
@@ -180,33 +177,30 @@
                                 <option value="DONE">DONE</option>
                                 <option value="CUSTOM">CUSTOM</option>
                             </select>
-                            <div *ngIf="taskForm.get('status')?.invalid && taskForm.get('status')?.touched" class="form-error">
+                            <div *ngIf="taskForm.get('status')?.invalid && taskForm.get('status')?.touched"
+                                class="form-error">
                                 <span *ngIf="taskForm.get('status')?.hasError('required')">Status is required</span>
                             </div>
                         </div>
 
                         <div class="form-group" *ngIf="taskForm.get('status')?.value === 'CUSTOM'">
-                            <label for="customStatus" class="form-label">Custom Status<span class="required">*</span></label>
-                            <input 
-                                type="text" 
-                                id="customStatus" 
-                                class="form-input" 
-                                placeholder="Enter custom status"
+                            <label for="customStatus" class="form-label">Custom Status<span
+                                    class="required">*</span></label>
+                            <input type="text" id="customStatus" class="form-input" placeholder="Enter custom status"
                                 formControlName="customStatus">
-                            <div *ngIf="taskForm.get('customStatus')?.invalid && taskForm.get('customStatus')?.touched" class="form-error">
-                                <span *ngIf="taskForm.get('customStatus')?.hasError('required')">Custom status is required</span>
+                            <div *ngIf="taskForm.get('customStatus')?.invalid && taskForm.get('customStatus')?.touched"
+                                class="form-error">
+                                <span *ngIf="taskForm.get('customStatus')?.hasError('required')">Custom status is
+                                    required</span>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="dueDate" class="form-label">Due Date<span class="required">*</span></label>
-                            <input 
-                                type="datetime-local" 
-                                id="dueDate" 
-                                class="form-input" 
-                                placeholder="mm/dd/yyyy --:-- --"
-                                formControlName="dueDate">
-                            <div *ngIf="taskForm.get('dueDate')?.invalid && taskForm.get('dueDate')?.touched" class="form-error">
+                            <input type="datetime-local" id="dueDate" class="form-input"
+                                placeholder="mm/dd/yyyy --:-- --" formControlName="dueDate">
+                            <div *ngIf="taskForm.get('dueDate')?.invalid && taskForm.get('dueDate')?.touched"
+                                class="form-error">
                                 <span *ngIf="taskForm.get('dueDate')?.hasError('required')">Due date is required</span>
                             </div>
                         </div>
@@ -219,7 +213,8 @@
             <div class="modal-footer">
                 <button class="btn-cancel" (click)="closeModal()" [disabled]="isLoading">Cancel</button>
                 <button class="btn-create" (click)="saveTask()" [disabled]="taskForm.invalid || isLoading">
-                    {{ isLoading ? (isEditing ? 'Updating...' : 'Creating...') : (isEditing ? 'Update Task' : 'Create Task') }}
+                    {{ isLoading ? (isEditing ? 'Updating...' : 'Creating...') : (isEditing ? 'Update Task' : 'Create
+                    Task') }}
                 </button>
             </div>
         </div>
@@ -273,7 +268,8 @@
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn-cancel" (click)="closeDeleteConfirmationModal()" [disabled]="isLoading">
+                <button type="button" class="btn-cancel" (click)="closeDeleteConfirmationModal()"
+                    [disabled]="isLoading">
                     Cancel
                 </button>
                 <button type="button" class="btn-delete" (click)="confirmDeleteSubmission()" [disabled]="isLoading">
@@ -289,10 +285,12 @@
             <div class="details-modal-header">
                 <h2 class="details-modal-title">{{ getTaskingDisplayName(selectedTask.tasking) }}</h2>
                 <div class="details-modal-actions">
-                    <button class="details-edit-btn" (click)="openEditModal(selectedTask); closeDetailsModal()" title="Edit task">
+                    <button class="details-edit-btn" (click)="openEditModal(selectedTask); closeDetailsModal()"
+                        title="Edit task">
                         <img src="assets/sk-official-events-icons/edit.svg" alt="Edit" width="20" height="20">
                     </button>
-                    <button class="details-delete-btn" (click)="deleteTask(selectedTask.taskId); closeDetailsModal()" title="Delete task">
+                    <button class="details-delete-btn" (click)="deleteTask(selectedTask.taskId); closeDetailsModal()"
+                        title="Delete task">
                         <img src="assets/sk-official-events-icons/delete.svg" alt="Delete" width="20" height="20">
                     </button>
                     <button class="details-close-btn" (click)="closeDetailsModal()" title="Close">✕</button>
@@ -301,19 +299,21 @@
 
             <div class="details-modal-body-wrapper">
                 <div class="scroll-indicator scroll-indicator-top"></div>
-                
+
                 <div class="details-modal-body">
                     <p class="detail-text">{{ selectedTask.taskDescription }}</p>
 
                     <div class="detail-info-row">
                         <span class="detail-info-label">SK INCHARGE:</span>
-                        <span class="detail-info-value">{{ selectedTask.skIncharge || getSkOfficialName(selectedTask.adminId) }}</span>
+                        <span class="detail-info-value">{{ selectedTask.skIncharge ||
+                            getSkOfficialName(selectedTask.adminId) }}</span>
                     </div>
 
                     <div class="detail-info-row">
                         <span class="detail-info-label">NOTE/HYPERLINK:</span>
                         <span class="detail-info-value">
-                            <a *ngIf="selectedTask.hyperlink" [href]="selectedTask.hyperlink" target="_blank" rel="noopener noreferrer">{{ selectedTask.hyperlink }}</a>
+                            <a *ngIf="selectedTask.hyperlink" [href]="selectedTask.hyperlink" target="_blank"
+                                rel="noopener noreferrer">{{ selectedTask.hyperlink }}</a>
                             <span *ngIf="!selectedTask.hyperlink">-</span>
                         </span>
                     </div>
@@ -327,7 +327,8 @@
 
                     <div class="detail-info-row">
                         <span class="detail-info-label">DUE DATE:</span>
-                        <span class="detail-info-value">{{ selectedTask.dueDate ? formatDate(selectedTask.dueDate) : 'No due date set' }}</span>
+                        <span class="detail-info-value">{{ selectedTask.dueDate ? formatDate(selectedTask.dueDate) : 'No
+                            due date set' }}</span>
                     </div>
                 </div>
 
@@ -335,11 +336,11 @@
             </div>
 
             <div class="details-modal-footer">
-                <button class="details-btn-task-action" 
-                        *ngIf="selectedTask.status !== 'DONE'"
-                        (click)="selectedTask.status === 'PRIO' || selectedTask.status === 'TODO' ? setAsInProgress(selectedTask.taskId) : updateTaskStatus(selectedTask.taskId, 'DONE')" 
-                        [ngClass]="selectedTask.status === 'PRIO' || selectedTask.status === 'TODO' ? 'details-btn-in-progress' : 'details-btn-mark-done'">
-                        {{ selectedTask.status === 'PRIO' || selectedTask.status === 'TODO' ? 'Set as In Progress' : 'Mark as Done' }}
+                <button class="details-btn-task-action" *ngIf="selectedTask.status !== 'DONE'"
+                    (click)="selectedTask.status === 'PRIO' || selectedTask.status === 'TODO' ? setAsInProgress(selectedTask.taskId) : updateTaskStatus(selectedTask.taskId, 'DONE')"
+                    [ngClass]="selectedTask.status === 'PRIO' || selectedTask.status === 'TODO' ? 'details-btn-in-progress' : 'details-btn-mark-done'">
+                    {{ selectedTask.status === 'PRIO' || selectedTask.status === 'TODO' ? 'Set as In Progress' : 'Mark
+                    as Done' }}
                 </button>
                 <span *ngIf="selectedTask.status === 'DONE'" class="details-task-done-badge">Done</span>
             </div>

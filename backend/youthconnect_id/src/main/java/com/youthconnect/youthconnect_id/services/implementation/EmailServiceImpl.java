@@ -794,4 +794,90 @@ public class EmailServiceImpl implements EmailService {
         
         System.out.println("📊 [ASYNC] Status change notification complete: " + successCount + " sent, " + failCount + " failed");
     }
+
+    @Async
+    @Override
+    public void sendTaskAssignmentNotificationAsync(String toEmail, String skOfficialName, String taskTitle,
+                                                   String taskDescription, String dueDate, String assignedBy) {
+        try {
+            System.out.println("🚀 [ASYNC] Sending task assignment notification in background...");
+            System.out.println("📧 To: " + toEmail);
+            System.out.println("📋 Task: " + taskTitle);
+            
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setFrom(fromEmail, "YouthConnect - Barangay 183");
+            helper.setTo(toEmail);
+            helper.setSubject("YouthConnect - New Task Assigned: " + taskTitle + " 📋");
+            helper.setText(buildTaskAssignmentTemplate(skOfficialName, taskTitle, taskDescription, 
+                                                      dueDate, assignedBy), true);
+
+            mailSender.send(message);
+            System.out.println("✅ [ASYNC] Task assignment notification sent successfully!");
+
+        } catch (Exception e) {
+            System.err.println("❌ [ASYNC] Failed to send task assignment notification: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private String buildTaskAssignmentTemplate(String skOfficialName, String taskTitle,
+                                              String taskDescription, String dueDate, String assignedBy) {
+        String tasksUrl = baseUrl + "/sk-official/task-tracker";
+        
+        return """
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                    .header { background-color: #2196F3; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+                    .content { background-color: #f9f9f9; padding: 30px; border-radius: 0 0 5px 5px; }
+                    .task-box { background-color: white; border: 2px solid #2196F3; padding: 20px; margin: 20px 0; border-radius: 5px; }
+                    .task-detail { margin: 10px 0; padding: 10px; background-color: #e3f2fd; border-radius: 3px; }
+                    .highlight { background-color: #fff3cd; border-left: 4px solid #FF9800; padding: 15px; margin: 20px 0; }
+                    .button { display: inline-block; padding: 12px 30px; background-color: #2196F3; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+                    .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>📋 New Task Assigned!</h1>
+                    </div>
+                    <div class="content">
+                        <p>Hi <strong>%s</strong>,</p>
+                        <div class="highlight">
+                            <p style="margin: 0; font-size: 18px;"><strong>You have been assigned a new task!</strong></p>
+                        </div>
+                        <p>A new task has been assigned to you by <strong>%s</strong>. Please review the details below:</p>
+                        <div class="task-box">
+                            <h2 style="color: #2196F3; margin-top: 0;">%s</h2>
+                            <div class="task-detail">
+                                <strong>📝 Description:</strong><br>
+                                %s
+                            </div>
+                            <div class="task-detail">
+                                <strong>📅 Due Date:</strong> %s
+                            </div>
+                            <div class="task-detail">
+                                <strong>👤 Assigned By:</strong> %s
+                            </div>
+                        </div>
+                        <p>Please log in to the Task Tracker to view more details and update the task status.</p>
+                        <center>
+                            <a href="%s" class="button">View Task Tracker</a>
+                        </center>
+                    </div>
+                    <div class="footer">
+                        <p>YouthConnect - Sangguniang Kabataan, Barangay 183</p>
+                        <p>This is an automated notification. Please do not reply.</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+        """.formatted(skOfficialName, assignedBy, taskTitle, taskDescription, dueDate, assignedBy, tasksUrl);
+    }
 }
