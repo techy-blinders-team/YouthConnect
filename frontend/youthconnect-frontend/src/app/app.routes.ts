@@ -176,6 +176,12 @@ export const routes: Routes = [
                 title: 'Concerns - YouthConnect'
             },
             {
+                path: 'concerns/update/:concernId',
+                loadComponent: () =>
+                    import('./pages/sk-official-page/update-concern/update-concern').then(move => move.UpdateConcern),
+                title: 'Update Concern - YouthConnect'
+            },
+            {
                 path: 'youth-profiling',
                 loadComponent: () =>
                     import('./pages/sk-official-page/youth-profiling/youth-profiling').then(move => move.YouthProfiling),
