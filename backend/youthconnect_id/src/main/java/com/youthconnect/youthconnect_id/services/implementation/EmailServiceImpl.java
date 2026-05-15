@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.youthconnect.youthconnect_id.models.User;
@@ -22,6 +23,9 @@ public class EmailServiceImpl implements EmailService {
 
     @Autowired
     private SkOfficialRepo skOfficialRepo;
+    
+    @Autowired
+    private com.youthconnect.youthconnect_id.repositories.YouthProfileRepo youthProfileRepo;
 
     @Value("${app.base.url}")
     private String baseUrl;
@@ -366,5 +370,428 @@ public class EmailServiceImpl implements EmailService {
             </body>
             </html>
         """.formatted(firstName, resetUrl, resetUrl);
+    }
+
+
+
+    @Override
+    public void sendNewEventNotification(String toEmail, String userName, String eventTitle, 
+                                         String eventDescription, String eventDate, String eventLocation) {
+        try {
+            System.out.println("📧 Building new event notification email...");
+            System.out.println("From: " + fromEmail);
+            System.out.println("To: " + toEmail);
+            System.out.println("Subject: New Event: " + eventTitle);
+            
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setFrom(fromEmail, "YouthConnect - Barangay 183");
+            helper.setTo(toEmail);
+            helper.setSubject("YouthConnect - New Event: " + eventTitle + " 🎉");
+            helper.setText(buildNewEventNotificationTemplate(userName, eventTitle, eventDescription, 
+                                                            eventDate, eventLocation), true);
+
+            System.out.println("📤 Sending new event notification email via SMTP...");
+            mailSender.send(message);
+            System.out.println("✅ New event notification email sent successfully!");
+
+        } catch (Exception e) {
+            System.err.println("❌ Failed to send new event notification email: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private String buildNewEventNotificationTemplate(String userName, String eventTitle, 
+                                                     String eventDescription, String eventDate, String eventLocation) {
+        String eventsUrl = baseUrl + "/youth/events";
+        
+        return """
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                    .header { background-color: #4CAF50; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+                    .content { background-color: #f9f9f9; padding: 30px; border-radius: 0 0 5px 5px; }
+                    .event-box { background-color: white; border: 2px solid #4CAF50; padding: 20px; margin: 20px 0; border-radius: 5px; }
+                    .event-detail { margin: 10px 0; padding: 10px; background-color: #f5f5f5; border-radius: 3px; }
+                    .button { display: inline-block; padding: 12px 30px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+                    .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>🎉 New Event Announcement!</h1>
+                    </div>
+                    <div class="content">
+                        <p>Hi <strong>%s</strong>,</p>
+                        <p>A new event has been created by the SK Officials of Barangay 183!</p>
+                        <div class="event-box">
+                            <h2 style="color: #4CAF50; margin-top: 0;">%s</h2>
+                            <div class="event-detail">
+                                <strong>📝 Description:</strong><br>
+                                %s
+                            </div>
+                            <div class="event-detail">
+                                <strong>📅 Date:</strong> %s
+                            </div>
+                            <div class="event-detail">
+                                <strong>📍 Location:</strong> %s
+                            </div>
+                        </div>
+                        <p>Don't miss out on this exciting opportunity! RSVP now to secure your spot.</p>
+                        <center>
+                            <a href="%s" class="button">View Event & RSVP</a>
+                        </center>
+                        <p>We look forward to seeing you there!</p>
+                    </div>
+                    <div class="footer">
+                        <p>YouthConnect - Sangguniang Kabataan, Barangay 183</p>
+                        <p>This is an automated notification. Please do not reply.</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+        """.formatted(userName, eventTitle, eventDescription, eventDate, eventLocation, eventsUrl);
+    }
+
+    @Override
+    public void sendEventStatusChangeNotification(String toEmail, String userName, String eventTitle, 
+                                                  String eventDescription, String eventDate, String eventLocation, 
+                                                  String newStatus) {
+        try {
+            System.out.println("📧 Building event status change notification email...");
+            System.out.println("From: " + fromEmail);
+            System.out.println("To: " + toEmail);
+            System.out.println("Status: " + newStatus);
+            
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setFrom(fromEmail, "YouthConnect - Barangay 183");
+            helper.setTo(toEmail);
+            
+            String subject = switch (newStatus.toLowerCase()) {
+                case "ongoing" -> "YouthConnect - Event Starting Now: " + eventTitle + " 🎉";
+                case "completed" -> "YouthConnect - Thank You for Attending: " + eventTitle + " ✅";
+                case "cancelled" -> "YouthConnect - Event Cancelled: " + eventTitle + " ❌";
+                default -> "YouthConnect - Event Update: " + eventTitle;
+            };
+            
+            helper.setSubject(subject);
+            helper.setText(buildEventStatusChangeTemplate(userName, eventTitle, eventDescription, 
+                                                          eventDate, eventLocation, newStatus), true);
+
+            System.out.println("📤 Sending event status change notification email via SMTP...");
+            mailSender.send(message);
+            System.out.println("✅ Event status change notification email sent successfully!");
+
+        } catch (Exception e) {
+            System.err.println("❌ Failed to send event status change notification email: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private String buildEventStatusChangeTemplate(String userName, String eventTitle, 
+                                                  String eventDescription, String eventDate, 
+                                                  String eventLocation, String newStatus) {
+        String eventsUrl = baseUrl + "/youth/events";
+        
+        return switch (newStatus.toLowerCase()) {
+            case "ongoing" -> buildOngoingEventTemplate(userName, eventTitle, eventDescription, eventDate, eventLocation, eventsUrl);
+            case "completed" -> buildCompletedEventTemplate(userName, eventTitle, eventDescription, eventDate, eventLocation, eventsUrl);
+            case "cancelled" -> buildCancelledEventTemplate(userName, eventTitle, eventDescription, eventDate, eventLocation, eventsUrl);
+            default -> buildDefaultStatusTemplate(userName, eventTitle, eventDescription, eventDate, eventLocation, newStatus, eventsUrl);
+        };
+    }
+
+    private String buildOngoingEventTemplate(String userName, String eventTitle, String eventDescription,
+                                            String eventDate, String eventLocation, String eventsUrl) {
+        return """
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                    .header { background-color: #FF9800; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+                    .content { background-color: #f9f9f9; padding: 30px; border-radius: 0 0 5px 5px; }
+                    .event-box { background-color: white; border: 2px solid #FF9800; padding: 20px; margin: 20px 0; border-radius: 5px; }
+                    .event-detail { margin: 10px 0; padding: 10px; background-color: #fff3e0; border-radius: 3px; }
+                    .highlight { background-color: #fff3cd; border-left: 4px solid #FF9800; padding: 15px; margin: 20px 0; }
+                    .button { display: inline-block; padding: 12px 30px; background-color: #FF9800; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+                    .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>🎉 Event Starting Now!</h1>
+                    </div>
+                    <div class="content">
+                        <p>Hi <strong>%s</strong>,</p>
+                        <div class="highlight">
+                            <p style="margin: 0; font-size: 18px;"><strong>⏰ The event you registered for is now ongoing!</strong></p>
+                        </div>
+                        <p>We're excited to see you at the event. Here are the details:</p>
+                        <div class="event-box">
+                            <h2 style="color: #FF9800; margin-top: 0;">%s</h2>
+                            <div class="event-detail">
+                                <strong>📝 Description:</strong><br>
+                                %s
+                            </div>
+                            <div class="event-detail">
+                                <strong>📅 Date:</strong> %s
+                            </div>
+                            <div class="event-detail">
+                                <strong>📍 Location:</strong> %s
+                            </div>
+                        </div>
+                        <p><strong>Don't forget to check in when you arrive!</strong></p>
+                        <p>We look forward to seeing you there!</p>
+                        <center>
+                            <a href="%s" class="button">View Event Details</a>
+                        </center>
+                    </div>
+                    <div class="footer">
+                        <p>YouthConnect - Sangguniang Kabataan, Barangay 183</p>
+                        <p>This is an automated notification. Please do not reply.</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+        """.formatted(userName, eventTitle, eventDescription, eventDate, eventLocation, eventsUrl);
+    }
+
+    private String buildCompletedEventTemplate(String userName, String eventTitle, String eventDescription,
+                                              String eventDate, String eventLocation, String eventsUrl) {
+        return """
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                    .header { background-color: #4CAF50; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+                    .content { background-color: #f9f9f9; padding: 30px; border-radius: 0 0 5px 5px; }
+                    .event-box { background-color: white; border: 2px solid #4CAF50; padding: 20px; margin: 20px 0; border-radius: 5px; }
+                    .event-detail { margin: 10px 0; padding: 10px; background-color: #f5f5f5; border-radius: 3px; }
+                    .thank-you-box { background-color: #e8f5e9; border-left: 4px solid #4CAF50; padding: 15px; margin: 20px 0; }
+                    .button { display: inline-block; padding: 12px 30px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+                    .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>✅ Thank You for Participating!</h1>
+                    </div>
+                    <div class="content">
+                        <p>Hi <strong>%s</strong>,</p>
+                        <div class="thank-you-box">
+                            <p style="margin: 0; font-size: 18px;"><strong>🎉 Thank you for being part of this event!</strong></p>
+                        </div>
+                        <p>The event has been successfully completed. We hope you had a great experience!</p>
+                        <div class="event-box">
+                            <h2 style="color: #4CAF50; margin-top: 0;">%s</h2>
+                            <div class="event-detail">
+                                <strong>📝 Description:</strong><br>
+                                %s
+                            </div>
+                            <div class="event-detail">
+                                <strong>📅 Date:</strong> %s
+                            </div>
+                            <div class="event-detail">
+                                <strong>📍 Location:</strong> %s
+                            </div>
+                        </div>
+                        <p>Your participation and support mean a lot to us. Stay tuned for more exciting events from YouthConnect!</p>
+                        <center>
+                            <a href="%s" class="button">View More Events</a>
+                        </center>
+                    </div>
+                    <div class="footer">
+                        <p>YouthConnect - Sangguniang Kabataan, Barangay 183</p>
+                        <p>This is an automated notification. Please do not reply.</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+        """.formatted(userName, eventTitle, eventDescription, eventDate, eventLocation, eventsUrl);
+    }
+
+    private String buildCancelledEventTemplate(String userName, String eventTitle, String eventDescription,
+                                              String eventDate, String eventLocation, String eventsUrl) {
+        return """
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                    .header { background-color: #f44336; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+                    .content { background-color: #f9f9f9; padding: 30px; border-radius: 0 0 5px 5px; }
+                    .event-box { background-color: white; border: 2px solid #f44336; padding: 20px; margin: 20px 0; border-radius: 5px; }
+                    .event-detail { margin: 10px 0; padding: 10px; background-color: #f5f5f5; border-radius: 3px; }
+                    .warning-box { background-color: #ffebee; border-left: 4px solid #f44336; padding: 15px; margin: 20px 0; }
+                    .button { display: inline-block; padding: 12px 30px; background-color: #f44336; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+                    .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>❌ Event Cancelled</h1>
+                    </div>
+                    <div class="content">
+                        <p>Hi <strong>%s</strong>,</p>
+                        <div class="warning-box">
+                            <p style="margin: 0; font-size: 18px;"><strong>⚠️ Important: This event has been cancelled</strong></p>
+                        </div>
+                        <p>We regret to inform you that the following event you registered for has been cancelled:</p>
+                        <div class="event-box">
+                            <h2 style="color: #f44336; margin-top: 0;">%s</h2>
+                            <div class="event-detail">
+                                <strong>📝 Description:</strong><br>
+                                %s
+                            </div>
+                            <div class="event-detail">
+                                <strong>📅 Originally Scheduled:</strong> %s
+                            </div>
+                            <div class="event-detail">
+                                <strong>📍 Location:</strong> %s
+                            </div>
+                        </div>
+                        <p>We apologize for any inconvenience this may cause. Please check our events page for other upcoming activities you might be interested in.</p>
+                        <p>If you have any questions, please contact the SK Officials at Barangay 183.</p>
+                        <center>
+                            <a href="%s" class="button">Browse Other Events</a>
+                        </center>
+                    </div>
+                    <div class="footer">
+                        <p>YouthConnect - Sangguniang Kabataan, Barangay 183</p>
+                        <p>This is an automated notification. Please do not reply.</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+        """.formatted(userName, eventTitle, eventDescription, eventDate, eventLocation, eventsUrl);
+    }
+
+    private String buildDefaultStatusTemplate(String userName, String eventTitle, String eventDescription,
+                                             String eventDate, String eventLocation, String newStatus, String eventsUrl) {
+        return """
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                    .header { background-color: #2196F3; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+                    .content { background-color: #f9f9f9; padding: 30px; border-radius: 0 0 5px 5px; }
+                    .event-box { background-color: white; border: 2px solid #2196F3; padding: 20px; margin: 20px 0; border-radius: 5px; }
+                    .event-detail { margin: 10px 0; padding: 10px; background-color: #f5f5f5; border-radius: 3px; }
+                    .button { display: inline-block; padding: 12px 30px; background-color: #2196F3; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+                    .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>📢 Event Status Update</h1>
+                    </div>
+                    <div class="content">
+                        <p>Hi <strong>%s</strong>,</p>
+                        <p>The status of the event you registered for has been updated to: <strong>%s</strong></p>
+                        <div class="event-box">
+                            <h2 style="color: #2196F3; margin-top: 0;">%s</h2>
+                            <div class="event-detail">
+                                <strong>📝 Description:</strong><br>
+                                %s
+                            </div>
+                            <div class="event-detail">
+                                <strong>📅 Date:</strong> %s
+                            </div>
+                            <div class="event-detail">
+                                <strong>📍 Location:</strong> %s
+                            </div>
+                        </div>
+                        <center>
+                            <a href="%s" class="button">View Event Details</a>
+                        </center>
+                    </div>
+                    <div class="footer">
+                        <p>YouthConnect - Sangguniang Kabataan, Barangay 183</p>
+                        <p>This is an automated notification. Please do not reply.</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+        """.formatted(userName, newStatus, eventTitle, eventDescription, eventDate, eventLocation, eventsUrl);
+    }
+
+    @Async
+    @Override
+    public void sendNewEventNotificationsAsync(List<User> users, String eventTitle, String eventDescription,
+                                              String eventDate, String eventLocation) {
+        System.out.println("🚀 [ASYNC] Starting bulk event notification sending in background thread...");
+        System.out.println("📧 [ASYNC] Sending event notifications to " + users.size() + " approved users");
+        
+        int successCount = 0;
+        int failCount = 0;
+        
+        for (User user : users) {
+            try {
+                // Get youth profile to get first name
+                com.youthconnect.youthconnect_id.models.YouthProfile profile = 
+                    youthProfileRepo.findById(user.getYouthId()).orElse(null);
+                
+                String firstName = profile != null && profile.getFirstName() != null ? 
+                    profile.getFirstName() : "Youth Member";
+                
+                sendNewEventNotification(user.getEmail(), firstName, eventTitle, eventDescription, 
+                                       eventDate, eventLocation);
+                successCount++;
+            } catch (Exception e) {
+                failCount++;
+                System.err.println("❌ [ASYNC] Failed to send notification to " + user.getEmail() + ": " + e.getMessage());
+            }
+        }
+        
+        System.out.println("📊 [ASYNC] Event notification complete: " + successCount + " sent, " + failCount + " failed");
+    }
+
+    @Async
+    @Override
+    public void sendEventStatusChangeNotificationsAsync(List<User> users, String eventTitle, String eventDescription,
+                                                       String eventDate, String eventLocation, String newStatus) {
+        System.out.println("🚀 [ASYNC] Starting bulk status change notification sending in background thread...");
+        System.out.println("📧 [ASYNC] Sending status change (" + newStatus + ") notifications to " + users.size() + " users");
+        
+        int successCount = 0;
+        int failCount = 0;
+        
+        for (User user : users) {
+            try {
+                // Get youth profile to get first name
+                com.youthconnect.youthconnect_id.models.YouthProfile profile = 
+                    youthProfileRepo.findById(user.getYouthId()).orElse(null);
+                
+                String firstName = profile != null && profile.getFirstName() != null ? 
+                    profile.getFirstName() : "Youth Member";
+                
+                sendEventStatusChangeNotification(user.getEmail(), firstName, eventTitle, eventDescription,
+                                                 eventDate, eventLocation, newStatus);
+                successCount++;
+            } catch (Exception e) {
+                failCount++;
+                System.err.println("❌ [ASYNC] Failed to send status change notification to " + user.getEmail() + ": " + e.getMessage());
+            }
+        }
+        
+        System.out.println("📊 [ASYNC] Status change notification complete: " + successCount + " sent, " + failCount + " failed");
     }
 }
