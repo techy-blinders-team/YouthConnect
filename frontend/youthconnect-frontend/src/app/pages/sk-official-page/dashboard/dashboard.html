@@ -55,10 +55,12 @@
                      (click)="openEventDetailsModal(event)">
                     <div class="item-header">
                         <h3>{{ event.title }}</h3>
-                        <span class="item-date">{{ getEventDate(event.eventDate) }}</span>
                     </div>
                     <p class="item-description">{{ event.description }}</p>
-                    <p class="item-location">{{ event.location }}</p>
+                    <div class="item-meta">
+                        <p class="item-location">{{ event.location }}</p>
+                        <span class="item-date">{{ getEventDate(event.eventDate) }}</span>
+                    </div>
                 </div>
                 <div *ngIf="events.length === 0" class="no-data-message">No events available</div>
             </div>
