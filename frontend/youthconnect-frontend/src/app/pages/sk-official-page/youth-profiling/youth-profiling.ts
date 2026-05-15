@@ -19,15 +19,24 @@ export class YouthProfiling implements OnInit {
   filteredProfiles: YouthMemberListItem[] = [];
   userAccountByUserId = new Map<number, { email: string; roleId: number; isActive: boolean; status: 'pending' | 'approved' | 'rejected' }>();
   searchQuery: string = '';
+  approvalSearchQuery: string = '';
   isLoading: boolean = false;
   errorMessage: string = '';
   successMessage: string = '';
+
+  // Pagination for approval panel
+  approvalCurrentPage: number = 1;
+  approvalItemsPerPage: number = 10;
+
+  // Tab management
+  activeTab: 'active' | 'inactive' | 'pending' | 'rejected' = 'active';
+
   isApprovalPanelOpen = false;
-  approvalFilter: 'pending' | 'approved' | 'rejected' | 'all' = 'pending';
+  approvalFilter: 'pending' | 'approved' | 'rejected' | 'deactivated' | 'all' = 'pending';
   approvalMessage: string = '';
   approvalError: string = '';
   updatingApprovalUserId: number | null = null;
-  updatingApprovalAction: 'approve' | 'reject' | null = null;
+  updatingApprovalAction: 'approve' | 'reject' | 'reactivate' | null = null;
   rejectingUserId: number | null = null;
   rejectionReason: string = '';
   isRejectModalOpen: boolean = false;
@@ -46,6 +55,7 @@ export class YouthProfiling implements OnInit {
   isDeactivateModalOpen = false;
   isEditConfirmationModalOpen = false;
   isDeactivateConfirmationModalOpen = false;
+  isReactivateConfirmationModalOpen = false;
   isYouthDetailsModalOpen = false;
   selectedProfile: YouthMemberListItem | null = null;
   selectedYouthProfile: YouthMemberListItem | null = null;
@@ -73,30 +83,30 @@ export class YouthProfiling implements OnInit {
   setupScrollIndicators() {
     setTimeout(() => {
       const modalBodyWrappers = document.querySelectorAll('.modal-body-wrapper');
-      
+
       modalBodyWrappers.forEach((wrapper) => {
         const element = wrapper as HTMLElement;
-        
+
         const updateScrollIndicators = () => {
           const canScrollUp = element.scrollTop > 10;
           const canScrollDown = element.scrollTop < element.scrollHeight - element.clientHeight - 10;
-          
+
           if (canScrollUp) {
             element.classList.add('can-scroll-up');
           } else {
             element.classList.remove('can-scroll-up');
           }
-          
+
           if (canScrollDown) {
             element.classList.add('can-scroll-down');
           } else {
             element.classList.remove('can-scroll-down');
           }
         };
-        
+
         element.addEventListener('scroll', updateScrollIndicators);
         updateScrollIndicators();
-        
+
         const resizeObserver = new ResizeObserver(updateScrollIndicators);
         resizeObserver.observe(element);
       });
@@ -220,7 +230,7 @@ export class YouthProfiling implements OnInit {
           };
         });
 
-        this.filteredProfiles = this.youthProfiles.filter(profile => profile.status === 'approved' && profile.isActive === true);
+        this.filteredProfiles = this.getProfilesByTab();
         this.isLoading = false;
       },
       error: (error) => {
@@ -232,24 +242,69 @@ export class YouthProfiling implements OnInit {
   }
 
   onSearch(): void {
+    this.filteredProfiles = this.getProfilesByTab();
+
     if (!this.searchQuery.trim()) {
-      // Only show approved AND active profiles in the main table
-      this.filteredProfiles = this.youthProfiles.filter(profile => profile.status === 'approved' && profile.isActive === true);
       return;
     }
 
     const query = this.searchQuery.toLowerCase();
-    // Filter to only search within approved AND active profiles
-    this.filteredProfiles = this.youthProfiles
-      .filter(profile => profile.status === 'approved' && profile.isActive === true)
-      .filter(profile =>
-        profile.firstName.toLowerCase().includes(query) ||
-        profile.lastName.toLowerCase().includes(query) ||
-        (profile.middleName && profile.middleName.toLowerCase().includes(query)) ||
-        profile.contactNumber.toLowerCase().includes(query) ||
-        (profile.completeAddress && profile.completeAddress.toLowerCase().includes(query)) ||
-        profile.civilStatus.toLowerCase().includes(query)
-      );
+    this.filteredProfiles = this.filteredProfiles.filter(profile =>
+      profile.firstName.toLowerCase().includes(query) ||
+      profile.lastName.toLowerCase().includes(query) ||
+      (profile.middleName && profile.middleName.toLowerCase().includes(query)) ||
+      profile.contactNumber.toLowerCase().includes(query) ||
+      (profile.completeAddress && profile.completeAddress.toLowerCase().includes(query)) ||
+      profile.civilStatus.toLowerCase().includes(query)
+    );
+  }
+
+  // Tab management methods
+  setActiveTab(tab: 'active' | 'inactive' | 'pending' | 'rejected'): void {
+    this.activeTab = tab;
+    this.searchQuery = '';
+    this.filteredProfiles = this.getProfilesByTab();
+  }
+
+  getProfilesByTab(): YouthMemberListItem[] {
+    let profiles: YouthMemberListItem[] = [];
+
+    switch (this.activeTab) {
+      case 'active':
+        profiles = this.youthProfiles.filter(p => p.status === 'approved' && p.isActive === true);
+        break;
+      case 'inactive':
+        profiles = this.youthProfiles.filter(p => p.isActive === false);
+        break;
+      case 'pending':
+        profiles = this.youthProfiles.filter(p => p.status === 'pending');
+        break;
+      case 'rejected':
+        profiles = this.youthProfiles.filter(p => p.status === 'rejected');
+        break;
+    }
+
+    if (!this.searchQuery.trim()) {
+      return profiles;
+    }
+
+    const query = this.searchQuery.toLowerCase();
+    return profiles.filter(profile =>
+      profile.firstName.toLowerCase().includes(query) ||
+      profile.lastName.toLowerCase().includes(query) ||
+      (profile.middleName && profile.middleName.toLowerCase().includes(query)) ||
+      profile.contactNumber.toLowerCase().includes(query) ||
+      (profile.completeAddress && profile.completeAddress.toLowerCase().includes(query)) ||
+      profile.civilStatus.toLowerCase().includes(query)
+    );
+  }
+
+  get activeCount(): number {
+    return this.youthProfiles.filter(p => p.status === 'approved' && p.isActive === true).length;
+  }
+
+  get inactiveCount(): number {
+    return this.youthProfiles.filter(p => p.isActive === false).length;
   }
 
   get approvalProfiles(): YouthMemberListItem[] {
@@ -266,8 +321,33 @@ export class YouthProfiling implements OnInit {
         return profile.status === 'rejected';
       }
 
+      if (this.approvalFilter === 'deactivated') {
+        return profile.isActive === false;
+      }
+
       return true;
     });
+  }
+
+  get filteredApprovalProfiles(): YouthMemberListItem[] {
+    let profiles = this.approvalProfiles;
+
+    if (!this.approvalSearchQuery.trim()) {
+      return profiles;
+    }
+
+    const query = this.approvalSearchQuery.toLowerCase();
+    return profiles.filter(profile =>
+      profile.firstName.toLowerCase().includes(query) ||
+      profile.lastName.toLowerCase().includes(query) ||
+      (profile.middleName && profile.middleName.toLowerCase().includes(query)) ||
+      (profile.email && profile.email.toLowerCase().includes(query)) ||
+      profile.contactNumber.toLowerCase().includes(query)
+    );
+  }
+
+  get deactivatedCount(): number {
+    return this.youthProfiles.filter(profile => profile.isActive === false).length;
   }
 
   get pendingCount(): number {
@@ -302,8 +382,82 @@ export class YouthProfiling implements OnInit {
     this.approvalMessage = '';
   }
 
-  setApprovalFilter(filter: 'pending' | 'approved' | 'rejected' | 'all'): void {
+  setApprovalFilter(filter: 'pending' | 'approved' | 'rejected' | 'deactivated' | 'all'): void {
     this.approvalFilter = filter;
+    this.approvalSearchQuery = '';
+    this.approvalCurrentPage = 1; // Reset to first page when filter changes
+  }
+
+  onApprovalSearch(): void {
+    // The filtering is handled by the filteredApprovalProfiles getter
+    // This method is here for explicit search button clicks if needed
+    this.approvalCurrentPage = 1; // Reset to first page when searching
+  }
+
+  get paginatedApprovalProfiles(): YouthMemberListItem[] {
+    const startIndex = (this.approvalCurrentPage - 1) * this.approvalItemsPerPage;
+    const endIndex = startIndex + this.approvalItemsPerPage;
+    return this.filteredApprovalProfiles.slice(startIndex, endIndex);
+  }
+
+  get approvalTotalPages(): number {
+    return Math.ceil(this.filteredApprovalProfiles.length / this.approvalItemsPerPage);
+  }
+
+  get approvalPageNumbers(): number[] {
+    return Array.from({ length: this.approvalTotalPages }, (_, i) => i + 1);
+  }
+
+  goToApprovalPage(page: number): void {
+    if (page >= 1 && page <= this.approvalTotalPages) {
+      this.approvalCurrentPage = page;
+    }
+  }
+
+  nextApprovalPage(): void {
+    if (this.approvalCurrentPage < this.approvalTotalPages) {
+      this.approvalCurrentPage++;
+    }
+  }
+
+  previousApprovalPage(): void {
+    if (this.approvalCurrentPage > 1) {
+      this.approvalCurrentPage--;
+    }
+  }
+
+  reactivateFromPanel(profile: YouthMemberListItem): void {
+    if (!profile.userId) {
+      this.approvalError = 'Unable to reactivate this account.';
+      return;
+    }
+
+    this.updatingApprovalUserId = profile.userId;
+    this.updatingApprovalAction = 'reactivate';
+    this.approvalError = '';
+    this.approvalMessage = '';
+
+    this.youthMemberManagementService.reactivateUser(profile.userId).subscribe({
+      next: () => {
+        this.approvalMessage = `Account for ${profile.firstName} ${profile.lastName} has been reactivated successfully!`;
+        this.updatingApprovalUserId = null;
+        this.updatingApprovalAction = null;
+
+        // Reload profiles to reflect changes
+        this.loadYouthProfiles();
+
+        // Clear message after 3 seconds
+        setTimeout(() => {
+          this.approvalMessage = '';
+        }, 3000);
+      },
+      error: (error) => {
+        console.error('Error reactivating user:', error);
+        this.approvalError = 'Failed to reactivate account. Please try again.';
+        this.updatingApprovalUserId = null;
+        this.updatingApprovalAction = null;
+      }
+    });
   }
 
   setRegistrationApproval(profile: YouthMemberListItem, approve: boolean): void {
@@ -864,6 +1018,38 @@ export class YouthProfiling implements OnInit {
   onDeactivate(profile: YouthMemberListItem): void {
     this.selectedProfile = profile;
     this.isDeactivateConfirmationModalOpen = true;
+  }
+
+  onReactivate(profile: YouthMemberListItem): void {
+    this.selectedProfile = profile;
+    this.isReactivateConfirmationModalOpen = true;
+  }
+
+  closeReactivateConfirmationModal(): void {
+    this.isReactivateConfirmationModalOpen = false;
+    this.selectedProfile = null;
+  }
+
+  confirmReactivateSubmission(): void {
+    if (!this.selectedProfile) return;
+
+    this.isSubmitting = true;
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    this.youthMemberManagementService.reactivateUser(this.selectedProfile.userId).subscribe({
+      next: () => {
+        this.showNotification(`Account for ${this.selectedProfile?.firstName} ${this.selectedProfile?.lastName} has been reactivated successfully`, 'success');
+        this.isSubmitting = false;
+        this.closeReactivateConfirmationModal();
+        this.loadYouthProfiles();
+      },
+      error: (error) => {
+        console.error('Error reactivating user:', error);
+        this.errorMessage = 'Failed to reactivate account. Please try again.';
+        this.isSubmitting = false;
+      }
+    });
   }
 
   closeDeactivateConfirmationModal(): void {
