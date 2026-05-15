@@ -1,165 +1,153 @@
-<div class="event-container">
-    <div class="event-content">
-        <div class="event-header">
-            <h1>Upcoming Events, RSVP now</h1>
-            <p class="subtitle">Discover and explore all events created by administrators</p>
+<div class="event-root">
+    <!-- Toast Notifications -->
+    <div class="notification-stack">
+        <div *ngIf="successMessage" class="toast-notification toast-success">
+            {{ successMessage }}
+        </div>
+        <div *ngIf="errorMessage" class="toast-notification toast-error">
+            {{ errorMessage }}
+        </div>
+    </div>
+
+    <div class="event-container">
+        <!-- Header Section -->
+        <div class="header-section">
+            <div class="header-content">
+                <h1>UPCOMING EVENTS</h1>
+                <p>Discover and RSVP to events created by SK administrators</p>
+            </div>
         </div>
 
-        <!-- Success Toast -->
-        <div class="success-toast" *ngIf="successMessage">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                <polyline points="22 4 12 14.01 9 11.01"></polyline>
-            </svg>
-            <span>{{ successMessage }}</span>
-        </div>
-
-        <!-- Error Message -->
-        <div class="error-banner" *ngIf="errorMessage">
-            <p>{{ errorMessage }}</p>
-        </div>
-
-        <!-- Event Stats -->
-        <div class="event-stats">
-            <span class="stat-badge">Total Events: {{ events.length }}</span>
-            <span class="stat-badge" *ngIf="filteredEvents.length !== events.length">
-                Showing: {{ filteredEvents.length }}
-            </span>
-        </div>
-
-        <!-- Search and Filters -->
-        <div class="filters-section">
-            <div class="search-box">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" class="search-icon">
+        <!-- Action Bar: Search + Filters -->
+        <div class="action-bar">
+            <div class="search-group">
+                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="11" cy="11" r="8"></circle>
                     <path d="m21 21-4.35-4.35"></path>
                 </svg>
-                <input type="text" placeholder="Search events by title, description, or location..."
-                    [value]="searchQuery" (input)="onSearchChange($event)" class="search-input" />
-                <button *ngIf="searchQuery" class="clear-search" (click)="searchQuery = ''; applyFilters()"
-                    aria-label="Clear search">
-                    ×
-                </button>
+                <input
+                    type="text"
+                    placeholder="Search events by title, description, or location"
+                    class="search-input"
+                    [value]="searchQuery"
+                    (input)="onSearchChange($event)">
             </div>
-
-            <div class="filter-controls">
+            <div class="filter-group">
                 <select class="filter-select" [value]="selectedStatusFilter"
                     (change)="onStatusFilterChange($any($event.target).value)">
-                    <option *ngFor="let filter of statusFilters" [value]="filter.value">
-                        {{ filter.label }}
-                    </option>
+                    <option *ngFor="let filter of statusFilters" [value]="filter.value">{{ filter.label }}</option>
                 </select>
-
-                <button class="btn-clear-filters" (click)="clearFilters()"
-                    *ngIf="searchQuery || selectedStatusFilter !== 'ALL'">
-                    Clear Filters
-                </button>
             </div>
-        </div>
-
-        <!-- Loading State -->
-        <div class="loading-state" *ngIf="isLoading && events.length === 0">
-            <p>Loading events...</p>
         </div>
 
         <!-- Events List -->
-        <div class="events-list" *ngIf="!isLoading || events.length > 0">
-            <div class="event-card" 
-                *ngFor="let event of paginatedEvents; let i = index"
+        <div class="events-list">
+            <div *ngIf="isLoading && events.length === 0" class="loading-indicator">
+                <p>Loading events...</p>
+            </div>
+            <div *ngIf="!isLoading && filteredEvents.length === 0" class="empty-state">
+                <p>{{ events.length === 0 ? 'No upcoming events at the moment. Check back later!' : 'No events match your filters.' }}</p>
+            </div>
+
+            <div *ngFor="let event of paginatedEvents; let i = index"
+                class="event-card"
                 [id]="'event-' + event.eventId"
-                [ngClass]="['event-' + getEventColor(i), isHighlighted(event.eventId) ? 'highlight-event' : '']">
-                <div class="event-info">
-                    <div class="event-title-row">
+                [class.highlight-event]="isHighlighted(event.eventId)">
+                <div class="card-header">
+                    <div class="card-title-group">
                         <h3>{{ event.title }}</h3>
-                        <div class="event-status-group">
-                            <span class="event-status" [ngClass]="getStatusBadgeClass(event.status)">
-                                {{ event.status }}
-                            </span>
-                            <span class="rsvp-status" *ngIf="isRsvped(event.eventId)">
-                                Joined
-                            </span>
-                        </div>
                     </div>
-                    <p class="event-description">{{ event.description }}</p>
-                    <div class="event-details">
-                        <span class="event-detail">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2">
+                    <div class="card-badges">
+                        <span class="status-pill" [ngClass]="getStatusBadgeClass(event.status)">
+                            {{ event.status }}
+                        </span>
+                        <span class="rsvp-joined-pill" *ngIf="isRsvped(event.eventId)">
+                            ✓ Joined
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="description">{{ event.description }}</p>
+                    <div class="event-meta">
+                        <div class="meta-item">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                                 <line x1="16" y1="2" x2="16" y2="6"></line>
                                 <line x1="8" y1="2" x2="8" y2="6"></line>
                                 <line x1="3" y1="10" x2="21" y2="10"></line>
                             </svg>
-                            {{ formatEventDate(event.eventDate) }}
-                        </span>
-                        <span class="event-detail" *ngIf="event.location">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2">
+                            <span class="meta-label">DATE:</span>
+                            <span>{{ formatEventDate(event.eventDate) }}</span>
+                        </div>
+                        <div class="meta-item" *ngIf="event.location">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                                 <circle cx="12" cy="10" r="3"></circle>
                             </svg>
-                            {{ event.location }}
-                        </span>
+                            <span class="meta-label">LOCATION:</span>
+                            <span>{{ event.location }}</span>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-rsvp"
+                            [class.btn-rsvp-disabled]="isEventOngoing(event) || isEventCompleted(event)"
+                            (click)="rsvpEvent(event)"
+                            [disabled]="isLoading || !canRsvp(event)"
+                            *ngIf="!isRsvped(event.eventId)">
+                            {{ isEventCompleted(event) ? 'Completed' : (isEventOngoing(event) ? 'Ongoing' : 'RSVP Now') }}
+                        </button>
+                        <button class="btn-cancel-rsvp" *ngIf="canCancelRsvp(event)"
+                            (click)="cancelRsvp(event)"
+                            [disabled]="isLoading">
+                            Cancel RSVP
+                        </button>
                     </div>
                 </div>
-                <div class="event-actions">
-                    <button class="btn-rsvp" [class.ongoing]="isEventOngoing(event)" [class.completed]="isEventCompleted(event)" 
-                        (click)="rsvpEvent(event)"
-                        [disabled]="isLoading || !canRsvp(event)"
-                        *ngIf="!isRsvped(event.eventId)">
-                        {{ isEventCompleted(event) ? 'Completed' : (isEventOngoing(event) ? 'Ongoing' : 'RSVP') }}
-                    </button>
-                    <button class="btn-cancel" *ngIf="canCancelRsvp(event)"
-                        (click)="cancelRsvp(event)"
-                        [disabled]="isLoading">
-                        Cancel
-                    </button>
-                </div>
-            </div>
-
-            <!-- Empty State -->
-            <div class="empty-state" *ngIf="filteredEvents.length === 0 && !isLoading">
-                <p *ngIf="events.length === 0">No upcoming events at the moment. Check back later!</p>
-                <p *ngIf="events.length > 0">No events match your filters. Try adjusting your search or filters.</p>
             </div>
         </div>
 
         <!-- Pagination -->
         <div class="pagination" *ngIf="filteredEvents.length > itemsPerPage && !isLoading">
             <button class="pagination-btn" (click)="previousPage()" [disabled]="currentPage === 1">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="15 18 9 12 15 6"></polyline>
                 </svg>
             </button>
-
             <button *ngFor="let page of getPageNumbers()" class="pagination-number"
-                [class.active]="page === currentPage" [disabled]="page === -1" (click)="page !== -1 && goToPage(page)">
+                [class.active]="page === currentPage"
+                [disabled]="page === -1"
+                (click)="page !== -1 && goToPage(page)">
                 {{ page === -1 ? '...' : page }}
             </button>
-
             <button class="pagination-btn" (click)="nextPage()" [disabled]="currentPage === totalPages">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="9 18 15 12 9 6"></polyline>
                 </svg>
             </button>
         </div>
     </div>
+</div>
 
-    <!-- RSVP Confirmation Modal -->
-    <div class="modal-overlay" *ngIf="showRsvpModal" (click)="closeRsvpModal()">
-        <div class="modal-content rsvp-modal" (click)="$event.stopPropagation()">
-            <button class="btn-close-x" (click)="closeRsvpModal()" aria-label="Close modal">×</button>
-
-            <div class="rsvp-modal-body">
+<!-- RSVP Confirmation Modal -->
+<div class="modal-overlay" *ngIf="showRsvpModal" (click)="closeRsvpModal()">
+    <div class="modal-content modal-small" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <div>
+                <h2 class="modal-title">You're In!</h2>
+                <p class="modal-subtitle">Thank you for your RSVP. See you at the event!</p>
+            </div>
+            <button class="close-btn" (click)="closeRsvpModal()">✕</button>
+        </div>
+        <div class="modal-body-wrapper">
+            <div class="modal-body rsvp-modal-body">
                 <div class="checkmark-icon">
                     <img src="assets/event/checklist.png" alt="Success" />
                 </div>
-                <h2>Thank you for RSVP, See you there on the Event!</h2>
+                <p class="rsvp-event-name">{{ selectedEvent?.title }}</p>
             </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-create" (click)="closeRsvpModal()">Done</button>
         </div>
     </div>
 </div>
